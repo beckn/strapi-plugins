@@ -1,2 +1,3 @@
-export const PLUGIN: string = 'beckn-bpp-adapter';
+import pluginPkg from '../package.json';
+export const PLUGIN: string = pluginPkg.strapi.name;
 export const actions: string[] = ['search', 'init'];
