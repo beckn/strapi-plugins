@@ -25,11 +25,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
     },
     async psResponse(ctx) {
-        const { action } = ctx.params;
-        const { body = {} } = ctx.request;
-        console.log('Response received from BPP', JSON.stringify({ action, body }));
-        ctx.body = {
-            ACK: true
+        try {
+            const { action } = ctx.params;
+            const { body = {} } = ctx.request;
+            console.log('Response received from BPP', JSON.stringify({ action, body }));
+            ctx.body = {
+                ACK: true
+            }
+        } catch (error) {
+            // throw error;
         }
     }
 });

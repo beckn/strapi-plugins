@@ -34,4 +34,8 @@ export class FilterUtil {
         filter.category_code = category.descriptor?.code
         return filter;
     }
+
+    static getItemsFilter = (items) => {
+        return items.map((obj: { id: string }) => obj.id);
+    }
 }
