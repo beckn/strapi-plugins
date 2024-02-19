@@ -1,0 +1,102 @@
+{
+    "context": $context(context, $action), 
+    "message":{
+    "providers": message.{
+            "id": id,
+            "descriptor": {
+                "name": provider_name,
+                "short_desc": short_desc,
+                "long_desc": long_desc,
+                "additional_desc": {
+                    "url": "www.makerspace.com"
+                },
+                "images": [
+                    {
+                        "url": "https://makerspace/assembly/makerspace_logo.png",
+                        "size_type": "sm"
+                    }
+                ]
+            },
+            "categories": category_ids. {
+                "id": id,
+                "descriptor": {
+                    "name": value
+                }
+            }[],
+            "rating": provider_rating,
+            "short_desc": short_desc,
+            "locations": [
+                {
+                    "id": "13",
+                    "gps": "50.311674, 11.90335",
+                    "address": "154/9, Bannerghatta Rd, opposite IIM-B, Sahyadri Layout, Panduranga Nagar, Bengaluru, Karnataka 560076",
+                    "city": {
+                        "name": "Bangalore F"
+                    },
+                    "country": {
+                        "name": "India"
+                    },
+                    "state": {
+                        "name": "Karnataka"
+                    },
+                    "area_code": "560076"
+                }
+            ],
+            "fulfillments": [
+                {
+                    "id": "3",
+                    "type": "HOME-DELIVERY",
+                    "rating": "5",
+                    "rateable": true
+                },
+                {
+                    "id": "4",
+                    "type": "SELF-PICKUP",
+                    "rating": "5",
+                    "rateable": true
+                },
+                {
+                    "id": "2",
+                    "type": "IN-STORE-PICKUP",
+                    "rating": "4",
+                    "rateable": true
+                }
+            ],
+            "rateable": true,
+            "items": items.{
+                "id": id,
+                "descriptor": {
+                    "name": name ? name : "",
+                    "code": code ? code : "",
+                    "short_desc": short_desc ? short_desc : "",
+                    "long_desc": long_desc ? long_desc : "",
+                    "images": image.{
+                        "url": url
+                    }[]
+                },
+                rateable: true,
+                "location_ids": [
+                    "13"
+                ],
+                "price": sc_retail_product.{
+                    "value": min_price ? min_price : "0",
+                    "currency": currency ? currency : "INR"
+                },
+                "quantity": sc_retail_product.{
+                    "available": {
+                        "count": stock_quantity ? stock_quantity : "0"
+                    }
+                },
+                "category_ids": $map(
+                    $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'CATEGORY'}),
+                    function($v) {
+                        $string($v.id)
+                    }
+                )[],
+                "fulfillment_ids": [
+                    null
+                ]
+            }[]
+        }[]
+    }
+}

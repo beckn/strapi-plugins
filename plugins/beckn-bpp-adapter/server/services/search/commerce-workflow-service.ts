@@ -47,6 +47,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             filters,
             populate
         });
+        console.log("providers::",providers)
         return providers;
     },
 });
