@@ -1,12 +1,13 @@
 {
     "context": $context(context, $action), 
     "message":{
-    "providers": message.{
-            "id": id,
+        "order":{
+             "providers": message.{
+            "id": provider.id,
             "descriptor": {
-                "name": provider_name,
-                "short_desc": short_desc,
-                "long_desc": long_desc,
+                "name": provider.provider_name,
+                "short_desc": provider.short_desc,
+                "long_desc": provider.long_desc,
                 "additional_desc": {
                     "url": "www.makerspace.com"
                 },
@@ -63,7 +64,7 @@
                 }
             ],
             "rateable": true,
-            "items": items.{
+            "items": {
                 "id": id,
                 "descriptor": {
                     "name": name ? name : "",
@@ -94,9 +95,11 @@
                     }
                 )[],
                 "fulfillment_ids": [
-                    null
+                    "3"
                 ]
             }[]
         }[]
     }
-}
+        }
+    }
+

@@ -13,12 +13,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         if (commerceDomains?.includes(domain)) {
             workflowService = strapi
                 .plugin(PLUGIN)
-                .service(`selectCommerceWorkflowService`);
+                .service(`initCommerceWorkflowService`);
 
         } else if (appointmentDomains?.includes(domain)) {
             workflowService = strapi
                 .plugin(PLUGIN)
-                .service(`selectAppointmentWorkflowService`);
+                .service(`initAppointmentWorkflowService`);
         } else {
             return;
         }

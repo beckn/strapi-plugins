@@ -20,7 +20,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             const result = await actionService.index({ context, message });
            console.log("SELECTRESULT:::",result)
             const transformedResult = await TLService.transform({ message: result }, `on_${context.action}`)
-            console.log('Result from service:', transformedResult);
+            console.log('Result from service:', JSON.stringify(transformedResult));
         } catch (error) {
             // throw error;
         }
