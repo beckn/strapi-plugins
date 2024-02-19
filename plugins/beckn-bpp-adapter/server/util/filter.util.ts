@@ -4,10 +4,12 @@ export class FilterUtil {
     static getItemFilter = (item: KeyValuePair = {}) => {
         const filter = {
             id: '',
-            name: ''
+            name: '',
+            code: ''
         };
         filter.id = item.id;
         filter.name = item.descriptor?.name;
+        filter.code = item.descriptor?.code;
         return filter;
     }
 

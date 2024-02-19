@@ -17,4 +17,13 @@ export default [
       auth: false
     },
   },
+  {
+    method: 'POST',
+    path: '/ps/:action',
+    handler: 'webhookController.psResponse',
+    config: {
+      policies: [],
+      auth: false
+    },
+  },
 ];

@@ -1,14 +1,16 @@
 import { Strapi } from '@strapi/strapi';
 import { ObjectUtil, FilterUtil } from '../../util';
 import { KeyValuePair } from '.././../types';
+import { PLUGIN } from '../../constants';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-    async search(message, domain?: string) {
+    async index({ message, context }) {
         const {
             item,
             provider,
             category
         } = message.intent;
+        const { domain } = context;
         const filters: KeyValuePair = provider ? FilterUtil.getProviderFilter(provider) : {};
         const populate: KeyValuePair = {
             items: {
@@ -21,10 +23,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                         }
                     },
                     image: {},
-                    sc_retail_product: {}
+                    sc_retail_product: {},
+                    item_fulfillment_id: {
+                        populate: {
+                            fulfilment_id: {}
+                        }
+                    }
                 }
             },
-            category_ids: {}
+            category_ids: {},
+            location_id: {},
+            fulfillments: {}
         }
 
         if (domain) {
@@ -47,8 +56,27 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             filters,
             populate
         });
+
+        const commonService = strapi
+            .plugin(PLUGIN)
+            .service('commonService');
+        await Promise.all(providers.map(async (provider) => {
+            await Promise.all(await provider.items.map(async (item) => {
+                await Promise.all(item['cat_attr_tag_relations']?.map(async (taxanomy) => {
+                    if (taxanomy.taxanomy === "CATEGORY") {
+                        taxanomy.taxanomy_id = await commonService.getCategoryId(taxanomy.taxanomy_id, {
+                            parent_id: {}
+                        });
+                    } else if (taxanomy.taxanomy === "TAG") {
+                        taxanomy.taxanomy_id = await commonService.getTagById(taxanomy.taxanomy_id, {
+                            tag_group_id: {}
+                        });
+                    }
+                }));
+            }));
+        }));
         return providers;
-    },
+    }
 });
 
 
