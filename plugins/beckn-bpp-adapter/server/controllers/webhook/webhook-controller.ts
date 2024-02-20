@@ -21,7 +21,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 }
             }
         } catch (error) {
-            // throw error;
+            throw error;
         }
     },
     async psResponse(ctx) {
