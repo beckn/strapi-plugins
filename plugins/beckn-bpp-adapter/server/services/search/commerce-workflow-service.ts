@@ -64,7 +64,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             await Promise.all(await provider.items.map(async (item) => {
                 await Promise.all(item['cat_attr_tag_relations']?.map(async (taxanomy) => {
                     if (taxanomy.taxanomy === "CATEGORY") {
-                        taxanomy.taxanomy_id = await commonService.getCategoryId(taxanomy.taxanomy_id, {
+                        taxanomy.taxanomy_id = await commonService.getCategoryById(taxanomy.taxanomy_id, {
                             parent_id: {}
                         });
                     } else if (taxanomy.taxanomy === "TAG") {
