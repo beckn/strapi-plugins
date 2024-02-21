@@ -103,7 +103,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         );
       })
     );
-    console.log("PROVIDERS:::", JSON.stringify(itemDetails));
     return itemDetails;
   },
 });

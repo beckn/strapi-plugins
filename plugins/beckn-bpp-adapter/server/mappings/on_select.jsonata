@@ -99,7 +99,13 @@
                             ]
                         }
                     }
-                )[]
+                )[],
+                "xinput": {
+                    "form": {
+                        "url": $xInput($action),
+                        "mime_type": "text/html"
+                    }
+                }
             }[],
            "quote":{
             "price": message.items[0].sc_retail_product.{
