@@ -6,16 +6,15 @@
             "id": $string(id),
             "descriptor": {
                 "name": provider_name,
-                "short_desc": short_desc,
-                "long_desc": long_desc,
+                "short_desc": short_desc ? short_desc : "",
+                "long_desc": long_desc ? long_desc : "",
                 "additional_desc": {
-                    "url": "www.makerspace.com"
+                    "url": provider_uri
                 },
                 "images": items.image.{
-                        "url": url,
-                        "size_type": "sm"
+                        "url": url?url:"https://abc.com",
+                        "size_type": size_type?size_type:"sm"
                     }[]
-                
             },
             "categories": category_ids. {
                 "id": $string(id),
@@ -59,7 +58,8 @@
                     "short_desc": short_desc ? short_desc : "",
                     "long_desc": long_desc ? long_desc : "",
                     "images": image.{
-                        "url": url
+                       "url": url?url:"https://abc.com",
+                        "size_type": size_type?size_type:"sm"
                     }[]
                 },
                 rateable: true,
@@ -108,20 +108,7 @@
                  "currency": currency ? currency : "INR"
                  }
                 },
-            "billing":message.{
-                "name":billing.name,
-                "address": billing.address,
-               
-                "email": billing.email,
-                "phone": billing.phone,
-                "state":{
-                    "name":billing.state.name
-                },
-                "city":{
-                    "name":billing.city.name
-                }
+                 "billing":message.billing
             }
-        }
-              
-    } 
+    }
 }

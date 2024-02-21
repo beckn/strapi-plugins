@@ -1,7 +1,8 @@
 {
     "context": $context(context, $action),
     "message": {
-        "order":{ 
+        "order":{
+            "id":message.order_id,
             "providers": message.{
             "id": $string(id),
             "descriptor": {
@@ -107,7 +108,9 @@
                 "value":$string(min_price ? min_price : 0),
                  "currency": currency ? currency : "INR"
                  }
-                }
+                },
+                "billing":message.billing,
+                "fulfillments":message.fulfillment
             }
     }
 }
