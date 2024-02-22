@@ -11,5 +11,6 @@ export const context = async (data: any, action: string) => {
 }
 
 export const xInput = async (action: string) => {
-    return `${process.env.BPP_ADAPTER_PLUGIN_URL}/x-input/form?form_id=${action}`;
+    const formId = action === 'on_select' ? 'itemDetailsForm' : 'ratingForm';
+    return `${process.env.BPP_ADAPTER_PLUGIN_URL}/x-input/form?form_id=${formId}`;
 }
