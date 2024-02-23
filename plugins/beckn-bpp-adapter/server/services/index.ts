@@ -13,6 +13,8 @@ import trackService from './track/track-service';
 import ratingCommerceWorkflowService from './rating/commerce-workflow-service';
 import ratingAppointmentWorkflowService from './rating/appointment-workflow-service';
 import ratingService from './rating/rating-service';
+import updateCommerceWorkflowService from './update/commerce-workflow-service'
+import updateAppointmentWorkflowService from './update/appointment-workflow-service';
 
 export default {
   healthService,
@@ -29,5 +31,7 @@ export default {
   trackService,
   ratingCommerceWorkflowService,
   ratingAppointmentWorkflowService,
-  ratingService
+  ratingService,
+  updateCommerceWorkflowService,
+  updateAppointmentWorkflowService
 };
