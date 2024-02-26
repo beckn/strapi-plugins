@@ -26,4 +26,22 @@ export default [
       auth: false
     },
   },
+  {
+    method: 'GET',
+    path: '/x-input/form',
+    handler: 'xInputController.getForm',
+    config: {
+      policies: [],
+      auth: false
+    },
+  },
+  {
+    method: 'POST',
+    path: '/x-input/submit',
+    handler: 'xInputController.submitForm',
+    config: {
+      policies: [],
+      auth: false
+    },
+  },
 ];

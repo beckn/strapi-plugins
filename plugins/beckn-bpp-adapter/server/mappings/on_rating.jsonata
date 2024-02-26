@@ -1,0 +1,11 @@
+{
+    "context": $context(context, $action),
+    "message": {
+        "xinput": {
+            "form": {
+                "url": $xInput($action),
+                "mime_type": "text/html"
+            }
+        }
+    }
+}

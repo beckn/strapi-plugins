@@ -1,0 +1,156 @@
+{
+    "context": $context(context, $action),
+    "message1": message,
+    "message": {
+        "order": message.{
+            "id": order_id.id,
+            "provider": provider.{
+                "id": $string(id),
+                "descriptor": {
+                    "name": provider_name,
+                    "short_desc": short_desc,
+                    "long_desc": long_desc,
+                    "additional_desc": {
+                        "url": provider_uri
+                    },
+                    "images": logo.{
+                        "url": url,
+                        "size_type": size_type
+                    }[]
+                }
+            },
+            "items": order_id.items.{
+                "id": $string(id),
+                "descriptor": {
+                    "name": name,
+                    "long_desc": long_desc,
+                    "short_desc": short_desc,
+                    "images": image.{
+                        "url": url,
+                        "size_type": size_type
+                    }[]
+                },
+                "category_ids": $map(
+                    $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'CATEGORY'}),
+                    function($v) {
+                        $string($v.taxanomy_id.id)
+                    }
+                )[],
+                "location_ids": [
+                    $string(provider.location_id.id)
+                ],
+                "fulfillment_ids": item_fulfillment_id.fulfilment_id.id ? [
+                    $string(item_fulfillment_id.fulfilment_id.id)
+                ] : [null],
+                "tags": $map(
+                    $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'TAG'}),
+                    function($v) {
+                        {
+                            "display": true,
+                            "descriptor": {
+                                "description": $v.taxanomy_id.tag_group_id.tag_group_name
+                            },
+                            "list": [
+                                {
+                                    "value": $v.taxanomy_id.tag_name,
+                                    "display": true
+                                }
+                            ]
+                        }
+                    }
+                )[],
+                "price": sc_retail_product.{
+                    "value": $string(min_price ? min_price : 0),
+                    "currency": currency ? currency : "INR"
+                }
+            }[],
+            "fulfillments": [
+                {
+                    "id":$string(fulfilment_id.id),
+                    "state": {
+                        "descriptor": {
+                            "code": state_code,
+                            "short_desc": state_value
+                        }
+                    },
+                    "customer": {
+                        "contact": {
+                            "email": customer_id.email,
+                            "phone": customer_id.contact
+                        },
+                        "person": {
+                            "name": customer_id.first_name
+                        }
+                    },
+                    "stops": order_fulfillment_location_id.{
+                        "type": "end",
+                        "location": {
+                            "gps": gps,
+                            "address": address,
+                            "city": {
+                                "name": city_name,
+                                "code": city_code
+                            },
+                            "country": {
+                                "name": country_name,
+                                "code": country_code
+                            },
+                            "state": {
+                                "name": state_name,
+                                "code": state_code
+                            },
+                            "area_code": area_code
+                        }
+                    }[]
+                }
+            ],
+            "billing": order_id.order_address.{
+                "name": first_name,
+                "address": address_line_1,
+                "city": {
+                    "name": city,
+                    "code": ""
+                },
+                "state": {
+                    "name": state,
+                    "code": ""
+                },
+                "email": email,
+                "phone": phone,
+                "tax_id": tax_id
+            },
+            "payments": provider.payment_methods.{
+                "collected_by": "BPP",
+                "params": {
+                    "bank_account": bank_account_number,
+                    "bank_code": bank_code,
+                    "price": price
+                },
+                "type": "PRE-ORDER"
+            }[],
+            "quote": {
+                "price": provider.payment_methods.price,
+                "breakup": %.message.order_id.items[0].sc_retail_product.price_bareakup_ids.{
+                    "item": {
+                        "id": item_id
+                    },
+                    "title": title,
+                    "price": {
+                        "currency": currency,
+                        "value": value
+                    }
+                }[]
+            },
+            "cancellation_terms": %.message.order_id.items[0].sc_retail_product.product_cancel.{
+                "cancellation_fee": {
+                    "cancellation_fee": {
+                        "amount": {
+                            "currency": %.currency,
+                            "value": cancel_term_id.cancellation_fee
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
