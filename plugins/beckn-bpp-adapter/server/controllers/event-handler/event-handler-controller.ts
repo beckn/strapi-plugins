@@ -9,10 +9,11 @@ export default ({ }: { strapi: Strapi }) => ({
         try {
             const { context } = filter;
             const { action } = context;
+            const resAction = `on_${action}`;
             const workflowService = WorkflowProvider.get(filter);
             const result = await workflowService.index(filter);
-            const transformedResult = await TLService.transform({ message: result }, `on_${action}`);
-            this.webhookCall(transformedResult, action);
+            const transformedResult = await TLService.transform({ message: result, context }, resAction);
+            this.webhookCall(transformedResult, resAction);
         } catch (error) {
             throw error;
         }
@@ -31,7 +32,7 @@ export default ({ }: { strapi: Strapi }) => ({
             };
             await axios.post(url, data, { headers: bppHeaders });
         } catch (error) {
-            // console.log('Error', JSON.stringify(error));
+            console.log('Error', JSON.stringify(error));
             // throw error;
         }
     }

@@ -17,7 +17,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             } else {
                 await strapi.eventHub.emit('webhook.request', body);
                 ctx.body = {
-                    ACK: true
+                    ack: {
+                        status: "ACK"
+                    }
                 }
             }
         } catch (error) {
@@ -30,7 +32,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             const { body = {} } = ctx.request;
             console.log('Response received from BPP', JSON.stringify({ action, body }));
             ctx.body = {
-                ACK: true
+                ack: {
+                    status: "ACK"
+                }
             }
         } catch (error) {
             // throw error;

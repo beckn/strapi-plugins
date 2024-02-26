@@ -8,7 +8,6 @@
                 "short_desc": "Unified Strapi BPP"
             }
         },
-        "count": $count(message),
         "providers": $count(message) > 0 ? message.{
             "id": $string(id),
             "descriptor": {
