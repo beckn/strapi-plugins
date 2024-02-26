@@ -1,6 +1,4 @@
 import { Strapi } from '@strapi/strapi';
-import { ObjectUtil, FilterUtil } from '../../util';
-import { KeyValuePair } from '.././../types';
 import { PLUGIN } from '../../constants';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
@@ -24,7 +22,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                                     populate: {
                                         cat_attr_tag_relations: {},
                                         image: {},
-                                        sc_retail_product: {},
+                                        sc_retail_product: {
+                                            populate: {
+                                                price_bareakup_ids: {},
+                                                product_cancel: {
+                                                    populate: {
+                                                        cancel_term_id: {}
+                                                    }
+                                                }
+                                            }
+                                        },
                                         item_fulfillment_id: {
                                             populate: {
                                                 fulfilment_id: {}
@@ -52,12 +59,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 const orderResponse = result[0] || {};
                 const customerId = orderResponse?.customer_id?.id;
                 if (customerId) {
-                    await strapi.entityService.update('api::customer.customer', customerId, {
-                        data: {
-                            contact: order.fulfillments[0].customer.contact.phone
-                        },
-                    });
-
+                    await this.update(order, customerId);
                     const commonService = strapi
                         .plugin(PLUGIN)
                         .service('commonService');
@@ -75,15 +77,41 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                             }
                         }));
                     }));
+                    const provider = (orderResponse?.order_id?.items || [])[0]?.provider || {};
                     return {
                         ...orderResponse,
-                        provider: (orderResponse?.order_id?.items || [])[0]?.provider
+                        provider: {
+                            ...provider,
+                            payment_methods: {
+                                ...provider.payment_methods[0],
+                                price: this.getItemTotalPrice(orderResponse?.order_id?.items)
+                            }
+                        }
                     };
                 }
             }
             return {};
         } catch (e) {
             console.log('Error', e);
+        }
+    },
+    async update(order, customerId) {
+        await strapi.entityService.update('api::customer.customer', customerId, {
+            data: {
+                contact: order.fulfillments[0].customer.contact.phone
+            },
+        });
+    },
+    getItemTotalPrice(items) {
+        let value = 0;
+        let currency = '';
+        items.map(item => {
+            value += Number(item.sc_retail_product.min_price);
+            currency = item.sc_retail_product.currency
+        });
+        return {
+            value,
+            currency
         }
     }
 });

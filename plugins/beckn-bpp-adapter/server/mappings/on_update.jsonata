@@ -124,63 +124,33 @@
                 "params": {
                     "bank_account": bank_account_number,
                     "bank_code": bank_code,
-                    "price": {
-                        "value": "300",
-                        "currency": "EUR"
-                    }
+                    "price": price
                 },
                 "type": "PRE-ORDER"
             }[],
             "quote": {
-                "price": {
-                    "value": "300",
-                    "currency": "EUR"
-                },
-                "breakup": [
-                    {
-                        "item": {
-                            "id": "61"
-                        },
-                        "title": "Base Price",
-                        "price": {
-                            "currency": "EUR",
-                            "value": "200"
-                        }
+                "price": provider.payment_methods.price,
+                "breakup": %.message.order_id.items[0].sc_retail_product.price_bareakup_ids.{
+                    "item": {
+                        "id": item_id
                     },
-                    {
-                        "item": {
-                            "id": "61"
-                        },
-                        "title": "Shipping Cost",
-                        "price": {
-                            "currency": "EUR",
-                            "value": "50"
-                        }
-                    },
-                    {
-                        "item": {
-                            "id": "61"
-                        },
-                        "title": "Tax",
-                        "price": {
-                            "currency": "EUR",
-                            "value": "50"
-                        }
+                    "title": title,
+                    "price": {
+                        "currency": currency,
+                        "value": value
                     }
-                ]
+                }[]
             },
-            "cancellation_terms": [
-                {
+            "cancellation_terms": %.message.order_id.items[0].sc_retail_product.product_cancel.{
+                "cancellation_fee": {
                     "cancellation_fee": {
-                        "cancellation_fee": {
-                            "amount": {
-                                "currency": "EUR",
-                                "value": "30%"
-                            }
+                        "amount": {
+                            "currency": %.currency,
+                            "value": cancel_term_id.cancellation_fee
                         }
                     }
                 }
-            ]
+            }
         }
     }
 }
