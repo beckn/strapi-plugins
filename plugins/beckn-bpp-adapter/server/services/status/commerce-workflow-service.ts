@@ -103,6 +103,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
         })
       );
+      const eventData={
+        order_id:orderDetails[0].order_id.id,
+        order_status:orderDetails[0].order_id.status,
+        domain:orderDetails[0].order_id.domain
+      }
+      strapi.eventHub.emit('status.request', eventData);
       return orderDetails;
     } catch (error) {
       console.error("An error occurred:", error);

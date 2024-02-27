@@ -7,7 +7,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message, context }) {
     try {
       const { items, provider, billing, fulfillments } = message.order;
-      const { domain } = context;
+      const { domain,transaction_id } = context;
       const currentDate = new Date();
       const isoString = currentDate.toISOString();
       let orderId;
@@ -62,6 +62,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const orderData = {
             status: "ACTIVE",
             items: itemValue,
+            order_transaction_id:transaction_id,
             publishedAt: isoString,
             domain,
           };
@@ -78,7 +79,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             ...billingInfo,
             publishedAt: isoString,
           };
-          const createOrderAddress = await strapi.entityService.create(
+          await strapi.entityService.create(
             "api::order-address.order-address",
             { data: orderAddressData }
           );
@@ -124,7 +125,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             order_tracking_id: trackingId,
             publishedAt: isoString,
           };
-          const createOrderFulfillment = await strapi.entityService.create(
+         
+          await strapi.entityService.create(
             "api::order-fulfillment.order-fulfillment",
             { data: orderFulfillmentDetail }
           );
