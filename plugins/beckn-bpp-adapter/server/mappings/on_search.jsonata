@@ -6,107 +6,107 @@
                 "name": "BPP",
                 "code": "bpp",
                 "short_desc": "Unified Strapi BPP"
-            }
-        },
-        "providers": $count(message) > 0 ? message.{
-            "id": $string(id),
-            "descriptor": {
-                "name": provider_name,
-                "short_desc": short_desc,
-                "long_desc": long_desc,
-                "additional_desc": {
-                    "url": "www.makerspace.com"
-                },
-                "images": [
-                    {
-                        "url": "https://makerspace/assembly/makerspace_logo.png",
-                        "size_type": "sm"
-                    }
-                ]
             },
-            "categories": category_ids. {
+            "providers": $count(message) > 0 ? message.{
                 "id": $string(id),
                 "descriptor": {
-                    "name": value
-                }
-            }[],
-            "rating": provider_rating,
-            "short_desc": short_desc,
-            "locations": [
-                {
-                    "id": $string(location_id.id),
-                    "gps": location_id.gps,
-                    "address": location_id.address,
-                    "city": {
-                        "name": location_id.city
+                    "name": provider_name,
+                    "short_desc": short_desc,
+                    "long_desc": long_desc,
+                    "additional_desc": {
+                        "url": "www.makerspace.com"
                     },
-                    "country": {
-                        "name": location_id.country
-                    },
-                    "state": {
-                        "name": location_id.state
-                    },
-                    "area_code": $string(location_id.zip)
-                }
-            ],
-            "fulfillments": $append(fulfillments, [items.item_fulfillment_id.fulfilment_id]).{
-                "id": $string(id),
-                "type": type,
-                "rating": $string(rating),
-                "rateable": true
-            }[],
-            "rateable": true,
-            "items": items.{
-                "id": id,
-                "descriptor": {
-                    "name": name ? name : "",
-                    "code": code ? code : "",
-                    "short_desc": short_desc ? short_desc : "",
-                    "long_desc": long_desc ? long_desc : "",
-                    "images": image.{
-                        "url": url
-                    }[]
-                },
-                rateable: true,
-                "location_ids": [
-                    $string(location_id.id)
-                ],
-                "price": sc_retail_product.{
-                    "value": $string(min_price ? min_price : 0),
-                    "currency": currency ? currency : "INR"
-                },
-                "quantity": sc_retail_product.{
-                    "available": {
-                        "count": $string(stock_quantity ? stock_quantity : 0)
-                    }
-                },
-                "category_ids": $map(
-                    $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'CATEGORY'}),
-                    function($v) {
-                        $string($v.taxanomy_id.id)
-                    }
-                )[],
-                "fulfillment_ids": item_fulfillment_id.fulfilment_id.id ? [
-                    $string(item_fulfillment_id.fulfilment_id.id)
-                ] : [null],
-                "tags": $map(
-                    $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'TAG'}),
-                    function($v) {
+                    "images": [
                         {
-                            "display": true,
-                            "descriptor": {
-                                "description": $v.taxanomy_id.tag_group_id.tag_group_name
-                            },
-                            "list": [
-                                {
-                                    "value": $v.taxanomy_id.tag_name,
-                                    "display": true
-                                }
-                            ]
+                            "url": "https://makerspace/assembly/makerspace_logo.png",
+                            "size_type": "sm"
                         }
+                    ]
+                },
+                "categories": category_ids. {
+                    "id": $string(id),
+                    "descriptor": {
+                        "name": value
                     }
-                )[]
-            }[]
-        }[] : []
+                }[],
+                "rating": provider_rating,
+                "short_desc": short_desc,
+                "locations": [
+                    {
+                        "id": $string(location_id.id),
+                        "gps": location_id.gps,
+                        "address": location_id.address,
+                        "city": {
+                            "name": location_id.city
+                        },
+                        "country": {
+                            "name": location_id.country
+                        },
+                        "state": {
+                            "name": location_id.state
+                        },
+                        "area_code": $string(location_id.zip)
+                    }
+                ],
+                "fulfillments": $append(fulfillments, [items.item_fulfillment_id.fulfilment_id]).{
+                    "id": $string(id),
+                    "type": type,
+                    "rating": $string(rating),
+                    "rateable": true
+                }[],
+                "rateable": true,
+                "items": items.{
+                    "id": $string(id),
+                    "descriptor": {
+                        "name": name ? name : "",
+                        "code": code ? code : "",
+                        "short_desc": short_desc ? short_desc : "",
+                        "long_desc": long_desc ? long_desc : "",
+                        "images": image.{
+                            "url": url
+                        }[]
+                    },
+                    rateable: true,
+                    "location_ids": [
+                        $string(location_id.id)
+                    ],
+                    "price": sc_retail_product.{
+                        "value": $string(min_price ? min_price : 0),
+                        "currency": currency ? currency : "INR"
+                    },
+                    "quantity": sc_retail_product.{
+                        "available": {
+                            "count": stock_quantity ? stock_quantity : 0
+                        }
+                    },
+                    "category_ids": $map(
+                        $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'CATEGORY'}),
+                        function($v) {
+                            $string($v.taxanomy_id.id)
+                        }
+                    )[],
+                    "fulfillment_ids": item_fulfillment_id.fulfilment_id.id ? [
+                        $string(item_fulfillment_id.fulfilment_id.id)
+                    ] : [null],
+                    "tags": $map(
+                        $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'TAG'}),
+                        function($v) {
+                            {
+                                "display": true,
+                                "descriptor": {
+                                    "description": $v.taxanomy_id.tag_group_id.tag_group_name
+                                },
+                                "list": [
+                                    {
+                                        "value": $v.taxanomy_id.tag_name,
+                                        "display": true
+                                    }
+                                ]
+                            }
+                        }
+                    )[]
+                }[]
+            }[] : []
+        }
     }
 }

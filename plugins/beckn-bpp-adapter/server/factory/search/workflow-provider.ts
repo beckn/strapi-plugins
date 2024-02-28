@@ -5,7 +5,9 @@ class WorkflowProvider {
         const { context } = filter;
         const { domain, action } = context;
         if (!actions.includes(action)) {
-            throw new Error(`No action matched, action name ${action}`);
+            console.log(`No action matched, action name ${action}`);
+            // throw new Error(`No action matched, action name ${action}`);
+            return;
         }
         const commerceDomains = process.env.COMMERCE?.split(',');
         const appointmentDomains = process.env.APPOINTMENT?.split(',');

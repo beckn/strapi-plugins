@@ -11,9 +11,11 @@ export default ({ }: { strapi: Strapi }) => ({
             const { action } = context;
             const resAction = `on_${action}`;
             const workflowService = WorkflowProvider.get(filter);
-            const result = await workflowService.index(filter);
-            const transformedResult = await TLService.transform({ message: result, context }, resAction);
-            await this.webhookCall(transformedResult, resAction);
+            if (workflowService) {
+                const result = await workflowService.index(filter);
+                const transformedResult = await TLService.transform({ message: result, context }, resAction);
+                await this.webhookCall(transformedResult, resAction);
+            }
         } catch (error) {
             throw error;
         }
