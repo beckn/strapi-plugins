@@ -13,7 +13,7 @@ export default ({ }: { strapi: Strapi }) => ({
             const workflowService = WorkflowProvider.get(filter);
             const result = await workflowService.index(filter);
             const transformedResult = await TLService.transform({ message: result, context }, resAction);
-            this.webhookCall(transformedResult, resAction);
+            await this.webhookCall(transformedResult, resAction);
         } catch (error) {
             throw error;
         }
