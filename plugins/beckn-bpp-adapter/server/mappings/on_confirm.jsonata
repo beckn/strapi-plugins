@@ -52,7 +52,7 @@
            
         },
           "items": message.items.{
-                "id": id,
+                "id": $string(id),
                 "descriptor": {
                     "name": name ? name : "",
                     "code": code ? code : "",
@@ -73,7 +73,7 @@
                 },
                 "quantity": sc_retail_product.{
                     "available": {
-                        "count": $string(stock_quantity ? stock_quantity : 0)
+                        "count": stock_quantity ? stock_quantity : 0
                     }
                 },
                 "category_ids": $map(
@@ -126,7 +126,8 @@
                 "cancellation_terms":$map(message.items,function($v) {
      $map($v.sc_retail_product.product_cancel ,function($vc) {
          {"state": $vc.state,
-         "cancellation_fee":$vc.cancel_term_id.cancellation_fee
+         "cancellation_fee":{
+            "percentage":$vc.cancel_term_id.cancellation_fee ? $vc.cancel_term_id.cancellation_fee:"10%"}
          }
     })
 })

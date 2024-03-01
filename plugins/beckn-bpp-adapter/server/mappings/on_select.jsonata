@@ -27,7 +27,7 @@
             "locations": [
                 {
                     "id": $string(location_id.id),
-                    "gps": location_id.gps,
+                    "gps": $string(location_id.gps),
                     "address": location_id.address,
                     "city": {
                         "name": location_id.city
@@ -51,7 +51,7 @@
            
         },
           "items": message.items.{
-                "id": id,
+                "id": $string(id),
                 "descriptor": {
                     "name": name ? name : "",
                     "code": code ? code : "",
@@ -72,7 +72,7 @@
                 },
                 "quantity": sc_retail_product.{
                     "available": {
-                        "count": $string(stock_quantity ? stock_quantity : 0)
+                        "count": stock_quantity ? stock_quantity : 0
                     }
                 },
                 "category_ids": $map(
