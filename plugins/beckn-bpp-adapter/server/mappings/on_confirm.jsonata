@@ -122,11 +122,13 @@
                 "status": "PAID",
                 "type": "PRE-ORDER"
             }[],
-            "cancellation_terms":$map(message.items,function($v) {
+            "cancellation_terms": $map(message.items,function($v) {
                 $map($v.sc_retail_product.product_cancel ,function($vc) {
                     {
                         "state": $vc.state,
-                        "cancellation_fee":$vc.cancel_term_id.cancellation_fee
+                        "cancellation_fee": {
+                            "percentage": $vc.cancel_term_id.cancellation_fee
+                        }
                     }
                 })
             })
