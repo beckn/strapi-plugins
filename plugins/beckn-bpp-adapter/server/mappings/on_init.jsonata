@@ -1,64 +1,63 @@
 {
     "context": $context(context, $action),
     "message": {
-        "order":{ 
+        "order": { 
             "providers": message.{
-            "id": $string(id),
-            "descriptor": {
-                "name": provider_name,
-                "short_desc": short_desc ? short_desc : "",
-                "long_desc": long_desc ? long_desc : "",
-                "additional_desc": {
-                    "url": provider_uri
-                },
-                "images": items.image.{
+                "id": $string(id),
+                "descriptor": {
+                    "name": provider_name,
+                    "short_desc": short_desc ? short_desc : "",
+                    "long_desc": long_desc ? long_desc : "",
+                    "additional_desc": {
+                        "url": provider_uri
+                    },
+                    "images": items.image.{
                         "url": url?url:"https://abc.com",
                         "size_type": size_type?size_type:"sm"
                     }[]
-            },
-            "categories": category_ids. {
-                "id": $string(id),
-                "descriptor": {
-                    "name": value
-                }
-            }[],
-            "rating": provider_rating,
-            "short_desc": short_desc,
-            "locations": [
-                {
-                    "id": $string(location_id.id),
-                    "gps": location_id.gps,
-                    "address": location_id.address,
-                    "city": {
-                        "name": location_id.city
-                    },
-                    "country": {
-                        "name": location_id.country
-                    },
-                    "state": {
-                        "name": location_id.state
-                    },
-                    "area_code": $string(location_id.zip)
-                }
-            ],
-            "fulfillments": $append(fulfillments, [items.item_fulfillment_id.fulfilment_id]).{
-                "id": $string(id),
-                "type": type,
-                "rating": $string(rating),
+                },
+                "categories": category_ids. {
+                    "id": $string(id),
+                    "descriptor": {
+                        "name": value
+                    }
+                }[],
+                "rating": provider_rating,
+                "short_desc": short_desc,
+                "locations": [
+                    {
+                        "id": $string(location_id.id),
+                        "gps": location_id.gps,
+                        "address": location_id.address,
+                        "city": {
+                            "name": location_id.city
+                        },
+                        "country": {
+                            "name": location_id.country
+                        },
+                        "state": {
+                            "name": location_id.state
+                        },
+                        "area_code": $string(location_id.zip)
+                    }
+                ],
+                "fulfillments": $append(fulfillments, [items.item_fulfillment_id.fulfilment_id]).{
+                    "id": $string(id),
+                    "type": type,
+                    "rating": $string(rating),
+                    "rateable": true
+                }[],
                 "rateable": true
-            }[],
-            "rateable": true
-           
-        },
-          "items": message.items.{
-                "id": id,
+            },
+            "items": message.items.{
+                "id": $string(id),
                 "descriptor": {
                     "name": name ? name : "",
                     "code": code ? code : "",
                     "short_desc": short_desc ? short_desc : "",
                     "long_desc": long_desc ? long_desc : "",
                     "images": image.{
-                       "url": url?url:"https://abc.com",
+                        "url": url?url:"https://abc.com",
                         "size_type": size_type?size_type:"sm"
                     }[]
                 },
@@ -72,7 +71,7 @@
                 },
                 "quantity": sc_retail_product.{
                     "available": {
-                        "count": $string(stock_quantity ? stock_quantity : 0)
+                        "count": stock_quantity ? stock_quantity : 0
                     }
                 },
                 "category_ids": $map(
@@ -102,13 +101,37 @@
                     }
                 )[]
             }[],
-           "quote":{
-            "price": message.items[0].sc_retail_product.{
-                "value":$string(min_price ? min_price : 0),
-                 "currency": currency ? currency : "INR"
-                 }
-                },
-                 "billing":message.billing
-            }
+            "quote":{
+                "price": message.items[0].sc_retail_product.{
+                    "value":$string(min_price ? min_price : 0),
+                    "currency": currency ? currency : "INR"
+                }
+            },
+            "billing": message.billing,
+            "categories": $map(message.category_ids, function($v) {
+                {
+                    "id": $string($v.id),
+                    "value": $v.value,
+                    "createdAt": $v.createdAt,
+                    "updatedAt": $v.updatedAt,
+                    "publishedAt": $v.publishedAt,
+                    "category_code": $v.category_code
+                }
+            }),
+            "fulfillments": $append(
+                message.fulfillments,
+                $map(
+                    message.items,
+                    function($v) {
+                        $v.item_fulfillment_id.fulfilment_id
+                    }
+                )
+            ).{
+                "id": $string(id),
+                "type": type,
+                "rating": $string(rating),
+                "rateable": true
+            }[]
+        }
     }
 }

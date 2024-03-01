@@ -3,56 +3,54 @@
     "message": {
         "order":{ 
             "id":$string(message.order_id.id),
-            "providers": message.order_id.items.provider{
-            "id": $string(id),
-            "descriptor": {
-                "name": provider_name,
-                "short_desc": short_desc ? short_desc : "",
-                "long_desc": long_desc ? long_desc : "",
-                "additional_desc": {
-                    "url": provider_uri
-                },
-
-                "images": logo.{
+            "providers": message.order_id.items.provider.{
+                "id": $string(id),
+                "descriptor": {
+                    "name": provider_name,
+                    "short_desc": short_desc ? short_desc : "",
+                    "long_desc": long_desc ? long_desc : "",
+                    "additional_desc": {
+                        "url": provider_uri
+                    },
+                    "images": logo.{
                         "url": url?url:"https://abc.com",
                         "size_type": size_type?size_type:"sm"
                     }[]
-            },
-            "categories": category_ids. {
-                "id": $string(id),
-                "descriptor": {
-                    "name": value
-                }
-            }[],
-            "rating": provider_rating,
-            "short_desc": short_desc,
-            "locations": [
-                {
-                    "id": $string(location_id.id),
-                    "gps": location_id.gps,
-                    "address": location_id.address,
-                    "city": {
-                        "name": location_id.city
-                    },
-                    "country": {
-                        "name": location_id.country
-                    },
-                    "state": {
-                        "name": location_id.state
-                    },
-                    "area_code": $string(location_id.zip)
-                }
-            ],
-            "fulfillments": $append(fulfillments, [items.item_fulfillment_id.fulfilment_id]).{
-                "id": $string(id),
-                "type": type,
-                "rating": $string(rating),
+                },
+                "categories": category_ids. {
+                    "id": $string(id),
+                    "descriptor": {
+                        "name": value
+                    }
+                }[],
+                "rating": provider_rating,
+                "short_desc": short_desc,
+                "locations": [
+                    {
+                        "id": $string(location_id.id),
+                        "gps": location_id.gps,
+                        "address": location_id.address,
+                        "city": {
+                            "name": location_id.city
+                        },
+                        "country": {
+                            "name": location_id.country
+                        },
+                        "state": {
+                            "name": location_id.state
+                        },
+                        "area_code": $string(location_id.zip)
+                    }
+                ],
+                "fulfillments": $append(fulfillments, [items.item_fulfillment_id.fulfilment_id]).{
+                    "id": $string(id),
+                    "type": type,
+                    "rating": $string(rating),
+                    "rateable": true
+                }[],
                 "rateable": true
-            }[],
-            "rateable": true
-           
-        },
-          "items": message.order_id.items.{
+            },
+            "items": message.order_id.items.{
                 "id": id,
                 "descriptor": {
                     "name": name ? name : "",
@@ -104,56 +102,54 @@
                     }
                 )[]
             }[],
-      
             "price": message.items[0].sc_retail_product.{
-                "value":$string(min_price ? min_price : 0),
-                 "currency": currency ? currency : "INR"
-                 
-                },
-                "fulfillments":message.{
-                    "id":$string(fulfilment_id.id),
-                    "state": {
-                        "descriptor": {
-                            "code": state_code,
-                            "short_desc": state_value
-                        },
-                        "updated_at": $string(updatedAt)
+                "value": $string(min_price ? min_price : 0),
+                "currency": currency ? currency : "INR" 
+            },
+            "fulfillments": message.{
+                "id": $string(fulfilment_id.id),
+                "state": {
+                    "descriptor": {
+                        "code": state_code,
+                        "short_desc": state_value
                     },
-                    "customer": {
-                        "contact": {
-                            "email": customer_id.email,
-                            "phone": customer_id.contact
+                    "updated_at": $string(updatedAt)
+                },
+                "customer": {
+                    "contact": {
+                        "email": customer_id.email,
+                        "phone": customer_id.contact
+                    },
+                    "person": {
+                        "name": customer_id.first_name
+                    }
+                },
+                "stops": order_fulfillment_location_id.{
+                    "type":"end",
+                    "location": {
+                        "gps":gps ,
+                        "address": address,
+                        "city": {
+                            "name": city_name,
+                            "code": city_code
                         },
-                        "person": {
-                            "name": customer_id.first_name
+                        "country": {
+                            "code": country_code,
+                            "name": country_name
+                        },
+                        "area_code": area_code,
+                        "state": {
+                            "name": state_code,
+                            "code": state_name
                         }
                     },
-                    "stops":order_fulfillment_location_id.{
-                            "type":"end",
-                             "location": {
-                                "gps":gps ,
-                                "address": address,
-                                "city": {
-                                    "name": city_name,
-                                    "code":city_code
-                                },
-                                "country": {
-                                    "code": country_code,
-                                    "name":country_name
-                                },
-                                "area_code": area_code,
-                                "state": {
-                                    "name": state_code,
-                                    "code":state_name
-                                }
-                            },
-                            "contact": {
-                                "phone": "9886098860"
-                            }
-                    }[]    
-                }[],
-                 "billing":message.order_id.{
-                     "name": order_address.first_name,
+                    "contact": {
+                        "phone": %.message.order_id.order_address.phone
+                    }
+                }[]    
+            }[],
+            "billing": message.order_id.{
+                "name": order_address.first_name,
                 "address": order_address.address_line_1,
                 "state": {
                     "name": order_address.state
@@ -163,48 +159,46 @@
                 },
                 "email": order_address.email,
                 "phone": order_address.phone
-                 },
-                  "payments": message.order_id.{ 
-                    "collected_by": "BPP",
-                    "params":items.provider.payment_methods.{
-                         "bank_account_number": bank_account_number,
-                        "bank_code": bank_code,
-                        "bank_account_name": bank_name
-                       
-                    },
-                    "status": "PAID",
-                    "type": "PRE-ORDER",
-                    "transaction_id": transaction_id
-                  }[],
-                   "quote": message.order_id.{
+            },
+            "payments": message.order_id.{
+                "collected_by": "BPP",
+                "params":items.provider.payment_methods.{
+                    "bank_account_number": bank_account_number,
+                    "bank_code": bank_code,
+                    "bank_account_name": bank_name
+                },
+                "status": "PAID",
+                "type": "PRE-ORDER",
+                "transaction_id": transaction_id
+            }[],
+            "quote": message.order_id.{
                 "price": items.{
                     "currency": sc_retail_product.currency,
                     "value": sc_retail_product.min_price
                 },
-
                 "breakup":$map(items,function($v) {
-     $map($v.sc_retail_product.price_bareakup_ids ,function($vc) {
-         {"title": $vc.title,
-         "price": {
-                            "currency": $vc.currency,
-                            "value": $vc.value
-                        },
-                        "item":{
-                            "id":$vc.item_id
+                    $map($v.sc_retail_product.price_bareakup_ids ,function($vc) {
+                        {
+                            "title": $vc.title,
+                            "price": {
+                                "currency": $vc.currency,
+                                "value": $vc.value
+                            },
+                            "item":{
+                                "id":$vc.item_id
+                            }
                         }
-         }
-    })
-})
-
+                    })
+                })
             },
             "cancellation_terms":$map(message.order_id.items,function($v) {
-     $map($v.sc_retail_product.product_cancel ,function($vc) {
-         {"state": $vc.state,
-         "cancellation_fee":$vc.cancel_term_id.cancellation_fee
-         }
-    })
-})
-            
-            }
+                $map($v.sc_retail_product.product_cancel ,function($vc) {
+                    {
+                        "state": $vc.state,
+                        "cancellation_fee":$vc.cancel_term_id.cancellation_fee
+                    }
+                })
+            })
+        }
     }
 }

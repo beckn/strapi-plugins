@@ -6,7 +6,7 @@
                 "name": "BPP",
                 "code": "bpp",
                 "short_desc": "Unified Strapi BPP"
-            },
+            }
             "providers": $count(message) > 0 ? message.{
                 "id": $string(id),
                 "descriptor": {
@@ -29,13 +29,13 @@
                         "name": value
                     }
                 }[],
-                "rating": provider_rating,
+                "rating": $string(provider_rating),
                 "short_desc": short_desc,
                 "locations": [
                     {
                         "id": $string(location_id.id),
-                        "gps": location_id.gps,
-                        "address": location_id.address,
+                        "gps": location_id.gps ? $string(location_id.gps) : '',
+                        "address": $string(location_id.address),
                         "city": {
                             "name": location_id.city
                         },
@@ -87,7 +87,7 @@
                     )[],
                     "fulfillment_ids": item_fulfillment_id.fulfilment_id.id ? [
                         $string(item_fulfillment_id.fulfilment_id.id)
-                    ] : [null],
+                    ] : [],
                     "tags": $map(
                         $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'TAG'}),
                         function($v) {

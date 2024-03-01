@@ -16,23 +16,27 @@ export class FilterUtil {
     }
 
     static getProviderFilter = (provider: KeyValuePair = {}) => {
-        const filter = {
+        const filter: KeyValuePair = {
             id: '',
             provider_name: ''
         };
         filter.id = provider.id;
-        filter.provider_name = provider.descriptor?.name;
+        filter.provider_name = {
+            $contains: provider.descriptor?.name
+        };
         return filter;
     }
 
     static getCategoryFilter = (category: KeyValuePair = {}) => {
-        const filter = {
+        const filter: KeyValuePair = {
             id: '',
             value: '',
             category_code: '',
         };
         filter.id = category.id;
-        filter.value = category.descriptor?.name;
+        filter.value = {
+            $contains: category.descriptor?.name
+        }
         filter.category_code = category.descriptor?.code
         return filter;
     }

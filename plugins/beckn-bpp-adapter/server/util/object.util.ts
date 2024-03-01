@@ -4,6 +4,8 @@ export class ObjectUtil {
             if (typeof obj[key] === 'object' && obj[key] !== null) {
                 this.removeEmptyObjectKeys(obj[key]);
                 if (Object.keys(obj[key]).length === 0) delete obj[key];
+            } else if (!obj[key]) {
+                delete obj[key];
             }
         }
         return obj;

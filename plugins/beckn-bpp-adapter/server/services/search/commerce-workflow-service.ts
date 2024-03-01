@@ -56,7 +56,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             filters,
             populate
         });
-
         const commonService = strapi
             .plugin(PLUGIN)
             .service('commonService');

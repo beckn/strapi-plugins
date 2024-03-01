@@ -7,7 +7,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message, context }) {
     try {
       const { items, provider, billing, fulfillments } = message.order;
-      const { domain,transaction_id } = context;
+      const { domain, transaction_id } = context;
       const currentDate = new Date();
       const isoString = currentDate.toISOString();
       let orderId;
@@ -27,11 +27,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       // Extract customer details
       const customer = fulfillments[0].customer;
-      const custEmail = customer?.contact?.email || billing.email;
+      const custEmail = customer?.contact?.email || billing?.email;
       const custData = {
-        first_name: customer.person.name,
-        email: customer.contact.email,
-        contact: customer.contact.phone,
+        first_name: customer?.person?.name,
+        email: custEmail,
+        contact: customer?.contact?.phone,
         publishedAt: isoString,
       };
 
@@ -62,7 +62,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const orderData = {
             status: "ACTIVE",
             items: itemValue,
-            order_transaction_id:transaction_id,
+            order_transaction_id: transaction_id,
             publishedAt: isoString,
             domain,
           };
@@ -92,10 +92,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const custId = existingCustomer
             ? existingCustomer.id
             : (
-                await strapi.entityService.create("api::customer.customer", {
-                  data: custData,
-                })
-              ).id;
+              await strapi.entityService.create("api::customer.customer", {
+                data: custData,
+              })
+            ).id;
 
           // Create shipping location
           const createShipping = await strapi.entityService.create(
@@ -125,12 +125,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             order_tracking_id: trackingId,
             publishedAt: isoString,
           };
-         
+
           await strapi.entityService.create(
             "api::order-fulfillment.order-fulfillment",
             { data: orderFulfillmentDetail }
           );
-
           trx.commit();
         } catch (err) {
           trx.rollback();

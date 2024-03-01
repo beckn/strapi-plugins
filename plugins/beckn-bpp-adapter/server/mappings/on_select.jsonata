@@ -2,7 +2,7 @@
     "context": $context(context, $action),
     "message": {
         "order":{ 
-            "providers": message.{
+            "provider": message.{
             "id": $string(id),
             "descriptor": {
                 "name": provider_name,
@@ -12,9 +12,9 @@
                     "url": provider_uri
                 },
                 "images": items.image.{
-                        "url": url?url:"https://abc.com",
-                        "size_type": size_type?size_type:"sm"
-                    }[]
+                    "url": url?url:"https://abc.com",
+                    "size_type": size_type?size_type:"sm"
+                }[]
             },
             "categories": category_ids. {
                 "id": $string(id),
@@ -48,10 +48,9 @@
                 "rateable": true
             }[],
             "rateable": true
-           
         },
           "items": message.items.{
-                "id": id,
+                "id": $string(id),
                 "descriptor": {
                     "name": name ? name : "",
                     "code": code ? code : "",
@@ -72,7 +71,7 @@
                 },
                 "quantity": sc_retail_product.{
                     "available": {
-                        "count": $string(stock_quantity ? stock_quantity : 0)
+                        "count": stock_quantity ? stock_quantity : 0
                     }
                 },
                 "category_ids": $map(
@@ -109,11 +108,25 @@
                 }
             }[],
            "quote":{
-            "price": message.items[0].sc_retail_product.{
-                "value":$string(min_price ? min_price : 0),
-                 "currency": currency ? currency : "INR"
-                 }
-                }
+                "price": message.items[0].sc_retail_product.{
+                    "value":$string(min_price ? min_price : 0),
+                    "currency": currency ? currency : "INR"
+                },
+                "breakup": $map(message.items, function($v) {
+                    $map($v.sc_retail_product.price_bareakup_ids ,function($vc) {
+                        {
+                            "title": $vc.title,
+                            "price": {
+                                "currency": $vc.currency,
+                                "value": $vc.value
+                            },
+                            "item":{
+                                "id": $vc.item_id
+                            }
+                        }
+                    })
+                })
             }
+        }
     }
 }
