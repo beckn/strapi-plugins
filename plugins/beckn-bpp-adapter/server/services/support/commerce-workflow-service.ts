@@ -11,13 +11,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const supportData = {
         ...supportDetails,
         ref_id,
-        callback_phone,
+        callback_phone
       };
 
       return supportData;
     } catch (error) {
-      console.error("An error occurred:", error);
+      console.error("An error occurred: here", error);
       throw error;
     }
-  },
+  }
 });
