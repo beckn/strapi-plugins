@@ -1,15 +1,17 @@
 {
     "context": $context(context, $action),
-    "message": message.{
-        "id": $string(order_tracking_id.id),
-        "status": order_tracking_id.status,
-        "url": order_tracking_id.url,
-        "location": {
-            "id": $string(order_fulfillment_location_id.id),
-            "descriptor": {
-                "name": order_fulfillment_location_id.address
-            },
-            "gps": order_fulfillment_location_id.gps
+    "message": {
+        "tracking":message.{
+            "id": $string(order_tracking_id.id),
+            "status": order_tracking_id.status,
+            "url": order_tracking_id.url,
+            "location": {
+                "id": $string(order_fulfillment_location_id.id),
+                "descriptor": {
+                    "name": order_fulfillment_location_id.address
+                },
+                "gps": order_fulfillment_location_id.gps
+            }
         }
     }
 }

@@ -51,7 +51,7 @@
                 "rateable": true
             },
             "items": message.order_id.items.{
-                "id": id,
+                "id": $string(id),
                 "descriptor": {
                     "name": name ? name : "",
                     "code": code ? code : "",
@@ -72,7 +72,7 @@
                 },
                 "quantity": sc_retail_product.{
                     "available": {
-                        "count": $string(stock_quantity ? stock_quantity : 0)
+                        "count": stock_quantity ? stock_quantity : 0
                     }
                 },
                 "category_ids": $map(
