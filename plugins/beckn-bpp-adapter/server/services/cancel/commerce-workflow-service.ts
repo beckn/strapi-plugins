@@ -9,11 +9,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const { domain } = context;
       const cancelMedia = [
         ...(descriptor?.media || []),
-        ...(descriptor?.images || []),
+        ...(descriptor?.images || [])
       ].filter(Boolean);
       const cancelMediaResponse = await createMediaEntries(cancelMedia);
-      delete descriptor.media;
-      delete descriptor.images;
+      delete descriptor?.media;
+      delete descriptor?.images;
       const cancelMediaId = cancelMediaResponse.map(
         (obj: { id: string }) => obj.id
       );
