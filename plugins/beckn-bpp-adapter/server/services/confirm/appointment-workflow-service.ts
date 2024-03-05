@@ -105,7 +105,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
           // Create tracking details
           const trackingDetail = {
-            url: `${process.env.ADAPTER_BASE_URL}/tracking/${orderId}`,
+            url: `${process.env.BPP_ADAPTER_PLUGIN_URL}/tracking/${orderId}`,
             status: "active",
             publishedAt: isoString,
           };

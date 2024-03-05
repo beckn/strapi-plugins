@@ -6,7 +6,7 @@ import { PLUGIN } from "../../constants";
 export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message, context }) {
     try {
-      const { items, provider, billing } = message.order;
+      const { items, provider, billing, fulfillments } = message.order;
       const { domain } = context;
       const filters: KeyValuePair = provider
         ? FilterUtil.getProviderFilter(provider)
@@ -97,14 +97,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     taxanomy.taxanomy_id = await commonService.getCategoryById(
                       taxanomy.taxanomy_id,
                       {
-                        parent_id: {},
+                        parent_id: {}
                       }
                     );
                   } else if (taxanomy.taxanomy === "TAG") {
                     taxanomy.taxanomy_id = await commonService.getTagById(
                       taxanomy.taxanomy_id,
                       {
-                        tag_group_id: {},
+                        tag_group_id: {}
                       }
                     );
                   }
@@ -119,6 +119,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const initDetails = itemDetails.map((item) => ({
         ...item,
         billing: billingInfo,
+        fulfillments: fulfillments || []
       }));
       return initDetails;
     } catch (error) {
