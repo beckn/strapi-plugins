@@ -173,7 +173,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             },
             item_fulfillment_id: {
               populate: {
-                fulfilment_id: {},
+                fulfilment_id: {
+                  populate: {
+                    agent_ids: {}
+                  }
+                },
+                location_id: {},
               },
             },
             item_meta_id: {

@@ -18,12 +18,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         (obj: { id: string }) => obj.id
       );
 
-      const returnCancelDetails = await strapi.entityService.create(
+      await strapi.entityService.create(
         "api::return-cancellation.return-cancellation",
         {
           data: {
-            reason_id: cancellation_reason_id ? cancellation_reason_id : "",
-            reason: descriptor ? descriptor : "",
+            reason_id: cancellation_reason_id || "",
+            reason: descriptor.short_desc || "",
             action_date_time: new Date().toISOString(),
             done_by: context.bap_id,
             media: {

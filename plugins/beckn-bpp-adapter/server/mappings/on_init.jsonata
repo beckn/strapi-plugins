@@ -2,7 +2,7 @@
     "context": $context(context, $action),
     "message": {
         "order": { 
-            "providers": message.{
+            "provider": message.{
                 "id": $string(id),
                 "descriptor": {
                     "name": provider_name,
@@ -41,12 +41,7 @@
                         "area_code": $string(location_id.zip)
                     }
                 ],
-                "fulfillments": $append(fulfillments, [items.item_fulfillment_id.fulfilment_id]).{
-                    "id": $string(id),
-                    "type": type,
-                    "rating": $string(rating),
-                    "rateable": true
-                }[],
+                "fulfillments": $fulfillments($append(fulfillments, [items.item_fulfillment_id.fulfilment_id])),
                 "rateable": true
             },
             "items": message.items.{
@@ -65,10 +60,7 @@
                 "location_ids": [
                     $string(location_id.id)
                 ],
-                "price": sc_retail_product.{
-                    "value": $string(min_price ? min_price : 0),
-                    "currency": currency ? currency : "INR"
-                },
+                "price": $price(sc_retail_product),
                 "quantity": sc_retail_product.{
                     "available": {
                         "count": stock_quantity ? stock_quantity : 0
@@ -99,14 +91,12 @@
                             ]
                         }
                     }
-                )[]
-            }[],
-            "quote":{
-                "price": message.items[0].sc_retail_product.{
-                    "value":$string(min_price ? min_price : 0),
-                    "currency": currency ? currency : "INR"
+                )[],
+                "time": {
+                    "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
                 }
-            },
+            }[],
+            "quote": $quote(message.items),
             "billing": message.billing,
             "categories": $map(message.category_ids, function($v) {
                 {
@@ -117,7 +107,7 @@
                     "publishedAt": $v.publishedAt,
                     "category_code": $v.category_code
                 }
-            }),
+            })[],
             "fulfillments": $append(
                 message.fulfillments,
                 $map(
@@ -131,7 +121,9 @@
                 "type": type,
                 "rating": $string(rating),
                 "rateable": true
-            }[]
+            }[],
+            "payments": $payments(message[0]),
+            "cancellation_terms": $cancellationTerms(message[0].items)
         }
     }
 }

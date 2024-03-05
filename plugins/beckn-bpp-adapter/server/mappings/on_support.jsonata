@@ -4,7 +4,7 @@
         "support":message.{
              "ref_id": ref_id,
             "callback_phone": callback_phone,
-            "phone": "+phone",
+            "phone": phone,
             "email": email,
             "url":url
         }

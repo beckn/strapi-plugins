@@ -1,5 +1,6 @@
 {
     "context": $context(context, $action),
+    "message1": message,
     "message": {
         "order":{ 
             "id": $string(message.order_id),
@@ -66,10 +67,7 @@
                 "location_ids": [
                     $string(location_id.id)
                 ],
-                "price": sc_retail_product.{
-                    "value": $string(min_price ? min_price : 0),
-                    "currency": currency ? currency : "INR"
-                },
+                "price": $price(sc_retail_product),
                 "quantity": sc_retail_product.{
                     "available": {
                         "count": stock_quantity ? stock_quantity : 0
@@ -100,38 +98,16 @@
                             ]
                         }
                     }
-                )[]
-            }[],
-            "quote":{
-                "price": message.items[0].sc_retail_product.{
-                    "value":$string(min_price ? min_price : 0),
-                    "currency": currency ? currency : "INR"
+                )[],
+                "time": {
+                    "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
                 }
-            },
-            "billing":message.billing,
-            "fulfillments":message.fulfillment,
-            "payments":message.payment_methods.{
-                "collected_by":"BPP",
-                "params":{
-                    "bank_account_number": bank_account_number,
-                    "bank_code": bank_code,
-                    "bank_account_name": bank_name
-
-                    
-                },
-                "status": "PAID",
-                "type": "PRE-ORDER"
             }[],
-            "cancellation_terms": $map(message.items,function($v) {
-                $map($v.sc_retail_product.product_cancel ,function($vc) {
-                    {
-                        "state": $vc.state,
-                        "cancellation_fee": {
-                            "percentage": $vc.cancel_term_id.cancellation_fee
-                        }
-                    }
-                })
-            })
+            "quote": $quote(message[0].items),
+            "billing": message.billing,
+            "fulfillments": message.fulfillment,
+            "payments": $payments(message[0]),
+            "cancellation_terms": $cancellationTerms(message[0].items)
         }
     }
 }

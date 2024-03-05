@@ -3,7 +3,7 @@
     "message": {
         "order":{
             "id": $string(message.order_id.id),
-            "providers": message.order_id.items.provider{
+            "provider": message.order_id.items.provider{
                 "id": $string(id),
                 "descriptor": {
                     "name": provider_name,
@@ -103,11 +103,8 @@
                     }
                 )[]
             }[],
-            "price": message.items[0].sc_retail_product.{
-                "value": $string(min_price ? min_price : 0),
-                "currency": currency ? currency : "INR"
-            },
-            "fulfillments":message.{
+            "price": $price(message.order_id.items[0].sc_retail_product),
+            "fulfillments": message.{
                 "id":$string(fulfilment_id.id),
                 "state": {
                     "descriptor": {
@@ -149,7 +146,7 @@
                     }
                 }[]    
             }[],
-            "billing":message.order_id.{
+            "billing": message.order_id.{
                 "name": order_address.first_name,
                 "address": order_address.address_line_1,
                 "state": {
@@ -172,33 +169,8 @@
                 "type": "PRE-ORDER",
                 "transaction_id": transaction_id
             }[],
-            "quote": message.order_id.{
-                "price": items.{
-                    "currency": sc_retail_product.currency,
-                    "value": sc_retail_product.min_price
-                },
-                "breakup":$map(items,function($v) {
-                    $map($v.sc_retail_product.price_bareakup_ids ,function($vc) {
-                        {
-                            "title": $vc.title,
-                            "price": {
-                                "currency": $vc.currency,
-                                "value": $vc.value
-                            },
-                            "item":{
-                                "id":$vc.item_id
-                            }
-                        }
-                    })
-                })
-            },
-            "cancellation_terms":$map(message.order_id.items,function($v) {
-                $map($v.sc_retail_product.product_cancel ,function($vc) {
-                    {"state": $vc.state,
-                    "cancellation_fee":$vc.cancel_term_id.cancellation_fee
-                    }
-                })
-            })
+            "quote": $quote(message.order_id.items),
+            "cancellation_terms": $cancellationTerms(message.order_id.items)
         }
     }
 }

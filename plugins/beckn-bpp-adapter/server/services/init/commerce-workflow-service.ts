@@ -23,6 +23,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         category_ids: {},
         location_id: {},
         fulfillments: {},
+        payment_methods: {},
         items: {
           populate: {
             cat_attr_tag_relations: {
@@ -36,11 +37,21 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             sc_retail_product: {
               populate: {
                 price_bareakup_ids: {},
-              },
+                product_cancel: {
+                  populate: {
+                    cancel_term_id: {}
+                  }
+                }
+              }
             },
             item_fulfillment_id: {
               populate: {
-                fulfilment_id: {},
+                fulfilment_id: {
+                  populate: {
+                    agent_ids: {}
+                  }
+                },
+                location_id: {}
               },
             },
             item_meta_id: {

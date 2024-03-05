@@ -41,10 +41,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     price_bareakup_ids: {},
                     product_cancel: {
                       populate: {
-                        cancel_term_id: {},
-                      },
-                    },
-                  },
+                        cancel_term_id: {}
+                      }
+                    }
+                  }
                 },
                 provider: {
                   populate: {

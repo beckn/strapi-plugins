@@ -6,7 +6,7 @@
                 "name": "BPP",
                 "code": "bpp",
                 "short_desc": "Unified Strapi BPP"
-            }
+            },
             "providers": $count(message) > 0 ? message.{
                 "id": $string(id),
                 "descriptor": {
@@ -26,15 +26,16 @@
                 "categories": category_ids. {
                     "id": $string(id),
                     "descriptor": {
-                        "name": value
+                        "name": value,
+                        "code": category_code
                     }
                 }[],
-                "rating": $string(provider_rating),
+                "rating": provider_rating ? $string(provider_rating) : null,
                 "short_desc": short_desc,
                 "locations": [
                     {
                         "id": $string(location_id.id),
-                        "gps": location_id.gps ? $string(location_id.gps) : '',
+                        "gps": location_id.gps ? $string(location_id.gps) : null,
                         "address": $string(location_id.address),
                         "city": {
                             "name": location_id.city
@@ -48,12 +49,7 @@
                         "area_code": $string(location_id.zip)
                     }
                 ],
-                "fulfillments": $append(fulfillments, [items.item_fulfillment_id.fulfilment_id]).{
-                    "id": $string(id),
-                    "type": type,
-                    "rating": $string(rating),
-                    "rateable": true
-                }[],
+                "fulfillments": $fulfillments($append(fulfillments, [items.item_fulfillment_id.fulfilment_id])),
                 "rateable": true,
                 "items": items.{
                     "id": $string(id),
@@ -70,10 +66,7 @@
                     "location_ids": [
                         $string(location_id.id)
                     ],
-                    "price": sc_retail_product.{
-                        "value": $string(min_price ? min_price : 0),
-                        "currency": currency ? currency : "INR"
-                    },
+                    "price": $price(sc_retail_product),
                     "quantity": sc_retail_product.{
                         "available": {
                             "count": stock_quantity ? stock_quantity : 0
@@ -104,7 +97,10 @@
                                 ]
                             }
                         }
-                    )[]
+                    )[],
+                    "time": {
+                        "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
+                    }
                 }[]
             }[] : []
         }

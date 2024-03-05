@@ -18,6 +18,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate: {
             items: {
               populate: {
+                sc_retail_product: {
+                  populate: {
+                    price_bareakup_ids: {},
+                    product_cancel: {
+                      populate: {
+                        cancel_term_id: {}
+                      }
+                    }
+                  }
+                },
                 cat_attr_tag_relations: {
                   filters: {
                     taxanomy: {
@@ -28,7 +38,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 image: {},
                 item_fulfillment_id: {
                   populate: {
-                    fulfilment_id: {},
+                    fulfilment_id: {
+                      populate: {
+                        agent_ids: {}
+                      }
+                    },
+                    location_id: {},
                   },
                 },
                 item_meta_id: {
@@ -37,7 +52,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     location_id: {},
                   },
                 },
-                
                 provider: {
                   populate: {
                     logo: {},

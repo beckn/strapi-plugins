@@ -1,55 +1,54 @@
 {
     "context": $context(context, $action),
     "message": {
-        "order":{ 
+        "order": {
             "provider": message.{
-            "id": $string(id),
-            "descriptor": {
-                "name": provider_name,
-                "short_desc": short_desc ? short_desc : "",
-                "long_desc": long_desc ? long_desc : "",
-                "additional_desc": {
-                    "url": provider_uri
-                },
-                "images": items.image.{
-                    "url": url?url:"https://abc.com",
-                    "size_type": size_type?size_type:"sm"
-                }[]
-            },
-            "categories": category_ids. {
                 "id": $string(id),
                 "descriptor": {
-                    "name": value
-                }
-            }[],
-            "rating": provider_rating,
-            "short_desc": short_desc,
-            "locations": [
-                {
-                    "id": $string(location_id.id),
-                    "gps": $string(location_id.gps),
-                    "address": location_id.address,
-                    "city": {
-                        "name": location_id.city
+                    "name": provider_name,
+                    "short_desc": short_desc ? short_desc : "",
+                    "long_desc": long_desc ? long_desc : "",
+                    "additional_desc": {
+                        "url": provider_uri
                     },
-                    "country": {
-                        "name": location_id.country
-                    },
-                    "state": {
-                        "name": location_id.state
-                    },
-                    "area_code": $string(location_id.zip)
-                }
-            ],
-            "fulfillments": $append(fulfillments, [items.item_fulfillment_id.fulfilment_id]).{
-                "id": $string(id),
-                "type": type,
-                "rating": $string(rating),
+                    "images": items.image.{
+                        "url": url?url:"https://abc.com",
+                        "size_type": size_type?size_type:"sm"
+                    }[]
+                },
+                "categories": category_ids. {
+                    "id": $string(id),
+                    "descriptor": {
+                        "name": value
+                    }
+                }[],
+                "rating": provider_rating,
+                "locations": [
+                    {
+                        "id": $string(location_id.id),
+                        "gps": $string(location_id.gps),
+                        "address": location_id.address,
+                        "city": {
+                            "name": location_id.city
+                        },
+                        "country": {
+                            "name": location_id.country
+                        },
+                        "state": {
+                            "name": location_id.state
+                        },
+                        "area_code": $string(location_id.zip)
+                    }
+                ],
+                "fulfillments": $append(fulfillments, [items.item_fulfillment_id.fulfilment_id]).{
+                    "id": $string(id),
+                    "type": type,
+                    "rating": $string(rating),
+                    "rateable": true
+                }[],
                 "rateable": true
-            }[],
-            "rateable": true
-        },
-          "items": message.items.{
+            },
+            "items": message.items.{
                 "id": $string(id),
                 "descriptor": {
                     "name": name ? name : "",
@@ -65,10 +64,7 @@
                 "location_ids": [
                     $string(location_id.id)
                 ],
-                "price": sc_retail_product.{
-                    "value": $string(min_price ? min_price : 0),
-                    "currency": currency ? currency : "INR"
-                },
+                "price": $price(sc_retail_product),
                 "quantity": sc_retail_product.{
                     "available": {
                         "count": stock_quantity ? stock_quantity : 0
@@ -105,28 +101,31 @@
                         "url": $xInput($action),
                         "mime_type": "text/html"
                     }
+                },
+                "time": {
+                    "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
                 }
             }[],
-           "quote":{
-                "price": message.items[0].sc_retail_product.{
-                    "value":$string(min_price ? min_price : 0),
-                    "currency": currency ? currency : "INR"
-                },
-                "breakup": $map(message.items, function($v) {
-                    $map($v.sc_retail_product.price_bareakup_ids ,function($vc) {
-                        {
-                            "title": $vc.title,
-                            "price": {
-                                "currency": $vc.currency,
-                                "value": $vc.value
-                            },
-                            "item":{
-                                "id": $vc.item_id
-                            }
-                        }
-                    })
-                })
-            }
+            "quote": $quote(message.items),
+            "categories": $map(message.category_ids, function($v) {
+                {
+                    "id": $string($v.id),
+                    "value": $v.value,
+                    "createdAt": $v.createdAt,
+                    "updatedAt": $v.updatedAt,
+                    "publishedAt": $v.publishedAt,
+                    "category_code": $v.category_code
+                }
+            }),
+            "fulfillments": $fulfillments($append(
+                message.fulfillments,
+                $map(
+                    message.items,
+                    function($v) {
+                        $v.item_fulfillment_id.fulfilment_id
+                    }
+                )
+            ))
         }
     }
 }

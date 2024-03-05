@@ -78,7 +78,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             ...billingInfo,
             publishedAt: isoString,
           };
-          const createOrderAddress = await strapi.entityService.create(
+          await strapi.entityService.create(
             "api::order-address.order-address",
             { data: orderAddressData }
           );
@@ -91,10 +91,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const custId = existingCustomer
             ? existingCustomer.id
             : (
-                await strapi.entityService.create("api::customer.customer", {
-                  data: custData,
-                })
-              ).id;
+              await strapi.entityService.create("api::customer.customer", {
+                data: custData,
+              })
+            ).id;
 
           // Create shipping location
           const createShipping = await strapi.entityService.create(
@@ -124,7 +124,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             order_tracking_id: trackingId,
             publishedAt: isoString,
           };
-          const createOrderFulfillment = await strapi.entityService.create(
+          await strapi.entityService.create(
             "api::order-fulfillment.order-fulfillment",
             { data: orderFulfillmentDetail }
           );
@@ -152,6 +152,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         payment_methods: {},
         items: {
           populate: {
+            sc_retail_product: {
+              populate: {
+                price_bareakup_ids: {},
+                product_cancel: {
+                  populate: {
+                    cancel_term_id: {}
+                  }
+                }
+              }
+            },
             cat_attr_tag_relations: {
               filters: {
                 taxanomy: {
@@ -163,7 +173,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             service: {},
             item_fulfillment_id: {
               populate: {
-                fulfilment_id: {},
+                fulfilment_id: {
+                  populate: {
+                    agent_ids: {}
+                  }
+                },
+                location_id: {},
               },
             },
             item_meta_id: {

@@ -18,12 +18,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         (obj: { id: string }) => obj.id
       );
 
-      const returnCancelDetails = await strapi.entityService.create(
+      await strapi.entityService.create(
         "api::return-cancellation.return-cancellation",
         {
           data: {
-            reason_id: cancellation_reason_id ? cancellation_reason_id : "",
-            reason: descriptor ? descriptor : "",
+            reason_id: cancellation_reason_id || "",
+            reason: descriptor.short_desc || "",
             action_date_time: new Date().toISOString(),
             done_by: context.bap_id,
             media: {
@@ -68,7 +68,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     location_id: {},
                   },
                 },
-                
                 provider: {
                   populate: {
                     logo: {},
@@ -77,6 +76,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     fulfillments: {},
                     payment_methods: {},
                   },
+                },
+                sc_retail_product: {
+                  populate: {
+                    price_bareakup_ids: {},
+                    product_cancel: {
+                      populate: {
+                        cancel_term_id: {}
+                      }
+                    }
+                  }
                 },
                 service: {},
               },
@@ -95,9 +104,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         {
           data: {
             state_code: "USER CANCELLED",
-            state_value: message?.descriptor?.short_desc
-              ? message?.descriptor?.short_desc
-              : "cancelled by user",
+            state_value: message?.descriptor?.short_desc || "cancelled by user",
           },
           populate,
         }
