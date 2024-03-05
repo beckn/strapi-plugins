@@ -1,5 +1,6 @@
 import { Strapi } from "@strapi/strapi";
 import { PLUGIN } from "../../constants";
+import { string } from "prop-types";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message }) {
@@ -119,10 +120,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     });
   },
   getItemTotalPrice(items) {
-    let value = 0;
+    let value:any = 0;
     let currency = "";
     items.map((item) => {
-      value += Number(item.sc_retail_product.min_price);
+      value += Number(item.sc_retail_product.min_price).toString();
       currency = item.sc_retail_product.currency;
     });
     return {

@@ -6,7 +6,8 @@ import { PLUGIN } from "../../constants";
 export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message, context }) {
     try {
-      const { items, provider, billing } = message.order;
+      const { items, provider, billing,fulfillments
+      } = message.order;
       const { domain } = context;
       const filters: KeyValuePair = provider
         ? FilterUtil.getProviderFilter(provider)
@@ -105,9 +106,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
 
       const billingInfo = billing;
+      const fulfillmentInfo=fulfillments?fulfillments:[]
       const initDetails = itemDetails.map((item) => ({
         ...item,
         billing: billingInfo,
+        fulfillments:fulfillmentInfo
+
       }));
       return initDetails;
     } catch (error) {

@@ -45,7 +45,7 @@ async function updateOrderFulfillment(strapi, orderId, orderStatus) {
   const [orderFulfillments] = await strapi.entityService.findMany("api::order-fulfillment.order-fulfillment", {
     filters: { order_id: orderId },
   });
-
+  console.log("orderFulfillments",orderFulfillments)
   if (!orderFulfillments ) {
     throw new Error("Order fulfillment not found.");
   }

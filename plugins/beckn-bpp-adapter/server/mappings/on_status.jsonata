@@ -3,7 +3,7 @@
     "message": {
         "order":{ 
             "id":$string(message.order_id.id),
-            "providers": message.order_id.items.provider.{
+            "provider": message.order_id.items.provider.{
                 "id": $string(id),
                 "descriptor": {
                     "name": provider_name,
@@ -16,41 +16,42 @@
                         "url": url?url:"https://abc.com",
                         "size_type": size_type?size_type:"sm"
                     }[]
-                },
-                "categories": category_ids. {
-                    "id": $string(id),
-                    "descriptor": {
-                        "name": value
-                    }
-                }[],
-                "rating": provider_rating,
-                "short_desc": short_desc,
-                "locations": [
-                    {
-                        "id": $string(location_id.id),
-                        "gps": location_id.gps,
-                        "address": location_id.address,
-                        "city": {
-                            "name": location_id.city
-                        },
-                        "country": {
-                            "name": location_id.country
-                        },
-                        "state": {
-                            "name": location_id.state
-                        },
-                        "area_code": $string(location_id.zip)
-                    }
-                ],
-                "fulfillments": $append(fulfillments, [items.item_fulfillment_id.fulfilment_id]).{
-                    "id": $string(id),
-                    "type": type,
-                    "rating": $string(rating),
-                    "rateable": true
-                }[],
-                "rateable": true
             },
-            "items": message.order_id.items.{
+            "categories": category_ids. {
+                "id": $string(id),
+                "descriptor": {
+                    "name": value
+                }
+            }[],
+            "rating": provider_rating,
+            "short_desc": short_desc,
+            "locations": [
+                {
+                    "id": $string(location_id.id),
+                    "gps": location_id.gps,
+                    "address": location_id.address,
+                    "city": {
+                        "name": location_id.city
+                    },
+                    "country": {
+                        "name": location_id.country
+                    },
+                    "state": {
+                        "name": location_id.state
+                    },
+                    "area_code": $string(location_id.zip)
+                }
+            ],
+            "fulfillments": $append(fulfillments, [items.item_fulfillment_id.fulfilment_id]).{
+                "id": $string(id),
+                "type": type,
+                "rating": $string(rating),
+                "rateable": true
+            }[],
+            "rateable": true
+           
+        },
+          "items": message.order_id.items.{
                 "id": $string(id),
                 "descriptor": {
                     "name": name ? name : "",
@@ -83,7 +84,7 @@
                 )[],
                 "fulfillment_ids": item_fulfillment_id.fulfilment_id.id ? [
                     $string(item_fulfillment_id.fulfilment_id.id)
-                ] : [null],
+                ] : [" "],
                 "tags": $map(
                     $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'TAG'}),
                     function($v) {
@@ -192,13 +193,13 @@
                 })
             },
             "cancellation_terms":$map(message.order_id.items,function($v) {
-                $map($v.sc_retail_product.product_cancel ,function($vc) {
-                    {
-                        "state": $vc.state,
-                        "cancellation_fee":$vc.cancel_term_id.cancellation_fee
-                    }
-                })
-            })
-        }
+     $map($v.sc_retail_product.product_cancel ,function($vc) {
+         {"state": $vc.state,
+         "cancellation_fee":$vc.cancel_term_id.cancellation_fee
+         }
+    })
+})
+            
+            }
     }
 }

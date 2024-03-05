@@ -4,6 +4,7 @@ class WorkflowProvider {
     static get(filter) {
         const { context } = filter;
         const { domain, action } = context;
+        console.log("ACTION::",action)
         if (!actions.includes(action)) {
             console.log(`No action matched, action name ${action}`);
             // throw new Error(`No action matched, action name ${action}`);

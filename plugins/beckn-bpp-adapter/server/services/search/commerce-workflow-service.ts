@@ -51,7 +51,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
         ObjectUtil.removeEmptyObjectKeys(filters);
         ObjectUtil.removeEmptyKeys(populate);
-
+        console.log(filters,populate)
         const providers = await strapi.entityService.findMany('api::provider.provider', {
             filters,
             populate
@@ -75,7 +75,4 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             }));
         }));
         return providers;
-    }
-});
-
-
+    }});

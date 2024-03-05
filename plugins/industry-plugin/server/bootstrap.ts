@@ -12,6 +12,7 @@ export default ({ strapi }: { strapi: Strapi }) => {
 
       if (result.domain.trim() === "supply-chain-services:assembly") {
         strapi.eventHub.emit("orders-event-emitter.created", event);
+        console.log("Event emitted")
       }
     },
   });

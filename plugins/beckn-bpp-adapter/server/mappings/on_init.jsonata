@@ -2,7 +2,7 @@
     "context": $context(context, $action),
     "message": {
         "order": { 
-            "providers": message.{
+            "provider": message.{
                 "id": $string(id),
                 "descriptor": {
                     "name": provider_name,
@@ -105,33 +105,39 @@
                 "price": message.items[0].sc_retail_product.{
                     "value":$string(min_price ? min_price : 0),
                     "currency": currency ? currency : "INR"
-                }
+                },
+                "breakup": $map(message.items, function($v) {
+                    $map($v.sc_retail_product.price_bareakup_ids ,function($vc) {
+                        {
+                            "title": $vc.title,
+                            "price": {
+                                "currency": $vc.currency,
+                                "value": $vc.value
+                            },
+                            "item":{
+                                "id": $vc.item_id
+                            }
+                        }
+                    })
+                })
             },
             "billing": message.billing,
-            "categories": $map(message.category_ids, function($v) {
-                {
-                    "id": $string($v.id),
-                    "value": $v.value,
-                    "createdAt": $v.createdAt,
-                    "updatedAt": $v.updatedAt,
-                    "publishedAt": $v.publishedAt,
-                    "category_code": $v.category_code
-                }
-            }),
-            "fulfillments": $append(
-                message.fulfillments,
-                $map(
-                    message.items,
-                    function($v) {
-                        $v.item_fulfillment_id.fulfilment_id
-                    }
-                )
-            ).{
-                "id": $string(id),
-                "type": type,
-                "rating": $string(rating),
-                "rateable": true
-            }[]
+            "fulfillments":message.fulfillments,
+            "payments": [
+                        {
+                            "collected_by": "BPP",
+                            "params": {
+                                "bank_account": "1234002341",
+                                "bank_code": "INB0004321",
+                                "price": {
+                                    "value": "300",
+                                    "currency": "EUR"
+                                }
+                            },
+                            "type": "PRE-ORDER"
+                        }
+                    ]
+          
         }
     }
 }
