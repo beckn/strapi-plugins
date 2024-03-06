@@ -1,5 +1,6 @@
 import { Strapi } from "@strapi/strapi";
 import { PLUGIN } from "../../constants";
+import { ObjectUtil } from "../../util";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
     async index({ message }) {
@@ -63,7 +64,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 if (customerId) {
                     await this.update(order, customerId);
                     const commonService = strapi.plugin(PLUGIN).service("commonService");
-
                     await Promise.all(
                         await (orderResponse?.order_id?.items || []).map(async (item) => {
                             await Promise.all(
@@ -107,15 +107,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
     },
     async update(order, customerId) {
+        const { customer = {} } = order?.fulfillments[0] || {};
+        const data = ObjectUtil.removeEmptyKeys({
+            contact: customer?.contact?.phone,
+            first_name: customer?.person?.name.split(" ")?.[0],
+            last_name: customer?.person?.name.split(" ")?.[1],
+            email: customer?.contact?.email
+        });
         await strapi.entityService.update("api::customer.customer", customerId, {
-            data: {
-                contact: order?.fulfillments[0]?.customer?.contact?.phone,
-                first_name:
-                    order?.fulfillments[0]?.customer?.person?.name.split(" ")?.[0],
-                last_name:
-                    order?.fulfillments[0]?.customer?.person?.name.split(" ")?.[1],
-                email: order?.fulfillments[0]?.customer?.contact?.email
-            }
+            data
         });
     },
     getItemTotalPrice(items) {

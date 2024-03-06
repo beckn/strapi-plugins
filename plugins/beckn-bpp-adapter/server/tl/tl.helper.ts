@@ -112,7 +112,7 @@ export const fulfillments = (fulfillments: KeyValuePair[]) => {
             rateable: fulfillment.rateable,
             agent: {
                 person: {
-                    id: agent?.id + '',
+                    id: agent?.id ? agent?.id + '' : '',
                     name: agent?.first_name + agent?.last_name
                 }
             }
