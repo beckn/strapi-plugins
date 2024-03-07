@@ -9,11 +9,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const { domain } = context;
       const cancelMedia = [
         ...(descriptor?.media || []),
-        ...(descriptor?.images || []),
+        ...(descriptor?.images || [])
       ].filter(Boolean);
       const cancelMediaResponse = await createMediaEntries(cancelMedia);
-      delete descriptor.media;
-      delete descriptor.images;
+      delete descriptor?.media;
+      delete descriptor?.images;
       const cancelMediaId = cancelMediaResponse.map(
         (obj: { id: string }) => obj.id
       );
@@ -27,24 +27,24 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             action_date_time: new Date().toISOString(),
             done_by: context.bap_id,
             media: {
-              connect: cancelMediaId,
+              connect: cancelMediaId
             },
-            publishedAt: new Date().toISOString(),
-          },
+            publishedAt: new Date().toISOString()
+          }
         }
       );
       const orderFulfillment = await strapi.entityService.findMany(
         "api::order-fulfillment.order-fulfillment",
         {
-          filters: { order_id: order_id },
+          filters: { order_id: order_id }
         }
       );
       const populate: KeyValuePair = {
         order_id: {
           filters: {
             domain: {
-              $eq: domain.trim(),
-            },
+              $eq: domain.trim()
+            }
           },
           populate: {
             items: {
@@ -52,21 +52,21 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 cat_attr_tag_relations: {
                   filters: {
                     taxanomy: {
-                      $in: ["TAG", "CATEGORY"],
-                    },
-                  },
+                      $in: ["TAG", "CATEGORY"]
+                    }
+                  }
                 },
                 image: {},
                 item_fulfillment_id: {
                   populate: {
-                    fulfilment_id: {},
-                  },
+                    fulfilment_id: {}
+                  }
                 },
                 item_meta_id: {
                   populate: {
                     fulfilment_id: {},
-                    location_id: {},
-                  },
+                    location_id: {}
+                  }
                 },
                 provider: {
                   populate: {
@@ -74,8 +74,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     location_id: {},
                     category_ids: {},
                     fulfillments: {},
-                    payment_methods: {},
-                  },
+                    payment_methods: {}
+                  }
                 },
                 sc_retail_product: {
                   populate: {
@@ -87,16 +87,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     }
                   }
                 },
-                service: {},
-              },
+                service: {}
+              }
             },
-            order_address: {},
-          },
+            order_address: {}
+          }
         },
         fulfilment_id: {},
         customer_id: {},
         agent_id: {},
-        order_fulfillment_location_id: {},
+        order_fulfillment_location_id: {}
       };
       const cancelDetails = await strapi.entityService.update(
         "api::order-fulfillment.order-fulfillment",
@@ -104,9 +104,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         {
           data: {
             state_code: "USER CANCELLED",
-            state_value: message?.descriptor?.short_desc || "cancelled by user",
+            state_value: message?.descriptor?.short_desc || "cancelled by user"
           },
-          populate,
+          populate
         }
       );
 
@@ -120,14 +120,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 taxanomy.taxanomy_id = await commonService.getCategoryById(
                   taxanomy.taxanomy_id,
                   {
-                    parent_id: {},
+                    parent_id: {}
                   }
                 );
               } else if (taxanomy.taxanomy === "TAG") {
                 taxanomy.taxanomy_id = await commonService.getTagById(
                   taxanomy.taxanomy_id,
                   {
-                    tag_group_id: {},
+                    tag_group_id: {}
                   }
                 );
               }
@@ -141,7 +141,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       console.error("An error occurred:", error);
       throw error;
     }
-  },
+  }
 });
 
 async function createMediaEntries(mediaItems) {
@@ -153,8 +153,8 @@ async function createMediaEntries(mediaItems) {
         data: {
           url: item.url,
           size_type: item.size_type,
-          publishedAt: new Date().toISOString(),
-        },
+          publishedAt: new Date().toISOString()
+        }
       })
     )
   );
