@@ -22,17 +22,19 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         phone: billing?.phone || "",
         publishedAt: isoString,
         postcode: billing?.area_code || "",
-        tax_id: billing?.tax_id || "",
+        tax_id: billing?.tax_id || ""
       };
 
       // Extract customer details
       const customer = fulfillments[0].customer;
       const custEmail = customer?.contact?.email || billing?.email;
+
       const custData = {
-        first_name: customer?.person?.name,
+        first_name: customer?.person?.name?.split(" ")?.[0],
+        last_name: customer?.person?.name?.split(" ")?.[1],
         email: custEmail,
         contact: customer?.contact?.phone,
-        publishedAt: isoString,
+        publishedAt: isoString
       };
 
       // Extract shipping details
@@ -50,7 +52,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         country_code: shipping?.country?.code || "",
         area_code: shipping?.area_code || "",
         address: shipping?.address || "",
-        publishedAt: isoString,
+        publishedAt: isoString
       };
 
       // Extract item values
@@ -64,7 +66,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             items: itemValue,
             order_transaction_id: transaction_id,
             publishedAt: isoString,
-            domain,
+            domain
           };
           // Create order
           const createOrder = await strapi.entityService.create(
@@ -77,7 +79,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const orderAddressData = {
             order_id: orderId.toString(),
             ...billingInfo,
-            publishedAt: isoString,
+            publishedAt: isoString
           };
           await strapi.entityService.create(
             "api::order-address.order-address",
@@ -89,13 +91,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::customer.customer",
             { filters: { email: custEmail } }
           );
+
           const custId = existingCustomer
             ? existingCustomer.id
             : (
-              await strapi.entityService.create("api::customer.customer", {
-                data: custData,
-              })
-            ).id;
+                await strapi.entityService.create("api::customer.customer", {
+                  data: custData
+                })
+              ).id;
 
           // Create shipping location
           const createShipping = await strapi.entityService.create(
@@ -108,7 +111,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const trackingDetail = {
             url: `${process.env.BPP_ADAPTER_PLUGIN_URL}/tracking/${orderId}`,
             status: "active",
-            publishedAt: isoString,
+            publishedAt: isoString
           };
           const createTracking = await strapi.entityService.create(
             "api::order-tracking.order-tracking",
@@ -123,7 +126,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             customer_id: custId,
             order_fulfillment_location_id: shippingLocationId,
             order_tracking_id: trackingId,
-            publishedAt: isoString,
+            publishedAt: isoString
           };
 
           await strapi.entityService.create(
@@ -138,13 +141,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const filters: KeyValuePair = provider
         ? FilterUtil.getProviderFilter(provider)
         : {};
+
       const itemId: KeyValuePair = items
         ? FilterUtil.getItemsFilter(items)
         : {};
       const itemFilter = {
         id: {
-          $in: itemId,
-        },
+          $in: itemId
+        }
       };
       const populate: KeyValuePair = {
         category_ids: {},
@@ -156,9 +160,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             cat_attr_tag_relations: {
               filters: {
                 taxanomy: {
-                  $in: ["TAG", "CATEGORY"],
-                },
-              },
+                  $in: ["TAG", "CATEGORY"]
+                }
+              }
             },
             image: {},
             sc_retail_product: {
@@ -166,10 +170,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 price_bareakup_ids: {},
                 product_cancel: {
                   populate: {
-                    cancel_term_id: {},
-                  },
-                },
-              },
+                    cancel_term_id: {}
+                  }
+                }
+              }
             },
             item_fulfillment_id: {
               populate: {
@@ -178,22 +182,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     agent_ids: {}
                   }
                 },
-                location_id: {},
-              },
+                location_id: {}
+              }
             },
             item_meta_id: {
               populate: {
                 fulfilment_id: {},
-                location_id: {},
-              },
-            },
-          },
-        },
+                location_id: {}
+              }
+            }
+          }
+        }
       };
 
       if (domain) {
         filters.domain_id = {
-          DomainName: domain,
+          DomainName: domain
         };
       }
 
@@ -209,7 +213,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         "api::provider.provider",
         {
           filters,
-          populate,
+          populate
         }
       );
       const commonService = strapi.plugin(PLUGIN).service("commonService");
@@ -223,14 +227,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     taxanomy.taxanomy_id = await commonService.getCategoryById(
                       taxanomy.taxanomy_id,
                       {
-                        parent_id: {},
+                        parent_id: {}
                       }
                     );
                   } else if (taxanomy.taxanomy === "TAG") {
                     taxanomy.taxanomy_id = await commonService.getTagById(
                       taxanomy.taxanomy_id,
                       {
-                        tag_group_id: {},
+                        tag_group_id: {}
                       }
                     );
                   }
@@ -242,16 +246,18 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
       const billingDetails = billing;
       const fulfillmentDetails = fulfillments;
+
       const confirmDetails = itemDetails.map((item) => ({
         ...item,
         billing: billingDetails,
         fulfillment: fulfillmentDetails,
-        order_id: orderId,
+        order_id: orderId
       }));
+
       return confirmDetails;
     } catch (error) {
       console.error("An error occurred:", error);
       throw error;
     }
-  },
+  }
 });
