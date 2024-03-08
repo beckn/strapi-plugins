@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"context\": {\n        \"domain\": \"{{odr}}\",\n        \"location\": {\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            },\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"action\": \"search\",\n        \"version\": \"1.1.0\",\n        \"bap_uri\": \"https://ps-bap-network-temp.becknprotocol.io/\",\n        \"timestamp\": \"2023-10-09T04:46:28.012Z\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\"\n    },\n    \"message\": {\n        \"intent\": {\n            \"item\": {\n                \"descriptor\": {\n                    \"name\": \"Conciliation Services local\"\n                }\n            }\n        }\n    }\n}",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{odr}}\",\n        \"location\": {\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            },\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"action\": \"search\",\n        \"version\": \"1.1.0\",\n        \"bap_uri\": \"https://ps-bap-network-temp.becknprotocol.io/\",\n        \"timestamp\": \"2023-10-09T04:46:28.012Z\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\"\n    },\n    \"message\": {\n        \"intent\": {\n            \"item\": {\n                \"descriptor\": {\n                    \"name\": \"Conciliation Services\"\n                }\n            }\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -24,9 +24,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}",
+							"raw": "{{base_url_dev}}",
 							"host": [
-								"{{base_url}}"
+								"{{base_url_dev}}"
 							]
 						}
 					},
@@ -47,9 +47,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}",
+							"raw": "{{base_url_dev}}",
 							"host": [
-								"{{base_url}}"
+								"{{base_url_dev}}"
 							]
 						}
 					},
@@ -70,9 +70,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}",
+							"raw": "{{base_url_dev}}",
 							"host": [
-								"{{base_url}}"
+								"{{base_url_dev}}"
 							]
 						}
 					},
@@ -93,9 +93,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}",
+							"raw": "{{base_url_dev}}",
 							"host": [
-								"{{base_url}}"
+								"{{base_url_dev}}"
 							]
 						}
 					},
@@ -116,9 +116,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}",
+							"raw": "{{base_url_dev}}",
 							"host": [
-								"{{base_url}}"
+								"{{base_url_dev}}"
 							]
 						}
 					},
@@ -139,9 +139,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}",
+							"raw": "{{base_url_dev}}",
 							"host": [
-								"{{base_url}}"
+								"{{base_url_dev}}"
 							]
 						}
 					},
@@ -162,9 +162,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}",
+							"raw": "{{base_url_dev}}",
 							"host": [
-								"{{base_url}}"
+								"{{base_url_dev}}"
 							]
 						}
 					},
@@ -185,9 +185,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}",
+							"raw": "{{base_url_dev}}",
 							"host": [
-								"{{base_url}}"
+								"{{base_url_dev}}"
 							]
 						}
 					},
@@ -208,9 +208,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}",
+							"raw": "{{base_url_dev}}",
 							"host": [
-								"{{base_url}}"
+								"{{base_url_dev}}"
 							]
 						}
 					},
@@ -231,9 +231,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}",
+							"raw": "{{base_url_dev}}",
 							"host": [
-								"{{base_url}}"
+								"{{base_url_dev}}"
 							]
 						}
 					},
@@ -378,7 +378,17 @@
 	],
 	"variable": [
 		{
-			"key": "base_url",
+			"key": "base_url_prod",
+			"value": "https://strapi-bpp.becknprotocol.io/beckn-bpp-adapter/health-check",
+			"type": "string"
+		},
+		{
+			"key": "base_url_dev",
+			"value": "https://strapi-bpp-dev.becknprotocol.io/beckn-bpp-adapter",
+			"type": "string"
+		},
+		{
+			"key": "base_url_local",
 			"value": "http://localhost:1337/beckn-bpp-adapter",
 			"type": "string"
 		},
@@ -399,12 +409,12 @@
 		},
 		{
 			"key": "bpp_id",
-			"value": "abhishek.bpp.plugin",
+			"value": "strapi-bpp-plugin",
 			"type": "string"
 		},
 		{
 			"key": "bpp_uri",
-			"value": "https://abhi-bpp-nw.loca.lt",
+			"value": "https://strapi-bpp-network.becknprotocol.io/beckn-bpp-adapter",
 			"type": "string"
 		}
 	]

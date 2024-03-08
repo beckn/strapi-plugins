@@ -26,7 +26,7 @@
                 "locations": [
                     {
                         "id": $string(location_id.id),
-                        "gps": $string(location_id.gps),
+                        "gps": location_id.gps ? $string(location_id.gps) : null,
                         "address": location_id.address,
                         "city": {
                             "name": location_id.city
