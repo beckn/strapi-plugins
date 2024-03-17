@@ -22,7 +22,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const populate: KeyValuePair = {
         category_ids: {},
         location_id: {},
-        fulfillments: {},
+        fulfillments: {
+          populate: {
+            tag_ids: {
+              populate: {
+                tag_group_id: {}
+              }
+            }
+          }
+        },
         payment_methods: {},
         items: {
           populate: {
@@ -114,7 +122,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
         })
       );
-
+      const quantitySelected = { quantity: items[0]?.quantity?.selected?.measure?.value || 0 }
+      itemDetails[0] = { ...itemDetails[0], ...quantitySelected }
       return itemDetails;
     } catch (error) {
       console.error("An error occurred:", error);
