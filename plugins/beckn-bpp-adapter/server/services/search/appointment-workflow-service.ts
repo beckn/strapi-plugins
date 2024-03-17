@@ -9,7 +9,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             item,
             provider,
             category
-        } = message.intent || {};
+        } = message?.intent || {};
         const { domain } = context;
         const filters: KeyValuePair = provider ? FilterUtil.getProviderFilter(provider) : {};
         const populate: KeyValuePair = {
