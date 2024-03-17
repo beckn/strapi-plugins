@@ -40,11 +40,25 @@
                         "area_code": $string(location_id.zip)
                     }
                 ],
-                "fulfillments": $append(fulfillments, [items.item_fulfillment_id.fulfilment_id]).{
+                "fulfillments": fulfillments.{
                     "id": $string(id),
                     "type": type,
                     "rating": $string(rating),
-                    "rateable": true
+                    "rateable": true,
+                    "tags": $map(tag_ids, function($v) {
+                        {"display":true,
+                        "descriptor": $v.tag_group_id.tag_group_name,
+                         "list": [
+                                {
+                                    "descriptor": $v.tag_name,
+                                    "value":$v.code,
+                                    "display": true
+                                }
+                            ]
+                        
+                        }
+                    })
+                   
                 }[],
                 "rateable": true
             },
@@ -67,7 +81,11 @@
                 "price": $price(sc_retail_product),
                 "quantity": sc_retail_product.{
                     "available": {
-                        "count": stock_quantity ? stock_quantity : 0
+                        "count": stock_quantity ? stock_quantity : 0,
+                        "measure":{
+                            "value":stock_quantity ? stock_quantity : 0,
+                            "unit":"kWh"
+                        }
                     }
                 },
                 "category_ids": $map(
@@ -84,12 +102,11 @@
                     function($v) {
                         {
                             "display": true,
-                            "descriptor": {
-                                "description": $v.taxanomy_id.tag_group_id.tag_group_name
-                            },
+                            "descriptor": $v.taxanomy_id.tag_group_id.tag_group_name,
                             "list": [
                                 {
-                                    "value": $v.taxanomy_id.tag_name,
+                                    "descriptor": $v.taxanomy_id.tag_name,
+                                    "value":$v.taxanomy_id.code,
                                     "display": true
                                 }
                             ]
@@ -106,26 +123,12 @@
                     "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
                 }
             }[],
-            "quote": $quote(message.items),
-            "categories": $map(message.category_ids, function($v) {
-                {
-                    "id": $string($v.id),
-                    "value": $v.value,
-                    "createdAt": $v.createdAt,
-                    "updatedAt": $v.updatedAt,
-                    "publishedAt": $v.publishedAt,
-                    "category_code": $v.category_code
-                }
-            }),
-            "fulfillments": $fulfillments($append(
-                message.fulfillments,
-                $map(
-                    message.items,
-                    function($v) {
-                        $v.item_fulfillment_id.fulfilment_id
-                    }
-                )
-            ))
+            "quote": $quote(message.items)
+           
         }
     }
 }
+
+
+
+

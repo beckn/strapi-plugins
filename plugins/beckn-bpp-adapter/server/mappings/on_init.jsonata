@@ -98,30 +98,6 @@
             }[],
             "quote": $quote(message.items),
             "billing": message.billing,
-            "categories": $map(message.category_ids, function($v) {
-                {
-                    "id": $string($v.id),
-                    "value": $v.value,
-                    "createdAt": $v.createdAt,
-                    "updatedAt": $v.updatedAt,
-                    "publishedAt": $v.publishedAt,
-                    "category_code": $v.category_code
-                }
-            })[],
-            "fulfillments": $append(
-                message.fulfillments,
-                $map(
-                    message.items,
-                    function($v) {
-                        $v.item_fulfillment_id.fulfilment_id
-                    }
-                )
-            ).{
-                "id": $string(id),
-                "type": type,
-                "rating": $string(rating),
-                "rateable": true
-            }[],
             "payments": $payments(message[0]),
             "cancellation_terms": $cancellationTerms(message[0].items)
         }
