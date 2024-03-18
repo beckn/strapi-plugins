@@ -40,25 +40,29 @@
                         "area_code": $string(location_id.zip)
                     }
                 ],
-                "fulfillments": fulfillments.{
+               "fulfillments": fulfillments.{
                     "id": $string(id),
                     "type": type,
                     "rating": $string(rating),
                     "rateable": true,
                     "tags": $map(tag_ids, function($v) {
                         {"display":true,
-                        "descriptor": $v.tag_group_id.tag_group_name,
+                         "descriptor": {
+                                "description":$v.tag_group_id.tag_group_name
+                            },
                          "list": [
                                 {
-                                    "descriptor": $v.tag_name,
+                                    "descriptor": {
+                                       "description": $v.tag_name
+                                    },
                                     "value":$v.code,
                                     "display": true
                                 }
                             ]
-                        
+
                         }
                     })
-                   
+
                 }[],
                 "rateable": true
             },
@@ -83,7 +87,7 @@
                     "available": {
                         "count": stock_quantity ? stock_quantity : 0,
                         "measure":{
-                            "value":stock_quantity ? stock_quantity : 0,
+                            "value":$string(stock_quantity ? stock_quantity : "0"),
                             "unit":"kWh"
                         }
                     }
@@ -102,10 +106,14 @@
                     function($v) {
                         {
                             "display": true,
-                            "descriptor": $v.taxanomy_id.tag_group_id.tag_group_name,
+                            "descriptor": {
+                                "description":$v.taxanomy_id.tag_group_id.tag_group_name
+                            },
                             "list": [
                                 {
-                                    "descriptor": $v.taxanomy_id.tag_name,
+                                    "descriptor": {
+                                       "description": $v.taxanomy_id.tag_name
+                                    },
                                     "value":$v.taxanomy_id.code,
                                     "display": true
                                 }

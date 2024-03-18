@@ -7,7 +7,9 @@ import moment from "moment";
 import { KeyValuePair } from "../types";
 
 export const context = async (data: any, action: string) => {
+  console.log("ENTEREDDDD",data)
   const expression = jsonata(fs.readFileSync(path.join(appRootPath.toString(), `/server/mappings/context.jsonata`), "utf8"));
+  console.log("EXPRESSION",expression)
   return await expression.evaluate(data, { env: process.env, moment, uuid, action });
 }
 
@@ -76,8 +78,8 @@ export const payments = async (
   });
 }
 
-export const price = (sc_retail_product: KeyValuePair = {}) => {
-  const { min_price = 0, currency = "INR" } = sc_retail_product || {};
+export const price = (sc_retail_product: KeyValuePair) => {
+  const { min_price = 0, currency = "INR" } = sc_retail_product;
   return {
     value: min_price + '',
     currency
@@ -89,8 +91,13 @@ export const cancellationTerms = (items: KeyValuePair[]) => {
   items.map((item: KeyValuePair) => {
     item.sc_retail_product?.product_cancel.map((pc: KeyValuePair) => {
       cancelTerms.push({
-        state: pc.state,
+        fulfillment_state: {
+          descriptor: {
+              code: pc.state
+          }
+      },
         cancellation_fee: {
+          percentage:pc.cancel_term_id.cancellation_fee,
           amount: {
             currency: item.sc_retail_product?.currency,
             value: pc.cancel_term_id.cancellation_fee

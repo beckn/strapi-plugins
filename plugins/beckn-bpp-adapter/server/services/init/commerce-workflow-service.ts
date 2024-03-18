@@ -1,6 +1,6 @@
 import { Strapi } from "@strapi/strapi";
 import { FilterUtil, ObjectUtil } from "../../util";
-import { KeyValuePair } from ".././../types";
+import { KeyValuePair } from "../../types";
 import { PLUGIN } from "../../constants";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
@@ -22,7 +22,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const populate: KeyValuePair = {
         category_ids: {},
         location_id: {},
-        fulfillments: {},
+        fulfillments: {
+          populate:{
+            tag_ids:{
+              populate:{
+                tag_group_id:{}
+              }
+            }
+          }
+        },
         payment_methods: {},
         items: {
           populate: {
