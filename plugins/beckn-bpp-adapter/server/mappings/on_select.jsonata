@@ -40,25 +40,7 @@
                         "area_code": $string(location_id.zip)
                     }
                 ],
-                "fulfillments": $append(fulfillments, [items.item_fulfillment_id.fulfilment_id]).{
-                    "id": $string(id),
-                    "type": type,
-                    "rating": $string(rating),
-                    "rateable": true,
-                    "tags": $map(tag_ids, function($v) {
-                        {
-                            "display":true,
-                            "descriptor": $v.tag_group_id.tag_group_name,
-                            "list": [
-                                {
-                                    "descriptor": $v.tag_name,
-                                    "value":$v.code,
-                                    "display": true
-                                }
-                            ]
-                        }
-                    })
-                }[],
+                "fulfillments": $fulfillments($append(fulfillments, [items.item_fulfillment_id.fulfilment_id])),
                 "rateable": true
             },
             "items": message.items.{
@@ -101,7 +83,9 @@
                     function($v) {
                         {
                             "display": true,
-                            "descriptor": $v.taxanomy_id.tag_group_id.tag_group_name,
+                            "descriptor": {
+                                "description": $v.taxanomy_id.tag_group_id.tag_group_name
+                            },
                             "list": [
                                 {
                                     "descriptor": {
