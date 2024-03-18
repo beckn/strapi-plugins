@@ -116,7 +116,7 @@ export const fulfillments = (fulfillments: KeyValuePair[]) => {
           name: agent?.first_name + agent?.last_name
         }
       },
-      tags: fulfillment.tag_ids.map((tag) => {
+      tags: fulfillment.tag_ids?.map((tag) => {
         return {
           display: true,
           descriptor: {

@@ -1,0 +1,576 @@
+{
+	"info": {
+		"_postman_id": "c61a7449-17aa-4529-afc0-feb6dcf1b4f4",
+		"name": "BPP adapter plugin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13127879"
+	},
+	"item": [
+		{
+			"name": "ODR",
+			"item": [
+				{
+					"name": "Search",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{odr}}\",\n        \"location\": {\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            },\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"action\": \"search\",\n        \"version\": \"1.1.0\",\n        \"bap_uri\": \"https://abhi-bap.loca.lt\",\n        \"bap_id\": \"abhi.generic.bap\",\n        \"timestamp\": \"2023-10-09T04:46:28.012Z\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\"\n    },\n    \"message\": {\n        \"intent\": {\n            \"item\": {\n                \"descriptor\": {\n                    \"name\": \"Conciliation Services\"\n                }\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_local}}",
+							"host": [
+								"{{base_url_local}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{odr}}\",\n        \"location\": {\n            \"country\": {\n                \"code\": \"IND\"\n            }\n        },\n        \"transaction_id\": \"a9aaecca-10b7-4d19-b640-b047a7c62196\",\n        \"message_id\": \"bb579fb8-cb82-4824-be12-fcbc405b6608\",\n        \"action\": \"select\",\n        \"timestamp\": \"2023-05-25T05:23:03.443Z\",\n        \"version\": \"1.1.0\",\n        \"bap_id\": \"ps-bap-network.becknprotocol.io\",\n        \"bap_uri\": \"https://ps-bap-network-temp.becknprotocol.io/\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"ttl\": \"PT10M\"\n    },\n    \"message\": {\n        \"order\": {\n            \"provider\": {\n                \"id\":\"35\"\n            },\n            \"items\": [\n                {\n                    \"id\": \"49\"\n                }\n            ]\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_dev}}",
+							"host": [
+								"{{base_url_dev}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Init",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{dhp_consultation}}\",\n        \"location\": {\n            \"country\": {\n                \"code\": \"IND\"\n            }\n        },\n        \"transaction_id\": \"a9aaecca-10b7-4d19-b640-b047a7c62196\",\n        \"message_id\": \"bb579fb8-cb82-4824-be12-fcbc405b6608\",\n        \"action\": \"init\",\n        \"timestamp\": \"2023-05-25T05:23:03.443Z\",\n        \"version\": \"1.1.0\",\n        \"bap_id\": \"ps-bap-network.becknprotocol.io\",\n        \"bap_uri\": \"https://ps-bap-network-temp.becknprotocol.io/\",\n        \"bpp_id\": \"abhishek.bpp.plugin\",\n        \"bpp_uri\": \"https://abhi-bpp-nw.loca.lt\",\n        \"ttl\": \"PT10M\"\n    },\n    \"message\": {\n        \"order\": {\n            \"provider\": {\n                \"id\": \"35\"\n            },\n            \"items\": [\n                {\n                    \"id\": \"49\"\n                }\n            ],\n            \"billing\": {\n                \"name\": \"Alice Smith\",\n                \"address\": \"Apt 303, Maple Towers, Richmond Road, 560001\",\n                \"state\": {\n                    \"name\": \"Jurong East\"\n                },\n                \"city\": {\n                    \"name\": \"Jurong East\"\n                },\n                \"email\": \"alice.smith@example.com\",\n                \"phone\": \"9886098860\"\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_dev}}",
+							"host": [
+								"{{base_url_dev}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{odr}}\",\n        \"location\": {\n            \"country\": {\n                \"code\": \"IND\"\n            }\n        },\n        \"transaction_id\": \"a9aaecca-10b7-4d19-b640-b047a7c62196\",\n        \"message_id\": \"a9aaecca-10b7-4d19-b640-b047a7c62196\",\n        \"action\": \"confirm\",\n        \"timestamp\": \"2023-05-25T05:23:03.443Z\",\n        \"version\": \"1.1.0\",\n        \"bap_id\": \"ps-bap-network.becknprotocol.io\",\n        \"bap_uri\": \"https://ps-bap-network.becknprotocol.io/\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"ttl\": \"PT10M\"\n    },\n    \"message\": {\n        \"order\": {\n            \"items\": [\n                {\n                    \"id\": \"49\"\n                }\n            ],\n            \"fulfillments\": [\n                {\n                    \"id\": \"5\",\n                    \"customer\": {\n                        \"contact\": {\n                            \"email\": \"fox.judie61234@abc.org\",\n                            \"phone\": \"+91-9999999999\"\n                        },\n                        \"person\": {\n                            \"name\": \"Judie Fox6\"\n                        }\n                    }\n                }\n            ],\n            \"billing\": {\n                \"name\": \"Industry buyer\",\n                \"address\": \"B005 aspire heights, Jurong East, SGP, 680230\",\n                \"state\": {\n                    \"name\": \"Jurong East\"\n                },\n                \"city\": {\n                    \"name\": \"Jurong East\"\n                },\n                \"email\": \"nobody@nomail.com\",\n                \"phone\": \"9886098860\"\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_dev}}",
+							"host": [
+								"{{base_url_dev}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Status",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{odr}}\",\n        \"location\": {\n            \"country\": {\n                \"code\": \"DE\"\n            }\n        },\n        \"action\": \"status\",\n        \"version\": \"1.1.0\",\n        \"bap_id\": \"ps-bap-network.becknprotocol.io\",\n        \"bap_uri\": \"https://ps-bap-network.becknprotocol.io/\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"transaction_id\": \"a9aaecca-10b7-4d19-b640-b047a7c62195\",\n        \"message_id\": \"27f9d99a-5ec6-11ee-8c99-0242ac120002\",\n        \"timestamp\": \"2023-05-25T05:23:03.443Z\",\n        \"ttl\": \"P30M\"\n    },\n    \"message\": {\n        \"order_id\": \"357\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_dev}}",
+							"host": [
+								"{{base_url_dev}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rating",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{odr}}\",\n        \"location\": {\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            },\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"action\": \"rating\",\n        \"version\": \"1.1.0\",\n        \"bap_uri\": \"https://ps-bap-network-temp.becknprotocol.io/\",\n        \"timestamp\": \"2023-10-09T04:46:28.012Z\"\n    },\n    \"message\": { }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_dev}}",
+							"host": [
+								"{{base_url_dev}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{odr}}\",\n        \"location\": {\n            \"country\": {\n                \"code\": \"DE\"\n            }\n        },\n        \"action\": \"cancel\",\n        \"version\": \"1.1.0\",\n        \"bap_uri\": \"https://supply-chain-protocol-network.becknprotocol.io/\",\n        \"bap_id\": \"supply-chain-protocol.becknprotocol.io\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"transaction_id\": \"a9aaecca-10b7-4d19-b640-b047a7c62195\",\n        \"message_id\": \"7f3f5b44-fa87-4ea2-b675-4991dd25728e\",\n        \"timestamp\": \"2023-05-25T05:23:04.443Z\",\n        \"ttl\": \"P30M\"\n    },\n    \"message\": {\n        \"order_id\": \"358\",\n        \"cancellation_reason_id\": \"4\",\n        \"descriptor\": {\n            \"short_desc\": \"Found better price\"\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_dev}}",
+							"host": [
+								"{{base_url_dev}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Track",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{odr}}\",\n        \"location\": {\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            },\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"action\": \"track\",\n        \"version\": \"1.1.0\",\n        \"bap_uri\": \"https://ps-bap-network-temp.becknprotocol.io/\",\n        \"timestamp\": \"2023-10-09T04:46:28.012Z\"\n    },\n    \"message\": {\n        \"order_id\": \"358\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_dev}}",
+							"host": [
+								"{{base_url_dev}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{odr}}\",\n        \"location\": {\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            },\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"action\": \"update\",\n        \"version\": \"1.1.0\",\n        \"bap_uri\": \"https://ps-bap-network-temp.becknprotocol.io/\",\n        \"timestamp\": \"2023-10-09T04:46:28.012Z\"\n    },\n    \"message\": {\n        \"order\": {\n            \"id\": \"330\",\n            \"fulfillments\": [\n                {\n                    \"customer\": {\n                        \"contact\": {\n                            \"phone\": \"8056475648\"\n                        }\n                    }\n                }\n            ]\n        },\n        \"update_target\": \"order.fulfillments[0].customer.contact.phone\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_dev}}",
+							"host": [
+								"{{base_url_dev}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Support",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{odr}}\",\n        \"location\": {\n            \"country\": {\n                \"code\": \"DE\"\n            }\n        },\n        \"transaction_id\": \"a9aaecca-10b7-4d19-b640-b047a7c62195\",\n        \"message_id\": \"27f9d99a-5ec6-11ee-8c99-0242ac120002\",\n        \"action\": \"support\",\n        \"timestamp\": \"2024-01-20T10:59:11.559Z\",\n        \"version\": \"1.1.0\",\n        \"bap_uri\": \"https://ps-bap-network.becknprotocol.io/\",\n        \"bap_id\": \"ps-bap-network.becknprotocol.io\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{base_url}}\"\n    },\n    \"message\": {\n        \"support\": {\n            \"ref_id\": \"1\",\n            \"callback_phone\": \"+91-81347776660\",\n            \"phone\": \"+91 9988776543\",\n            \"email\": \"supportperson@gmail.com\"\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_dev}}",
+							"host": [
+								"{{base_url_dev}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Misc",
+			"item": [
+				{
+					"name": "x-input",
+					"item": [
+						{
+							"name": "Get Form",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"context\": {\n        \"domain\": \"{{supply_chain}}\",\n        \"transcation_id\": \"1234\"\n    },\n    \"message\": {\n        \"form_id\" : \"ratingForm\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/x-input/form?form_id=ratingForm",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"x-input",
+										"form"
+									],
+									"query": [
+										{
+											"key": "form_id",
+											"value": "ratingForm"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Submit Form",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"context\": {\n        \"action\": \"on_select\"\n    },\n    \"message\": {\n        \"name\": \"Abhi\",\n        \"number_of_items\": \"5\",\n        \"form_id\": \"itemDetailsForm\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/x-input/submit",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"x-input",
+										"submit"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health-check",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health-check"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PS webhook",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"transaction_id\": \"5c678023-1148-4e09-93bd-2ace4a735383\",\n        \"message_id\": \"a344117e-f78f-48aa-ab86-85fce919c432\",\n        \"action\": \"on_search\",\n        \"timestamp\": \"2024-02-26T12:07:48.259Z\",\n        \"version\": \"1.1.0\",\n        \"bpp_id\": \"beckn-strapi-sandbox-bpp\",\n        \"bpp_uri\": \"https://beckn-strapi-sandbox-bpp-network.becknprotocol.io\"\n    },\n    \"message\": {\n        \"catalog\": {\n            \"descriptor\": {\n                \"name\": \"BPP\",\n                \"code\": \"bpp\",\n                \"short_desc\": \"Unified Strapi BPP\"\n            }\n        },\n        \"providers\": [\n            {\n                \"id\": \"41\",\n                \"descriptor\": {\n                    \"name\": \"Makerspace - S\",\n                    \"short_desc\": \"Makerspace\",\n                    \"long_desc\": \"Makerspace, Hof\",\n                    \"additional_desc\": {\n                        \"url\": \"www.makerspace.com\"\n                    },\n                    \"images\": [\n                        {\n                            \"url\": \"https://makerspace/assembly/makerspace_logo.png\",\n                            \"size_type\": \"sm\"\n                        }\n                    ]\n                },\n                \"categories\": [\n                    {\n                        \"id\": \"68\",\n                        \"descriptor\": {\n                            \"name\": \"Intermittent\"\n                        }\n                    },\n                    {\n                        \"id\": \"69\",\n                        \"descriptor\": {\n                            \"name\": \"Lean\"\n                        }\n                    },\n                    {\n                        \"id\": \"65\",\n                        \"descriptor\": {\n                            \"name\": \"Assembly\"\n                        }\n                    },\n                    {\n                        \"id\": \"66\",\n                        \"descriptor\": {\n                            \"name\": \"Classic\"\n                        }\n                    }\n                ],\n                \"rating\": \"4.7\",\n                \"short_desc\": \"Makerspace\",\n                \"locations\": [\n                    {\n                        \"id\": \"13\",\n                        \"gps\": \"50.311674, 11.90335\",\n                        \"address\": \"154/9, Bannerghatta Rd, opposite IIM-B, Sahyadri Layout, Panduranga Nagar, Bengaluru, Karnataka 560076\",\n                        \"city\": {\n                            \"name\": \"Bangalore F\"\n                        },\n                        \"country\": {\n                            \"name\": \"India\"\n                        },\n                        \"state\": {\n                            \"name\": \"Karnataka\"\n                        },\n                        \"area_code\": \"560076\"\n                    }\n                ],\n                \"fulfillments\": [\n                    {\n                        \"id\": \"3\",\n                        \"type\": \"HOME-DELIVERY\",\n                        \"rating\": \"5\",\n                        \"rateable\": true\n                    },\n                    {\n                        \"id\": \"4\",\n                        \"type\": \"SELF-PICKUP\",\n                        \"rating\": \"5\",\n                        \"rateable\": true\n                    },\n                    {\n                        \"id\": \"2\",\n                        \"type\": \"IN-STORE-PICKUP\",\n                        \"rating\": \"4\",\n                        \"rateable\": true\n                    },\n                    {\n                        \"id\": \"1\",\n                        \"type\": \"IN-STORE-PICKUP\",\n                        \"rating\": \"3.4\",\n                        \"rateable\": true\n                    }\n                ],\n                \"rateable\": true,\n                \"items\": [\n                    {\n                        \"id\": 62,\n                        \"descriptor\": {\n                            \"name\": \"Packaging\",\n                            \"code\": \"PCK\",\n                            \"short_desc\": \"Packaging\",\n                            \"long_desc\": \"\",\n                            \"images\": [\n                                {\n                                    \"url\": \"https://i.pinimg.com/474x/42/8e/08/428e08c7c632d41fbd44d484c6c24616.jpg\"\n                                }\n                            ]\n                        },\n                        \"price\": {\n                            \"value\": \"310\",\n                            \"currency\": \"INR\"\n                        },\n                        \"quantity\": {\n                            \"available\": {\n                                \"count\": \"5\"\n                            }\n                        },\n                        \"category_ids\": [\n                            \"5\"\n                        ],\n                        \"fulfillment_ids\": [\n                            \"1\"\n                        ],\n                        \"tags\": [\n                            {\n                                \"display\": true,\n                                \"descriptor\": {\n                                    \"description\": \"online courses\"\n                                },\n                                \"list\": [\n                                    {\n                                        \"value\": \"java\",\n                                        \"display\": true\n                                    }\n                                ]\n                            }\n                        ]\n                    }\n                ]\n            }\n        ]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/ps/search",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ps",
+								"search"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "UEI",
+			"item": [
+				{
+					"name": "Search",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{uei}}\",\n        \"location\": {\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            },\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"action\": \"search\",\n        \"version\": \"1.1.0\",\n        \"transaction_id\": \"fc24f1e9-6d01-44bf-888c-d5884ca0f66f\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"timestamp\": \"2023-10-09T04:46:28.012Z\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"bap_id\": \"{{bap_id}}\",\n        \"bap_uri\": \"{{bap_uri}}\"\n    },\n    \"message\": {\n        \"intent\": {\n            \"location\": {\n                \"circle\": {\n                    \"gps\": \"12.423423,77.325647\",\n                    \"radius\": {\n                        \"type\": \"CONSTANT\",\n                        \"value\": \"5\",\n                        \"unit\": \"km\"\n                    }\n                }\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_ev}}/search",
+							"host": [
+								"{{base_url_ev}}"
+							],
+							"path": [
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{uei}}\",\n        \"location\": {\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            },\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"action\": \"select\",\n        \"version\": \"1.1.0\",\n        \"transaction_id\": \"fc24f1e9-6d01-44bf-888c-d5884ca0f66f\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"timestamp\": \"2023-10-09T04:46:28.012Z\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"bap_id\": \"{{bap_id}}\",\n        \"bap_uri\": \"{{bap_uri}}\"\n    },\n    \"message\": {\n        \"order\": {\n            \"provider\": {\n                \"id\": \"1\"\n            },\n            \"items\": [\n                {\n                    \"id\": \"1\"\n                }\n            ]\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_ev}}/select",
+							"host": [
+								"{{base_url_ev}}"
+							],
+							"path": [
+								"select"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Init",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{uei}}\",\n        \"location\": {\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            },\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"action\": \"init\",\n        \"version\": \"1.1.0\",\n        \"transaction_id\": \"fc24f1e9-6d01-44bf-888c-d5884ca0f66f\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"timestamp\": \"2023-10-09T04:46:28.012Z\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"bap_id\": \"{{bap_id}}\",\n        \"bap_uri\": \"{{bap_uri}}\"\n    },\n    \"message\": {\n        \"order\": {\n            \"provider\": {\n                \"id\": \"1\"\n            },\n            \"items\": [\n                {\n                    \"id\": \"1\"\n                }\n            ],\n            \"billing\": {\n                \"name\": \"Alice Smith\",\n                \"address\": \"Apt 303, Maple Towers, Richmond Road, 560001\",\n                \"state\": {\n                    \"name\": \"Jurong East\"\n                },\n                \"city\": {\n                    \"name\": \"Jurong East\"\n                },\n                \"email\": \"alice.smith@example.com\",\n                \"phone\": \"9886098860\"\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_ev}}/init",
+							"host": [
+								"{{base_url_ev}}"
+							],
+							"path": [
+								"init"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{uei}}\",\n        \"location\": {\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            },\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"action\": \"confirm\",\n        \"version\": \"1.1.0\",\n        \"transaction_id\": \"fc24f1e9-6d01-44bf-888c-d5884ca0f66f\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"timestamp\": \"2023-10-09T04:46:28.012Z\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"bap_id\": \"{{bap_id}}\",\n        \"bap_uri\": \"{{bap_uri}}\"\n    },\n    \"message\": {\n        \"order\": {\n            \"items\": [\n                {\n                    \"id\": \"1\"\n                }\n            ],\n            \"fulfillments\": [\n                {\n                    \"id\": \"1\",\n                    \"customer\": {\n                        \"contact\": {\n                            \"email\": \"fox.judie61234@abc.org\",\n                            \"phone\": \"+91-9999999999\"\n                        },\n                        \"person\": {\n                            \"name\": \"Judie Fox6\"\n                        }\n                    }\n                }\n            ],\n            \"billing\": {\n                \"name\": \"Industry buyer\",\n                \"address\": \"B005 aspire heights, Jurong East, SGP, 680230\",\n                \"state\": {\n                    \"name\": \"Jurong East\"\n                },\n                \"city\": {\n                    \"name\": \"Jurong East\"\n                },\n                \"email\": \"nobody@nomail.com\",\n                \"phone\": \"9886098860\"\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_ev}}/confirm",
+							"host": [
+								"{{base_url_ev}}"
+							],
+							"path": [
+								"confirm"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Status",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{uei}}\",\n        \"location\": {\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            },\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"action\": \"status\",\n        \"version\": \"1.1.0\",\n        \"transaction_id\": \"fc24f1e9-6d01-44bf-888c-d5884ca0f66f\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"timestamp\": \"2023-10-09T04:46:28.012Z\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"bap_id\": \"{{bap_id}}\",\n        \"bap_uri\": \"{{bap_uri}}\"\n    },\n    \"message\": {\n        \"order_id\": \"1\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_ev}}/status",
+							"host": [
+								"{{base_url_ev}}"
+							],
+							"path": [
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url_prod",
+			"value": "https://strapi-bpp.becknprotocol.io/beckn-bpp-adapter/health-check",
+			"type": "string"
+		},
+		{
+			"key": "base_url_dev",
+			"value": "https://strapi-bpp-dev.becknprotocol.io/beckn-bpp-adapter",
+			"type": "string"
+		},
+		{
+			"key": "base_url_local",
+			"value": "http://localhost:1337/beckn-bpp-adapter",
+			"type": "string"
+		},
+		{
+			"key": "dhp_consultation",
+			"value": "dhp:consultation:0.1.0",
+			"type": "string"
+		},
+		{
+			"key": "supply_chain",
+			"value": "supply-chain-services:assembly",
+			"type": "string"
+		},
+		{
+			"key": "odr",
+			"value": "online-dispute-resolution:0.1.0",
+			"type": "string"
+		},
+		{
+			"key": "bpp_id",
+			"value": "bpp-network",
+			"type": "string"
+		},
+		{
+			"key": "bpp_uri",
+			"value": "http://ec2-13-126-143-70.ap-south-1.compute.amazonaws.com:6002",
+			"type": "string"
+		},
+		{
+			"key": "uei",
+			"value": "uei:charging",
+			"type": "string"
+		},
+		{
+			"key": "base_url_ev",
+			"value": "http://ec2-13-126-143-70.ap-south-1.compute.amazonaws.com:5001",
+			"type": "string"
+		},
+		{
+			"key": "bap_id",
+			"value": "bap-network",
+			"type": "string"
+		},
+		{
+			"key": "bap_uri",
+			"value": "http://ec2-13-126-143-70.ap-south-1.compute.amazonaws.com:5002",
+			"type": "string"
+		}
+	]
+}
