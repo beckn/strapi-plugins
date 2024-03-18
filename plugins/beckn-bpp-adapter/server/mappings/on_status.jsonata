@@ -64,7 +64,11 @@
                 "price": $price(sc_retail_product),
                 "quantity": sc_retail_product.{
                     "available": {
-                        "count": stock_quantity ? stock_quantity : 0
+                        "count": stock_quantity ? stock_quantity : 0,
+                        "measure": {
+                            "value": $string(stock_quantity ? stock_quantity : 0),
+                            "unit": "kWh"
+                        }
                     }
                 },
                 "category_ids": $map(
@@ -75,7 +79,7 @@
                 )[],
                 "fulfillment_ids": item_fulfillment_id.fulfilment_id.id ? [
                     $string(item_fulfillment_id.fulfilment_id.id)
-                ] : [null],
+                ] : [],
                 "tags": $map(
                     $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'TAG'}),
                     function($v) {
@@ -102,8 +106,8 @@
                 "id": $string(fulfilment_id.id),
                 "state": {
                     "descriptor": {
-                        "code": state_code,
-                        "short_desc": state_value
+                        "code": $string(state_code ? state_code : "IN_PROGRESS"),
+                        "short_desc": $string(state_value ? state_value : "in progress")
                     },
                     "updated_at": $string(updatedAt)
                 },

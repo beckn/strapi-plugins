@@ -69,7 +69,11 @@
                 "price": $price(sc_retail_product),
                 "quantity": sc_retail_product.{
                     "available": {
-                        "count": stock_quantity ? stock_quantity : 0
+                        "count": stock_quantity ? stock_quantity : 0,
+                        "measure":{
+                            "value": $string(stock_quantity ? stock_quantity : 0),
+                            "unit": "kWh"
+                        }
                     }
                 },
                 "category_ids": $map(

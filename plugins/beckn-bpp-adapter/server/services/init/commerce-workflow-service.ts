@@ -22,7 +22,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const populate: KeyValuePair = {
         category_ids: {},
         location_id: {},
-        fulfillments: {},
+        fulfillments: {
+          populate: {
+            tag_ids: {
+              populate: {
+                tag_group_id: {}
+              }
+            }
+          }
+        },
         payment_methods: {},
         items: {
           populate: {

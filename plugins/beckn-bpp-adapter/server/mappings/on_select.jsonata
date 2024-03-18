@@ -82,8 +82,8 @@
                     "available": {
                         "count": stock_quantity ? stock_quantity : 0,
                         "measure":{
-                            "value":stock_quantity ? stock_quantity : 0,
-                            "unit":"kWh"
+                            "value": $string(stock_quantity ? stock_quantity : 0),
+                            "unit": "kWh"
                         }
                     }
                 },
@@ -104,8 +104,10 @@
                             "descriptor": $v.taxanomy_id.tag_group_id.tag_group_name,
                             "list": [
                                 {
-                                    "descriptor": $v.taxanomy_id.tag_name,
-                                    "value": $v.taxanomy_id.tag_name,
+                                    "descriptor": {
+                                       "description": $v.taxanomy_id.tag_name
+                                    },
+                                    "value": $v.taxanomy_id.code,
                                     "display": true
                                 }
                             ]

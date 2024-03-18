@@ -115,7 +115,22 @@ export const fulfillments = (fulfillments: KeyValuePair[]) => {
           id: agent?.id ? agent?.id + '' : '',
           name: agent?.first_name + agent?.last_name
         }
-      }
+      },
+      tags: fulfillment.tag_ids.map((tag) => {
+        return {
+          display: true,
+          descriptor: {
+            description: tag.tag_group_id?.tag_group_name
+          },
+          list: [{
+            descriptor: {
+              description: tag.tag_name
+            },
+            value: tag.code,
+            display: true
+          }]
+        };
+      })
     }
   });
 }
