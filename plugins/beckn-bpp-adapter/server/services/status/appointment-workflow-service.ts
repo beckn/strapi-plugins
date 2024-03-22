@@ -2,12 +2,13 @@ import { Strapi } from "@strapi/strapi";
 import { FilterUtil, ObjectUtil } from "../../util";
 import { KeyValuePair } from "../../types";
 import { PLUGIN } from "../../constants";
+import { Object } from '../../interface/object'
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async index({ message, context }) {
+  async index(obj: Object) {
     try {
-      const { order_id } = message;
-      const { domain } = context;
+      const { order_id } = obj.message;
+      const { domain } = obj.context;
       const populate: KeyValuePair = {
         order_id: {
           filters: {
@@ -72,7 +73,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         agent_id: {},
         order_fulfillment_location_id: {},
       };
-
+      console.log(JSON.stringify(populate))
       const orderDetails = await strapi.entityService.findMany(
         "api::order-fulfillment.order-fulfillment",
         {
@@ -83,11 +84,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       const commonService = strapi.plugin(PLUGIN).service("commonService");
       await Promise.all(
-        orderDetails.map(async (orderDetail) => {
+        orderDetails.map(async (orderDetail:any) => {
           await Promise.all(
-            await orderDetail.order_id.items.map(async (item) => {
+            await orderDetail.order_id.items.map(async (item:any) => {
               await Promise.all(
-                item["cat_attr_tag_relations"]?.map(async (taxanomy) => {
+                item["cat_attr_tag_relations"]?.map(async (taxanomy:any) => {
                   if (taxanomy.taxanomy === "CATEGORY") {
                     taxanomy.taxanomy_id = await commonService.getCategoryById(
                       taxanomy.taxanomy_id,

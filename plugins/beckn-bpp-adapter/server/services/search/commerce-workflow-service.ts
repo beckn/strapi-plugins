@@ -1,15 +1,16 @@
 import { Strapi } from '@strapi/strapi';
 import { ObjectUtil, FilterUtil } from '../../util';
-import { KeyValuePair } from '.././../types';
+import { KeyValuePair } from '../../types';
 import { PLUGIN } from '../../constants';
-
+import { Object } from '../../interface/object'
 export default ({ strapi }: { strapi: Strapi }) => ({
-    async index({ message, context }) {
+    async index(obj: Object) {
+        const { message,context } = obj;
         const {
             item,
             provider,
             category
-        } = message?.intent || {};
+        } = message.intent;
         const { domain } = context;
         const filters: KeyValuePair = provider ? FilterUtil.getProviderFilter(provider) : {};
         const populate: KeyValuePair = {
@@ -73,16 +74,19 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         ObjectUtil.removeEmptyObjectKeys(filters);
         ObjectUtil.removeEmptyKeys(populate);
 
+       
+
         const providers = await strapi.entityService.findMany('api::provider.provider', {
             filters,
             populate
         });
+
         const commonService = strapi
             .plugin(PLUGIN)
             .service('commonService');
-        await Promise.all(providers.map(async (provider) => {
-            await Promise.all(await provider.items.map(async (item) => {
-                await Promise.all(item['cat_attr_tag_relations']?.map(async (taxanomy) => {
+        await Promise.all(providers.map(async (provider:any) => {
+            await Promise.all(await provider.items.map(async (item:any) => {
+                await Promise.all(item['cat_attr_tag_relations']?.map(async (taxanomy:any) => {
                     if (taxanomy.taxanomy === "CATEGORY") {
                         taxanomy.taxanomy_id = await commonService.getCategoryById(taxanomy.taxanomy_id, {
                             parent_id: {}

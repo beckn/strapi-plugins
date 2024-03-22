@@ -1,12 +1,13 @@
 import { Strapi } from "@strapi/strapi";
 import { KeyValuePair } from "../../types";
 import { PLUGIN } from "../../constants";
+import { Object } from '../../interface/object'
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async index({ message, context }) {
-    try {
-      const { order_id, cancellation_reason_id, descriptor } = message;
-      const { domain } = context;
+  async index(obj: Object) {
+        try {
+      const { order_id, cancellation_reason_id, descriptor } = obj.message;
+      const { domain } = obj.context;
       const cancelMedia = [
         ...(descriptor?.media || []),
         ...(descriptor?.images || [])
@@ -14,7 +15,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const cancelMediaResponse = await createMediaEntries(cancelMedia);
       delete descriptor?.media;
       delete descriptor?.images;
-      const cancelMediaId = cancelMediaResponse.map(
+      const cancelMediaId = cancelMediaResponse?.map(
         (obj: { id: string }) => obj.id
       );
 
@@ -25,7 +26,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             reason_id: cancellation_reason_id || "",
             reason: descriptor.short_desc || "",
             action_date_time: new Date().toISOString(),
-            done_by: context.bap_id,
+            done_by: obj.context.bap_id,
             media: {
               connect: cancelMediaId,
             },
@@ -100,12 +101,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       };
       const cancelDetails = await strapi.entityService.update(
         "api::order-fulfillment.order-fulfillment",
-        orderFulfillment[0].id,
+        orderFulfillment[0]?.id,
         {
           data: {
             state_code: "USER CANCELLED",
-            state_value: message?.descriptor?.short_desc
-              ? message?.descriptor?.short_desc
+            state_value: obj.message?.descriptor?.short_desc
+              ? obj.message?.descriptor?.short_desc
               : "cancelled by user",
           },
           populate,
@@ -115,9 +116,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const commonService = strapi.plugin(PLUGIN).service("commonService");
 
       await Promise.all(
-        await cancelDetails.order_id.items.map(async (item) => {
+        await cancelDetails.order_id.items.map(async (item:any) => {
           await Promise.all(
-            item["cat_attr_tag_relations"]?.map(async (taxanomy) => {
+            item["cat_attr_tag_relations"]?.map(async (taxanomy:any) => {
               if (taxanomy.taxanomy === "CATEGORY") {
                 taxanomy.taxanomy_id = await commonService.getCategoryById(
                   taxanomy.taxanomy_id,
@@ -146,11 +147,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
 });
 
-async function createMediaEntries(mediaItems) {
+async function createMediaEntries(mediaItems:any) {
   if (!mediaItems.length) return [];
 
   return Promise.all(
-    mediaItems.map((item) =>
+    mediaItems.map((item:any) =>
       strapi.entityService.create("api::media.media", {
         data: {
           url: item.url,

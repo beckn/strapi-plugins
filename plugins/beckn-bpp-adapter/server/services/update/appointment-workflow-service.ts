@@ -1,11 +1,12 @@
 import { Strapi } from "@strapi/strapi";
 import { PLUGIN } from "../../constants";
 import { ObjectUtil } from "../../util";
+import { Object } from '../../interface/object'
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async index({ message }) {
-    try {
-      const { order } = message;
+  async index(obj: Object) {
+        try {
+            const { order } = obj.message;
       if (order) {
         const result = await strapi.entityService.findMany(
           "api::order-fulfillment.order-fulfillment",
@@ -65,9 +66,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           await this.update(order, customerId);
           const commonService = strapi.plugin(PLUGIN).service("commonService");
           await Promise.all(
-            await (orderResponse?.order_id?.items || []).map(async (item) => {
+            await (orderResponse?.order_id?.items || []).map(async (item:any) => {
               await Promise.all(
-                item["cat_attr_tag_relations"]?.map(async (taxanomy) => {
+                item["cat_attr_tag_relations"]?.map(async (taxanomy:any) => {
                   if (taxanomy.taxanomy === "CATEGORY") {
                     taxanomy.taxanomy_id = await commonService.getCategoryById(
                       taxanomy.taxanomy_id,
@@ -106,7 +107,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       console.log("Error", e);
     }
   },
-  async update(order, customerId) {
+  async update(order:any, customerId:any) {
     const { customer = {} } = order?.fulfillments[0] || {};
     const data = ObjectUtil.removeEmptyKeys({
       contact: customer?.contact?.phone,
@@ -118,10 +119,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       data
     });
   },
-  getItemTotalPrice(items) {
+  getItemTotalPrice(items:any) {
     let value = 0;
     let currency = "";
-    items.map((item) => {
+    items.map((item:any) => {
       value += Number(item.sc_retail_product.min_price);
       currency = item.sc_retail_product.currency;
     });

@@ -1,9 +1,10 @@
 import { Strapi } from "@strapi/strapi";
+import { Object } from '../../interface/object'
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async index({ message }) {
+  async index(obj: Object) {
     try {
-      const { ref_id, callback_phone } = message.support;
+      const { ref_id, callback_phone } = obj.message.support;
       const supportDetails = await strapi.entityService.findOne(
         "api::support.support",
         1

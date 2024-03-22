@@ -1,10 +1,11 @@
 import { Strapi } from "@strapi/strapi";
 import { FilterUtil, ObjectUtil } from "../../util";
-import { KeyValuePair } from ".././../types";
+import { KeyValuePair } from "../../types";
 import { PLUGIN } from "../../constants";
-
+import { Object } from '../../interface/object'
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async index({ message, context }) {
+    async index(obj: Object) {
+        const { message,context } = obj;
     try {
       const { items, provider, billing } = message.order;
       const { domain } = context;
@@ -89,11 +90,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       const commonService = strapi.plugin(PLUGIN).service("commonService");
       await Promise.all(
-        itemDetails.map(async (itemDetail) => {
+        itemDetails.map(async (itemDetail:any) => {
           await Promise.all(
-            await itemDetail.items.map(async (item) => {
+            await itemDetail.items.map(async (item:any) => {
               await Promise.all(
-                item["cat_attr_tag_relations"]?.map(async (taxanomy) => {
+                item["cat_attr_tag_relations"]?.map(async (taxanomy:any) => {
                   if (taxanomy.taxanomy === "CATEGORY") {
                     taxanomy.taxanomy_id = await commonService.getCategoryById(
                       taxanomy.taxanomy_id,
@@ -116,7 +117,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         })
       );
       const billingInfo = billing;
-      const initDetails = itemDetails.map((item) => ({
+      const initDetails = itemDetails.map((item:any) => ({
         ...item,
         billing: billingInfo,
       }));

@@ -41,7 +41,7 @@ export class FilterUtil {
         return filter;
     }
 
-    static getItemsFilter = (items) => {
+    static getItemsFilter = (items:any) => {
         return items.map((obj: { id: string }) => obj.id);
     }
 }

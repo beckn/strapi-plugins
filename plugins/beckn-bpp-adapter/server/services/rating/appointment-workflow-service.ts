@@ -1,11 +1,14 @@
 import { Strapi } from '@strapi/strapi';
 import { PLUGIN } from '../../constants';
+import { Object } from '../../interface/object'
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-    async index({ message, context }) {
-        const ratingService = strapi
-            .plugin(PLUGIN)
-            .service('ratingService');
-        return ratingService.rating({ message, context });
-    }
+  async index(obj: Object) {
+    const ratingService = strapi
+      .plugin(PLUGIN)
+      .service('ratingService');
+      const message=obj.message
+      const context=obj.context
+    return ratingService.rating({ message, context });
+  }
 });

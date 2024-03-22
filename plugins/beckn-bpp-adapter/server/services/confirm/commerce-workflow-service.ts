@@ -2,15 +2,16 @@ import { Strapi } from "@strapi/strapi";
 import { FilterUtil, ObjectUtil } from "../../util";
 import { KeyValuePair } from "../../types";
 import { PLUGIN } from "../../constants";
+import { Object } from '../../interface/object'
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async index({ message, context }) {
+  async index(obj: Object) {
     try {
-      const { items, provider, billing, fulfillments } = message.order;
-      const { domain, transaction_id } = context;
+      const { items, provider, billing, fulfillments } = obj.message.order;
+      const { domain, transaction_id } = obj.context;
       const currentDate = new Date();
       const isoString = currentDate.toISOString();
-      let orderId;
+      let orderId:String;
 
       // Extract billing details
       const billingInfo = {
@@ -61,6 +62,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       // Start transaction
       await strapi.db.transaction(async ({ trx }) => {
         try {
+          console.log("ENTEREDDD")
           const orderData = {
             status: "ACTIVE",
             items: itemValue,
@@ -216,13 +218,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate
         }
       );
+      
       const commonService = strapi.plugin(PLUGIN).service("commonService");
       await Promise.all(
-        itemDetails.map(async (itemDetail) => {
+        itemDetails.map(async (itemDetail:any) => {
           await Promise.all(
-            await itemDetail.items.map(async (item) => {
+            await itemDetail.items.map(async (item:any) => {
               await Promise.all(
-                item["cat_attr_tag_relations"]?.map(async (taxanomy) => {
+                item["cat_attr_tag_relations"]?.map(async (taxanomy:any) => {
                   if (taxanomy.taxanomy === "CATEGORY") {
                     taxanomy.taxanomy_id = await commonService.getCategoryById(
                       taxanomy.taxanomy_id,
@@ -247,7 +250,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const billingDetails = billing;
       const fulfillmentDetails = fulfillments;
 
-      const confirmDetails = itemDetails.map((item) => ({
+      const confirmDetails = itemDetails.map((item:any) => ({
         ...item,
         billing: billingDetails,
         fulfillment: fulfillmentDetails,
