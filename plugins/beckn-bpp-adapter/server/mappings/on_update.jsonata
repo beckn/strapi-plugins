@@ -128,7 +128,7 @@
                 "type": "PRE-ORDER"
             }[],
             "quote": {
-                "price": provider.payment_methods.price,
+                "price": {"value":$string(provider.payment_methods.price.value)},
                 "breakup": %.message.order_id.items[0].sc_retail_product.price_bareakup_ids.{
                     "item": {
                         "id": item_id
