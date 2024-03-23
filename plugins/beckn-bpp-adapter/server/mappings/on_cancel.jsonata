@@ -12,11 +12,10 @@
                     "additional_desc": {
                         "url": provider_uri
                     },
-
                     "images": logo.{
-                            "url": url?url:"https://abc.com",
-                            "size_type": size_type?size_type:"sm"
-                        }[]
+                        "url": url ? url : "https://abc.com",
+                        "size_type": size_type ? size_type : "sm"
+                    }[]
                 },
                 "categories": category_ids. {
                     "id": $string(id),

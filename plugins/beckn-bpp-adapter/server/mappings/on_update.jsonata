@@ -13,8 +13,8 @@
                         "url": provider_uri
                     },
                     "images": logo.{
-                        "url": url,
-                        "size_type": size_type
+                        "url": url ? url : "https://abc.com",
+                        "size_type": size_type ? size_type : "sm"
                     }[]
                 }
             },
@@ -128,7 +128,10 @@
                 "type": "PRE-ORDER"
             }[],
             "quote": {
-                "price": {"value":$string(provider.payment_methods.price.value)},
+                "price": {
+                    "value": $string(provider.payment_methods.price.value),
+                    "currency": provider.payment_methods.price.currency
+                },
                 "breakup": %.message.order_id.items[0].sc_retail_product.price_bareakup_ids.{
                     "item": {
                         "id": item_id
@@ -136,7 +139,7 @@
                     "title": title,
                     "price": {
                         "currency": currency,
-                        "value": value
+                        "value": $string(value)
                     }
                 }[]
             },
