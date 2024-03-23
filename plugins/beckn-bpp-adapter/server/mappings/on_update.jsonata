@@ -1,9 +1,8 @@
 {
     "context": $context(context, $action),
-    "message1": message,
     "message": {
         "order": message.{
-            "id": order_id.id,
+            "id": $string(order_id.id),
             "provider": provider.{
                 "id": $string(id),
                 "descriptor": {
