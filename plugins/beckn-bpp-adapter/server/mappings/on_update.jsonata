@@ -12,10 +12,12 @@
                     "additional_desc": {
                         "url": provider_uri
                     },
-                    "images": logo.{
-                        "url": url ? url : "https://abc.com",
-                        "size_type": size_type ? size_type : "sm"
-                    }[]
+                    "images": [
+                        {
+                            "url": "https://abc.com",
+                            "size_type": "sm"
+                        }
+                    ]
                 }
             },
             "items": order_id.items.{

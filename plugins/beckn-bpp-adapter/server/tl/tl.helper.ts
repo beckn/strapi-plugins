@@ -97,7 +97,6 @@ export const payments = async (
 };
 
 export const price = (sc_retail_product: KeyValuePair = {}) => {
-  console.log("min_price======>", sc_retail_product);
   const { min_price = 0, currency = "INR" } = sc_retail_product || {};
   return {
     value: min_price ? min_price + "" : "0",

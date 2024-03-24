@@ -34,7 +34,7 @@ export default ({ }: { strapi: Strapi }) => ({
             };
             await axios.post(url, data, { headers: bppHeaders });
         } catch (error) {
-            console.log('Error', JSON.stringify(error));
+            console.log('Error Data:', JSON.stringify(error?.response?.data));
             // throw error;
         }
     }

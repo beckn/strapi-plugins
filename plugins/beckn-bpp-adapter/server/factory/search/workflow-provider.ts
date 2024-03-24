@@ -23,7 +23,8 @@ class WorkflowProvider {
                 .plugin(PLUGIN)
                 .service(`${action}AppointmentWorkflowService`);
         } else {
-            throw new Error(`No domain matched, domain name ${domain}`);
+            console.log('Error', `No domain matched, domain name ${domain}`);
+            // throw new Error(`No domain matched, domain name ${domain}`);
         }
         return workflowService;
     }

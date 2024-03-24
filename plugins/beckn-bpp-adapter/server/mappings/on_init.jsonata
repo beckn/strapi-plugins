@@ -12,8 +12,8 @@
                         "url": provider_uri
                     },
                     "images": items.image.{
-                        "url": url?url:"https://abc.com",
-                        "size_type": size_type?size_type:"sm"
+                        "url": url ? url : "https://abc.com",
+                        "size_type": size_type ? size_type : "sm"
                     }[]
                 },
                 "categories": category_ids. {
