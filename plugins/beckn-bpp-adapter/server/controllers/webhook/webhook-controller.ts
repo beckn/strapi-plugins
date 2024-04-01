@@ -15,7 +15,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 if (
                     !result ||
                     Array.isArray(result) && !result.length ||
-                    typeof result === 'object' && result !== null
+                    typeof result === 'object' && result !== null && !Object.keys(result).length
                 ) {
                     console.log('No Data Found');
                 } else {
