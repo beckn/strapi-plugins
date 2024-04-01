@@ -12,8 +12,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             if (process.env.SYNC_RESPONSE === 'true') {
                 const workflowService = WorkflowProvider.get(body);
                 const result = await workflowService.index(body);
-                const transformedResult = await TLService.transform({ message: result }, `on_${action}`);
-                ctx.body = transformedResult;
+                if (
+                    !result ||
+                    Array.isArray(result) && !result.length ||
+                    typeof result === 'object' && result !== null
+                ) {
+                    console.log('No Data Found');
+                } else {
+                    const transformedResult = await TLService.transform({ message: result }, `on_${action}`);
+                    ctx.body = transformedResult;
+                }
             } else {
                 await strapi.eventHub.emit('webhook.request', body);
                 ctx.body = {

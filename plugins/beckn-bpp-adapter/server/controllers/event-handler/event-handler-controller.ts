@@ -13,8 +13,16 @@ export default ({ }: { strapi: Strapi }) => ({
             const workflowService = WorkflowProvider.get(filter);
             if (workflowService) {
                 const result = await workflowService.index(filter);
-                const transformedResult = await TLService.transform({ message: result, context }, resAction);
-                await this.webhookCall(transformedResult, resAction);
+                if (
+                    !result ||
+                    Array.isArray(result) && !result.length ||
+                    typeof result === 'object' && result !== null
+                ) {
+                    console.log('No Data Found');
+                } else {
+                    const transformedResult = await TLService.transform({ message: result, context }, resAction);
+                    await this.webhookCall(transformedResult, resAction);
+                }
             }
         } catch (error) {
             throw error;
