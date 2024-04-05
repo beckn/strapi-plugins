@@ -106,8 +106,10 @@ export class FilterUtil {
                         const checkInLong = checkInGps[1];
                         const itemLat = itemGps[0];
                         const itemLong = itemGps[1];
-                        console.log(checkInReq?.time?.timestamp, checkOutReq?.time?.timestamp, checkInItem?.timestamp, checkOutItem?.timestamp);
+                        console.log(checkInReq?.time?.timestamp, checkOutReq?.time?.timestamp, checkInItem?.timestamp, checkOutItem?.timestamp, JSON.stringify(item));
                         if (
+                            !checkInItem?.timestamp ||
+                            !checkOutItem?.timestamp ||
                             !moment(checkInReq?.time?.timestamp).isBetween
                                 (checkInItem?.timestamp, checkOutItem?.timestamp) ||
                             !moment(checkOutReq?.time?.timestamp).isBetween
