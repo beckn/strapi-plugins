@@ -97,7 +97,8 @@
                             },
                             "list": [
                                 {
-                                    "value": $v.taxanomy_id.tag_name,
+                                    "value": $v.taxanomy_id.value,
+                                    "code": $v.taxanomy_id.code,
                                     "display": true
                                 }
                             ]
