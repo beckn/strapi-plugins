@@ -17,13 +17,17 @@ export class TLService {
           "utf8"
         )
       );
-      // console.log("Transforming %s data: \n%o", action, JSON.stringify(data));
+      console.log("Transforming %s data: \n%o", action, JSON.stringify(data));
       let transformed = await expression.evaluate(data, {
         action,
         ...tlHelpers
       });
       transformed = ObjectUtil.removeEmptyObjectKeys(transformed);
-      // console.log("Transformed %s data: \n%o", action, JSON.stringify(transformed));
+      console.log(
+        "Transformed %s data: \n%o",
+        action,
+        JSON.stringify(transformed)
+      );
       return transformed;
     }
     return {};
