@@ -33,7 +33,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                           }
                         }
                       },
-                      item_fulfillment_id: {
+                      item_fulfillment_ids: {
                         populate: {
                           fulfilment_id: {}
                         }

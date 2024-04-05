@@ -29,7 +29,7 @@ export const xInput = async (action: string) => {
 export const quote = async (items: KeyValuePair[]) => {
   const priceValue = items?.reduce(
     (accumulator, currentValue) =>
-      accumulator + Number(currentValue?.sc_retail_product.min_price),
+      accumulator + Number(currentValue?.sc_retail_product?.min_price),
     0
   );
   const breakup: KeyValuePair[] = [];
@@ -52,7 +52,7 @@ export const quote = async (items: KeyValuePair[]) => {
   return {
     price: {
       value: priceValue + "",
-      currency: items[0].sc_retail_product.currency
+      currency: items[0].sc_retail_product?.currency
     },
     breakup
   };
@@ -72,7 +72,7 @@ export const payments = async (
   if (!incomingPrice) {
     const priceValue = provider?.items.reduce(
       (accumulator: number, currentValue: KeyValuePair) =>
-        accumulator + Number(currentValue?.sc_retail_product.min_price),
+        accumulator + Number(currentValue?.sc_retail_product?.min_price),
       0
     );
     price.value = priceValue;
