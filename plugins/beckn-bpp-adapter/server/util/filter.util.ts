@@ -74,9 +74,9 @@ export class FilterUtil {
         providers: KeyValuePair[],
         fulfillment: KeyValuePair,
         context: KeyValuePair
-    ) => {
+    ): KeyValuePair[] => {
         // TODO: Optimisation required, move common code to util - Abhishek Y
-
+        let filteredProviders: KeyValuePair[] = [];
         if (isHospitality(context)) {
             let checkInReq: KeyValuePair | null = null;
             let checkOutReq: KeyValuePair | null = null;
@@ -89,11 +89,11 @@ export class FilterUtil {
             });
 
             if (checkInReq && checkOutReq) {
-                providers.map((providerItem: KeyValuePair, providerIndex: number) => {
-                    providerItem.items.map((item: KeyValuePair, itemIndex: number) => {
+                filteredProviders = providers.filter((providerItem: KeyValuePair, providerIndex: number) => {
+                    providerItem.items.filter((item: KeyValuePair, itemIndex: number) => {
                         let checkInItem: any = null;
                         let checkOutItem: any = null;
-                        item?.item_fulfillment_ids?.map((fulfillment: KeyValuePair) => {
+                        item?.item_fulfillment_ids?.forEach((fulfillment: KeyValuePair) => {
                             if (fulfillment?.fulfilment_id?.type?.toLowerCase() === CHECK_IN) {
                                 checkInItem = fulfillment;
                             } else if (fulfillment?.fulfilment_id?.type?.toLowerCase() === CHECK_OUT) {
@@ -116,12 +116,11 @@ export class FilterUtil {
                                 (checkInItem?.timestamp, checkOutItem?.timestamp) ||
                             (checkInGps.length && itemGps.length && !isInRange(checkInLat, checkInLong, itemLat, itemLong))
                         ) {
-                            providerItem.items.splice(itemIndex, 1);
+                            return false;
                         }
+                        return true;
                     });
-                    if (!providerItem?.items?.length) {
-                        providers.splice(providerIndex, 1);
-                    }
+                    return providerItem.items.length > 0;
                 });
             }
         } else if (isTourism(context)) {
@@ -133,10 +132,10 @@ export class FilterUtil {
             });
 
             if (checkInReq) {
-                providers.map((providerItem: KeyValuePair, providerIndex) => {
-                    providerItem.items.map((item: KeyValuePair, itemIndex) => {
+                filteredProviders = providers.filter((providerItem: KeyValuePair, providerIndex) => {
+                    providerItem.items.filter((item: KeyValuePair, itemIndex) => {
                         let checkInItem: any = null;
-                        item?.item_fulfillment_ids?.map((fulfillment: KeyValuePair) => {
+                        item?.item_fulfillment_ids?.forEach((fulfillment: KeyValuePair) => {
                             if (fulfillment?.fulfilment_id?.type?.toLowerCase() === CHECK_IN) {
                                 checkInItem = fulfillment;
                             }
@@ -155,21 +154,20 @@ export class FilterUtil {
                             moment(checkInReq?.time?.timestamp).format('YYYY-MM-DD') !== moment(checkInItem?.timestamp).format('YYYY-MM-DD') ||
                             (checkInGps.length && itemGps.length && !isInRange(checkInLat, checkInLong, itemLat, itemLong))
                         ) {
-                            providerItem.items.splice(itemIndex, 1);
+                            return false;
                         }
+                        return true;
                     });
-                    if (!providerItem?.items?.length) {
-                        providers.splice(providerIndex, 1);
-                    }
+                    return providerItem.items.length > 0;
                 });
             }
         } else {
             const gps: string = fulfillment?.stops?.find((stop: KeyValuePair) => stop?.location?.gps)?.location?.gps;
             if (gps) {
-                providers.map((providerItem: KeyValuePair, providerIndex: number) => {
-                    providerItem.items.map((item: KeyValuePair, itemIndex: number) => {
+                filteredProviders = providers.filter((providerItem: KeyValuePair, providerIndex: number) => {
+                    providerItem.items.filter((item: KeyValuePair, itemIndex: number) => {
                         let isMatched: boolean = false;
-                        item?.item_fulfillment_ids?.map((fulfillment: KeyValuePair) => {
+                        item?.item_fulfillment_ids?.forEach((fulfillment: KeyValuePair) => {
                             const checkInGps = gps.split(',') || [];
                             const itemGps = fulfillment?.location_id?.gps.split(',') || [];
                             const checkInLat = checkInGps[0];
@@ -180,15 +178,12 @@ export class FilterUtil {
                                 isMatched = true;
                             }
                         });
-                        if (!isMatched) {
-                            providerItem.items.splice(itemIndex, 1);
-                        }
+                        return isMatched;
                     });
-                    if (!providerItem?.items?.length) {
-                        providers.splice(providerIndex, 1);
-                    }
+                    return providerItem.items.length > 0;
                 });
             }
         }
+        return filteredProviders;
     }
 }

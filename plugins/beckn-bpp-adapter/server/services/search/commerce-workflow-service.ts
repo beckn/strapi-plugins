@@ -75,13 +75,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     ObjectUtil.removeEmptyObjectKeys(filters);
     ObjectUtil.removeEmptyKeys(populate);
 
-    const providers = await strapi.entityService.findMany('api::provider.provider', {
+    let providers = await strapi.entityService.findMany('api::provider.provider', {
       filters,
       populate
     });
 
     if (fulfillment) {
-      FilterUtil.filterByFulfillment(providers, fulfillment, context);
+      providers = FilterUtil.filterByFulfillment(providers, fulfillment, context);
     }
 
     const commonService = strapi

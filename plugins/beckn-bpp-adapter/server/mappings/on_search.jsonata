@@ -14,7 +14,7 @@
                     "short_desc": short_desc,
                     "long_desc": long_desc,
                     "additional_desc": {
-                        "url": "www.makerspace.com"
+                        "url": provider_uri ? provider_uri : "www.becknprotocol.io"
                     },
                     "images": [
                         {
