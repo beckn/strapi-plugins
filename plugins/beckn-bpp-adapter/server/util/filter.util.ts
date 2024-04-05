@@ -90,7 +90,7 @@ export class FilterUtil {
 
             if (checkInReq && checkOutReq) {
                 filteredProviders = providers.filter((providerItem: KeyValuePair, providerIndex: number) => {
-                    providerItem.items.filter((item: KeyValuePair, itemIndex: number) => {
+                    providerItem.items = providerItem.items.filter((item: KeyValuePair, itemIndex: number) => {
                         let checkInItem: any = null;
                         let checkOutItem: any = null;
                         item?.item_fulfillment_ids?.forEach((fulfillment: KeyValuePair) => {
@@ -133,7 +133,7 @@ export class FilterUtil {
 
             if (checkInReq) {
                 filteredProviders = providers.filter((providerItem: KeyValuePair, providerIndex) => {
-                    providerItem.items.filter((item: KeyValuePair, itemIndex) => {
+                    providerItem.items = providerItem.items.filter((item: KeyValuePair, itemIndex) => {
                         let checkInItem: any = null;
                         item?.item_fulfillment_ids?.forEach((fulfillment: KeyValuePair) => {
                             if (fulfillment?.fulfilment_id?.type?.toLowerCase() === CHECK_IN) {
@@ -165,7 +165,7 @@ export class FilterUtil {
             const gps: string = fulfillment?.stops?.find((stop: KeyValuePair) => stop?.location?.gps)?.location?.gps;
             if (gps) {
                 filteredProviders = providers.filter((providerItem: KeyValuePair, providerIndex: number) => {
-                    providerItem.items.filter((item: KeyValuePair, itemIndex: number) => {
+                    providerItem.items = providerItem.items.filter((item: KeyValuePair, itemIndex: number) => {
                         let isMatched: boolean = false;
                         item?.item_fulfillment_ids?.forEach((fulfillment: KeyValuePair) => {
                             const checkInGps = gps.split(',') || [];
