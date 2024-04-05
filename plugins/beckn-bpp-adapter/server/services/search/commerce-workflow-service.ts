@@ -8,7 +8,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         const {
             item,
             provider,
-            category
+            category,
+            fulfillment
         } = message?.intent || {};
         const { domain } = context;
         const filters: KeyValuePair = provider ? FilterUtil.getProviderFilter(provider) : {};
@@ -33,7 +34,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                             }
                         }
                     },
-                    item_fulfillment_id: {
+                    item_fulfillment_ids: {
                         populate: {
                             fulfilment_id: {
                                 populate: {
@@ -70,6 +71,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 populate.category_ids.filters = filters.category_ids = categoryFilter;
             }
         }
+
         ObjectUtil.removeEmptyObjectKeys(filters);
         ObjectUtil.removeEmptyKeys(populate);
 
@@ -77,6 +79,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             filters,
             populate
         });
+
+        if (fulfillment) {
+            FilterUtil.filterByFulfillment(providers, fulfillment, context);
+        }
+
         const commonService = strapi
             .plugin(PLUGIN)
             .service('commonService');
@@ -98,5 +105,3 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         return providers;
     }
 });
-
-

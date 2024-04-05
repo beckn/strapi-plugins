@@ -95,10 +95,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const custId = existingCustomer
             ? existingCustomer.id
             : (
-                await strapi.entityService.create("api::customer.customer", {
-                  data: custData
-                })
-              ).id;
+              await strapi.entityService.create("api::customer.customer", {
+                data: custData
+              })
+            ).id;
 
           // Create shipping location
           const createShipping = await strapi.entityService.create(
@@ -175,7 +175,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 }
               }
             },
-            item_fulfillment_id: {
+            item_fulfillment_ids: {
               populate: {
                 fulfilment_id: {
                   populate: {

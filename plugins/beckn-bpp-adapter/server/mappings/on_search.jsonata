@@ -49,7 +49,7 @@
                         "area_code": $string(location_id.zip)
                     }
                 ],
-                "fulfillments": $fulfillments($append(fulfillments, [items.item_fulfillment_id.fulfilment_id])),
+                "fulfillments": $fulfillments($append(fulfillments, [items.item_fulfillment_ids.fulfilment_id])),
                 "rateable": true,
                 "items": items.{
                     "id": $string(id),
@@ -78,9 +78,11 @@
                             $string($v.taxanomy_id.id)
                         }
                     )[],
-                    "fulfillment_ids": item_fulfillment_id.fulfilment_id.id ? [
-                        $string(item_fulfillment_id.fulfilment_id.id)
-                    ] : [],
+                    "fulfillment_ids": $count(item_fulfillment_ids) > 0 ?
+                        $map(item_fulfillment_ids, function($v){
+                            $string($v.fulfilment_id.id)
+                        })[] :
+                    [],
                     "tags": $map(
                         $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'TAG'}),
                         function($v) {
