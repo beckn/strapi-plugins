@@ -87,10 +87,9 @@ export class FilterUtil {
                     checkOutReq = fulfillmentStop;
                 }
             });
-
             if (checkInReq && checkOutReq) {
-                filteredProviders = providers.filter((providerItem: KeyValuePair, providerIndex: number) => {
-                    providerItem.items = providerItem.items.filter((item: KeyValuePair, itemIndex: number) => {
+                filteredProviders = providers.filter((providerItem: KeyValuePair) => {
+                    providerItem.items = providerItem.items.filter((item: KeyValuePair) => {
                         let checkInItem: any = null;
                         let checkOutItem: any = null;
                         item?.item_fulfillment_ids?.forEach((fulfillment: KeyValuePair) => {
@@ -141,10 +140,9 @@ export class FilterUtil {
                     checkInReq = fulfillmentStop;
                 }
             });
-
             if (checkInReq) {
-                filteredProviders = providers.filter((providerItem: KeyValuePair, providerIndex) => {
-                    providerItem.items = providerItem.items.filter((item: KeyValuePair, itemIndex) => {
+                filteredProviders = providers.filter((providerItem: KeyValuePair) => {
+                    providerItem.items = providerItem.items.filter((item: KeyValuePair) => {
                         let checkInItem: any = null;
                         item?.item_fulfillment_ids?.forEach((fulfillment: KeyValuePair) => {
                             if (fulfillment?.fulfilment_id?.type?.toLowerCase() === CHECK_IN) {
@@ -175,8 +173,8 @@ export class FilterUtil {
         } else {
             const gps: string = fulfillment?.stops?.find((stop: KeyValuePair) => stop?.location?.gps)?.location?.gps;
             if (gps) {
-                filteredProviders = providers.filter((providerItem: KeyValuePair, providerIndex: number) => {
-                    providerItem.items = providerItem.items.filter((item: KeyValuePair, itemIndex: number) => {
+                filteredProviders = providers.filter((providerItem: KeyValuePair) => {
+                    providerItem.items = providerItem.items.filter((item: KeyValuePair) => {
                         let isMatched: boolean = false;
                         item?.item_fulfillment_ids?.forEach((fulfillment: KeyValuePair) => {
                             const checkInGps = gps.split(',') || [];
@@ -185,6 +183,12 @@ export class FilterUtil {
                             const checkInLong = checkInGps[1];
                             const itemLat = itemGps[0];
                             const itemLong = itemGps[1];
+                            console.log(
+                                checkInGps.length,
+                                itemGps.length,
+                                isInRange(checkInLat, checkInLong, itemLat, itemLong),
+                                JSON.stringify(item)
+                            );
                             if ((checkInGps.length && itemGps.length && isInRange(checkInLat, checkInLong, itemLat, itemLong))) {
                                 isMatched = true;
                             }
