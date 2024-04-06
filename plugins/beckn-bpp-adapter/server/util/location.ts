@@ -2,6 +2,7 @@ import { RADIUS } from "../constants";
 
 export const isInRange = (lat1, lon1, lat2, lon2, radius = RADIUS) => {
     const distance = calculateDistance(lat1, lon1, lat2, lon2);
+    console.log('Distance between Source and Target Lat Lang', distance);
     return distance <= radius;
 }
 
