@@ -16,4 +16,4 @@ export const HOSPITALITY_DOMAINS: string[] = ['hospitality'];
 export const TOURISM_DOMAINS: string[] = ['tourism'];
 export const CHECK_IN: string = 'check-in';
 export const CHECK_OUT: string = 'check-out';
-export const RADIUS: number = 5;
+export const RADIUS: number = 50;
