@@ -24,24 +24,8 @@
                 }[],
                 "rating": provider_rating,
                 "short_desc": short_desc,
-                "locations": [
-                    {
-                        "id": $string(location_id.id),
-                        "gps": location_id.gps ? $string(location_id.gps) : null,
-                        "address": location_id.address,
-                        "city": {
-                            "name": location_id.city
-                        },
-                        "country": {
-                            "name": location_id.country
-                        },
-                        "state": {
-                            "name": location_id.state
-                        },
-                        "area_code": $string(location_id.zip)
-                    }
-                ],
                 "fulfillments": $fulfillments($append(fulfillments, [items.item_fulfillment_ids.fulfilment_id])),
+                "locations": $locations($append(location_id, [items.item_fulfillment_ids.location_id])),
                 "rateable": true
             },
             "items": message.items.{
@@ -57,9 +41,6 @@
                     }[]
                 },
                 rateable: true,
-                "location_ids": [
-                    $string(location_id.id)
-                ],
                 "price": $price(sc_retail_product),
                 "quantity": sc_retail_product.{
                     "available": {
@@ -79,6 +60,11 @@
                 "fulfillment_ids": $count(item_fulfillment_ids) > 0 ?
                     $map(item_fulfillment_ids, function($v){
                         $string($v.fulfilment_id.id)
+                    })[] :
+                [],
+                "location_ids": $count(item_fulfillment_ids) > 0 ?
+                    $map(item_fulfillment_ids, function($v){
+                        $string($v.location_id.id)
                     })[] :
                 [],
                 "tags": $map(

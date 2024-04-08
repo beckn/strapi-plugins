@@ -156,3 +156,23 @@ export const fulfillments = (fulfillments: KeyValuePair[]) => {
     };
   });
 };
+
+export const locations = (locations: KeyValuePair[]) => {
+  return locations.map((location) => {
+    return {
+      id: location.id + "",
+      gps: location.gps || null,
+      address: location.address,
+      city: {
+        name: location.city
+      },
+      country: {
+        name: location.country
+      },
+      state: {
+        name: location.state
+      },
+      area_code: location.zip + ""
+    }
+  });
+}

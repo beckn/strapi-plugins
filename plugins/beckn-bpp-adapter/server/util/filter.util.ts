@@ -1,8 +1,8 @@
 import moment from "moment";
 import { KeyValuePair } from "../types";
-import { CHECK_IN, CHECK_OUT } from "../constants";
+import { CHECK_IN, CHECK_OUT, MAX_DISTANCE } from "../constants";
 import { isHospitality, isTourism } from "./domain";
-import { isInRange } from "./location";
+import { isInRange, findStoresAlongRouteWithinDistance } from "./location";
 
 export class FilterUtil {
     static getItemFilter = (item: KeyValuePair = {}) => {
@@ -76,7 +76,7 @@ export class FilterUtil {
         context: KeyValuePair
     ): KeyValuePair[] => {
         // TODO: Optimisation required, move common code to util - Abhishek Y
-        let filteredProviders: KeyValuePair[] = [];
+        let filteredProviders: KeyValuePair[] = providers;
         if (isHospitality(context)) {
             let checkInReq: KeyValuePair | null = null;
             let checkOutReq: KeyValuePair | null = null;
@@ -199,6 +199,42 @@ export class FilterUtil {
                 });
             }
         }
+        const stop = fulfillment?.stops?.find((stop: KeyValuePair) => stop?.location?.polygon) || {};
+        const { polygon, circle } = stop.location || {};
+        // const polygon2 = 'yrpqF`|x_SoFxgCwfApWyeBqkCa`Cq\_pHk`@qiLji@iuUo|@qoZaHwiRdFmgS|g@_dQn^eoXzy@ynO}AicKao@swPwjCo}U{vGofLceCwsEwzAuhFmdF{tNqoAg`PoKgoVngEgzLrm@}`FppB_mJgGsqD_zAanK{hDiyDshAqaEqdAwzBrf@izHao@ksAmjEikCeQmzHh_JocFnwEefDjeGswFtuCk|Tz~AavDllBosEfiAefInk@sfOd`FqlDhv@{yGwFivKuMmwM{{A}tEE{jF|m@guNpbTqoEncKibGpyIkqCh~K}hAhiKul@buAa`Bd`BwlBl~BsLz`JiwAlpTmoBnkOcu@h}N{oBb}YsNv}x@o~A`}VecAnrArf@zyImoDfnMacCtsGoyJpw^}nEjsGcwCxpIs^dzM|u@haQi}AjcP{vA|cNuiCdz_@ahGzyMwbCpjPpHh}b@gmCh}Ocn@d_R{aDthRwnCjrHsQl}IeyAlaPo|C|a@i{B`iAouFtJgjGuz@urAfdBwnEtiG{mBxLswEic@swBcFa`BmbA}dAxiAut@trAwcA}r@alB`eAm}@`rBeuD`t@sfI|o@{K{w@_o@`OjC|aBnc@jxB_o@`rAawBfr@{bDnpHamG`dNc{E`zJihJjr@i_Dm^}qCpk@swD`bCcdExjI}fHteM}vC`jIg|D|uDusIbuLefDvsFoqDdwH_y@`mBk_EsX_jFc`GcyAfd@eu@xyCctDhiEg_FrcHseFdxC{uEdeBiiBjqC_tDts@srLroAct@b{AcThpAiiBt]sx@viAkjHznHcjEjfDgpJ|bIs_F~_C}jBl`@|qAb{Ajy@zzI{w@zl@hHxy@az@o@r\le@n_@h|AWxzAeeA~`Eg`Dji@toAv[ay@~Pl^pGmi@vn@q^tFnc@duBqvAeXcIfw@uUbb@ayA}@}hC`~Bg_CdoCk{BjuDafAxcC`~@jaDlm@`eDyNr}Cyr@j{E}_CpoAqfDdxCw`CpcFqiCfhLasE~uJaaEdaD{hBtkDjQlmDjwBdoMb@|{Hv`MlqFfwDnoEdsEh~IeJftD{fDdzEksBpmHxAx}EnVlhIgz@f`DbZfwA|p@kmAfsB_`BpbAmc@~}AzmAoUdtAtjAl[xyAbqC~gA~eAxnBsHzfBuDldBnwAlk@kOfj@v{@pqAxzBrbEzdBhxBdYhmGmhGlhDm}BzaCo_G|[krBp_DuWp~DjgFreC~yBdrAquBpqE`_CxlAlpDd{AhtE_mCpcD~YdkDh_Cbx@~cC~`C';
+        if (polygon && circle) {
+            // Polygon based search
+            const stores = this.filterItemsWithLocation(providers);
+            const gps = circle.gps.split(',') || [];
+            const location = { latitude: gps[0], longitude: gps[1] };
+            const fliteredStores = findStoresAlongRouteWithinDistance(polygon, stores, location, MAX_DISTANCE, circle?.radius);
+            const itemIds = fliteredStores.map((fliteredStore: KeyValuePair) => fliteredStore.item_id) || [];
+            filteredProviders = providers.filter((providerItem: KeyValuePair) => {
+                providerItem.items = providerItem.items.filter((item: KeyValuePair) => {
+                    return itemIds.includes(item.id);
+                });
+                return providerItem.items.length > 0;
+            });
+        }
         return filteredProviders;
+    }
+
+    private static filterItemsWithLocation = (providers: KeyValuePair[]) => {
+        const stores: KeyValuePair[] = [];
+        providers.forEach((provider: KeyValuePair) => {
+            provider.items?.forEach((item: KeyValuePair) => {
+                item.item_fulfillment_ids.forEach((item_fulfillment_id: KeyValuePair) => {
+                    const gps = item_fulfillment_id.location_id?.gps?.split(',') || [];
+                    if (gps.length) {
+                        stores.push({
+                            item_id: item.id,
+                            lat: gps[0],
+                            lng: gps[1]
+                        })
+                    }
+                });
+            });
+        });
+        return stores;
     }
 }

@@ -1,4 +1,6 @@
-import { RADIUS } from "../constants";
+import { RADIUS, TOLERANCE_RADIUS, MAX_DISTANCE } from "../constants";
+import * as polyline from '@mapbox/polyline';
+import * as geolib from 'geolib';
 
 export const isInRange = (lat1, lon1, lat2, lon2, radius = RADIUS) => {
     const distance = calculateDistance(lat1, lon1, lat2, lon2);
@@ -22,4 +24,48 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 // Function to convert degrees to radians
 function deg2rad(deg) {
     return deg * (Math.PI / 180);
+}
+
+// Decode polyline
+function decodePolyline(encodedPolyline) {
+    return polyline.decode(encodedPolyline).map(pair => ({
+        latitude: pair[0],
+        longitude: pair[1]
+    }));
+}
+
+// Check if a store is near the route within specified distance
+function isStoreNearRouteWithinDistance(store, routePoints, location, maxDistance, toleranceRadius) {
+    // Find the segment of the route within the specified distance from the location
+    const pointsWithinDistance = routePoints.filter(point =>
+        geolib.isPointWithinRadius(
+            point,
+            location,
+            maxDistance
+        )
+    );
+
+    // Check if the store is within 500 meters of any point in this segment
+    return pointsWithinDistance.some(point =>
+        geolib.isPointWithinRadius(
+            { latitude: store.lat, longitude: store.lng },
+            point,
+            toleranceRadius
+        )
+    );
+}
+
+// Main function to find stores along a segment of the route
+export const findStoresAlongRouteWithinDistance = (
+    encodedPolyline,
+    stores,
+    location,
+    maxDistance = MAX_DISTANCE,
+    toleranceRadius = TOLERANCE_RADIUS
+) => {
+    const routePoints = decodePolyline(encodedPolyline);
+    const storesAlongRoute = stores.filter(store =>
+        isStoreNearRouteWithinDistance(store, routePoints, location, maxDistance, toleranceRadius)
+    );
+    return storesAlongRoute;
 }
