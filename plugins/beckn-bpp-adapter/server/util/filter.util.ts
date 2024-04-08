@@ -1,6 +1,6 @@
 import moment from "moment";
 import { KeyValuePair } from "../types";
-import { CHECK_IN, CHECK_OUT, MAX_DISTANCE } from "../constants";
+import { CHECK_IN, CHECK_OUT, TOLERANCE_RADIUS } from "../constants";
 import { isHospitality, isTourism } from "./domain";
 import { isInRange, findStoresAlongRouteWithinDistance } from "./location";
 
@@ -207,8 +207,9 @@ export class FilterUtil {
             const stores = this.filterItemsWithLocation(providers);
             const gps = circle.gps.split(',') || [];
             const location = { latitude: gps[0], longitude: gps[1] };
-            const fliteredStores = findStoresAlongRouteWithinDistance(polygon, stores, location, MAX_DISTANCE, circle?.radius?.value);
+            const fliteredStores = findStoresAlongRouteWithinDistance(polygon, stores, location, circle?.radius?.value, TOLERANCE_RADIUS);
             const itemIds = fliteredStores.map((fliteredStore: KeyValuePair) => fliteredStore.item_id) || [];
+            console.log('Filter Item IDs', itemIds);
             filteredProviders = providers.filter((providerItem: KeyValuePair) => {
                 providerItem.items = providerItem.items.filter((item: KeyValuePair) => {
                     return itemIds.includes(item.id);
