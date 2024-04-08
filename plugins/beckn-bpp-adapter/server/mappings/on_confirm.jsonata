@@ -26,12 +26,7 @@
                 "rating": provider_rating,
                 "short_desc": short_desc,
                 "locations": $locations($append(location_id, [items.item_fulfillment_ids.location_id])),
-                "fulfillments": $append(fulfillments, [items.item_fulfillment_ids.fulfilment_id]).{
-                    "id": $string(id),
-                    "type": type,
-                    "rating": $string(rating),
-                    "rateable": true
-                }[],
+                "fulfillments": $fulfillments($append($append(fulfillments, [items.item_fulfillment_ids.fulfilment_id]), [orderFulfillment.fulfilment_id])),
                 "rateable": true
             },
             "items": message.items.{

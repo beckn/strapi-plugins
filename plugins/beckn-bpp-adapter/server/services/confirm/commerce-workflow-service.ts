@@ -11,6 +11,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const currentDate = new Date();
       const isoString = currentDate.toISOString();
       let orderId;
+      let orderFulFillmentId;
 
       // Extract billing details
       const billingInfo = {
@@ -126,13 +127,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             customer_id: custId,
             order_fulfillment_location_id: shippingLocationId,
             order_tracking_id: trackingId,
+            state_code: "PAYMENT_RECEIVED",
+            state_value: "PAYMENT RECEIVED",
             publishedAt: isoString
           };
 
-          await strapi.entityService.create(
+          const orderFulfillmentRes = await strapi.entityService.create(
             "api::order-fulfillment.order-fulfillment",
             { data: orderFulfillmentDetail }
           );
+          orderFulFillmentId = orderFulfillmentRes.id;
           trx.commit();
         } catch (err) {
           trx.rollback();
@@ -244,6 +248,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
         })
       );
+      const orderFulfillment = await commonService.getOrderFulfillmentById(orderFulFillmentId, {
+        order_id: {},
+        fulfilment_id: {}
+      });
       const billingDetails = billing;
       const fulfillmentDetails = fulfillments;
 
@@ -251,6 +259,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         ...item,
         billing: billingDetails,
         fulfillment: fulfillmentDetails,
+        orderFulfillment: {
+          ...orderFulfillment,
+          fulfilment_id: {
+            ...(orderFulfillment?.fulfilment_id || {}),
+            state_code: orderFulfillment.state_code,
+            state_value: orderFulfillment.state_value,
+          },
+        },
         order_id: orderId
       }));
 

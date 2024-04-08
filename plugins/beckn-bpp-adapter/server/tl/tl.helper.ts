@@ -130,6 +130,13 @@ export const fulfillments = (fulfillments: KeyValuePair[]) => {
       type: fulfillment.type,
       rating: fulfillment.rating + "",
       rateable: fulfillment.rateable,
+      state: {
+        description: fulfillment?.state_value,
+        descriptor: {
+          code: fulfillment?.state_code,
+          name: fulfillment?.state_value
+        }
+      },
       agent: {
         person: {
           id: agent?.id ? agent?.id + "" : "",
@@ -160,21 +167,21 @@ export const fulfillments = (fulfillments: KeyValuePair[]) => {
 export const locations = (locations: KeyValuePair[]) => {
   const formatedLocations: KeyValuePair[] = [];
   locations.map((location) => {
-    if (!formatedLocations.find((lc: KeyValuePair) => lc.id === (location.id + ""))) {
+    if (!formatedLocations.find((lc: KeyValuePair) => lc?.id === (location?.id + ""))) {
       formatedLocations.push({
-        id: location.id + "",
-        gps: location.gps || null,
-        address: location.address,
+        id: location?.id + "",
+        gps: location?.gps || null,
+        address: location?.address,
         city: {
-          name: location.city
+          name: location?.city
         },
         country: {
-          name: location.country
+          name: location?.country
         },
         state: {
-          name: location.state
+          name: location?.state
         },
-        area_code: location.zip + ""
+        area_code: location?.zip + ""
       });
     }
   });

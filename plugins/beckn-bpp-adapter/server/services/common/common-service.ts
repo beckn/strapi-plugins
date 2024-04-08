@@ -11,5 +11,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         return await strapi.entityService.findOne('api::tag.tag', id, {
             populate
         });
+    },
+    async getOrderFulfillmentById(id: string, populate: KeyValuePair = {}) {
+        return await strapi.entityService.findOne('api::order-fulfillment.order-fulfillment', id, {
+            populate
+        });
     }
 });
