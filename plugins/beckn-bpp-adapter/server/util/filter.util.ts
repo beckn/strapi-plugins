@@ -202,12 +202,12 @@ export class FilterUtil {
         const stop = fulfillment?.stops?.find((stop: KeyValuePair) => stop?.location?.polygon) || {};
         const { polygon, circle } = stop.location || {};
         // const polygon2 = 'yrpqF`|x_SoFxgCwfApWyeBqkCa`Cq\_pHk`@qiLji@iuUo|@qoZaHwiRdFmgS|g@_dQn^eoXzy@ynO}AicKao@swPwjCo}U{vGofLceCwsEwzAuhFmdF{tNqoAg`PoKgoVngEgzLrm@}`FppB_mJgGsqD_zAanK{hDiyDshAqaEqdAwzBrf@izHao@ksAmjEikCeQmzHh_JocFnwEefDjeGswFtuCk|Tz~AavDllBosEfiAefInk@sfOd`FqlDhv@{yGwFivKuMmwM{{A}tEE{jF|m@guNpbTqoEncKibGpyIkqCh~K}hAhiKul@buAa`Bd`BwlBl~BsLz`JiwAlpTmoBnkOcu@h}N{oBb}YsNv}x@o~A`}VecAnrArf@zyImoDfnMacCtsGoyJpw^}nEjsGcwCxpIs^dzM|u@haQi}AjcP{vA|cNuiCdz_@ahGzyMwbCpjPpHh}b@gmCh}Ocn@d_R{aDthRwnCjrHsQl}IeyAlaPo|C|a@i{B`iAouFtJgjGuz@urAfdBwnEtiG{mBxLswEic@swBcFa`BmbA}dAxiAut@trAwcA}r@alB`eAm}@`rBeuD`t@sfI|o@{K{w@_o@`OjC|aBnc@jxB_o@`rAawBfr@{bDnpHamG`dNc{E`zJihJjr@i_Dm^}qCpk@swD`bCcdExjI}fHteM}vC`jIg|D|uDusIbuLefDvsFoqDdwH_y@`mBk_EsX_jFc`GcyAfd@eu@xyCctDhiEg_FrcHseFdxC{uEdeBiiBjqC_tDts@srLroAct@b{AcThpAiiBt]sx@viAkjHznHcjEjfDgpJ|bIs_F~_C}jBl`@|qAb{Ajy@zzI{w@zl@hHxy@az@o@r\le@n_@h|AWxzAeeA~`Eg`Dji@toAv[ay@~Pl^pGmi@vn@q^tFnc@duBqvAeXcIfw@uUbb@ayA}@}hC`~Bg_CdoCk{BjuDafAxcC`~@jaDlm@`eDyNr}Cyr@j{E}_CpoAqfDdxCw`CpcFqiCfhLasE~uJaaEdaD{hBtkDjQlmDjwBdoMb@|{Hv`MlqFfwDnoEdsEh~IeJftD{fDdzEksBpmHxAx}EnVlhIgz@f`DbZfwA|p@kmAfsB_`BpbAmc@~}AzmAoUdtAtjAl[xyAbqC~gA~eAxnBsHzfBuDldBnwAlk@kOfj@v{@pqAxzBrbEzdBhxBdYhmGmhGlhDm}BzaCo_G|[krBp_DuWp~DjgFreC~yBdrAquBpqE`_CxlAlpDd{AhtE_mCpcD~YdkDh_Cbx@~cC~`C';
-        if (polygon && circle) {
+        if (polygon) {
             // Polygon based search
             const stores = this.filterItemsWithLocation(providers);
-            const gps = circle.gps.split(',') || [];
-            const location = { latitude: gps[0], longitude: gps[1] };
-            const fliteredStores = findStoresAlongRouteWithinDistance(polygon, stores, location, circle?.radius?.value, TOLERANCE_RADIUS);
+            const gps = circle?.gps.split(',') || [];
+            const location = gps.length ? { latitude: gps[0], longitude: gps[1] } : undefined;
+            const fliteredStores = findStoresAlongRouteWithinDistance(polygon, stores, location, circle?.radius?.value);
             const itemIds = fliteredStores.map((fliteredStore: KeyValuePair) => fliteredStore.item_id) || [];
             console.log('Filter Item IDs', itemIds);
             filteredProviders = providers.filter((providerItem: KeyValuePair) => {

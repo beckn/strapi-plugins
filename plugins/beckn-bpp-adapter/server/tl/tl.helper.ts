@@ -158,21 +158,25 @@ export const fulfillments = (fulfillments: KeyValuePair[]) => {
 };
 
 export const locations = (locations: KeyValuePair[]) => {
-  return locations.map((location) => {
-    return {
-      id: location.id + "",
-      gps: location.gps || null,
-      address: location.address,
-      city: {
-        name: location.city
-      },
-      country: {
-        name: location.country
-      },
-      state: {
-        name: location.state
-      },
-      area_code: location.zip + ""
+  const formatedLocations: KeyValuePair[] = [];
+  locations.map((location) => {
+    if (!formatedLocations.find((lc: KeyValuePair) => lc.id === (location.id + ""))) {
+      formatedLocations.push({
+        id: location.id + "",
+        gps: location.gps || null,
+        address: location.address,
+        city: {
+          name: location.city
+        },
+        country: {
+          name: location.country
+        },
+        state: {
+          name: location.state
+        },
+        area_code: location.zip + ""
+      });
     }
   });
+  return formatedLocations;
 }
