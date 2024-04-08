@@ -172,8 +172,9 @@ export class FilterUtil {
                 });
             }
         } else {
-            const gps: string = fulfillment?.stops?.find((stop: KeyValuePair) => stop?.location?.gps)?.location?.gps;
-            if (gps) {
+            const stop = fulfillment?.stops?.find((stop: KeyValuePair) => stop?.location?.gps) || {};
+            const { polygon, gps } = stop.location || {};
+            if (gps && !polygon) {
                 filteredProviders = providers.filter((providerItem: KeyValuePair) => {
                     providerItem.items = providerItem.items.filter((item: KeyValuePair) => {
                         let isMatched: boolean = false;
