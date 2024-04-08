@@ -58,11 +58,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
     }
 
-    if (item) {
-      const itemFilter = ObjectUtil.removeEmptyObjectKeys(FilterUtil.getItemFilter(item));
-      if (Object.keys(itemFilter).length) {
-        populate.items.filters = filters.items = itemFilter
-      }
+    const itemFilter = ObjectUtil.removeEmptyObjectKeys(FilterUtil.getItemFilter(item));
+    if (Object.keys(itemFilter).length) {
+      populate.items.filters = filters.items = itemFilter
     }
 
     if (category) {

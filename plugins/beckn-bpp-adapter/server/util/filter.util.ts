@@ -1,6 +1,6 @@
 import moment from "moment";
 import { KeyValuePair } from "../types";
-import { CHECK_IN, CHECK_OUT, TOLERANCE_RADIUS } from "../constants";
+import { CHECK_IN, CHECK_OUT } from "../constants";
 import { isHospitality, isTourism } from "./domain";
 import { isInRange, findStoresAlongRouteWithinDistance } from "./location";
 
@@ -9,7 +9,8 @@ export class FilterUtil {
         const filter: KeyValuePair = {
             id: "",
             name: "",
-            code: ""
+            code: "",
+            publishedAt: { $notNull: true }
         };
         filter.$or = [];
         filter.code = item.descriptor?.code;
