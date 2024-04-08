@@ -207,7 +207,7 @@ export class FilterUtil {
             const stores = this.filterItemsWithLocation(providers);
             const gps = circle.gps.split(',') || [];
             const location = { latitude: gps[0], longitude: gps[1] };
-            const fliteredStores = findStoresAlongRouteWithinDistance(polygon, stores, location, MAX_DISTANCE, circle?.radius);
+            const fliteredStores = findStoresAlongRouteWithinDistance(polygon, stores, location, MAX_DISTANCE, circle?.radius?.value);
             const itemIds = fliteredStores.map((fliteredStore: KeyValuePair) => fliteredStore.item_id) || [];
             filteredProviders = providers.filter((providerItem: KeyValuePair) => {
                 providerItem.items = providerItem.items.filter((item: KeyValuePair) => {
