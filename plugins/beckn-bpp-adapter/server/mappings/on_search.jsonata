@@ -48,6 +48,7 @@
                     },
                     rateable: true,
                     "price": $price(sc_retail_product),
+                    "rating": sc_retail_product.rating_count,
                     "quantity": sc_retail_product.{
                         "available": {
                             "count": stock_quantity ? stock_quantity : 0
