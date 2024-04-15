@@ -62,7 +62,8 @@
                         "size_type": size_type?size_type:"sm"
                     }[]
                 },
-                rateable: true,
+                "rating":sc_retail_product.average_rating,
+                "rateable": true,
                 "location_ids": [
                     $string(location_id.id)
                 ],
