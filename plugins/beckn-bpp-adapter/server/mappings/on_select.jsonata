@@ -39,7 +39,8 @@
                         "size_type": size_type?size_type:"sm"
                     }[]
                 },
-                rateable: true,
+                "rating":sc_retail_product.average_rating,
+                "rateable": true,
                 "location_ids": $count(item_fulfillment_ids) > 0 ?
                     $map(item_fulfillment_ids, function($v){
                         $string($v.location_id.id)

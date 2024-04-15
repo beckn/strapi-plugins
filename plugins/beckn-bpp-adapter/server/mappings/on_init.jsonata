@@ -40,7 +40,8 @@
                         "size_type": size_type?size_type:"sm"
                     }[]
                 },
-                rateable: true,
+                "rating":sc_retail_product.average_rating,
+                "rateable": true,
                 "price": $price(sc_retail_product),
                 "quantity": sc_retail_product.{
                     "available": {
