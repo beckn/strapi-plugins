@@ -1,12 +1,12 @@
 {
     "context": $context(context, $action),
     "message":{
-        "support":message.{
-             "ref_id": ref_id,
+        "support": message.{
+            "ref_id": ref_id,
             "callback_phone": callback_phone,
             "phone": phone,
             "email": email,
-            "url":url
+            "url": url
         }
     }
    

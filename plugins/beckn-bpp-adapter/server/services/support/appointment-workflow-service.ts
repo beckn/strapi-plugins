@@ -4,12 +4,18 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message }) {
     try {
       const { ref_id, callback_phone } = message.support;
-      const supportDetails = await strapi.entityService.findOne(
+      const supportDetails = await strapi.entityService.findMany(
         "api::support.support",
-        1
+        {
+          filters: {
+            publishedAt: {
+              $notNull: true,
+            },
+          }
+        }
       );
       const supportData = {
-        ...supportDetails,
+        ...(supportDetails[0] || {}),
         ref_id,
         callback_phone,
       };
