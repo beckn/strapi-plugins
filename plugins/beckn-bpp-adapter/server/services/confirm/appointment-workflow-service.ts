@@ -7,7 +7,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message, context }) {
     try {
       const { items, provider, billing, fulfillments } = message.order;
-      const { domain } = context;
+      const { domain, bap_id, bap_uri } = context;
       const currentDate = new Date();
       const isoString = currentDate.toISOString();
       let orderId;
@@ -64,7 +64,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             status: "ACTIVE",
             items: itemValue,
             publishedAt: isoString,
-            domain
+            domain,
+            bap_id,
+            bap_uri
           };
           // Create order
           const createOrder = await strapi.entityService.create(
