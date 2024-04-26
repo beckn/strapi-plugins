@@ -146,7 +146,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         email: customer?.contact?.email
       });
       await strapi.entityService.update("api::customer.customer", customerId, {
-        customerData
+        data: customerData
       });
     }
   },

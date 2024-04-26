@@ -128,7 +128,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate: { order_address: true }
         }
       );
-      console.log(billingData);
 
       await strapi.entityService.update(
         "api::order-address.order-address",
@@ -146,7 +145,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         email: customer?.contact?.email
       });
       await strapi.entityService.update("api::customer.customer", customerId, {
-        customerData
+        data: customerData
       });
     }
   },
