@@ -107,16 +107,48 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     }
   },
   async update(order, customerId) {
-    const { customer = {} } = order?.fulfillments[0] || {};
-    const data = ObjectUtil.removeEmptyKeys({
-      contact: customer?.contact?.phone,
-      first_name: customer?.person?.name.split(" ")?.[0],
-      last_name: customer?.person?.name.split(" ")?.[1],
-      email: customer?.contact?.email
-    });
-    await strapi.entityService.update("api::customer.customer", customerId, {
-      data
-    });
+    const { billing = {} } = order;
+    const { customer = {} } = order?.fulfillments?.[0] || {};
+    if (Object.keys(billing).length) {
+      const billingData = ObjectUtil.removeEmptyKeys({
+        first_name: billing?.name || "",
+        address_line_1: billing?.address || "",
+        state: billing?.state?.name || billing?.state?.code || "",
+        city: billing?.city?.name || billing?.city?.code || "",
+        email: billing?.email || "",
+        phone: billing?.phone || "",
+        postcode: billing?.area_code || "",
+        tax_id: billing?.tax_id || ""
+      });
+
+      const orderDetails = await strapi.entityService.findOne(
+        "api::order.order",
+        order.id,
+        {
+          populate: { order_address: true }
+        }
+      );
+      console.log(billingData);
+
+      await strapi.entityService.update(
+        "api::order-address.order-address",
+        orderDetails?.order_address?.id,
+        {
+          data: billingData
+        }
+      );
+    }
+    if (Object.keys(customer).length) {
+      const customerData = ObjectUtil.removeEmptyKeys({
+        contact: customer?.contact?.phone,
+        first_name: customer?.person?.name.split(" ")?.[0],
+        last_name: customer?.person?.name.split(" ")?.[1],
+        email: customer?.contact?.email
+      });
+      await strapi.entityService.update("api::customer.customer", customerId, {
+        customerData
+      });
+    }
   },
   getItemTotalPrice(items) {
     let value = 0;
