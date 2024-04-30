@@ -1,5 +1,5 @@
 import { Strapi } from '@strapi/strapi';
-import { ObjectUtil, FilterUtil } from '../../util';
+import { ObjectUtil, FilterUtil, SearchUtil } from '../../util';
 import { KeyValuePair } from '.././../types';
 import { PLUGIN } from '../../constants';
 
@@ -79,7 +79,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     });
 
     if (fulfillment) {
-      providers = FilterUtil.filterByFulfillment(providers, fulfillment, context);
+      providers = SearchUtil.filterByFulfillment(providers, fulfillment, context);
     }
 
     const commonService = strapi
