@@ -90,7 +90,7 @@
                 )[],
                 "xinput": {
                     "form": {
-                        "url": $xInput($action),
+                        "url": $xInput($objContext),
                         "mime_type": "text/html"
                     }
                 },

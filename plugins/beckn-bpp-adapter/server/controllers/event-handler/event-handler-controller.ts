@@ -20,7 +20,7 @@ export default ({ }: { strapi: Strapi }) => ({
                 ) {
                     console.log('No Data Found');
                 } else {
-                    const transformedResult = await TLService.transform({ message: result, context }, resAction);
+                    const transformedResult = await TLService.transform({ message: result, context }, resAction, context);
                     await this.webhookCall(transformedResult, resAction);
                 }
             }

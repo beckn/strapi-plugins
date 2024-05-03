@@ -21,8 +21,16 @@ export const context = async (data: any, action: string) => {
   });
 };
 
-export const xInput = async (action: string) => {
-  const formId = action === "on_select" ? "itemDetailsForm" : "ratingForm";
+export const xInput = async (data: any) => {
+  
+  const { action, domain } = data;
+  let formId;
+  if(action === "select" && domain === "dsep:scholarships") {
+    formId = 'dsepScholarshipDetailsForm';
+  } else {
+    formId = action === "select" ? "itemDetailsForm" : "ratingForm";
+  }
+  
   return `${process.env.BPP_ADAPTER_PLUGIN_URL}/x-input/form?form_id=${formId}`;
 };
 

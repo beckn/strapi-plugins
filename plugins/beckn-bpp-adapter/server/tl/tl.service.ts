@@ -6,11 +6,12 @@ import { ObjectUtil } from "../util/object.util";
 import * as tlHelpers from './tl.helper'
 
 export class TLService {
-    static async transform(data: any, action: string) {
+    static async transform(data: any, action: string, objContext: any) {
+        
         if (action) {
             const expression = jsonata(fs.readFileSync(path.join(appRootPath.toString(), `/server/mappings/${action}.jsonata`), "utf8"));
             console.log("Transforming %s data: \n%o", action, JSON.stringify(data));
-            let transformed = await expression.evaluate(data, { action, ...tlHelpers });
+            let transformed = await expression.evaluate(data, { action, objContext,  ...tlHelpers });
             transformed = ObjectUtil.removeEmptyObjectKeys(transformed)
             console.log("Transformed %s data: \n%o", action, JSON.stringify(transformed));
             return transformed;
