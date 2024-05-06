@@ -19,7 +19,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 ) {
                     console.log('No Data Found');
                 } else {
-                    const transformedResult = await TLService.transform({ message: result }, `on_${action}`, context);
+                    const transformedResult = await TLService.transform({ message: result, context }, `on_${action}`);
                     ctx.body = transformedResult;
                 }
             } else {

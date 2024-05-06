@@ -1,0 +1,31 @@
+{
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "mobile": {
+      "type": "string",
+      "required": true
+    },
+    "reason": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+        "type": "string",
+        "required": true
+    },
+    "address": {
+        "type": "string",
+        "required": true
+    },
+    "zipcode": {
+        "type": "number",
+        "required": true
+    },
+    "document": {
+        "type": "array",
+        "required": false
+    }
+
+}
