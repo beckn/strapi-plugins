@@ -26,6 +26,8 @@ export const xInput = async (context: KeyValuePair) => {
   let formId;
   if (action === "select" && domain === "dsep:scholarships") {
     formId = 'dsepScholarshipDetailsForm';
+  } else if(action === "select" && domain === "dsep:jobs") {
+    formId = "dsepJobsApplyForm";
   } else {
     formId = action === "select" ? "itemDetailsForm" : "ratingForm";
   }
