@@ -1,0 +1,20 @@
+<html>
+<head>
+    <title>XInput Form</title>
+</head>
+<body>
+    <form action="<%=action %>" method="POST">
+        <div>
+            <label for="details">Dispute Details</label>
+            <input type="text" id="details" name="details" required>
+        </div>
+        <div>
+            <label for="claimValue">Claim Value (optional)</label>
+            <input type="text" id="claimValue" name="claimValue" required>
+        </div>
+        <div>
+            <button type="submit">Save</button>
+        </div>
+    </form>
+</body>
+</html>

@@ -89,6 +89,12 @@
                         }
                     }
                 )[],
+                "xinput": {
+                    "form": {
+                        "url": $xInput(%.%.context),
+                        "mime_type": "text/html"
+                    }
+                },
                 "time": {
                     "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
                 }

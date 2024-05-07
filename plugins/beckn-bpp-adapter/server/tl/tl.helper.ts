@@ -25,9 +25,16 @@ export const xInput = async (context: KeyValuePair) => {
   const { action, domain } = context;
   let formId;
   if (action === "select" && domain === "dsep:scholarships") {
-    formId = 'dsepScholarshipDetailsForm';
+    formId = "dsepScholarshipDetailsForm";
   } else if(action === "select" && domain === "dsep:jobs") {
     formId = "dsepJobsApplyForm";
+  } else if(action === "select" && domain === "online-dispute-resolution:0.1.0") {
+    formId = "odrDisputeDetailsForm";
+  } else if(action === "init" && domain === "online-dispute-resolution:0.1.0") {
+    formId = "odrConsentForm";
+  } else if(action === "select" && domain === "supply-chain-services:assembly") {
+    //add assembly details
+    formId = "industryAssemblyDetailsForm";
   } else {
     formId = action === "select" ? "itemDetailsForm" : "ratingForm";
   }
