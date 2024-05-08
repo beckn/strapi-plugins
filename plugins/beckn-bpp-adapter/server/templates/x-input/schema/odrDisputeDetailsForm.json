@@ -6,5 +6,9 @@
     "claimValue": {
         "type": "string",
         "required": false
+    },
+    "form_id": {
+        "type": "string",
+        "required": true
     }
 }

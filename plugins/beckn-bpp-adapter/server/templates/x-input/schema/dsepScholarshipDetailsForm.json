@@ -26,6 +26,10 @@
     "document": {
         "type": "array",
         "required": false
+    },
+    "form_id": {
+        "type": "string",
+        "required": true
     }
 
 }
