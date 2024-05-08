@@ -1,0 +1,30 @@
+<html>
+<head>
+    <title>XInput Form</title>
+</head>
+<body>
+    <form action="<%=action %>" method="POST">
+        <div>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div>
+            <label for="place">Place</label>
+            <input type="text" id="place" name="place" required>
+        </div>
+        <div>
+            <label>
+                <input type="checkbox" id="digitalSignature" name="digitalSignature">
+                Add Digital Signature
+            </label>
+        </div>
+        <div>
+            <button type="submit">Confirm</button>
+        </div>
+        <div>
+            <button type="button">Cancel</button>
+        </div>
+
+    </form>
+</body>
+</html>

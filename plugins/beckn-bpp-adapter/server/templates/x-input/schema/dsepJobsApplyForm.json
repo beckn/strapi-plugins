@@ -1,0 +1,19 @@
+{
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "mobile": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+        "type": "string",
+        "required": true
+    },
+    "documents": {
+        "type": "array",
+        "required": false
+    }
+
+}

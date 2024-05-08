@@ -1,0 +1,10 @@
+{
+    "details": {
+        "type": "string",
+        "required": true
+    },
+    "claimValue": {
+        "type": "string",
+        "required": false
+    }
+}
