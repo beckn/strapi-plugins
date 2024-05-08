@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Industry 4.0 Add Assembly Details Form</title>
+</head>
+
+<body>
+    <form action="<%=action %>" method="POST">
+        <div>
+            <label for="type">Type</label>
+            <select id="type" name="type">
+                <option value="Plastic Box">Plastic Box</option>
+                <option value="Wooden Box">Wooden Box</option>
+            </select>
+        </div>
+        <div>
+            <label for="colour">Colour</label>
+            <select id="colour" name="colour">
+                <option value="Blue">Blue</option>
+                <option value="Red">Red</option>
+                <option value="Green">Green</option>
+            </select>
+        </div>
+        <div>
+            <label for="shape">Shape</label>
+            <select id="shape" name="shape">
+                <option value="Circle">Circle</option>
+                <option value="Square">Square</option>
+            </select>
+        </div>
+        <div>
+            <label for="length">Length (in mm)</label>
+            <input type="number" id="length" name="length" step="0.01">
+        </div>
+        <div>
+            <label for="width">Width (in mm)</label>
+            <input type="number" id="width" name="width" step="0.01">
+        </div>
+        <div>
+            <label for="quantity">Quantity</label>
+            <div>
+                <button type="button" id="decreaseQuantity">-</button>
+                <input type="number" id="quantity" name="quantity" value="1" min="0">
+                <button type="button" id="increaseQuantity">+</button>
+            </div>
+        </div>
+        <div>
+            <label for="weight">Weight (in kg)</label>
+            <input type="number" id="weight" name="weight" step="0.01">
+        </div>
+        <div>
+            <button type="submit">Add Shipping Details</button>
+        </div>
+    </form>
+</body>
+
+</html>
