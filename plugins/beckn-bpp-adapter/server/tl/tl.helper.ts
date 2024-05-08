@@ -33,7 +33,6 @@ export const xInput = async (context: KeyValuePair) => {
   } else if(action === "init" && domain === "online-dispute-resolution:0.1.0") {
     formId = "odrConsentForm";
   } else if(action === "select" && domain === "supply-chain-services:assembly") {
-    //add assembly details
     formId = "industryAssemblyDetailsForm";
   } else {
     formId = action === "select" ? "itemDetailsForm" : "ratingForm";
