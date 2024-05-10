@@ -4,7 +4,8 @@ export default [
     path: "/driver-login",
     handler: "driverProfileController.login",
     config: {
-      policies: []
+      policies: [],
+      auth: false
     }
   }
 ];
