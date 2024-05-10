@@ -8,9 +8,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       .getWelcomeMessage();
   },
   async login(ctx) {
-    ctx.body = {
-      success: true
-    };
+    try {
+      const driverService = strapi
+        .plugin("driver-app")
+        .service("driverService");
+      const result = await driverService.login(ctx.request.body);
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+
   },
   async create(ctx) {}
 });
