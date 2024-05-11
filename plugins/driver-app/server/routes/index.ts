@@ -7,5 +7,14 @@ export default [
       policies: [],
       auth: false
     }
+  },
+  {
+    method: "GET",
+    path: "/test",
+    handler: "driverProfileController.create",
+    config: {
+      middlewares: ['plugin::driver-app.authMiddleware'],
+      auth: false
+    }
   }
 ];

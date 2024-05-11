@@ -11,13 +11,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     try {
       const driverService = strapi
         .plugin("driver-app")
-        .service("driverService");
+        .service("driverProfileService");
       const result = await driverService.login(ctx.request.body);
       ctx.body = result;
-    } catch (error) {
+    } catch (error) {    
       ctx.badRequest(error.message);
     }
 
   },
-  async create(ctx) {}
+  async create(ctx) {
+    console.log('Inside create:: ', ctx.state.user);
+    ctx.body = ctx.state.user;
+  }
 });
