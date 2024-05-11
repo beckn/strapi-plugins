@@ -1,5 +1,5 @@
-import myService from './my-service';
-import driverProfileService from './driver-profile/driver-profile-service';
+import myService from "./my-service";
+import driverProfileService from "./driver-profile/driver-profile-service";
 
 export default {
   myService,
