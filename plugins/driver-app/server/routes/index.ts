@@ -1,7 +1,7 @@
 export default [
   {
     method: "POST",
-    path: "/driver-login",
+    path: "/login",
     handler: "driverProfileController.login",
     config: {
       policies: [],
@@ -13,7 +13,25 @@ export default [
     path: "/test",
     handler: "driverProfileController.create",
     config: {
-      middlewares: ['plugin::driver-app.authMiddleware'],
+      middlewares: ["plugin::driver-app.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "POST",
+    path: "/toggle-availability",
+    handler: "driverProfileController.toggleAvailability",
+    config: {
+      middlewares: ["plugin::driver-app.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "POST",
+    path: "/update-location",
+    handler: "driverProfileController.updateLocation",
+    config: {
+      middlewares: ["plugin::driver-app.authMiddleware"],
       auth: false
     }
   }
