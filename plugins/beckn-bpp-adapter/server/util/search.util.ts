@@ -10,6 +10,7 @@ export class SearchUtil {
         fulfillment: KeyValuePair,
         context: KeyValuePair
     ): KeyValuePair[] => {
+        console.log('isMobility', isMobility(context));
         let filteredProviders: KeyValuePair[] = providers;
         if (isHospitality(context)) {
             let checkInReq: KeyValuePair | null = null;
@@ -105,6 +106,7 @@ export class SearchUtil {
                 });
             }
         } else if (isMobility(context)) {
+            console.log('isMobility', isMobility(context));
             let customerLocation: KeyValuePair | null = null;
             fulfillment?.stops.map((fulfillmentStop: KeyValuePair) => {
                 if (fulfillmentStop?.type?.toLowerCase() === START) {
