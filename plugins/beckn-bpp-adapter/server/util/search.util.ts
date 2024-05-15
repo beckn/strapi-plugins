@@ -66,6 +66,8 @@ export class SearchUtil {
                     });
                     return providerItem.items.length > 0;
                 });
+            } else {
+                filteredProviders = [];
             }
         } else if (isTourism(context)) {
             let checkInReq: KeyValuePair | null = null;
@@ -103,6 +105,8 @@ export class SearchUtil {
                     });
                     return providerItem.items.length > 0;
                 });
+            } else {
+                filteredProviders = [];
             }
         } else if (isMobility(context)) {
             let customerLocation: KeyValuePair | null = null;
@@ -143,6 +147,8 @@ export class SearchUtil {
                     });
                     return providerItem.items.length > 0;
                 });
+            } else {
+                filteredProviders = [];
             }
         } else {
             const stop = fulfillment?.stops?.find((stop: KeyValuePair) => stop?.location?.gps) || {};
@@ -172,6 +178,8 @@ export class SearchUtil {
                     });
                     return providerItem.items.length > 0;
                 });
+            } else {
+                filteredProviders = [];
             }
         }
         const stop = fulfillment?.stops?.find((stop: KeyValuePair) => stop?.location?.polygon) || {};
