@@ -1,7 +1,7 @@
 import moment from "moment";
 import { KeyValuePair } from "../types";
-import { CHECK_IN, CHECK_OUT } from "../constants";
-import { isHospitality, isTourism } from "./domain.util";
+import { CHECK_IN, CHECK_OUT, START } from "../constants";
+import { isHospitality, isMobility, isTourism } from "./domain.util";
 import { isInRange, findStoresAlongRouteWithinDistance } from "./location.util";
 
 export class SearchUtil {
@@ -100,6 +100,46 @@ export class SearchUtil {
                             return false;
                         }
                         return true;
+                    });
+                    return providerItem.items.length > 0;
+                });
+            }
+        } else if (isMobility(context)) {
+            let customerLocation: KeyValuePair | null = null;
+            fulfillment?.stops.map((fulfillmentStop: KeyValuePair) => {
+                if (fulfillmentStop?.type?.toLowerCase() === START) {
+                    customerLocation = fulfillmentStop;
+                }
+            });
+            if (customerLocation) {
+                const customerGps = (customerLocation as KeyValuePair).location?.gps.split(',') || [];
+                const customerLat = customerGps[0].trim();
+                const customerLong = customerGps[1].trim();
+                filteredProviders = providers.filter((providerItem: KeyValuePair) => {
+                    providerItem.items = providerItem.items.filter((item: KeyValuePair) => {
+
+                        item.service = item?.service?.filter((serv: KeyValuePair) => {
+                            if (serv?.service_availabilities[0].is_available) {
+                                const itemGps = serv?.location_id?.gps.split(',') || [];
+                                const itemLat = itemGps[0].trim();
+                                const itemLong = itemGps[1].trim();
+
+                                console.log(
+                                    "Driver search:: ",
+                                    customerGps.length,
+                                    itemGps.length,
+                                    isInRange(customerLat, customerLong, itemLat, itemLong)
+                                );
+                                if (
+                                    customerGps.length && itemGps.length && isInRange(customerLat, customerLong, itemLat, itemLong)
+                                ) {
+                                    return true;
+                                }
+                                return false;
+                            }
+                            return false;
+                        });
+                        return item.service.length > 0;
                     });
                     return providerItem.items.length > 0;
                 });

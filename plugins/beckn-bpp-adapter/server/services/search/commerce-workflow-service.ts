@@ -43,6 +43,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               },
               location_id: {}
             }
+          },
+          service: {
+            populate: {
+              location_id: {},
+              service_availabilities: {}
+            }
           }
         }
       },
