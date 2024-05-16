@@ -53,7 +53,6 @@ export const quote = async (items: KeyValuePair[]) => {
       (price_bareakup_id: KeyValuePair) => {
         breakup.push({
           title: price_bareakup_id.title,
-          price1: price_bareakup_id || "no value",
           price: {
             currency: price_bareakup_id.currency,
             value: price_bareakup_id.value ? price_bareakup_id.value + "" : ""
