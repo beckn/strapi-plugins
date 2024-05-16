@@ -26,13 +26,13 @@ export const xInput = async (context: KeyValuePair) => {
   let formId;
   if (action === "select" && domain === "dsep:scholarships") {
     formId = "dsepScholarshipDetailsForm";
-  } else if(action === "select" && domain === "dsep:jobs") {
+  } else if (action === "select" && domain === "dsep:jobs") {
     formId = "dsepJobsApplyForm";
-  } else if(action === "select" && domain === "online-dispute-resolution:0.1.0") {
+  } else if (action === "select" && domain === "online-dispute-resolution:0.1.0") {
     formId = "odrDisputeDetailsForm";
-  } else if(action === "init" && domain === "online-dispute-resolution:0.1.0") {
+  } else if (action === "init" && domain === "online-dispute-resolution:0.1.0") {
     formId = "odrConsentForm";
-  } else if(action === "select" && domain === "supply-chain-services:assembly") {
+  } else if (action === "select" && domain === "supply-chain-services:assembly") {
     formId = "industryAssemblyDetailsForm";
   } else {
     formId = action === "select" ? "itemDetailsForm" : "ratingForm";
@@ -55,7 +55,7 @@ export const quote = async (items: KeyValuePair[]) => {
           title: price_bareakup_id.title,
           price: {
             currency: price_bareakup_id.currency,
-            value: price_bareakup_id.value + ""
+            value: price_bareakup_id.value ? price_bareakup_id.value + "" : ""
           },
           item: {
             id: price_bareakup_id.item_id
