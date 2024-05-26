@@ -3,6 +3,7 @@
     "message": {
         "order":{ 
             "id": $string(message.order_id.id),
+            "created_at": message.order_id.createdAt, 
             "provider": message.order_id.items.provider.{
                 "id": $string(id),
                 "descriptor": {
