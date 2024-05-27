@@ -24,9 +24,9 @@ export const context = async (data: any, action: string) => {
 export const xInput = async (context: KeyValuePair) => {
   const { action, domain } = context;
   let formId;
-  if (action === "select" && domain === "dsep:scholarships") {
+  if (action === "init" && domain === "dsep:scholarships") {
     formId = "dsepScholarshipDetailsForm";
-  } else if (action === "select" && domain === "dsep:jobs") {
+  } else if (action === "init" && domain === "dsep:jobs") {
     formId = "dsepJobsApplyForm";
   } else if (action === "select" && domain === "online-dispute-resolution:0.1.0") {
     formId = "odrDisputeDetailsForm";
@@ -34,11 +34,12 @@ export const xInput = async (context: KeyValuePair) => {
     formId = "odrConsentForm";
   } else if (action === "select" && domain === "supply-chain-services:assembly") {
     formId = "industryAssemblyDetailsForm";
-  } else {
-    formId = action === "select" ? "itemDetailsForm" : "ratingForm";
   }
+  // } else {
+  //   formId = action === "select" ? "itemDetailsForm" : "ratingForm";
+  // }
 
-  return `${process.env.BPP_ADAPTER_PLUGIN_URL}/x-input/form?form_id=${formId}`;
+  return formId ? `${process.env.BPP_ADAPTER_PLUGIN_URL}/x-input/form?form_id=${formId}` : null;
 };
 
 export const quote = async (items: KeyValuePair[]) => {
