@@ -49,6 +49,7 @@ export default ({ }: { strapi: Strapi }) => ({
             const schema = convertToJoiSchema(JSON.parse(validationRules));
             const { error, value } = schema.validate(message);
             if (error != undefined) {
+                ctx.response.status = 400;
                 ctx.body = {
                     error: error.details[0].message
                 };
