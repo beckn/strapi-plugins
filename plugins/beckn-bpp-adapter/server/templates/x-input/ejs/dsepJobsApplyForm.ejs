@@ -6,7 +6,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #fbfcff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -143,9 +143,9 @@
             const fileContainer = document.createElement('div');
             fileContainer.className = 'file-container';
             fileContainer.innerHTML = `
-                <span style="display: flex; align-items: center; width: 80%;">
+                <span style="display: flex; align-items: center;">
                     <i style="font-size:24px" class="fa">&#xf1c1;</i>
-                    <span style="white-space: nowrap; overflow: hidden; width: 100%; text-overflow: ellipsis;">${file.name}</span>
+                    <span style="white-space: nowrap; overflow: hidden; width: 12rem; text-overflow: ellipsis;">${file.name}</span>
                 </span>
                 <button type="button" onclick="removeFile(${i})"><i class="fa fa-trash" style="color:black;"></i></button>
             `;
@@ -174,7 +174,7 @@
 </script>
 
 <body>
-    <form action="<%=action %>" method="POST">
+    <form action="<%=action %>" method="POST" id="xinputform">
         <div>
             <label for="name" id="nameLabel">Name</label>
             <input type="text" id="name" name="name" required onfocus="changeLabelColor('nameLabel', '#3AA5E1')"
