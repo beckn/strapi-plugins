@@ -1,58 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <title>Industry 4.0 Add Assembly Details Form</title>
-</head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fbfcff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
 
+        form {
+            background: #fff;
+            max-width: 400px;
+            padding: 20px;
+            width: 100%;
+            height: 100%
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        label {
+            margin-bottom: 5px;
+        }
+
+        select,
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            border: 0;
+            outline: 0;
+            border-bottom: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        select:focus,
+        input[type="number"]:focus {
+            border-bottom: 1px solid #3AA5E1;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        .quantity-controls button {
+            background-color: #3aa5e1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
+            margin-bottom: 6%;
+        }
+
+        .quantity-controls input {
+            flex: 1;
+            text-align: center;
+        }
+
+        button[type="submit"] {
+            background-color: #3aa5e1;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #3490d6;
+        }
+    </style>
+</head>
 <body>
-    <form action="<%=action %>" method="POST">
-        <div>
-            <label for="type">Type</label>
-            <select id="type" name="type">
+    <form action="<%=action %>" method="POST" id="xinputform">
+        <h1>Add Assembly Details</h1>
+ 
+            <label for="type" id="typeLabel">Type</label>
+            <select id="type" name="type" onfocus="changeLabelColor('typeLabel', '#3AA5E1')" onblur="changeLabelColor('typeLabel', 'black')">
                 <option value="Plastic Box">Plastic Box</option>
                 <option value="Wooden Box">Wooden Box</option>
             </select>
-        </div>
-        <div>
-            <label for="colour">Colour</label>
-            <select id="colour" name="colour">
+   
+            <label for="colour" id="colorLabel">Colour</label>
+            <select id="colour" name="colour" onfocus="changeLabelColor('colorLabel', '#3AA5E1')" onblur="changeLabelColor('colorLabel', 'black')">
                 <option value="Blue">Blue</option>
                 <option value="Red">Red</option>
                 <option value="Green">Green</option>
             </select>
-        </div>
-        <div>
-            <label for="shape">Shape</label>
-            <select id="shape" name="shape">
+   
+            <label for="shape" id="shapeLabel">Shape</label>
+            <select id="shape" name="shape" onfocus="changeLabelColor('shapeLabel', '#3AA5E1')" onblur="changeLabelColor('shapeLabel', 'black')">
                 <option value="Circle">Circle</option>
                 <option value="Square">Square</option>
             </select>
-        </div>
-        <div>
-            <label for="length">Length (in mm)</label>
-            <input type="number" id="length" name="length" step="0.01">
-        </div>
-        <div>
-            <label for="width">Width (in mm)</label>
-            <input type="number" id="width" name="width" step="0.01">
-        </div>
-        <div>
-            <label for="quantity">Quantity</label>
-            <div>
+  
+            <label for="length" id="lengthLabel">Length (in mm)</label>
+            <input type="number" id="length" name="length" step="0.01" onfocus="changeLabelColor('lengthLabel', '#3AA5E1')" onblur="changeLabelColor('lengthLabel', 'black')">
+        
+            <label for="width" id="widthLabel">Width (in mm)</label>
+            <input type="number" id="width" name="width" step="0.01" onfocus="changeLabelColor('widthLabel', '#3AA5E1')" onblur="changeLabelColor('widthLabel', 'black')">
+
+
+            <label for="quantity" id="quantityLabel">Quantity</label>
+            <div class="quantity-controls">
                 <button type="button" id="decreaseQuantity">-</button>
-                <input type="number" id="quantity" name="quantity" value="1" min="0">
+                <input type="number" id="quantity" name="quantity" value="1" min="0" onfocus="changeLabelColor('quantityLabel', '#3AA5E1')" onblur="changeLabelColor('quantityLabel', 'black')">
                 <button type="button" id="increaseQuantity">+</button>
             </div>
-        </div>
-        <div>
-            <label for="weight">Weight (in kg)</label>
-            <input type="number" id="weight" name="weight" step="0.01">
-        </div>
-        <div>
+
+            <label for="weight" id="weightLabel">Weight (in kg)</label>
+            <input type="number" id="weight" name="weight" step="0.01" onfocus="changeLabelColor('weightLabel', '#3AA5E1')" onblur="changeLabelColor('weightLabel', 'black')">
+
+       
             <button type="submit">Add Shipping Details</button>
-        </div>
+
     </form>
 </body>
+<script>
+            document.getElementById('decreaseQuantity').addEventListener('click', function() {
+            var quantityInput = document.getElementById('quantity');
+            var currentValue = parseInt(quantityInput.value);
+            if (currentValue > 0) {
+                quantityInput.value = currentValue - 1;
+            }
+        });
 
+        document.getElementById('increaseQuantity').addEventListener('click', function() {
+            var quantityInput = document.getElementById('quantity');
+            var currentValue = parseInt(quantityInput.value);
+            quantityInput.value = currentValue + 1;
+        });
+        
+  function changeLabelColor(labelId, color) {
+        const label = document.getElementById(labelId);
+
+        label.style.color = color;
+    }
+</script>
 </html>
