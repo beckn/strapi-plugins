@@ -1,7 +1,7 @@
 import { Strapi } from "@strapi/strapi";
 import { FilterUtil, ObjectUtil } from "../../util";
 import { KeyValuePair } from "../../types";
-import { PLUGIN } from "../../constants";
+import { PLUGIN, DEFAULT_INITIAL_STATE } from "../../constants";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message, context }) {
@@ -96,10 +96,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const custId = existingCustomer
             ? existingCustomer.id
             : (
-              await strapi.entityService.create("api::customer.customer", {
-                data: custData
-              })
-            ).id;
+                await strapi.entityService.create("api::customer.customer", {
+                  data: custData
+                })
+              ).id;
 
           // Create shipping location
           const createShipping = await strapi.entityService.create(
@@ -120,6 +120,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
           const trackingId = createTracking.id;
 
+          // Create Initial Order Fulfillment State
+          const defaultState = DEFAULT_INITIAL_STATE.filter(
+            (elem) => elem.domain === domain
+          )?.[0] || {
+            state: {
+              state_code: "ORDER_RECEIVED",
+              state_value: "ORDER RECEIVED"
+            }
+          };
           // Create order fulfillment
           const orderFulfillmentDetail = {
             fulfilment_id: fulfillments[0].id,
@@ -127,8 +136,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             customer_id: custId,
             order_fulfillment_location_id: shippingLocationId,
             order_tracking_id: trackingId,
-            state_code: "PAYMENT_RECEIVED",
-            state_value: "PAYMENT RECEIVED",
+            state_code: defaultState.state.state_code,
+            state_value: defaultState.state.state_value,
             publishedAt: isoString
           };
 
@@ -248,10 +257,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
         })
       );
-      const orderFulfillment = await commonService.getOrderFulfillmentById(orderFulFillmentId, {
-        order_id: {},
-        fulfilment_id: {}
-      });
+      const orderFulfillment = await commonService.getOrderFulfillmentById(
+        orderFulFillmentId,
+        {
+          order_id: {},
+          fulfilment_id: {}
+        }
+      );
       const billingDetails = billing;
       const fulfillmentDetails = fulfillments;
 
@@ -264,8 +276,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           fulfilment_id: {
             ...(orderFulfillment?.fulfilment_id || {}),
             state_code: orderFulfillment.state_code,
-            state_value: orderFulfillment.state_value,
-          },
+            state_value: orderFulfillment.state_value
+          }
         },
         order_id: orderId
       }));

@@ -96,7 +96,13 @@
             }[],
             "quote": $quote(message[0].items),
             "billing": message.billing,
-            "fulfillments": message.fulfillment,
+            "fulfillments": $merge([message.fulfillment, {"state": {
+                    "descriptor": {
+                        "code": $string(message.orderFulfillment.state_code ? message.orderFulfillment.state_code : "IN_PROGRESS"),
+                        "short_desc": $string(message.orderFulfillment.state_value ? message.orderFulfillment.state_value : "in progress")
+                    },
+                    "updated_at": $string(message.orderFulfillment.updatedAt)
+                }}]),
             "payments": $payments(message[0]),
             "cancellation_terms": $cancellationTerms(message[0].items)
         }
