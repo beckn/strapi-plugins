@@ -1,1 +1,3 @@
-export default {};
+export default {
+    authMiddleware: require('./auth-middleware'),
+};
