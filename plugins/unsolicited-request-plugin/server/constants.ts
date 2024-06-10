@@ -1,0 +1,1 @@
+export const BPP_ADAPTER_PLUGIN = "beckn-bpp-adapter";
