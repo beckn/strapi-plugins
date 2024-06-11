@@ -1,5 +1,4 @@
 <html>
-
 <head>
     <title>XInput Form</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -12,7 +11,6 @@
             align-items: center;
             margin: 0;
         }
-
         form {
             background: #fff;
             max-width: 400px;
@@ -20,17 +18,14 @@
             width: 100%;
             height: 100%
         }
-
         h1 {
             font-size: 24px;
             margin-bottom: 20px;
             text-align: center;
         }
-
         label {
             margin-bottom: 5px;
         }
-
         input[type="text"],
         input[type="tel"],
         input[type="email"],
@@ -38,23 +33,19 @@
         textarea {
             width: 100%;
             margin-bottom: 20px;
-
             border: 0;
             outline: 0;
             border-bottom: 1px solid #ccc;
             font-size: 16px;
         }
-
         input:focus,
         textarea:focus {
             border-bottom: 1px solid #3AA5E1;
         }
-
         input[type="file"] {
             margin-bottom: 20px;
             border: 0;
         }
-
         button {
             background-color: #3aa5e1 !important;
             color: white;
@@ -64,7 +55,6 @@
             cursor: pointer;
             width: 100%;
         }
-
         .file-container {
             display: flex;
             align-items: center;
@@ -75,33 +65,37 @@
             border-radius: 4px;
             margin-bottom: 20px;
         }
-
         .file-container span {
             margin-left: 10px;
         }
-
         .file-container button {
             background: none !Important;
             border: none;
             cursor: pointer;
             width: 30px;
         }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: -15px;
+            margin-bottom: 10px;
+        }
+        .disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <script>
     function changeLabelColor(labelId, color) {
         const label = document.getElementById(labelId);
-
         label.style.color = color;
     }
-
     function handleFileSelect(event) {
         const fileList = document.getElementById('file-list');
         const files = event.target.files;
-
         // Clear the file list container
         fileList.innerHTML = '';
-
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             const fileContainer = document.createElement('div');
@@ -116,57 +110,130 @@
             fileList.appendChild(fileContainer);
         }
     }
-
     function removeFile(index) {
         const fileInput = document.getElementById('document');
         const dataTransfer = new DataTransfer();
         const files = fileInput.files;
-
         for (let i = 0; i < files.length; i++) {
             if (i !== index) {
                 dataTransfer.items.add(files[i]);
             }
         }
-
         fileInput.files = dataTransfer.files;
         handleFileSelect({ target: fileInput });
     }
-</script>
+    
+    function validateName() {
+            const name = document.getElementById('name').value;
+            if (name !== '' && !/^[a-zA-Z\s]+$/.test(name)) {
+                document.getElementById('nameError').textContent = 'Please enter a valid name.';
+                return false;
+            } else {
+                document.getElementById('nameError').textContent = '';
+                return true;
+            }
+        }
 
+        function validateMobile() {
+            const mobile = document.getElementById('mobile').value;
+            if (mobile !== '' && !/^\d{10}$/.test(mobile)) {
+                document.getElementById('mobileError').textContent = 'Please enter a valid 10-digit mobile number.';
+                return false;
+            } else {
+                document.getElementById('mobileError').textContent = '';
+                return true;
+            }
+        }
+
+        function validateEmail() {
+            const email = document.getElementById('email').value;
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email !== '' && !emailPattern.test(email)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email address.';
+                return false;
+            } else {
+                document.getElementById('emailError').textContent = '';
+                return true;
+            }
+        }
+
+        function validateZipcode() {
+            const zipcode = document.getElementById('zipcode').value;
+            if (zipcode !== '' && !/^\d{5,6}$/.test(zipcode)) {
+                document.getElementById('zipcodeError').textContent = 'Please enter a valid zip code.';
+                return false;
+            } else {
+                document.getElementById('zipcodeError').textContent = '';
+                return true;
+            }
+        }
+
+        function validateForm() {
+            const isNameValid = validateName();
+            const isMobileValid = validateMobile();
+            const isEmailValid = validateEmail();
+            const isZipcodeValid = validateZipcode();
+            return isNameValid && isMobileValid && isEmailValid && isZipcodeValid;
+        }
+
+        function updateSubmitButton() {
+            const submitButton = document.getElementById('submitButton');
+            if (validateForm()) {
+                submitButton.disabled = false;
+                submitButton.classList.remove('disabled');
+            } else {
+                submitButton.disabled = true;
+                submitButton.classList.add('disabled');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateSubmitButton(); // Initial check to disable the button if any field is invalid
+
+            document.getElementById('name').addEventListener('input', updateSubmitButton);
+            document.getElementById('mobile').addEventListener('input', updateSubmitButton);
+            document.getElementById('email').addEventListener('input', updateSubmitButton);
+            document.getElementById('zipcode').addEventListener('input', updateSubmitButton);
+            document.getElementById('document').addEventListener('change', updateSubmitButton);
+        });
+</script>
 <body>
     <form action="<%=action %>" method="post" id="xinputform">
         <label for="name" id="nameLabel">Name</label>
         <input type="text" id="name" name="name" required onfocus="changeLabelColor('nameLabel', '#3AA5E1')"
             onblur="changeLabelColor('nameLabel', 'black')">
+                    <div id="nameError" class="error"></div>
 
         <label for="mobile" id="mobileLabel">Mobile Number</label>
         <input type="tel" id="mobile" name="mobile" minlength="10" maxlength="10" required onfocus="changeLabelColor('mobileLabel', '#3AA5E1')"
             onblur="changeLabelColor('mobileLabel', 'black')">
-
+            <div id="mobileError" class="error"></div>
+            
         <label for="reason" id="reasonLabel">Tell us why you need this scholarship</label>
         <textarea id="reason" name="reason" required onfocus="changeLabelColor('reasonLabel', '#3AA5E1')"
             onblur="changeLabelColor('reasonLabel', 'black')"></textarea>
-
+                    <div id="reasonError" class="error"></div>
+            
         <label for="email" id="emailLabel">Email ID</label>
         <input type="email" id="email" name="email" required onfocus="changeLabelColor('emailLabel', '#3AA5E1')"
             onblur="changeLabelColor('emailLabel', 'black')">
-
+          <div id="emailError" class="error"></div>
+          
         <label for="address" id="addressLabel">Address</label>
         <input type="text" id="address" name="address" required onfocus="changeLabelColor('addressLabel', '#3AA5E1')"
             onblur="changeLabelColor('addressLabel', 'black')">
+          <div id="addressError" class="error"></div>
 
         <label for="zipcode" id="zipcodeLabel">Zip Code</label>
         <input type="number" id="zipcode" name="zipcode" required onfocus="changeLabelColor('zipcodeLabel', '#3AA5E1')"
             onblur="changeLabelColor('zipcodeLabel', 'black')">
-
+          <div id="zipcodeError" class="error"></div>
+          
         <label for="document">Documents</label>
         <div id="file-list">
         </div>
-
         <input type="file" id="document" name="document" multiple accept=".pdf" onchange="handleFileSelect(event)">
-
-        <button type="submit">Submit</button>
+        <button type="submit" id="submitButton" class="disabled" disabled>Submit</button>
     </form>
 </body>
-
 </html>
