@@ -208,33 +208,24 @@
                 submitButton.classList.add('disabled');
             }
         }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-        updateSubmitButton(); // Initial check to disable the button if any field is invalid
-
-            document.getElementById('name').addEventListener('input', updateSubmitButton);
-            document.getElementById('mobile').addEventListener('input', updateSubmitButton);
-            document.getElementById('email').addEventListener('input', updateSubmitButton);
-            document.getElementById('declaration').addEventListener('change', updateSubmitButton);
-        });
 </script>
 <body>
     <form action="<%=action %>" method="POST" id="xinputform">
         <div>
             <label for="name" id="nameLabel">Name</label>
             <input type="text" id="name" name="name" required onfocus="changeLabelColor('nameLabel', '#3AA5E1')"
-                onblur="changeLabelColor('nameLabel', 'black')">
+                onblur="changeLabelColor('nameLabel', 'black')" oninput="updateSubmitButton()">
               <div id="nameError" class="error"></div>
               
             <label for="mobile" id="mobileLabel">Mobile Number</label>
             <input type="tel" id="mobile" name="mobile" minlength="10" maxlength="10" required onfocus="changeLabelColor('mobileLabel', '#3AA5E1')"
-                onblur="changeLabelColor('mobileLabel', 'black')"
+                onblur="changeLabelColor('mobileLabel', 'black')" oninput="updateSubmitButton()"
                 >
                 <div id="mobileError" class="error"></div>
                 
             <label for="email" id="emailLabel">Email ID</label>
             <input type="email" id="email" name="email" required onfocus="changeLabelColor('emailLabel', '#3AA5E1')"
-                onblur="changeLabelColor('emailLabel', 'black')">
+                onblur="changeLabelColor('emailLabel', 'black')" oninput="updateSubmitButton()">
               <div id="emailError" class="error"></div>
             <label>Documents</label>
             <div id="file-list">
