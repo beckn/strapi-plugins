@@ -1,0 +1,17 @@
+{
+  "name": "plugins-repo",
+  "version": "1.0.0",
+  "description": "strapi plugins repo",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --testTimeout=20000 --watch",
+    "test:coverage": "jest --testTimeout=20000 --coverage"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.5"
+  }
+}

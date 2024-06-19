@@ -28,18 +28,29 @@ export const xInput = async (context: KeyValuePair) => {
     formId = "dsepScholarshipDetailsForm";
   } else if (action === "init" && domain === "dsep:jobs") {
     formId = "dsepJobsApplyForm";
-  } else if (action === "select" && domain === "online-dispute-resolution:0.1.0") {
+  } else if (
+    action === "select" &&
+    domain === "online-dispute-resolution:0.1.0"
+  ) {
     formId = "odrDisputeDetailsForm";
-  } else if (action === "init" && domain === "online-dispute-resolution:0.1.0") {
+  } else if (
+    action === "init" &&
+    domain === "online-dispute-resolution:0.1.0"
+  ) {
     formId = "odrConsentForm";
-  } else if (action === "select" && domain === "supply-chain-services:assembly") {
+  } else if (
+    action === "select" &&
+    domain === "supply-chain-services:assembly"
+  ) {
     formId = "industryAssemblyDetailsForm";
   }
   // } else {
   //   formId = action === "select" ? "itemDetailsForm" : "ratingForm";
   // }
 
-  return formId ? `${process.env.BPP_ADAPTER_PLUGIN_URL}/x-input/form?form_id=${formId}` : null;
+  return formId
+    ? `${process.env.BPP_ADAPTER_PLUGIN_URL}/x-input/form?form_id=${formId}`
+    : null;
 };
 
 export const quote = async (items: KeyValuePair[]) => {
@@ -159,7 +170,7 @@ export const fulfillments = (fulfillments: KeyValuePair[]) => {
           name: agent?.first_name + agent?.last_name
         }
       },
-      tags: fulfillment.tag_ids?.map((tag) => {
+      tags: fulfillment.tag_ids?.map((tag: any) => {
         return {
           display: true,
           descriptor: {
@@ -183,7 +194,11 @@ export const fulfillments = (fulfillments: KeyValuePair[]) => {
 export const locations = (locations: KeyValuePair[]) => {
   const formatedLocations: KeyValuePair[] = [];
   locations.map((location) => {
-    if (!formatedLocations.find((lc: KeyValuePair) => lc?.id === (location?.id + ""))) {
+    if (
+      !formatedLocations.find(
+        (lc: KeyValuePair) => lc?.id === location?.id + ""
+      )
+    ) {
       formatedLocations.push({
         id: location?.id + "",
         gps: location?.gps || null,
@@ -202,4 +217,4 @@ export const locations = (locations: KeyValuePair[]) => {
     }
   });
   return formatedLocations;
-}
+};

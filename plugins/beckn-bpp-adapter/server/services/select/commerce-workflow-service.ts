@@ -16,8 +16,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         : {};
       const itemFilter = {
         id: {
-          $in: itemValue,
-        },
+          $in: itemValue
+        }
       };
       const populate: KeyValuePair = {
         category_ids: {},
@@ -37,9 +37,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             cat_attr_tag_relations: {
               filters: {
                 taxanomy: {
-                  $in: ["TAG", "CATEGORY"],
-                },
-              },
+                  $in: ["TAG", "CATEGORY"]
+                }
+              }
             },
             image: {},
             sc_retail_product: {
@@ -60,21 +60,21 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                   }
                 },
                 location_id: {}
-              },
+              }
             },
             item_meta_id: {
               populate: {
                 fulfilment_id: {},
-                location_id: {},
-              },
-            },
-          },
-        },
+                location_id: {}
+              }
+            }
+          }
+        }
       };
 
       if (domain) {
         filters.domain_id = {
-          DomainName: domain,
+          DomainName: domain
         };
       }
 
@@ -90,7 +90,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         "api::provider.provider",
         {
           filters,
-          populate,
+          populate
         }
       );
 
@@ -105,14 +105,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     taxanomy.taxanomy_id = await commonService.getCategoryById(
                       taxanomy.taxanomy_id,
                       {
-                        parent_id: {},
+                        parent_id: {}
                       }
                     );
                   } else if (taxanomy.taxanomy === "TAG") {
                     taxanomy.taxanomy_id = await commonService.getTagById(
                       taxanomy.taxanomy_id,
                       {
-                        tag_group_id: {},
+                        tag_group_id: {}
                       }
                     );
                   }
@@ -122,12 +122,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
         })
       );
-      const quantitySelected = { quantity: items[0]?.quantity?.selected?.measure?.value || 0 }
-      itemDetails[0] = { ...itemDetails[0], ...quantitySelected }
+
+      const quantitySelected = {
+        quantity: items[0]?.quantity?.selected?.measure?.value || 0
+      };
+      itemDetails[0] = { ...itemDetails[0], ...quantitySelected };
+
       return itemDetails;
     } catch (error) {
       console.error("An error occurred:", error);
       throw error;
     }
-  },
+  }
 });
