@@ -5,7 +5,7 @@ import appointmentWorkflowService from "../../../services/search/appointment-wor
 
 describe("default", () => {
   // The function should return a list of providers.
-  it("should return a list of providers when the function is invoked", () => {
+  it("should return a list of providers when the function is invoked", async () => {
     // Mock dependencies
     const strapi: Strapi = {
       entityService: {
@@ -20,12 +20,12 @@ describe("default", () => {
     };
 
     // Invoke the function
-    const result = appointmentWorkflowService({ strapi }).index({
+    const result = await appointmentWorkflowService({ strapi }).index({
       message: { intent: {} },
       context: {}
     });
     // Check the result
-    expect(result).resolves.toEqual([]);
+    expect(result).toEqual([]);
     expect(strapi.entityService.findMany).toHaveBeenCalledWith(
       "api::provider.provider",
       {
@@ -52,7 +52,7 @@ describe("default", () => {
                   }
                 }
               },
-              item_fulfillment_id: {
+              item_fulfillment_ids: {
                 populate: {
                   fulfilment_id: {
                     populate: {
@@ -286,7 +286,7 @@ describe("default", () => {
   });
 
   // The provider, item, and category objects may not have all the required properties.
-  it.only("should handle the case when the provider, item, and category objects do not have all the required properties", () => {
+  it("should handle the case when the provider, item, and category objects do not have all the required properties", () => {
     // Mock dependencies
     const strapi = {
       entityService: {
