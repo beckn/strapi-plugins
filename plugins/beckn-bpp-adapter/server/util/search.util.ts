@@ -10,6 +10,7 @@ export class SearchUtil {
         fulfillment: KeyValuePair,
         context: KeyValuePair
     ): KeyValuePair[] => {
+        console.log('isMobility', isMobility(context));
         let filteredProviders: KeyValuePair[] = providers;
         if (isHospitality(context)) {
             let checkInReq: KeyValuePair | null = null;
@@ -109,6 +110,7 @@ export class SearchUtil {
                 filteredProviders = [];
             }
         } else if (isMobility(context)) {
+            console.log('isMobility', isMobility(context));
             let customerLocation: KeyValuePair | null = null;
             fulfillment?.stops.map((fulfillmentStop: KeyValuePair) => {
                 if (fulfillmentStop?.type?.toLowerCase() === START) {
@@ -116,13 +118,15 @@ export class SearchUtil {
                 }
             });
             if (customerLocation) {
+                console.log('customerLocation', customerLocation);
                 const customerGps = (customerLocation as KeyValuePair).location?.gps.split(',') || [];
                 const customerLat = customerGps[0].trim();
                 const customerLong = customerGps[1].trim();
                 filteredProviders = providers.filter((providerItem: KeyValuePair) => {
                     providerItem.items = providerItem.items.filter((item: KeyValuePair) => {
-
+                        console.log('item.service', item.service);
                         item.service = item?.service?.filter((serv: KeyValuePair) => {
+                            console.log('serv', serv);
                             if (serv?.service_availabilities[0].is_available) {
                                 const itemGps = serv?.location_id?.gps.split(',') || [];
                                 const itemLat = itemGps[0].trim();
@@ -143,6 +147,7 @@ export class SearchUtil {
                             }
                             return false;
                         });
+                        console.log('item.service after', item.service);
                         return item.service.length > 0;
                     });
                     return providerItem.items.length > 0;

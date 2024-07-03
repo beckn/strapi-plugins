@@ -31,7 +31,7 @@ export default ({ }: { strapi: Strapi }) => ({
     async webhookCall(data: any, action: string): Promise<any> {
         const url = `${process.env?.PROTOCOL_SERVER_URL}/${action}`;
         try {
-            console.log('Data sent to Protocol server:', JSON.stringify(data));
+            console.log('Data sent to Protocol server:1', JSON.stringify(data));
             const axios = axiosInstance.create({
                 httpsAgent: new https.Agent({
                     rejectUnauthorized: false,
