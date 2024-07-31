@@ -58,5 +58,12 @@ export const DEFAULT_INITIAL_STATE = [
       state_code: "REQUEST_RECEIVED",
       state_value: "REQUEST RECEIVED"
     }
+  },
+  {
+    domain: "mobility:1.1.0",
+    state: {
+      state_code: "RIDE_STATUS",
+      state_value: "AWAITING_DRIVER_APPROVAL"
+    }
   }
 ];

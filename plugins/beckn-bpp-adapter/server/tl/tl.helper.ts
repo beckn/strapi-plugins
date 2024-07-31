@@ -157,7 +157,11 @@ export const fulfillments = (fulfillments: KeyValuePair[]) => {
         person: {
           id: agent?.id ? agent?.id + "" : "",
           name: agent?.first_name + agent?.last_name
-        }
+        },
+        contact: {
+          phone: agent?.agent_profile?.phone_number,
+          email: agent?.agent_profile?.email
+        },
       },
       tags: fulfillment.tag_ids?.map((tag) => {
         return {

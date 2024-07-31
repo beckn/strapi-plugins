@@ -47,7 +47,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           service: {
             populate: {
               location_id: {},
-              service_availabilities: {}
+              service_availabilities: {},
+              agent_id: {
+                populate: {
+                  agent_profile: {}
+                }
+              }
             }
           }
         }
