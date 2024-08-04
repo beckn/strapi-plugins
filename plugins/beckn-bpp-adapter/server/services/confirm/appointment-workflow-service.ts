@@ -39,7 +39,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       // Extract shipping details
       const shipping =
         (fulfillments[0]?.stops
-          ? fulfillments[0]?.stops[0]?.location
+          ? fulfillments[0]?.stops.find((elem: any) => elem.type === "start")
+              ?.location || fulfillments[0]?.stops[0]?.location
           : undefined) || billing;
       const shippingDetail = {
         gps: shipping?.gps || "",
@@ -54,6 +55,28 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         publishedAt: isoString
       };
 
+      const endLocation = fulfillments[0]?.stops
+        ? fulfillments[0]?.stops.find((elem: any) => elem.type === "end")
+          ? fulfillments[0]?.stops.find((elem: any) => elem.type === "end")
+              ?.location
+          : undefined
+        : undefined;
+
+      let endLocationDetail: undefined | KeyValuePair;
+      if (endLocation) {
+        endLocationDetail = {
+          gps: endLocation?.gps || "",
+          city_name: endLocation?.city?.name || "",
+          city_code: endLocation?.city?.code || "",
+          state_code: endLocation?.state?.name || "",
+          state_name: endLocation?.state?.code || "",
+          country_name: endLocation?.country?.name || "",
+          country_code: endLocation?.country?.code || "",
+          area_code: endLocation?.area_code || "",
+          address: endLocation?.address || "",
+          publishedAt: isoString
+        };
+      }
       // Extract item values
       const itemValue = items.map((obj: { id: string }) => `${obj.id}`);
 
@@ -69,6 +92,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             bap_uri
           };
           // Create order
+
           const createOrder = await strapi.entityService.create(
             "api::order.order",
             { data: orderData }
@@ -94,10 +118,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const custId = existingCustomer
             ? existingCustomer.id
             : (
-              await strapi.entityService.create("api::customer.customer", {
-                data: custData
-              })
-            ).id;
+                await strapi.entityService.create("api::customer.customer", {
+                  data: custData
+                })
+              ).id;
 
           // Create shipping location
           const createShipping = await strapi.entityService.create(
@@ -105,6 +129,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             { data: shippingDetail }
           );
           const shippingLocationId = createShipping.id;
+
+          // Create End Location
+          let createdEndLocation: undefined | KeyValuePair;
+          if (endLocationDetail) {
+            createdEndLocation = await strapi.entityService.create(
+              "api::order-fulfillment-location.order-fulfillment-location",
+              { data: endLocationDetail }
+            );
+          }
 
           // Create tracking details
           const trackingDetail = {
@@ -125,7 +158,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             customer_id: custId,
             order_fulfillment_location_id: shippingLocationId,
             order_tracking_id: trackingId,
-            publishedAt: isoString
+            publishedAt: isoString,
+            ...(createdEndLocation
+              ? { order_fulfillment_location_end: createdEndLocation.id }
+              : {}),
+            ...(domain === "mobility:1.1.0"
+              ? {
+                  state_code: "AWAITING_DRIVER_APPROVAL",
+                  state_value: "AWAITING_DRIVER_APPROVAL"
+                }
+              : {})
           };
           await strapi.entityService.create(
             "api::order-fulfillment.order-fulfillment",

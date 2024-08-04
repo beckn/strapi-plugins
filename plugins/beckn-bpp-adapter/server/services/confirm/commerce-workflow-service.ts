@@ -41,7 +41,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       // Extract shipping details
       const shipping =
         (fulfillments[0]?.stops
-          ? fulfillments[0]?.stops[0]?.location
+          ? fulfillments[0]?.stops.find((elem: any) => elem.type === "start")
+              ?.location || fulfillments[0]?.stops[0]?.location
           : undefined) || billing;
       const shippingDetail = {
         gps: shipping?.gps || "",
@@ -55,6 +56,30 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         address: shipping?.address || "",
         publishedAt: isoString
       };
+
+      // Extract end location details
+      const endLocation = fulfillments[0]?.stops
+        ? fulfillments[0]?.stops.find((elem: any) => elem.type === "end")
+          ? fulfillments[0]?.stops.find((elem: any) => elem.type === "end")
+              ?.location
+          : undefined
+        : undefined;
+
+      let endLocationDetail: undefined | KeyValuePair;
+      if (endLocation) {
+        endLocationDetail = {
+          gps: endLocation?.gps || "",
+          city_name: endLocation?.city?.name || "",
+          city_code: endLocation?.city?.code || "",
+          state_code: endLocation?.state?.name || "",
+          state_name: endLocation?.state?.code || "",
+          country_name: endLocation?.country?.name || "",
+          country_code: endLocation?.country?.code || "",
+          area_code: endLocation?.area_code || "",
+          address: endLocation?.address || "",
+          publishedAt: isoString
+        };
+      }
 
       // Extract item values
       const itemValue = items.map((obj: { id: string }) => `${obj.id}`);
@@ -110,6 +135,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
           const shippingLocationId = createShipping.id;
 
+          let createdEndLocation: undefined | KeyValuePair;
+          if (endLocationDetail) {
+            createdEndLocation = await strapi.entityService.create(
+              "api::order-fulfillment-location.order-fulfillment-location",
+              { data: endLocationDetail }
+            );
+          }
           // Create tracking details
           const trackingDetail = {
             url: `${process.env.BPP_ADAPTER_PLUGIN_URL}/tracking/${orderId}`,
@@ -140,6 +172,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             order_tracking_id: trackingId,
             state_code: defaultState.state.state_code,
             state_value: defaultState.state.state_value,
+            ...(createdEndLocation
+              ? { order_fulfillment_location_end: createdEndLocation.id }
+              : {}),
             publishedAt: isoString
           };
 
