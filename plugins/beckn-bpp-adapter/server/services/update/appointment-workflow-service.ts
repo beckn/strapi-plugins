@@ -54,7 +54,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               },
               fulfilment_id: {},
               customer_id: {},
-              order_fulfillment_location_id: {}
+              stops: {}
             }
           }
         );

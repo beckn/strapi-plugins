@@ -39,42 +39,43 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       // Extract shipping details
       const shipping =
         (fulfillments[0]?.stops
-          ? fulfillments[0]?.stops.find((elem: any) => elem.type === "start")
-              ?.location || fulfillments[0]?.stops[0]?.location
+          ? fulfillments[0]?.stops.find((elem: any) => elem.type === "start") ||
+            fulfillments[0]?.stops[0]
           : undefined) || billing;
       const shippingDetail = {
-        gps: shipping?.gps || "",
-        city_name: shipping?.city?.name || "",
-        city_code: shipping?.city?.code || "",
-        state_code: shipping?.state?.name || "",
-        state_name: shipping?.state?.code || "",
-        country_name: shipping?.country?.name || "",
-        country_code: shipping?.country?.code || "",
-        area_code: shipping?.area_code || "",
-        address: shipping?.address || "",
-        publishedAt: isoString
+        gps: shipping?.location?.gps || "",
+        city_name: shipping?.location?.city?.name || "",
+        city_code: shipping?.location?.city?.code || "",
+        state_code: shipping?.location?.state?.name || "",
+        state_name: shipping?.location?.state?.code || "",
+        country_name: shipping?.location?.country?.name || "",
+        country_code: shipping?.location?.country?.code || "",
+        area_code: shipping?.location?.area_code || "",
+        address: shipping?.location?.address || "",
+        publishedAt: isoString,
+        type: shipping?.type || "start"
       };
 
       const endLocation = fulfillments[0]?.stops
         ? fulfillments[0]?.stops.find((elem: any) => elem.type === "end")
           ? fulfillments[0]?.stops.find((elem: any) => elem.type === "end")
-              ?.location
           : undefined
         : undefined;
 
       let endLocationDetail: undefined | KeyValuePair;
       if (endLocation) {
         endLocationDetail = {
-          gps: endLocation?.gps || "",
-          city_name: endLocation?.city?.name || "",
-          city_code: endLocation?.city?.code || "",
-          state_code: endLocation?.state?.name || "",
-          state_name: endLocation?.state?.code || "",
-          country_name: endLocation?.country?.name || "",
-          country_code: endLocation?.country?.code || "",
-          area_code: endLocation?.area_code || "",
-          address: endLocation?.address || "",
-          publishedAt: isoString
+          gps: endLocation?.location?.gps || "",
+          city_name: endLocation?.location?.city?.name || "",
+          city_code: endLocation?.location?.city?.code || "",
+          state_code: endLocation?.location?.state?.name || "",
+          state_name: endLocation?.location?.state?.code || "",
+          country_name: endLocation?.location?.country?.name || "",
+          country_code: endLocation?.location?.country?.code || "",
+          area_code: endLocation?.location?.area_code || "",
+          address: endLocation?.location?.address || "",
+          publishedAt: isoString,
+          type: endLocation?.type || "end"
         };
       }
       // Extract item values
@@ -128,15 +129,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::order-fulfillment-location.order-fulfillment-location",
             { data: shippingDetail }
           );
-          const shippingLocationId = createShipping.id;
+          const stopsIds = [createShipping.id];
 
           // Create End Location
-          let createdEndLocation: undefined | KeyValuePair;
+
           if (endLocationDetail) {
-            createdEndLocation = await strapi.entityService.create(
+            const createdEndLocation = await strapi.entityService.create(
               "api::order-fulfillment-location.order-fulfillment-location",
               { data: endLocationDetail }
             );
+            stopsIds.push(createdEndLocation.id);
           }
 
           // Create tracking details
@@ -152,16 +154,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const trackingId = createTracking.id;
 
           // Create order fulfillment
+
           const orderFulfillmentDetail = {
             fulfilment_id: fulfillments[0].id,
             order_id: orderId,
             customer_id: custId,
-            order_fulfillment_location_id: shippingLocationId,
+            stops: stopsIds,
             order_tracking_id: trackingId,
             publishedAt: isoString,
-            ...(createdEndLocation
-              ? { order_fulfillment_location_end: createdEndLocation.id }
-              : {}),
             ...(domain === "mobility:1.1.0"
               ? {
                   state_code: "AWAITING_DRIVER_APPROVAL",

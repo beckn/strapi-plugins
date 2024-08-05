@@ -25,13 +25,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         })
       )[0];
-      const validOrders = availableOrders?.filter(
-        (order) =>
-          distance(
-            agentService.location_id.gps,
-            order.order_fulfillment_location_id.gps
-          ) <= 2
-      );
+      const validOrders = availableOrders?.filter((order) => {
+        const startLocation =
+          order.stops.find((stop) => stop.type === "start") || order.stops[0];
+        if (startLocation?.gps) {
+          return distance(agentService.location_id.gps, startLocation.gps) <= 2;
+        }
+      });
 
       return (ctx.body = {
         message: "Rides Fetched",

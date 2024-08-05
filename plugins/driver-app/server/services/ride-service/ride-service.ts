@@ -33,7 +33,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 }
               }
             },
-            order_fulfillment_location_id: true
+            stops: true
           }
         }
       );

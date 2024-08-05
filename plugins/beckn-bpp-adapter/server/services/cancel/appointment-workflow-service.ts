@@ -96,7 +96,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         fulfilment_id: {},
         customer_id: {},
         agent_id: {},
-        order_fulfillment_location_id: {}
+        stops: {}
       };
       const cancelDetails = await strapi.entityService.update(
         "api::order-fulfillment.order-fulfillment",
