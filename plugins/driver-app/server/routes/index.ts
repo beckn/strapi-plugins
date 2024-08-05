@@ -43,5 +43,14 @@ export default [
       middlewares: ["plugin::driver-app.authMiddleware"],
       auth: false
     }
+  },
+  {
+    method: "POST",
+    path: "/ride-summary",
+    handler: "rideController.showRideSummary",
+    config: {
+      middlewares: ["plugin::driver-app.authMiddleware"],
+      auth: false
+    }
   }
 ];
