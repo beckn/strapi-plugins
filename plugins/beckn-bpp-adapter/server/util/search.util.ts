@@ -119,7 +119,6 @@ export class SearchUtil {
                 const customerGps = (customerLocation as KeyValuePair).location?.gps.split(',') || [];
                 const customerLat = customerGps[0].trim();
                 const customerLong = customerGps[1].trim();
-                console.log("abhi", JSON.stringify(providers));
                 filteredProviders = providers.filter((providerItem: KeyValuePair) => {
                     providerItem.items = providerItem.items.filter((item: KeyValuePair) => {
                         item.service = item?.service.filter((serv: KeyValuePair) => {
