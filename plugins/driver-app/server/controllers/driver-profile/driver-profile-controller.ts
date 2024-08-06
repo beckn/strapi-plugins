@@ -81,7 +81,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             .driverProfileService({ strapi })
             .updateRide(agentId, order_id, order_status);
           return (ctx.body = {
-            updateRideStatus
+            status: 'success',
+            code: 200,
+            data: updateRideStatus
           });
         } else {
           throw new Error("Order id or order status not provided to update ride");

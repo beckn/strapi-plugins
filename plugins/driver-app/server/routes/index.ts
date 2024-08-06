@@ -54,6 +54,7 @@ export default [
     }
   },
   {
+    method: "POST",
     path: "/rides",
     handler: "driverProfileController.updateRide",
     config: {
