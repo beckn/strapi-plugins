@@ -6,11 +6,11 @@
             "status": order_tracking_id.status,
             "url": order_tracking_id.url,
             "location": {
-                "id": $string(order_fulfillment_location_id.id),
+                "id": $string(stops[0].id),
                 "descriptor": {
-                    "name": order_fulfillment_location_id.address
+                    "name": stops[0].address
                 },
-                "gps": order_fulfillment_location_id.gps
+                "gps": stops[0].gps
             }
         }
     }

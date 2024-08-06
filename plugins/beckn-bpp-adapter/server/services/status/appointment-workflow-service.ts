@@ -12,8 +12,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         order_id: {
           filters: {
             domain: {
-              $eq: domain.trim(),
-            },
+              $eq: domain.trim()
+            }
           },
           populate: {
             items: {
@@ -31,9 +31,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 cat_attr_tag_relations: {
                   filters: {
                     taxanomy: {
-                      $in: ["TAG", "CATEGORY"],
-                    },
-                  },
+                      $in: ["TAG", "CATEGORY"]
+                    }
+                  }
                 },
                 image: {},
                 item_fulfillment_ids: {
@@ -43,14 +43,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                         agent_ids: {}
                       }
                     },
-                    location_id: {},
-                  },
+                    location_id: {}
+                  }
                 },
                 item_meta_id: {
                   populate: {
                     fulfilment_id: {},
-                    location_id: {},
-                  },
+                    location_id: {}
+                  }
                 },
                 provider: {
                   populate: {
@@ -58,26 +58,26 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     location_id: {},
                     category_ids: {},
                     fulfillments: {},
-                    payment_methods: {},
-                  },
+                    payment_methods: {}
+                  }
                 },
-                service: {},
-              },
+                service: {}
+              }
             },
-            order_address: {},
-          },
+            order_address: {}
+          }
         },
         fulfilment_id: {},
         customer_id: {},
         agent_id: {},
-        order_fulfillment_location_id: {},
+        stops: {}
       };
 
       const orderDetails = await strapi.entityService.findMany(
         "api::order-fulfillment.order-fulfillment",
         {
           filters: { order_id: order_id },
-          populate,
+          populate
         }
       );
 
@@ -92,14 +92,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     taxanomy.taxanomy_id = await commonService.getCategoryById(
                       taxanomy.taxanomy_id,
                       {
-                        parent_id: {},
+                        parent_id: {}
                       }
                     );
                   } else if (taxanomy.taxanomy === "TAG") {
                     taxanomy.taxanomy_id = await commonService.getTagById(
                       taxanomy.taxanomy_id,
                       {
-                        tag_group_id: {},
+                        tag_group_id: {}
                       }
                     );
                   }
@@ -114,5 +114,5 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       console.error("An error occurred:", error);
       throw error;
     }
-  },
+  }
 });

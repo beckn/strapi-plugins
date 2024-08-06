@@ -41,20 +41,45 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       // Extract shipping details
       const shipping =
         (fulfillments[0]?.stops
-          ? fulfillments[0]?.stops[0]?.location
+          ? fulfillments[0]?.stops.find((elem: any) => elem.type === "start") ||
+            fulfillments[0]?.stops[0]
           : undefined) || billing;
       const shippingDetail = {
-        gps: shipping?.gps || "",
-        city_name: shipping?.city?.name || "",
-        city_code: shipping?.city?.code || "",
-        state_code: shipping?.state?.name || "",
-        state_name: shipping?.state?.code || "",
-        country_name: shipping?.country?.name || "",
-        country_code: shipping?.country?.code || "",
-        area_code: shipping?.area_code || "",
-        address: shipping?.address || "",
-        publishedAt: isoString
+        gps: shipping?.location?.gps || "",
+        city_name: shipping?.location?.city?.name || "",
+        city_code: shipping?.location?.city?.code || "",
+        state_code: shipping?.location?.state?.name || "",
+        state_name: shipping?.location?.state?.code || "",
+        country_name: shipping?.location?.country?.name || "",
+        country_code: shipping?.location?.country?.code || "",
+        area_code: shipping?.location?.area_code || "",
+        address: shipping?.location?.address || "",
+        publishedAt: isoString,
+        type: shipping?.type || "start"
       };
+
+      const endLocation = fulfillments[0]?.stops
+        ? fulfillments[0]?.stops.find((elem: any) => elem.type === "end")
+          ? fulfillments[0]?.stops.find((elem: any) => elem.type === "end")
+          : undefined
+        : undefined;
+
+      let endLocationDetail: undefined | KeyValuePair;
+      if (endLocation) {
+        endLocationDetail = {
+          gps: endLocation?.location?.gps || "",
+          city_name: endLocation?.location?.city?.name || "",
+          city_code: endLocation?.location?.city?.code || "",
+          state_code: endLocation?.location?.state?.name || "",
+          state_name: endLocation?.location?.state?.code || "",
+          country_name: endLocation?.location?.country?.name || "",
+          country_code: endLocation?.location?.country?.code || "",
+          area_code: endLocation?.location?.area_code || "",
+          address: endLocation?.location?.address || "",
+          publishedAt: isoString,
+          type: endLocation?.type || "end"
+        };
+      }
 
       // Extract item values
       const itemValue = items.map((obj: { id: string }) => `${obj.id}`);
@@ -108,8 +133,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::order-fulfillment-location.order-fulfillment-location",
             { data: shippingDetail }
           );
-          const shippingLocationId = createShipping.id;
+          const stopsIds = [createShipping.id];
 
+          if (endLocationDetail) {
+            const createdEndLocation = await strapi.entityService.create(
+              "api::order-fulfillment-location.order-fulfillment-location",
+              { data: endLocationDetail }
+            );
+            stopsIds.push(createdEndLocation.id);
+          }
           // Create tracking details
           const trackingDetail = {
             url: `${process.env.BPP_ADAPTER_PLUGIN_URL}/tracking/${orderId}`,
@@ -136,7 +168,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             fulfilment_id: fulfillments[0].id,
             order_id: orderId,
             customer_id: custId,
-            order_fulfillment_location_id: shippingLocationId,
+            stops: stopsIds,
             order_tracking_id: trackingId,
             state_code: defaultState.state.state_code,
             state_value: defaultState.state.state_value,
