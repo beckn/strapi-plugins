@@ -1,5 +1,5 @@
 import { Strapi } from "@strapi/strapi";
-import { FilterUtil, ObjectUtil } from "../../util";
+import { FilterUtil, isMobility, ObjectUtil } from "../../util";
 import { KeyValuePair } from "../../types";
 import { PLUGIN } from "../../constants";
 
@@ -162,7 +162,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             stops: stopsIds,
             order_tracking_id: trackingId,
             publishedAt: isoString,
-            ...(domain === "mobility:1.1.0"
+            ...(isMobility(context)
               ? {
                   state_code: "AWAITING_DRIVER_APPROVAL",
                   state_value: "AWAITING_DRIVER_APPROVAL"
