@@ -128,8 +128,8 @@
                         "name": customer_id.first_name
                     }
                 },
-                "stops":order_fulfillment_location_id.{
-                    "type":"end",
+                "stops":stops.{
+                    "type":type,
                         "location": {
                         "gps":gps ,
                         "address": address,

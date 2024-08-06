@@ -1,10 +1,56 @@
 export default [
   {
     method: "POST",
-    path: "/driver-login",
+    path: "/login",
     handler: "driverProfileController.login",
     config: {
-      policies: []
+      policies: [],
+      auth: false
+    }
+  },
+  {
+    method: "GET",
+    path: "/test",
+    handler: "driverProfileController.create",
+    config: {
+      middlewares: ["plugin::driver-app.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "POST",
+    path: "/toggle-availability",
+    handler: "driverProfileController.toggleAvailability",
+    config: {
+      middlewares: ["plugin::driver-app.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "POST",
+    path: "/update-location",
+    handler: "driverProfileController.updateLocation",
+    config: {
+      middlewares: ["plugin::driver-app.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "POST",
+    path: "/show-rides",
+    handler: "rideController.showAvailableRides",
+    config: {
+      middlewares: ["plugin::driver-app.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "POST",
+    path: "/ride-summary",
+    handler: "rideController.showRideSummary",
+    config: {
+      middlewares: ["plugin::driver-app.authMiddleware"],
+      auth: false
     }
   }
 ];
