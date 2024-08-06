@@ -112,5 +112,40 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       throw new Error(error.message);
     }
+  },
+  async updateRide(
+    agent_id: number,
+    order_id: number,
+    order_status: string
+  ) {
+    try {
+      let orderFulfillment = await strapi.entityService.findMany(
+        "api::order-fulfillment.order-fulfillment",
+        {
+          filters: {
+            order_id
+          }
+        }
+      );
+      if(!orderFulfillment.length) {
+        throw new Error('No order fulfillment exists for this order');
+      }
+      orderFulfillment = orderFulfillment[0];
+
+      const updatedRide = await strapi.entityService.update(
+        "api::order-fulfillment.order-fulfillment",
+        orderFulfillment.id,
+        {
+          data: {
+            agent_id,
+            state_code: order_status,
+            state_value: order_status
+          }
+        }
+      );
+      return updatedRide;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 });

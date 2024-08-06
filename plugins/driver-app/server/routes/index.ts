@@ -11,7 +11,7 @@ export default [
   {
     method: "GET",
     path: "/test",
-    handler: "driverProfileController.create",
+    handler: "driverProfileController.index",
     config: {
       middlewares: ["plugin::driver-app.authMiddleware"],
       auth: false
@@ -48,6 +48,14 @@ export default [
     method: "POST",
     path: "/ride-summary",
     handler: "rideController.showRideSummary",
+    config: {
+      middlewares: ["plugin::driver-app.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    path: "/rides",
+    handler: "driverProfileController.updateRide",
     config: {
       middlewares: ["plugin::driver-app.authMiddleware"],
       auth: false
