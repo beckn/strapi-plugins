@@ -122,7 +122,7 @@ export class SearchUtil {
                 console.log("abhi", JSON.stringify(providers));
                 filteredProviders = providers.filter((providerItem: KeyValuePair) => {
                     providerItem.items = providerItem.items.filter((item: KeyValuePair) => {
-                        item.service = [{ ...item?.service }].filter((serv: KeyValuePair) => {
+                        item.service = item?.service.filter((serv: KeyValuePair) => {
                             if (serv?.service_availabilities?.[0].is_available) {
                                 const itemGps = serv?.location_id?.gps.split(',') || [];
                                 const itemLat = itemGps[0].trim();
