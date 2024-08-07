@@ -70,6 +70,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ctx.badRequest(error.message);
     }
   },
+
   async create(ctx) {
     console.log("Inside create:: ", ctx.state.user);
     ctx.body = ctx.state.user;

@@ -26,7 +26,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       // Request API.
       const response = await axios.post(
-        "http://127.0.0.1:1337/api/auth/local",
+        `${process.env.STRAPI_BPP_URL}/api/auth/local`,
         {
           identifier: email,
           password
