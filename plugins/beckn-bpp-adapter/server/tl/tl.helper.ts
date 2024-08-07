@@ -138,7 +138,7 @@ export const cancellationTerms = (items: KeyValuePair[]) => {
   return cancelTerms;
 };
 
-export const fulfillments = (fulfillments: KeyValuePair[], items: KeyValuePair[]) => {
+export const fulfillments = (fulfillments: KeyValuePair[], items: KeyValuePair[] = []) => {
   const allFulfillments = fulfillments || [];
   items.forEach((item: KeyValuePair) => {
     item?.item_fulfillment_ids?.forEach((item_fulfillment_id) => {

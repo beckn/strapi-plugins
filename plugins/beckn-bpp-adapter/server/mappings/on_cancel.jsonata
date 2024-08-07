@@ -42,12 +42,7 @@
                         "area_code": $string(location_id.zip)
                     }
                 ],
-                "fulfillments": $append(fulfillments, [items.item_fulfillment_ids.fulfilment_id]).{
-                    "id": $string(id),
-                    "type": type,
-                    "rating": $string(rating),
-                    "rateable": true
-                }[],
+                "fulfillments": $fulfillments(fulfillments, items),
                 "rateable": true
             },
             "items": message.order_id.items.{
