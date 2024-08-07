@@ -122,7 +122,8 @@ export class SearchUtil {
                 filteredProviders = providers.filter((providerItem: KeyValuePair) => {
                     providerItem.items = providerItem.items.filter((item: KeyValuePair) => {
                         item.service = item?.service.filter((serv: KeyValuePair) => {
-                            if (serv?.service_availabilities?.[0].is_available) {
+                            const { agent_id = {}, service_availabilities = [] } = serv;
+                            if (service_availabilities[0].is_available) {
                                 const itemGps = serv?.location_id?.gps.split(',') || [];
                                 const itemLat = itemGps[0].trim();
                                 const itemLong = itemGps[1].trim();
@@ -136,6 +137,21 @@ export class SearchUtil {
                                 if (
                                     customerGps.length && itemGps.length && isInRange(customerLat, customerLong, itemLat, itemLong)
                                 ) {
+                                    item.item_fulfillment_ids.map((item_fulfillment_id: KeyValuePair) => {
+                                        item_fulfillment_id.fulfilment_id.agent_ids.push(agent_id);
+                                        // = {
+                                        //     ...item_fulfillment_id.fulfilment_id,
+
+                                        //     agent: {
+                                        //         person: {
+                                        //             ...agent_id,
+                                        //         },
+                                        //         contact: {
+                                        //             ...(agent_id.agent_profile || {}),
+                                        //         },
+                                        //     },
+                                        // };
+                                    });
                                     return true;
                                 }
                                 return false;

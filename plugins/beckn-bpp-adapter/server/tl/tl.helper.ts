@@ -138,8 +138,14 @@ export const cancellationTerms = (items: KeyValuePair[]) => {
   return cancelTerms;
 };
 
-export const fulfillments = (fulfillments: KeyValuePair[]) => {
-  return fulfillments.map((fulfillment) => {
+export const fulfillments = (fulfillments: KeyValuePair[], items: KeyValuePair[]) => {
+  const allFulfillments = fulfillments || [];
+  items.forEach((item: KeyValuePair) => {
+    item?.item_fulfillment_ids?.forEach((item_fulfillment_id) => {
+      allFulfillments.push(item_fulfillment_id?.fulfilment_id)
+    });
+  });
+  return allFulfillments.map((fulfillment) => {
     const agent = fulfillment.agent_ids ? fulfillment.agent_ids[0] : {};
     return {
       id: fulfillment.id + "",
@@ -156,12 +162,19 @@ export const fulfillments = (fulfillments: KeyValuePair[]) => {
       agent: {
         person: {
           id: agent?.id ? agent?.id + "" : "",
-          name: agent?.first_name + agent?.last_name
+          name: `${agent?.first_name} ${agent?.last_name}`
         },
         contact: {
           phone: agent?.agent_profile?.phone_number,
           email: agent?.agent_profile?.email
         },
+      },
+      vehicle: {
+        category: "",
+        capacity: "5",
+        make: "Toyota",
+        model: "Etios",
+        color: "White",
       },
       tags: fulfillment.tag_ids?.map((tag) => {
         return {
