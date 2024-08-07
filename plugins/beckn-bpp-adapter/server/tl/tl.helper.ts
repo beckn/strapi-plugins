@@ -169,13 +169,13 @@ export const fulfillments = (fulfillments: KeyValuePair[], items: KeyValuePair[]
           email: agent?.agent_profile?.email
         },
       },
-      // vehicle: {
-      //   category: "",
-      //   capacity: "5",
-      //   make: "Toyota",
-      //   model: "Etios",
-      //   color: "White",
-      // },
+      vehicle: {
+        category: "",
+        capacity: 5,
+        make: "Toyota",
+        model: "Etios",
+        color: "White",
+      },
       tags: fulfillment.tag_ids?.map((tag) => {
         return {
           display: true,
