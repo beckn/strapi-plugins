@@ -137,21 +137,9 @@ export class SearchUtil {
                                 if (
                                     customerGps.length && itemGps.length && isInRange(customerLat, customerLong, itemLat, itemLong)
                                 ) {
-                                    item.item_fulfillment_ids.map((item_fulfillment_id: KeyValuePair) => {
-                                        item_fulfillment_id.fulfilment_id.agent_ids.push(agent_id);
-                                        // = {
-                                        //     ...item_fulfillment_id.fulfilment_id,
-
-                                        //     agent: {
-                                        //         person: {
-                                        //             ...agent_id,
-                                        //         },
-                                        //         contact: {
-                                        //             ...(agent_id.agent_profile || {}),
-                                        //         },
-                                        //     },
-                                        // };
-                                    });
+                                    // item.item_fulfillment_ids.map((item_fulfillment_id: KeyValuePair) => {
+                                    //     item_fulfillment_id.fulfilment_id.agent_ids.push(agent_id);
+                                    // });
                                     return true;
                                 }
                                 return false;
