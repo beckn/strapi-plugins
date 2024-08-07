@@ -76,5 +76,30 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       ctx.badRequest(error.message);
     }
-  }
+  },
+
+  async updateRide(ctx) {
+    try {
+      const { order_id, order_status } = ctx.request.body;
+      const agentId = ctx.state.user?.agent?.id;
+      if (agentId) {
+        if (order_id && order_status) {
+          const updateRideStatus = await services
+            .rideService({ strapi })
+            .updateRide(agentId, order_id, order_status);
+          return (ctx.body = {
+            status: 'success',
+            code: 200,
+            data: updateRideStatus
+          });
+        } else {
+          throw new Error("Order id or order status not provided to update ride");
+        }
+      } else {
+        throw new Error("Invalid user");
+      }
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
 });

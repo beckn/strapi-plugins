@@ -56,7 +56,7 @@ export default [
   {
     method: "POST",
     path: "/rides",
-    handler: "driverProfileController.updateRide",
+    handler: "rideController.updateRide",
     config: {
       middlewares: ["plugin::driver-app.authMiddleware"],
       auth: false
