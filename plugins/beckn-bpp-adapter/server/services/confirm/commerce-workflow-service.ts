@@ -42,7 +42,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const shipping =
         (fulfillments[0]?.stops
           ? fulfillments[0]?.stops.find((elem: any) => elem.type === "start") ||
-            fulfillments[0]?.stops[0]
+          fulfillments[0]?.stops[0]
           : undefined) || billing;
       const shippingDetail = {
         gps: shipping?.location?.gps || "",
@@ -123,10 +123,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const custId = existingCustomer
             ? existingCustomer.id
             : (
-                await strapi.entityService.create("api::customer.customer", {
-                  data: custData
-                })
-              ).id;
+              await strapi.entityService.create("api::customer.customer", {
+                data: custData
+              })
+            ).id;
 
           // Create shipping location
           const createShipping = await strapi.entityService.create(
@@ -226,7 +226,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               populate: {
                 fulfilment_id: {
                   populate: {
-                    agent_ids: {}
+                    service: {
+                      populate: {
+                        location_id: {},
+                        service_availabilities: {},
+                        agent_id: {
+                          populate: {
+                            agent_profile: {}
+                          }
+                        }
+                      }
+                    }
                   }
                 },
                 location_id: {}

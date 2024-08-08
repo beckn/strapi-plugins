@@ -38,7 +38,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               populate: {
                 fulfilment_id: {
                   populate: {
-                    agent_ids: {}
+                    service: {
+                      populate: {
+                        location_id: {},
+                        service_availabilities: {},
+                        agent_id: {
+                          populate: {
+                            agent_profile: {}
+                          }
+                        }
+                      }
+                    }
                   }
                 },
                 location_id: {}
@@ -50,7 +60,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 location_id: {},
               },
             },
-            service: {},
             sc_retail_product: {
               populate: {
                 price_bareakup_ids: {},
@@ -115,7 +124,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
         })
       );
-
       return itemDetails;
     } catch (error) {
       console.error("An error occurred:", error);

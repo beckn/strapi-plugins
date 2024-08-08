@@ -109,15 +109,7 @@
                     "category_code": $v.category_code
                 }
             }),
-            "fulfillments": $fulfillments($append(
-                message.fulfillments,
-                $map(
-                    message.items,
-                    function($v) {
-                        $v.item_fulfillment_ids.fulfilment_id
-                    }
-                )
-            ))
+            "fulfillments": $fulfillments(fulfillments, items)
         }
     }
 }

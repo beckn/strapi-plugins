@@ -146,11 +146,11 @@ export const fulfillments = (fulfillments: KeyValuePair[], items: KeyValuePair[]
     });
   });
   return allFulfillments.map((fulfillment) => {
-    const agent = fulfillment.agent_ids ? fulfillment.agent_ids[0] : {};
+    const agent = fulfillment?.service?.agent_id || {};
     return {
       id: fulfillment.id + "",
       type: fulfillment.type,
-      rating: fulfillment.rating + "",
+      rating: fulfillment.rating ? fulfillment.rating + "" : "",
       rateable: fulfillment.rateable,
       state: {
         description: fulfillment?.state_value,
@@ -162,7 +162,7 @@ export const fulfillments = (fulfillments: KeyValuePair[], items: KeyValuePair[]
       agent: {
         person: {
           id: agent?.id ? agent?.id + "" : "",
-          name: `${agent?.first_name} ${agent?.last_name}`
+          name: agent?.first_name ? `${agent?.first_name} ${agent?.last_name}` : ""
         },
         contact: {
           phone: agent?.agent_profile?.phone_number,
@@ -170,11 +170,9 @@ export const fulfillments = (fulfillments: KeyValuePair[], items: KeyValuePair[]
         },
       },
       vehicle: {
-        category: "",
-        capacity: 5,
-        make: "Toyota",
-        model: "Etios",
-        color: "White",
+        make: agent?.agent_profile?.vehicle_make,
+        model: agent?.agent_profile?.vehicle_model,
+        registration: agent?.agent_profile?.registration_no
       },
       tags: fulfillment.tag_ids?.map((tag) => {
         return {
@@ -202,7 +200,7 @@ export const locations = (locations: KeyValuePair[]) => {
   locations.map((location) => {
     if (!formatedLocations.find((lc: KeyValuePair) => lc?.id === (location?.id + ""))) {
       formatedLocations.push({
-        id: location?.id + "",
+        id: location?.id ? location?.id + "" : "",
         gps: location?.gps || null,
         address: location?.address,
         city: {
@@ -214,7 +212,7 @@ export const locations = (locations: KeyValuePair[]) => {
         state: {
           name: location?.state
         },
-        area_code: location?.zip + ""
+        area_code: location?.zip ? location?.zip + "" : ""
       });
     }
   });

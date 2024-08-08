@@ -121,32 +121,26 @@ export class SearchUtil {
                 const customerLong = customerGps[1].trim();
                 filteredProviders = providers.filter((providerItem: KeyValuePair) => {
                     providerItem.items = providerItem.items.filter((item: KeyValuePair) => {
-                        item.service = item?.service.filter((serv: KeyValuePair) => {
-                            const { agent_id = {}, service_availabilities = [] } = serv;
-                            if (service_availabilities[0].is_available) {
-                                const itemGps = serv?.location_id?.gps.split(',') || [];
-                                const itemLat = itemGps[0].trim();
-                                const itemLong = itemGps[1].trim();
+                        item.item_fulfillment_ids = item?.item_fulfillment_ids.filter((item_fulfillment_id: KeyValuePair) => {
+                            const { service } = item_fulfillment_id.fulfilment_id;
+                            const itemGps = service?.location_id?.gps.split(',') || [];
+                            const itemLat = itemGps[0]?.trim();
+                            const itemLong = itemGps[1]?.trim();
 
-                                console.log(
-                                    "Driver search:: ",
-                                    customerGps.length,
-                                    itemGps.length,
-                                    isInRange(customerLat, customerLong, itemLat, itemLong)
-                                );
-                                if (
-                                    customerGps.length && itemGps.length && isInRange(customerLat, customerLong, itemLat, itemLong)
-                                ) {
-                                    item.item_fulfillment_ids.map((item_fulfillment_id: KeyValuePair) => {
-                                        item_fulfillment_id.fulfilment_id.agent_ids.push(agent_id);
-                                    });
-                                    return true;
-                                }
-                                return false;
+                            console.log(
+                                "Driver search:: ",
+                                customerGps.length,
+                                itemGps.length,
+                                isInRange(customerLat, customerLong, itemLat, itemLong)
+                            );
+                            if (
+                                customerGps.length && itemGps.length && isInRange(customerLat, customerLong, itemLat, itemLong)
+                            ) {
+                                return true;
                             }
                             return false;
                         });
-                        return item.service.length > 0;
+                        return item.item_fulfillment_ids.length > 0;
                     });
                     return providerItem.items.length > 0;
                 });

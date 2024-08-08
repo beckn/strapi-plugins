@@ -38,23 +38,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             populate: {
               fulfilment_id: {
                 populate: {
-                  agent_ids: {}
+                  service: {
+                    populate: {
+                      location_id: {},
+                      service_availabilities: {},
+                      agent_id: {
+                        populate: {
+                          agent_profile: {}
+                        }
+                      }
+                    }
+                  }
                 }
               },
               location_id: {}
             }
           },
-          service: {
-            populate: {
-              location_id: {},
-              service_availabilities: {},
-              agent_id: {
-                populate: {
-                  agent_profile: {}
-                }
-              }
-            }
-          }
         }
       },
       payment_methods: {},

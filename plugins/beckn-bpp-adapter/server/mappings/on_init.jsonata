@@ -111,20 +111,7 @@
                     "category_code": $v.category_code
                 }
             })[],
-            "fulfillments": $append(
-                message.fulfillments,
-                $map(
-                    message.items,
-                    function($v) {
-                        $v.item_fulfillment_ids.fulfilment_id
-                    }
-                )
-            ).{
-                "id": $string(id),
-                "type": type,
-                "rating": $string(rating),
-                "rateable": true
-            }[],
+            "fulfillments": $fulfillments(message.fulfillments, message.items),
             "payments": $payments(message[0]),
             "cancellation_terms": $cancellationTerms(message[0].items)
         }

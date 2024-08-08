@@ -56,7 +56,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               populate: {
                 fulfilment_id: {
                   populate: {
-                    agent_ids: {}
+                    service: {
+                      populate: {
+                        location_id: {},
+                        service_availabilities: {},
+                        agent_id: {
+                          populate: {
+                            agent_profile: {}
+                          }
+                        }
+                      }
+                    }
                   }
                 },
                 location_id: {}
@@ -129,6 +139,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         billing: billingInfo,
         fulfillments: fulfillments || []
       }));
+      console.log('abhi', JSON.stringify(itemDetails), JSON.stringify(initDetails));
       return initDetails;
     } catch (error) {
       console.error("An error occurred:", error);

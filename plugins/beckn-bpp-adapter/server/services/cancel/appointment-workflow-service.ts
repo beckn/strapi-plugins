@@ -59,7 +59,21 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 image: {},
                 item_fulfillment_ids: {
                   populate: {
-                    fulfilment_id: {}
+                    fulfilment_id: {
+                      populate: {
+                        service: {
+                          populate: {
+                            location_id: {},
+                            service_availabilities: {},
+                            agent_id: {
+                              populate: {
+                                agent_profile: {}
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 },
                 item_meta_id: {
