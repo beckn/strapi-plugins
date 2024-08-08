@@ -50,7 +50,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         {
           filters: {
             order_id,
-            state_code: RIDE_STATUS_CODE.RIDE_COMPLETED,
+            state_value: RIDE_STATUS_CODE.RIDE_COMPLETED,
             agent_id
           },
           populate: {
@@ -79,11 +79,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
-  async updateRide(
-    agent_id: number,
-    order_id: number,
-    order_status: string
-  ) {
+  async updateRide(agent_id: number, order_id: number, order_status: string) {
     try {
       let orderFulfillment = await strapi.entityService.findMany(
         "api::order-fulfillment.order-fulfillment",
@@ -93,8 +89,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         }
       );
-      if(!orderFulfillment.length) {
-        throw new Error('No order fulfillment exists for this order');
+      if (!orderFulfillment.length) {
+        throw new Error("No order fulfillment exists for this order");
       }
       orderFulfillment = orderFulfillment[0];
       const rideStatus = RIDE_STATUS_CODE;
@@ -107,7 +103,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
       }
       if (!validStatus) {
-        throw new Error('Invalid order status provided');
+        throw new Error("Invalid order status provided");
       }
       const updatedRide = await strapi.entityService.update(
         "api::order-fulfillment.order-fulfillment",
