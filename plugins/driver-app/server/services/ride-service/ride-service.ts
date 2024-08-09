@@ -37,7 +37,38 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         }
       );
-
+      console.log(
+        JSON.stringify({
+          filters: {
+            state_value: { $eq: status_code },
+            order_id: {
+              items: {
+                provider: {
+                  domain_id: {
+                    DomainName: MOBILITY_DOMAIN
+                  }
+                }
+              }
+            }
+          },
+          populate: {
+            order_id: {
+              populate: {
+                items: {
+                  populate: {
+                    provider: {
+                      populate: {
+                        domain_id: true
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            stops: true
+          }
+        })
+      );
       return orders;
     } catch (error) {
       throw new Error(error.message);
