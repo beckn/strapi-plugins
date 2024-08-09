@@ -79,13 +79,49 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
-  async updateRide(agent_id: number, order_id: number, order_status: string) {
+  async updateRide(
+    agent_id: number,
+    order_id: number,
+    order_status: RIDE_STATUS_CODE
+  ) {
     try {
       let orderFulfillment = await strapi.entityService.findMany(
         "api::order-fulfillment.order-fulfillment",
         {
           filters: {
-            order_id
+            order_id: {
+              id: order_id,
+              items: {
+                item_fulfillment_ids: {
+                  fulfilment_id: {
+                    service: {
+                      agent_id: agent_id
+                    }
+                  }
+                }
+              }
+            }
+          },
+          populate: {
+            order_id: {
+              populate: {
+                items: {
+                  populate: {
+                    item_fulfillment_ids: {
+                      populate: {
+                        fulfilment_id: {
+                          populate: {
+                            service: {
+                              populate: { agent_id: {} }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       );
@@ -93,24 +129,19 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         throw new Error("No order fulfillment exists for this order");
       }
       orderFulfillment = orderFulfillment[0];
-      const rideStatus = RIDE_STATUS_CODE;
-      let validStatus = false;
-      order_status = order_status.trim();
-      for (const status in rideStatus) {
-        if (rideStatus[status].trim() === order_status) {
-          validStatus = true;
-          break;
-        }
-      }
-      if (!validStatus) {
-        throw new Error("Invalid order status provided");
-      }
+      const fulfilmentService =
+        orderFulfillment?.order_id?.items[0]?.item_fulfillment_ids?.find(
+          (id: any) => id?.fulfilment_id?.service?.agent_id?.id === agent_id
+        );
+
       const updatedRide = await strapi.entityService.update(
         "api::order-fulfillment.order-fulfillment",
         orderFulfillment.id,
         {
           data: {
-            agent_id,
+            ...(order_status === RIDE_STATUS_CODE.RIDE_ACCEPTED
+              ? { fulfilment_id: fulfilmentService.fulfilment_id.id }
+              : {}),
             state_value: order_status
           }
         }
