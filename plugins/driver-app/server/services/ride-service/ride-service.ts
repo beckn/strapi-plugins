@@ -8,7 +8,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         "api::order-fulfillment.order-fulfillment",
         {
           filters: {
-            state_code: { $eq: status_code },
+            state_value: { $eq: status_code },
             order_id: {
               items: {
                 provider: {
@@ -111,7 +111,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         {
           data: {
             agent_id,
-            state_code: order_status,
             state_value: order_status
           }
         }
