@@ -29,13 +29,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         const startLocation =
           order.stops.find((stop) => stop.type === "start") || order.stops[0];
         if (startLocation?.gps) {
-          console.log(
-            "here---> the distance is ",
-            distance(agentService.location_id.gps, startLocation.gps)
-          );
-          return (
-            distance(agentService.location_id.gps, startLocation.gps) <= 2000
-          );
+          return distance(agentService.location_id.gps, startLocation.gps) <= 2;
         }
       });
 
