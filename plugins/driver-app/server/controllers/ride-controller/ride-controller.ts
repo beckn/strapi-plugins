@@ -83,7 +83,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const { order_id, order_status } = ctx.request.body;
       const agentId = ctx.state.user?.agent?.id;
       if (agentId) {
-        if (order_id && order_status) {
+        if (
+          order_id &&
+          order_status &&
+          Object.values(RIDE_STATUS_CODE).includes(order_status)
+        ) {
           const updateRideStatus = await services
             .rideService({ strapi })
             .updateRide(agentId, order_id, order_status);
@@ -93,9 +97,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             data: updateRideStatus
           });
         } else {
-          throw new Error(
-            "Order id or order status not provided to update ride"
-          );
+          throw new Error("Invalid Order Id or Order Status");
         }
       } else {
         throw new Error("Invalid user");
