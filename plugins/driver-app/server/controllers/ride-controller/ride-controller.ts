@@ -29,7 +29,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         const startLocation =
           order.stops.find((stop) => stop.type === "start") || order.stops[0];
         if (startLocation?.gps) {
-          return distance(agentService.location_id.gps, startLocation.gps) <= 2;
+          return (
+            distance(agentService.location_id.gps, startLocation.gps) <= 2000
+          );
         }
       });
 
@@ -88,12 +90,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             .rideService({ strapi })
             .updateRide(agentId, order_id, order_status);
           return (ctx.body = {
-            status: 'success',
+            status: "success",
             code: 200,
             data: updateRideStatus
           });
         } else {
-          throw new Error("Order id or order status not provided to update ride");
+          throw new Error(
+            "Order id or order status not provided to update ride"
+          );
         }
       } else {
         throw new Error("Invalid user");
@@ -101,5 +105,5 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       ctx.badRequest(error.message);
     }
-  },
+  }
 });
