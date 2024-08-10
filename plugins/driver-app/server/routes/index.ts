@@ -61,5 +61,14 @@ export default [
       middlewares: ["plugin::driver-app.authMiddleware"],
       auth: false
     }
+  },
+  {
+    method: "POST",
+    path: "/me",
+    handler: "driverProfileController.myProfile",
+    config: {
+      middlewares: ["plugin::driver-app.authMiddleware"],
+      auth: false
+    }
   }
 ];

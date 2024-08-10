@@ -1,40 +1,43 @@
 module.exports = (config, { strapi }) => {
-    return async (ctx, next) => {
-        try {
-            console.log('My custom middleware is applied', ctx.request);
-            //Extract token from request
-            const token = ctx.request.header.authorization;
-            if (!token || !token.startsWith('Bearer ')) {
-                return ctx.unauthorized("Invalid Token");
-            }
-            const jwtToken = token.split(" ")[1];
-            //validate token
-            const jwtService = strapi.plugins['users-permissions'].services.jwt;
-            const res = await jwtService.verify(jwtToken);
+  return async (ctx, next) => {
+    try {
+      console.log("My custom middleware is applied", ctx.request);
+      //Extract token from request
+      const token = ctx.request.header.authorization;
+      if (!token || !token.startsWith("Bearer ")) {
+        return ctx.unauthorized("Invalid Token");
+      }
+      const jwtToken = token.split(" ")[1];
+      //validate token
+      const jwtService = strapi.plugins["users-permissions"].services.jwt;
+      const res = await jwtService.verify(jwtToken);
 
-            //extract userid
-            const id = res.id;
-            const user = await strapi
-                .query("plugin::users-permissions.user")
-                .findOne({
-                    where: { id }
-                    ,populate: {
-                        role: true,
-                        agent: true,
-                        provider: true
-                    }
-                });
-            if (!user) {
-                return ctx.unauthorized('User Not Found!');
-            }
-            delete user.password;
-            ctx.state.user = user;
-            await next();
-        } catch (error) {
-            console.log('Auth Middleware error: ', error);
-            
-            return ctx.unauthorized(error.message);
-        }
+      //extract userid
+      const id = res.id;
+      const user = await strapi
+        .query("plugin::users-permissions.user")
+        .findOne({
+          where: { id },
+          populate: {
+            role: true,
+            agent: {
+              populate: {
+                agent_profile: true
+              }
+            },
+            provider: true
+          }
+        });
+      if (!user) {
+        return ctx.unauthorized("User Not Found!");
+      }
+      delete user.password;
+      ctx.state.user = user;
+      await next();
+    } catch (error) {
+      console.log("Auth Middleware error: ", error);
 
-    };
+      return ctx.unauthorized(error.message);
+    }
+  };
 };
