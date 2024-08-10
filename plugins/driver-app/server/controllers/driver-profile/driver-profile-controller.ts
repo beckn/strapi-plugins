@@ -74,5 +74,27 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async create(ctx) {
     console.log("Inside create:: ", ctx.state.user);
     ctx.body = ctx.state.user;
+  },
+  async myProfile(ctx) {
+    try {
+      const { user } = ctx.state;
+      const profile = {
+        user_details: {
+          email: user.email,
+          username: user.username,
+          name: `${user.agent.first_name} ${user.agent.last_name}`,
+          description: user.agent.description
+        },
+        vehicle_details: {
+          registration_no: user.agent.agent_profile.registration_no,
+          vehicle_make: user.agent.agent_profile.vehicle_make,
+          vehicle_model: user.agent.agent_profile.vehicle_model,
+          power_source: user.agent.agent_profile.power_source
+        }
+      };
+      return (ctx.body = profile);
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
   }
 });
