@@ -83,7 +83,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           email: user.email,
           username: user.username,
           name: `${user.agent.first_name} ${user.agent.last_name}`,
-          description: user.agent.description
+          description: user.agent.description,
+          phone_number: user.agent.agent_profile.phone_number
         },
         vehicle_details: {
           registration_no: user.agent.agent_profile.registration_no,
