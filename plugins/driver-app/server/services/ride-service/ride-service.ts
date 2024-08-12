@@ -2,13 +2,25 @@ import { Strapi } from "@strapi/strapi";
 import { MOBILITY_DOMAIN, RIDE_STATUS_CODE } from "../../../contstants";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async showMobilityOrders(status_code: RIDE_STATUS_CODE) {
+  async showMobilityOrders(
+    status_code?: RIDE_STATUS_CODE | null,
+    agent_id?: number | null
+  ) {
     try {
       const orders = await strapi.entityService.findMany(
         "api::order-fulfillment.order-fulfillment",
         {
           filters: {
-            state_value: { $eq: status_code },
+            ...(status_code ? { state_value: { $eq: status_code } } : {}),
+            ...(agent_id
+              ? {
+                  fulfilment_id: {
+                    service: {
+                      agent_id
+                    }
+                  }
+                }
+              : {}),
             order_id: {
               items: {
                 provider: {
@@ -20,6 +32,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             }
           },
           populate: {
+            customer_id: {},
+            fulfilment_id: {
+              populate: { service: {} }
+            },
             order_id: {
               populate: {
                 items: {
@@ -51,7 +67,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           filters: {
             order_id,
             state_value: RIDE_STATUS_CODE.RIDE_COMPLETED,
-            agent_id
+            fulfilment_id: {
+              service: {
+                agent_id
+              }
+            }
           },
           populate: {
             customer_id: {},
@@ -73,7 +93,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         }
       );
-
       return orders;
     } catch (error) {
       throw new Error(error.message);
@@ -147,6 +166,18 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
       );
       return updatedRide;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
+  async updateOrderPrice(order_id: number, price: number) {
+    try {
+      return strapi.entityService.update("api::order.order", order_id, {
+        data: {
+          total_amount: price,
+          currency: "Rs"
+        }
+      });
     } catch (error) {
       throw new Error(error.message);
     }
