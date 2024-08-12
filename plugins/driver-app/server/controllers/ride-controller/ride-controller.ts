@@ -13,7 +13,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     try {
       const availableOrders = await services
         .rideService({ strapi })
-        .showMobilityOrders(RIDE_STATUS_CODE.AWAITING_DRIVER_APPROVAL);
+        .showMobilityOrders(RIDE_STATUS_CODE.AWAITING_DRIVER_APPROVAL, null);
       const agentService = (
         await strapi.entityService.findMany("api::service.service", {
           filters: {
@@ -65,6 +65,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const total_price =
         total_distance *
         order_details[0].order_id.items[0].sc_retail_product.min_price;
+      await services
+        .rideService({ strapi })
+        .updateOrderPrice(
+          ctx.request.body.order_id,
+          parseFloat(total_price.toFixed(2))
+        );
       return (ctx.body = {
         message: "Rides Summary",
         data: {
@@ -102,6 +108,20 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       } else {
         throw new Error("Invalid user");
       }
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
+  async myRides(ctx) {
+    try {
+      const agentId = ctx.state.user?.agent?.id;
+      const myRides = await services
+        .rideService({ strapi })
+        .showMobilityOrders(null, agentId);
+      return (ctx.body = {
+        message: "Rides Fetched",
+        data: { my_rides: myRides }
+      });
     } catch (error) {
       ctx.badRequest(error.message);
     }
