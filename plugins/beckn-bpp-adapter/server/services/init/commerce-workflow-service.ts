@@ -139,7 +139,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         billing: billingInfo,
         fulfillments: fulfillments || []
       }));
-      console.log('abhi', JSON.stringify(itemDetails), JSON.stringify(initDetails));
       return initDetails;
     } catch (error) {
       console.error("An error occurred:", error);

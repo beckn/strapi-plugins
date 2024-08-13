@@ -27,8 +27,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       };
 
       // Extract customer details
-      const customer = fulfillments[0].customer;
-      const custEmail = customer?.contact?.email || billing?.email;
+      const customer = fulfillments[0]?.customer || {
+        person: {
+          name: billing?.name
+        },
+        contact: {
+          email: billing?.email,
+          phone: billing?.phone,
+        }
+      };
+      const custEmail = customer?.contact?.email;
 
       const custData = {
         first_name: customer?.person?.name?.split(" ")?.[0],
