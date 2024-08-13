@@ -148,7 +148,7 @@ export const fulfillments = (fulfillments: KeyValuePair[], items: KeyValuePair[]
   return allFulfillments.map((fulfillment) => {
     const agent = fulfillment?.service?.agent_id || {};
     return {
-      id: fulfillment.id + "",
+      id: fulfillment.id ? fulfillment.id + "" : "",
       type: fulfillment.type,
       rating: fulfillment.rating ? fulfillment.rating + "" : "",
       rateable: fulfillment.rateable,
@@ -190,7 +190,8 @@ export const fulfillments = (fulfillments: KeyValuePair[], items: KeyValuePair[]
             }
           ]
         };
-      })
+      }),
+      stops: fulfillment?.stops || []
     };
   });
 };
