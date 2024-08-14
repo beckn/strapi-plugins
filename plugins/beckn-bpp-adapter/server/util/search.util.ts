@@ -166,7 +166,10 @@ export class SearchUtil {
                   const itemGps = service?.location_id?.gps.split(",") || [];
                   const itemLat = itemGps[0]?.trim();
                   const itemLong = itemGps[1]?.trim();
-                  console.log(item_fulfillment_id.fulfilment_id);
+                  console.log(
+                    item_fulfillment_id.fulfilment_id.service
+                      .service_availabilities
+                  );
                   console.log(
                     "Driver search:: ",
                     customerGps.length,
