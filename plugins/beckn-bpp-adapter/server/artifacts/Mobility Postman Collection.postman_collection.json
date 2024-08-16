@@ -1,0 +1,319 @@
+{
+	"info": {
+		"_postman_id": "0f5c65dd-41e3-4732-837f-4e443d8d96f7",
+		"name": "Mobility Postman Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23690031"
+	},
+	"item": [
+		{
+			"name": "Search",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"context\": {\n        \"domain\": \"mobility:1.1.0\",\n        \"action\": \"search\",\n        \"version\": \"1.1.0\",\n        \"bap_id\": \"{{bap_id}}\",\n        \"bap_uri\": \"{{bap_uri}}\",\n        \"location\": {\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            },\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            }\n        },\n        \"transaction_id\": \"a9aaecca-10b7-4d19-b640-b047a7c60008\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"timestamp\": \"2023-02-06T09:55:41.161Z\"\n    },\n    \"message\": {\n        \"intent\": {\n            \"fulfillment\": {\n                \"stops\": [\n                    {\n                        \"type\": \"start\",\n                        \"location\": {\n                            \"city\": {\n                                \"name\": \"Pune\",\n                                \"code\": \"PNQ\"\n                            },\n                            \"state\": {\n                                \"name\": \"Maharashtra\",\n                                \"code\": \"MH\"\n                            },\n                            \"country\": {\n                                \"name\": \"INDIA\",\n                                \"code\": \"IND\"\n                            },\n                            \"address\": \"GIVA - Pune - Wakad High street\",\n                            \"area_code\": \"411057\",\n                            \"gps\": \"18.608640615944037, 73.75210728526258\"\n                        }\n                    },\n                    {\n                        \"type\": \"end\",\n                        \"location\": {\n                            \"city\": {\n                                \"name\": \"Pune\",\n                                \"code\": \"PNQ\"\n                            },\n                            \"state\": {\n                                \"name\": \"Maharashtra\",\n                                \"code\": \"MH\"\n                            },\n                            \"country\": {\n                                \"name\": \"INDIA\",\n                                \"code\": \"IND\"\n                            },\n                            \"address\": \"Westend Mall\",\n                            \"area_code\": \"411007\",\n                            \"gps\": \"18.565537439536033, 73.80704996158512\"\n                        }\n                    }\n                ]\n            }\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/search",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Select",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"context\": {\n        \"domain\": \"mobility:1.1.0\",\n        \"action\": \"select\",\n        \"version\": \"1.1.0\",\n        \"bap_id\": \"{{bap_id}}\",\n        \"bap_uri\": \"{{bap_uri}}\",\n        \"bpp_id\":\"{{bpp_id}}\",\n        \"bpp_uri\":\"{{bpp_uri}}\",\n        \"location\": {\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            },\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            }\n        },\n        \"transaction_id\": \"a9aaecca-10b7-4d19-b640-b047a7c60008\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"timestamp\": \"2023-02-06T09:55:41.161Z\"\n    },\n    \"message\": {\n        \"order\": {\n            \"provider\": {\n                \"id\": \"629\"\n            },\n            \"items\": [\n                {\n                    \"id\": \"86\"\n                }\n            ]\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/select",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"select"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Init",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"context\": {\n        \"domain\": \"mobility:1.1.0\",\n        \"action\": \"init\",\n        \"version\": \"1.1.0\",\n        \"bap_id\": \"{{bap_id}}\",\n        \"bap_uri\": \"{{bap_uri}}\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"location\": {\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            },\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            }\n        },\n        \"transaction_id\": \"a9aaecca-10b7-4d19-b640-b047a7c60008\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"timestamp\": \"2023-02-06T09:55:41.161Z\"\n    },\n    \"message\": {\n        \"order\": {\n            \"provider\": {\n                \"id\": \"629\"\n            },\n            \"items\": [\n                {\n                    \"id\": \"86\"\n                }\n            ]\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/init",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"init"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"context\": {\n        \"domain\": \"mobility:1.1.0\",\n        \"action\": \"confirm\",\n        \"version\": \"1.1.0\",\n        \"bap_id\": \"{{bap_id}}\",\n        \"bap_uri\": \"{{bap_uri}}\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"location\": {\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            },\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            }\n        },\n        \"transaction_id\": \"a9aaecca-10b7-4d19-b640-b047a7c60008\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"timestamp\": \"2023-02-06T09:55:41.161Z\"\n    },\n    \"message\": {\n        \"order\": {\n            \"provider\": {\n                \"id\": \"629\"\n            },\n            \"items\": [\n                {\n                    \"id\": \"86\"\n                }\n            ],\n            \"fulfillments\": [\n                {\n                    \"customer\": {\n                        \"person\": {\n                            \"name\": \"Sanjay\",\n                            \"gender\": \"M\"\n                        },\n                        \"contact\": {\n                            \"phone\": \"9718339615\",\n                            \"email\": \"abc@abc.bc\"\n                        }\n                    },\n                    \"stops\": [\n                        {\n                            \"type\": \"start\",\n                            \"location\": {\n                                \"city\": {\n                                    \"name\": \"Pune\",\n                                    \"code\": \"PNQ\"\n                                },\n                                \"state\": {\n                                    \"name\": \"Maharashtra\",\n                                    \"code\": \"MH\"\n                                },\n                                \"country\": {\n                                    \"name\": \"INDIA\",\n                                    \"code\": \"IND\"\n                                },\n                                \"address\": \"GIVA - Pune - Wakad High street\",\n                                \"area_code\": \"411057\",\n                                \"gps\": \"18.608640615944037, 73.75210728526258\"\n                            }\n                        },\n                        {\n                            \"type\": \"end\",\n                            \"location\": {\n                                \"city\": {\n                                    \"name\": \"Pune\",\n                                    \"code\": \"PNQ\"\n                                },\n                                \"state\": {\n                                    \"name\": \"Maharashtra\",\n                                    \"code\": \"MH\"\n                                },\n                                \"country\": {\n                                    \"name\": \"INDIA\",\n                                    \"code\": \"IND\"\n                                },\n                                \"address\": \"Westend Mall\",\n                                \"area_code\": \"411007\",\n                                \"gps\": \"18.565537439536033, 73.80704996158512\"\n                            }\n                        }\n                    ]\n                }\n            ]\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/confirm",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"confirm"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Status",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"context\": {\n        \"domain\": \"mobility:1.1.0\",\n        \"action\": \"status\",\n        \"version\": \"1.1.0\",\n        \"bap_id\": \"{{bap_id}}\",\n        \"bap_uri\": \"{{bap_uri}}\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"location\": {\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            },\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            }\n        },\n        \"transaction_id\": \"a9aaecca-10b7-4d19-b640-b047a7c60008\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"timestamp\": \"2023-02-06T09:55:41.161Z\"\n    },\n    \"message\": {\n        \"order_id\": \"1226\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/status",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cancel",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"context\": {\n        \"domain\": \"mobility:1.1.0\",\n        \"location\": {\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"action\": \"cancel\",\n        \"version\": \"1.1.0\",\n        \"bap_id\": \"{{bap_id}}\",\n        \"bap_uri\": \"{{bap_uri}}\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"timestamp\": \"2022-12-15T15:38:16.226Z\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"ttl\": \"PT10M\",\n        \"transaction_id\": \"bdb5ba09-2241-4f00-b434-73466cd06228\"\n    },\n    \"message\": {\n        \"order_id\": \"1226\",\n        \"cancellation_reason_id\": \"1\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/cancel",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"cancel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"context\": {\n        \"domain\": \"mobility:1.1.0\",\n        \"action\": \"update\",\n        \"location\": {\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"version\": \"1.1.0\",\n        \"bap_id\": \"{{bap_id}}\",\n        \"bap_uri\": \"{{bap_uri}}\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"transaction_id\": \"a9aaecca-10b7-4d19-b640-b047a7c62195\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"ttl\": \"PT10M\",\n        \"timestamp\": \"2023-02-23T08:09:02.172Z\"\n    },\n    \"message\": {\n        \"update_target\": \"order.fulfillments[0].customer.person.name\",\n        \"order\": {\n            \"fulfillments\": [\n                {\n                    \"customer\": {\n                        \"person\": {\n                            \"name\": \"shreya vishal\"\n                        },\n                        \"contact\": {\n                            \"phone\": \"9801223567\",\n                            \"email\": \"abcd@test.com\"\n                        }\n                    }\n                }\n            ],\n            \"id\": \"1226\"\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/update",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Track",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"context\": {\n        \"domain\": \"mobility:1.1.0\",\n        \"action\": \"track\",\n        \"location\": {\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"version\": \"1.1.0\",\n        \"bap_id\": \"{{bap_id}}\",\n        \"bap_uri\": \"{{bap_uri}}\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"transaction_id\": \"a9aaecca-10b7-4d19-b640-b047a7c62195\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"ttl\": \"PT10M\",\n        \"timestamp\": \"2023-02-23T08:09:02.172Z\"\n    },\n    \"message\": {\n        \"order_id\": \"1226\"\n    }\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/track",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"track"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Rating",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"context\": {\n        \"domain\": \"mobility:1.1.0\",\n        \"action\": \"rating\",\n        \"location\": {\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            },\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"version\": \"1.1.0\",\n        \"bap_id\": \"{{bap_id}}\",\n        \"bap_uri\": \"{{bap_uri}}\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"transaction_id\": \"a9aaecca-10b7-4d19-b640-b047a7c62195\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"ttl\": \"PT10M\",\n        \"timestamp\": \"2023-02-23T08:09:02.172Z\"\n    },\n    \"message\": {\n        \"id\": \"1226\",\n        \"rating_category\": \"DRIVER-RATING\",\n        \"value\": \"1\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/rating",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"rating"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Support",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"context\": {\n        \"domain\": \"mobility:1.1.0\",\n        \"action\": \"support\",\n        \"location\": {\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            }\n        },\n        \"version\": \"1.1.0\",\n        \"bap_id\": \"{{bap_id}}\",\n        \"bap_uri\": \"{{bap_uri}}\",\n        \"bpp_id\": \"{{bpp_id}}\",\n        \"bpp_uri\": \"{{bpp_uri}}\",\n        \"transaction_id\": \"a9aaecca-10b7-4d19-b640-b047a7c62195\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"ttl\": \"PT10M\",\n        \"timestamp\": \"2023-02-23T08:09:02.172Z\"\n    },\n    \"message\": {\n        \"support\": {\n            \"ref_id\": \"1677140405881\"\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/support",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"support"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://bap-ps-client-dev.becknprotocol.io",
+			"type": "string"
+		},
+		{
+			"key": "bap_uri",
+			"value": "https://bap-ps-network-dev.becknprotocol.io",
+			"type": "string"
+		},
+		{
+			"key": "bap_id",
+			"value": "bap-ps-network-dev.becknprotocol.io",
+			"type": "string"
+		},
+		{
+			"key": "bpp_uri",
+			"value": "http://bpp-ps-network-strapi-dev.becknprotocol.io",
+			"type": "string"
+		},
+		{
+			"key": "bpp_id",
+			"value": "bpp-ps-network-strapi-dev.becknprotocol.io",
+			"type": "string"
+		}
+	]
+}
