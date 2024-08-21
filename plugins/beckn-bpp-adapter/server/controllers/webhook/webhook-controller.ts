@@ -8,7 +8,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             const { body = {} } = ctx.request;
             const { context } = body;
             const { action } = context;
-
             if (process.env.SYNC_RESPONSE === 'true') {
                 const workflowService = WorkflowProvider.get(body);
                 const result = await workflowService.index(body);

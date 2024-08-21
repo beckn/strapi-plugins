@@ -15,9 +15,8 @@ export default ({ }: { strapi: Strapi }) => ({
                 populate,
             }
         ) || {};
-        console.log("Order details fetched: ", orderDetails.order_id);
         const { id, domain, bap_id, bap_uri } = orderDetails?.order_id;
-        
+
         const payload = {
             message: {
                 order_id: id
@@ -34,10 +33,8 @@ export default ({ }: { strapi: Strapi }) => ({
                 .plugin(PLUGIN)
                 .controller("eventHandlerController")
                 .index(payload);
-        } catch(error) {
+        } catch (error) {
             console.log("Unsolicited Controller Order Status Update Error calling external API: ", error);
         }
-        
     }
-        
 });

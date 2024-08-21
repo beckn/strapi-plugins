@@ -134,7 +134,10 @@ export class SearchUtil {
                                 isInRange(customerLat, customerLong, itemLat, itemLong)
                             );
                             if (
-                                customerGps.length && itemGps.length && isInRange(customerLat, customerLong, itemLat, itemLong)
+                                customerGps.length &&
+                                itemGps.length &&
+                                isInRange(customerLat, customerLong, itemLat, itemLong) &&
+                                service?.service_availabilities[0]?.is_available
                             ) {
                                 return true;
                             }
