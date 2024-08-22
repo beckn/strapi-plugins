@@ -50,7 +50,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               }
             },
             stops: true
-          }
+          },
+          sort: [{ createdAt: "desc" }]
         }
       );
 
