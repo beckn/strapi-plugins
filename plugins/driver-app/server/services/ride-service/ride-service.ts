@@ -216,10 +216,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         }
       );
-      const { state_code, state_value } = order;
+      const { state_code, state_value, stops } = order;
       return {
         state_code,
-        state_value
+        state_value,
+        stops
       };
     } catch (error) {
       throw new Error(error.message);
