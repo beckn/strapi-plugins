@@ -5,6 +5,7 @@ import appRootPath from "app-root-path";
 import { v4 as uuid } from "uuid";
 import moment from "moment";
 import { KeyValuePair } from "../types";
+import { isMobility } from "../util";
 
 export const context = async (data: any, action: string) => {
   const expression = jsonata(
@@ -34,6 +35,8 @@ export const xInput = async (context: KeyValuePair) => {
     formId = "odrConsentForm";
   } else if (action === "select" && domain === "supply-chain-services:assembly") {
     formId = "industryAssemblyDetailsForm";
+  } else if (action === "rating" && isMobility(context)) {
+    formId = "ratingForm";
   }
   // } else {
   //   formId = action === "select" ? "itemDetailsForm" : "ratingForm";
