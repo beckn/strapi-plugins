@@ -79,5 +79,14 @@ export default [
       middlewares: ["plugin::driver-app.authMiddleware"],
       auth: false
     }
-  }
+  },
+  {
+    method: "GET",
+    path: "/ride/status/:order_id",
+    handler: "rideController.rideStatus",
+    config: {
+      middlewares: ["plugin::driver-app.authMiddleware"],
+      auth: false
+    }
+  },
 ];

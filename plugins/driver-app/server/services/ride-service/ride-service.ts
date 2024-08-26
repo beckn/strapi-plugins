@@ -14,12 +14,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             ...(status_code ? { state_value: { $eq: status_code } } : {}),
             ...(agent_id
               ? {
-                  fulfilment_id: {
-                    service: {
-                      agent_id
-                    }
+                fulfilment_id: {
+                  service: {
+                    agent_id
                   }
                 }
+              }
               : {}),
             order_id: {
               items: {
@@ -182,5 +182,47 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       throw new Error(error.message);
     }
-  }
+  },
+  async rideStatus(order_id: number, agent_id: number) {
+    try {
+      const order = await strapi.entityService.findOne(
+        "api::order-fulfillment.order-fulfillment",
+        order_id,
+        {
+          filters: {
+            fulfilment_id: {
+              service: {
+                agent_id
+              }
+            }
+          },
+          populate: {
+            customer_id: {},
+            order_id: {
+              populate: {
+                items: {
+                  populate: {
+                    provider: {
+                      populate: {
+                        domain_id: true
+                      }
+                    },
+                    sc_retail_product: {}
+                  }
+                }
+              }
+            },
+            stops: true
+          }
+        }
+      );
+      const { state_code, state_value } = order;
+      return {
+        state_code,
+        state_value
+      };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
 });

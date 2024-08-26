@@ -1,7 +1,6 @@
 module.exports = (config, { strapi }) => {
   return async (ctx, next) => {
     try {
-      console.log("My custom middleware is applied", ctx.request);
       //Extract token from request
       const token = ctx.request.header.authorization;
       if (!token || !token.startsWith("Bearer ")) {

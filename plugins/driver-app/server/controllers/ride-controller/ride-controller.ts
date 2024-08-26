@@ -2,6 +2,7 @@ import { Strapi } from "@strapi/strapi";
 import { RIDE_STATUS_CODE } from "../../../contstants";
 import services from "../../services";
 import { distance } from "../../../utils/location_utils";
+
 export default ({ strapi }: { strapi: Strapi }) => ({
   index(ctx) {
     ctx.body = strapi
@@ -108,6 +109,25 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       } else {
         throw new Error("Invalid user");
       }
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
+  async rideStatus(ctx) {
+    try {
+      const { order_id } = ctx.request.params;
+      const agentId = ctx.state.user?.agent?.id;
+      const order_detail: any = await services
+        .rideService({ strapi })
+        .rideStatus(
+          order_id,
+          agentId
+        );
+      return (ctx.body = {
+        status: "success",
+        code: 200,
+        data: order_detail
+      });
     } catch (error) {
       ctx.badRequest(error.message);
     }
