@@ -116,7 +116,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async rideStatus(ctx) {
     try {
       const { order_id } = ctx.request.params;
-      const agentId = ctx.state.user?.agent?.id;
       const order_detail: any = await services
         .rideService({ strapi })
         .rideStatus(
@@ -155,7 +154,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .rideService({ strapi })
         .getOrderFulfillment(id);
       // @ts-ignore
-      strapi.io.emit('show-rides', order);
+      strapi.io.emit('show-rides', { validOrders: [order] });
     } catch (error) {
       console.log('Error:', error);
     }

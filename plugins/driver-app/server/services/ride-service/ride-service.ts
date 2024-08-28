@@ -1,6 +1,8 @@
 import { Strapi } from "@strapi/strapi";
 import { MOBILITY_DOMAIN, RIDE_STATUS_CODE } from "../../../contstants";
 
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 export default ({ strapi }: { strapi: Strapi }) => ({
   async showMobilityOrders(
     status_code?: RIDE_STATUS_CODE | null,
@@ -227,6 +229,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     id: number,
   ) {
     try {
+      await delay(500);
       const order = await strapi.entityService.findOne(
         "api::order-fulfillment.order-fulfillment",
         id,
@@ -254,7 +257,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           sort: [{ createdAt: "desc" }]
         }
       );
-
       return order;
     } catch (error) {
       throw new Error(error.message);
