@@ -185,16 +185,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async rideStatus(order_id: number, agent_id: number) {
     try {
-      const order = await strapi.entityService.findOne(
+      const orders = await strapi.entityService.findMany(
         "api::order-fulfillment.order-fulfillment",
-        order_id,
         {
           filters: {
-            fulfilment_id: {
-              service: {
-                agent_id
-              }
-            }
+            order_id: {
+              id: order_id
+            },
           },
           populate: {
             customer_id: {},
@@ -216,7 +213,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         }
       );
-      const { state_code, state_value, stops } = order;
+      const { state_code, state_value, stops } = orders[0] || {};
       return {
         state_code,
         state_value,
