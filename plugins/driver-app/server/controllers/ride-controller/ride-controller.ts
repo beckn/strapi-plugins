@@ -120,8 +120,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const order_detail: any = await services
         .rideService({ strapi })
         .rideStatus(
-          order_id,
-          agentId
+          order_id
         );
       return (ctx.body = {
         status: "success",
@@ -144,6 +143,36 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       });
     } catch (error) {
       ctx.badRequest(error.message);
+    }
+  },
+  async sendRideToDriver(orderFulfillment: any = {}) {
+    const { id } = orderFulfillment;
+    if (!id) {
+      return;
+    }
+    try {
+      const order = await services
+        .rideService({ strapi })
+        .getOrderFulfillment(id);
+      // @ts-ignore
+      strapi.io.emit('show-rides', order);
+    } catch (error) {
+      console.log('Error:', error);
+    }
+  },
+  async sendRideStatus(orderFulfillment: any = {}) {
+    const { id } = orderFulfillment;
+    if (!id) {
+      return;
+    }
+    try {
+      const order = await services
+        .rideService({ strapi })
+        .getOrderFulfillment(id);
+      // @ts-ignore
+      strapi.io.emit('ride-status', order);
+    } catch (error) {
+      console.log('Error:', error);
     }
   }
 });

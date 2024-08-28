@@ -183,7 +183,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
-  async rideStatus(order_id: number, agent_id: number) {
+  async rideStatus(order_id: number) {
     try {
       const orders = await strapi.entityService.findMany(
         "api::order-fulfillment.order-fulfillment",
@@ -223,4 +223,41 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
+  async getOrderFulfillment(
+    id: number,
+  ) {
+    try {
+      const order = await strapi.entityService.findOne(
+        "api::order-fulfillment.order-fulfillment",
+        id,
+        {
+          populate: {
+            customer_id: {},
+            fulfilment_id: {
+              populate: { service: {} }
+            },
+            order_id: {
+              populate: {
+                items: {
+                  populate: {
+                    provider: {
+                      populate: {
+                        domain_id: true
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            stops: true
+          },
+          sort: [{ createdAt: "desc" }]
+        }
+      );
+
+      return order;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 });
