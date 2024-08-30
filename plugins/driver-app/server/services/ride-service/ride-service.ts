@@ -237,7 +237,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate: {
             customer_id: {},
             fulfilment_id: {
-              populate: { service: {} }
+              populate: {
+                service: {
+                  agent_id: {}
+                }
+              }
             },
             order_id: {
               populate: {
