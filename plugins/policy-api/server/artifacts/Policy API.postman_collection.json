@@ -1,0 +1,140 @@
+{
+	"info": {
+		"_postman_id": "ae1a3a2d-3c21-4650-b94b-f619ab623898",
+		"name": "Policy API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13127879"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseBody = pm.response.json();",
+							"var jwtToken = responseBody.jwt;",
+							"console.log(jwtToken);",
+							"pm.collectionVariables.set(\"token\", jwtToken);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"policyadmin@becknprotocol.io\",\n    \"password\": \"test@123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auth",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:1337/policy-api",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"policy-api"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Policy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"policy\": {\n        \"id\": \"\",\n        \"status\": \"active\",\n        \"domain\": \"mobility\",\n        \"owner\": {\n            \"descriptor\": {\n                \"name\": \"Ministry of Health1\",\n                \"contact\": {\n                    \"email\": \"support@moh.gov.in\"\n                }\n            }\n        },\n        \"descriptor\": {\n            \"name\": \"Quarantine Policy\",\n            \"short_desc\": \"Latest quarantine zones as mentioned in Circular 334-A-2022-03-21 published by ministry of Health\"\n        },\n        \"media\": [\n            {\n                \"mimetype\": \"application/pdf\",\n                \"url\": \"https://moh.gov.in/circulars/334-A-2022-03-21.pdf\"\n            }\n        ],\n        \"type\": \"geofence\",\n        \"coverage\": [\n            {\n                \"spatial\": [\n                    {\n                        \"country\": \"IND\",\n                        \"city\": \"std:080\"\n                    }\n                ],\n                \"temporal\": [\n                    {\n                        \"range\": {\n                            \"start\": \"2022-03-09\",\n                            \"end\": \"2022-03-20\"\n                        }\n                    }\n                ],\n                \"subscribers\": [\n                    {\n                        \"type\": \"bap\"\n                    },\n                    {\n                        \"type\": \"bpp\"\n                    }\n                ]\n            }\n        ],\n        \"geofences\": [\n            {\n                \"polygon\": [\n                    \"18.49632198310945, 73.83838330284058\",\n                    \"18.486186835168446, 73.84954133969724\",\n                    \"18.47438307447668, 73.85155860928064\",\n                    \"18.475686643028933, 73.8253797182722\",\n                    \"18.489443874240443, 73.82473591029934\"\n                ]\n            }\n        ]\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/policy",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"policy"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://bpp-unified-strapi-dev.becknprotocol.io/policy-api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
