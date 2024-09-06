@@ -2,18 +2,13 @@ import { Strapi } from "@strapi/strapi";
 import axios from "axios";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async auth(loginDto: any) {
+  async auth(authData: any) {
     try {
-      const { email, password } = loginDto;
+      const { email, password } = authData;
       const user = await strapi
         .query("plugin::users-permissions.user")
         .findOne({
-          where: { email: { $eqi: email } },
-          populate: {
-            role: true,
-            agent: true,
-            provider: true
-          }
+          where: { email: { $eqi: email } }
         });
       if (!user) {
         throw new Error("Email Not found");

@@ -13,7 +13,8 @@ export default [
     path: "/policy",
     handler: "policyController.createPolicy",
     config: {
-      policies: []
+      middlewares: ["plugin::policy-api.authMiddleware"],
+      auth: false
     }
   },
   {
