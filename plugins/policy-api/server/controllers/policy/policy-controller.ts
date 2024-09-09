@@ -29,5 +29,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       ctx.badRequest(error.message);
     }
+  },
+  async getDashboardCount(ctx) {
+    try {
+      const policyService = strapi
+        .plugin(PLUGIN)
+        .service("policyService");
+      const count = await policyService.getDashboardCount();
+      ctx.body = count;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
   }
 });
