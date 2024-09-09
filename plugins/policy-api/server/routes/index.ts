@@ -18,6 +18,15 @@ export default [
     }
   },
   {
+    method: "GET",
+    path: "/dashboard",
+    handler: "policyController.getDashboardCount",
+    config: {
+      middlewares: ["plugin::policy-api.authMiddleware"],
+      auth: false
+    }
+  },
+  {
     method: 'GET',
     path: '/',
     handler: 'myController.index',

@@ -62,5 +62,25 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       throw new Error(error.message);
     }
+  },
+  async getDashboardCount() {
+    try {
+      const active = await strapi.entityService.count('api::pp-policy.pp-policy', {
+        filters: { status: 'active' }
+      });
+      const inactive = await strapi.entityService.count('api::pp-policy.pp-policy', {
+        filters: { status: 'inactive' }
+      });
+      const published = await strapi.entityService.count('api::pp-policy.pp-policy', {
+        filters: { status: 'published' }
+      });
+      return {
+        active,
+        inactive,
+        published
+      }
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 });
