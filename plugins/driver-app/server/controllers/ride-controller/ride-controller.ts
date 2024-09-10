@@ -183,7 +183,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           )
         ) {
           // @ts-ignore
-          strapi.io.emit("show-rides", { validOrders: [order] });
+          strapi.io.to().emit("show-rides", { validOrders: [order] });
         }
       }
 
