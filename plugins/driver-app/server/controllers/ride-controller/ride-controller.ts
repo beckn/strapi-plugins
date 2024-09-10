@@ -158,38 +158,38 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .rideService({ strapi })
         .getOrderFulfillment(id);
 
-      // @ts-ignore
-      const agentId = strapi?.agent?.agentId;
-      const agentService = (
-        await strapi.entityService.findMany("api::service.service", {
-          filters: {
-            agent_id: agentId
-          },
+      const agentServices = await strapi.entityService.findMany(
+        "api::service.service",
+        {
           populate: {
-            agent: {},
+            agent_id: {},
             location_id: {}
           }
-        })
-      )[0];
-
+        }
+      );
       const startLocation =
         order.stops.find((stop) => stop.type === "start") || order.stops[0];
+
       if (startLocation?.gps) {
-        if (
-          distance(agentService.location_id.gps, startLocation.gps) <= 2 &&
-          order.order_id.items[0].item_fulfillment_ids.find(
-            (fulfillment) =>
-              fulfillment.fulfilment_id.service.id === agentService.id
-          )
-        ) {
+        const validDrivers = agentServices.filter((driver: any) => {
+          if (
+            distance(driver.location_id.gps, startLocation.gps) <= 2 &&
+            order.order_id.items[0].item_fulfillment_ids.find(
+              (fulfillment) =>
+                fulfillment.fulfilment_id.service.id === driver.id
+            )
+          ) {
+            return driver;
+          }
+        });
+        console.log("Valid Drivers ---->", validDrivers);
+        validDrivers.forEach((driver) => {
           // @ts-ignore
-          strapi.io.emit("show-rides", { validOrders: [order] });
-        }
+          strapi.io
+            .to(driver.agent_id.connection_id)
+            .emit("show-rides", { validOrders: [order] });
+        });
       }
-
-      // const validOrders = availableOrders?.filter((order) => {
-
-      // });
     } catch (error) {
       console.log("Error:", error);
     }
