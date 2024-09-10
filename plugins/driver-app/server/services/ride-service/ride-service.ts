@@ -241,6 +241,32 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         "api::order-fulfillment.order-fulfillment",
         id,
         {
+          // populate: {
+          //   customer_id: {},
+          //   fulfilment_id: {
+          //     populate: {
+          //       service: {
+          //         populate: {
+          //           agent_id: true
+          //         }
+          //       }
+          //     }
+          //   },
+          //   order_id: {
+          //     populate: {
+          //       items: {
+          //         populate: {
+          //           provider: {
+          //             populate: {
+          //               domain_id: true
+          //             }
+          //           }
+          //         }
+          //       }
+          //     }
+          //   },
+          //   stops: true
+          // },
           populate: {
             customer_id: {},
             fulfilment_id: {
@@ -259,6 +285,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     provider: {
                       populate: {
                         domain_id: true
+                      }
+                    },
+                    item_fulfillment_ids: {
+                      populate: {
+                        fulfilment_id: {
+                          populate: {
+                            service: {}
+                          }
+                        }
                       }
                     }
                   }
