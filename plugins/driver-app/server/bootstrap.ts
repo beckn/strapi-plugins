@@ -25,9 +25,18 @@ export default ({ strapi }: { strapi: Strapi }) => {
     }
   });
   io.on("connection", (socket) => {
-    console.log("a user connected", socket.id);
     const agentId = socket.handshake.query.agentId;
-
+    console.log(
+      "a user connected on strapi driver plugin ",
+      socket.id,
+      "agentID",
+      agentId
+    );
+    strapi.entityService.update("api::agent.agent", agentId, {
+      data: {
+        connection_id: socket.id
+      }
+    });
     socket.on("disconnect", () => {
       console.log("user disconnected");
     });
