@@ -157,8 +157,39 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const order = await services
         .rideService({ strapi })
         .getOrderFulfillment(id);
+
       // @ts-ignore
-      strapi.io.emit("show-rides", { validOrders: [order] });
+      const agentId = strapi?.agent?.agentId;
+      const agentService = (
+        await strapi.entityService.findMany("api::service.service", {
+          filters: {
+            agent_id: agentId
+          },
+          populate: {
+            agent: {},
+            location_id: {}
+          }
+        })
+      )[0];
+
+      const startLocation =
+        order.stops.find((stop) => stop.type === "start") || order.stops[0];
+      if (startLocation?.gps) {
+        if (
+          distance(agentService.location_id.gps, startLocation.gps) <= 2 &&
+          order.order_id.items[0].item_fulfillment_ids.find(
+            (fulfillment) =>
+              fulfillment.fulfilment_id.service.id === agentService.id
+          )
+        ) {
+          // @ts-ignore
+          strapi.io.emit("show-rides", { validOrders: [order] });
+        }
+      }
+
+      // const validOrders = availableOrders?.filter((order) => {
+
+      // });
     } catch (error) {
       console.log("Error:", error);
     }
