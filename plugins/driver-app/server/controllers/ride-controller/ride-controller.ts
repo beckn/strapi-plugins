@@ -162,7 +162,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         "api::service.service",
         {
           populate: {
-            agent: {},
+            agent_id: {},
             location_id: {}
           }
         }
@@ -202,7 +202,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         validDrivers.forEach((driver) => {
           // @ts-ignore
           strapi.io
-            .to(driver.agent.connection_id)
+            .to(driver.agent_id.connection_id)
             .emit("show-rides", { validOrders: [order] });
         });
       }
