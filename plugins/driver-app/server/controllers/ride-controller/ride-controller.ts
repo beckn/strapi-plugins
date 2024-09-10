@@ -185,6 +185,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 fulfillment.fulfilment_id.service.id === driver.id
             )
           );
+          console.log(order.order_id.items[0].item_fulfillment_ids);
           if (
             distance(driver.location_id.gps, startLocation.gps) <= 2 &&
             order.order_id.items[0].item_fulfillment_ids.find(
