@@ -1,7 +1,7 @@
 import { Strapi } from "@strapi/strapi";
 import { MOBILITY_DOMAIN, RIDE_STATUS_CODE } from "../../../contstants";
 
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async showMobilityOrders(
@@ -16,12 +16,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             ...(status_code ? { state_value: { $eq: status_code } } : {}),
             ...(agent_id
               ? {
-                fulfilment_id: {
-                  service: {
-                    agent_id
+                  fulfilment_id: {
+                    service: {
+                      agent_id
+                    }
                   }
                 }
-              }
               : {}),
             order_id: {
               items: {
@@ -45,6 +45,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     provider: {
                       populate: {
                         domain_id: true
+                      }
+                    },
+                    item_fulfillment_ids: {
+                      populate: {
+                        fulfilment_id: {
+                          populate: {
+                            service: {}
+                          }
+                        }
                       }
                     }
                   }
@@ -193,7 +202,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           filters: {
             order_id: {
               id: order_id
-            },
+            }
           },
           populate: {
             customer_id: {},
@@ -225,9 +234,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
-  async getOrderFulfillment(
-    id: number,
-  ) {
+  async getOrderFulfillment(id: number) {
     try {
       await delay(500);
       const order = await strapi.entityService.findOne(
