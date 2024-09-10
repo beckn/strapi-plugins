@@ -172,6 +172,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       if (startLocation?.gps) {
         const validDrivers = agentServices.filter((driver: any) => {
+          console.log(
+            "is in radius",
+            distance(driver.location_id.gps, startLocation.gps) <= 2
+          );
+          console.log(
+            "is valid driver",
+            order.order_id.items[0].item_fulfillment_ids.find(
+              (fulfillment) =>
+                fulfillment.fulfilment_id.service.id === driver.id
+            )
+          );
           if (
             distance(driver.location_id.gps, startLocation.gps) <= 2 &&
             order.order_id.items[0].item_fulfillment_ids.find(
