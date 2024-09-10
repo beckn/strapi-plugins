@@ -195,6 +195,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 fulfillment.fulfilment_id.service.id === driver.id
             )
           ) {
+            return driver;
           }
         });
         console.log("Valid Drivers ---->", validDrivers);
