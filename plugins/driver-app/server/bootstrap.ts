@@ -32,17 +32,19 @@ export default ({ strapi }: { strapi: Strapi }) => {
       "agentID",
       agentId
     );
-    strapi.entityService.update("api::agent.agent", agentId, {
-      data: {
-        connection_id: socket.id
-      }
-    });
+    if (agentId) {
+      strapi.entityService.update("api::agent.agent", agentId, {
+        data: {
+          connection_id: socket.id
+        }
+      });
+      strapi.io = io;
+      strapi.agent = { agentId };
+    }
     socket.on("disconnect", () => {
       console.log("user disconnected");
     });
 
     // Make the socket instance accessible globally
-    strapi.io = io;
-    strapi.agent = { agentId };
   });
 };
