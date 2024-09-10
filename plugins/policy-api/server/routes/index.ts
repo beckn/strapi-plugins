@@ -27,6 +27,24 @@ export default [
     }
   },
   {
+    method: "GET",
+    path: "/policy",
+    handler: "policyController.getPolicies",
+    config: {
+      middlewares: ["plugin::policy-api.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "GET",
+    path: "/policy/:policyId",
+    handler: "policyController.getPolicyById",
+    config: {
+      middlewares: ["plugin::policy-api.authMiddleware"],
+      auth: false
+    }
+  },
+  {
     method: 'GET',
     path: '/',
     handler: 'myController.index',

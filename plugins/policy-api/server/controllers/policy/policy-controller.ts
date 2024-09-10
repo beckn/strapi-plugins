@@ -40,5 +40,35 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       ctx.badRequest(error.message);
     }
+  },
+  async getPolicies(ctx) {
+    try {
+      let { start = 0, limit = 10, status } = ctx.request?.query;
+      start = Number(start);
+      limit = Number(limit);
+      const policyService = strapi
+        .plugin(PLUGIN)
+        .service("policyService");
+      const policyResult = await policyService.getPolicies({ start, limit, status });
+      ctx.body = policyResult;
+    } catch (error) {
+      console.log('Get policies error: ', error);
+      ctx.badRequest(error.message);
+    }
+  },
+  async getPolicyById(ctx) {
+    try {
+      const { policyId } = ctx.request.params;
+      if (!policyId) {
+        ctx.badRequest('No policy id provided!');
+      }
+      const policyService = strapi
+        .plugin(PLUGIN)
+        .service("policyService");
+      const policyResult = await policyService.getPolicyById(policyId);
+      ctx.body = policyResult;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
   }
 });

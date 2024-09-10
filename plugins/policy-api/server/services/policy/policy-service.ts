@@ -82,5 +82,80 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       throw new Error(error.message);
     }
+  },
+  async getPolicies({start, limit, status}) {
+    let filters;
+    if(status) {
+      filters = {
+        status
+      }
+    } 
+    const policies = await strapi.entityService.findMany('api::pp-policy.pp-policy', {
+      filters : status ? { status } : {},
+      start,
+      limit,
+    });
+    const total = await strapi.entityService.count('api::pp-policy.pp-policy', {
+      filters : status ? { status } : {},
+    });
+    if(policies.length) {
+      const allPolicies = policies.map(policy => {
+        return {
+          id: policy.policyId,
+          status: policy.status,
+          name: policy.name,
+          description: policy.short_desc,
+          startDate: policy?.coverage[0].temporal[0].range.start,
+          endDate: policy?.coverage[0].temporal[0].range.end,
+        }
+      })
+      return {
+        policies: allPolicies,
+        meta: {
+          start,
+          limit,
+          total
+        }
+      }
+    } else {
+      console.log('No policies found');
+      return {
+        policies: []
+      }
+    }
+  },
+
+  async getPolicyById(policyId) {
+    try {
+      const data = await strapi.entityService.findMany('api::pp-policy.pp-policy', {
+        populate: ['pp_owner'],
+        start: 0,
+        limit: 1,
+        filters: {
+          policyId
+        }
+      });
+      if(!data.length) {
+        throw new Error('No Policy found for this id');
+      }
+      const result = data[0];
+      const policy = {
+        "id": result.policyId,
+        "status": result.status,
+        "domain": result.domain,
+        "owner": result?.pp_owner.name,
+        "descriptor": result.descriptor,
+        "type": result.type,
+        "coverage": result.coverage,
+        "geofences": result.geofences,
+        "rules": result.rules
+      }
+      return {
+        policy
+      }
+    } catch(error) {
+      throw error;
+    }
+    
   }
 });
