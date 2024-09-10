@@ -180,6 +180,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           ) {
           }
         });
+        console.log("Valid Drivers ---->", validDrivers);
         validDrivers.forEach((driver) => {
           // @ts-ignore
           strapi.io
