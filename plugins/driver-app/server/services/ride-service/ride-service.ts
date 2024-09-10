@@ -241,32 +241,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         "api::order-fulfillment.order-fulfillment",
         id,
         {
-          // populate: {
-          //   customer_id: {},
-          //   fulfilment_id: {
-          //     populate: {
-          //       service: {
-          //         populate: {
-          //           agent_id: true
-          //         }
-          //       }
-          //     }
-          //   },
-          //   order_id: {
-          //     populate: {
-          //       items: {
-          //         populate: {
-          //           provider: {
-          //             populate: {
-          //               domain_id: true
-          //             }
-          //           }
-          //         }
-          //       }
-          //     }
-          //   },
-          //   stops: true
-          // },
           populate: {
             customer_id: {},
             fulfilment_id: {

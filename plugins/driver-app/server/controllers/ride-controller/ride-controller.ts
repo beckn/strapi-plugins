@@ -172,22 +172,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       if (startLocation?.gps) {
         const validDrivers = agentServices.filter((driver: any) => {
-          console.log(
-            "is in radius",
-            driver,
-            distance(driver.location_id.gps, startLocation.gps) <= 2
-          );
-          console.log(
-            "is valid driver",
-            driver,
-            order.order_id.items[0].item_fulfillment_ids.find(
-              (fulfillment) =>
-                fulfillment.fulfilment_id.service.id === driver.id
-            )
-          );
-          console.log(
-            JSON.stringify(order.order_id.items[0].item_fulfillment_ids)
-          );
           if (
             distance(driver.location_id.gps, startLocation.gps) <= 2 &&
             order.order_id.items[0].item_fulfillment_ids.find(
@@ -206,23 +190,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             .emit("show-rides", { validOrders: [order] });
         });
       }
-
-      // if (startLocation?.gps) {
-      //   if (
-      //     distance(agentService.location_id.gps, startLocation.gps) <= 2 &&
-      //     order.order_id.items[0].item_fulfillment_ids.find(
-      //       (fulfillment) =>
-      //         fulfillment.fulfilment_id.service.id === agentService.id
-      //     )
-      //   ) {
-      //     // @ts-ignore
-      //     strapi.io.to().emit("show-rides", { validOrders: [order] });
-      //   }
-      // }
-
-      // const validOrders = availableOrders?.filter((order) => {
-
-      // });
     } catch (error) {
       console.log("Error:", error);
     }
