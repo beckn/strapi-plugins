@@ -158,14 +158,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .rideService({ strapi })
         .getOrderFulfillment(id);
 
-      const agentServices = (
-        await strapi.entityService.findMany("api::service.service", {
+      const agentServices = await strapi.entityService.findMany(
+        "api::service.service",
+        {
           populate: {
             agent: {},
             location_id: {}
           }
-        })
-      )[0];
+        }
+      );
       const startLocation =
         order.stops.find((stop) => stop.type === "start") || order.stops[0];
 
