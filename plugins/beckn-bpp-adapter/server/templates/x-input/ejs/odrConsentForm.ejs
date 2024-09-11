@@ -1,16 +1,37 @@
 <html>
 <head>
+
     <title>XInput Form</title>
+    <script>
+        function validateForm() {
+            const name = document.getElementById('name');
+            const place = document.getElementById('place');
+            const digitalSignature = document.getElementById('digitalSignature');
+            const submitButton = document.querySelector('button[type="submit"]');
+                        if (name.value.trim() === '' || place.value.trim() === '' || !digitalSignature.checked) {
+                submitButton.disabled = true;
+            } else {
+                submitButton.disabled = false;
+            }
+        }
+
+        window.onload = function() {
+            validateForm(); // Disable submit on initial page load
+            document.getElementById('name').addEventListener('input', validateForm);
+            document.getElementById('place').addEventListener('input', validateForm);
+            document.getElementById('digitalSignature').addEventListener('change', validateForm);
+        };
+    </script>
 </head>
 <body>
     <div>
         <h2>Terms and Conditions</h2>
         <p>
-            I, $$name$$ confirm that l've read and understand the terms of representation by $$companyName$$
+            I, $$name$$ confirm that I've read and understand the terms of representation by $$companyName$$
             <br><br>
             I agree to be represented in the described
             legal matter and acknowledge the fee
-            structure, billing terms, and potential costs.I
+            structure, billing terms, and potential costs. I
             understand the attorney-client privilege and
             agree to communicate promptly and
             honestly. I'm aware of the conditions for
@@ -34,12 +55,11 @@
             </label>
         </div>
         <div>
-            <button type="submit">Confirm</button>
+            <button type="submit" disabled>Confirm</button>
         </div>
         <div>
             <button type="button">Cancel</button>
         </div>
-
     </form>
 </body>
 </html>

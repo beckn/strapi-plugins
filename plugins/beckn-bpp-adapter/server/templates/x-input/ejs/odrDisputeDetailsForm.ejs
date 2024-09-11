@@ -1,6 +1,25 @@
 <html>
 <head>
     <title>XInput Form</title>
+    <script>
+        function validateForm() {
+            const details = document.getElementById('details');
+            const claimValue = document.getElementById('claimValue');
+            const submitButton = document.querySelector('button[type="submit"]');
+            
+            if (details.value.trim() === '' || claimValue.value.trim() === '') {
+                submitButton.disabled = true;
+            } else {
+                submitButton.disabled = false;
+            }
+        }
+
+        window.onload = function() {
+            validateForm(); 
+            document.getElementById('details').addEventListener('input', validateForm);
+            document.getElementById('claimValue').addEventListener('input', validateForm);
+        };
+    </script>
 </head>
 <body>
     <form action="<%=action %>" method="POST">
@@ -9,11 +28,11 @@
             <input type="text" id="details" name="details" required>
         </div>
         <div>
-            <label for="claimValue">Claim Value (optional)</label>
+            <label for="claimValue">Claim Value</label>
             <input type="text" id="claimValue" name="claimValue" required>
         </div>
         <div>
-            <button type="submit">Save</button>
+            <button type="submit" disabled>Save</button>
         </div>
     </form>
 </body>
