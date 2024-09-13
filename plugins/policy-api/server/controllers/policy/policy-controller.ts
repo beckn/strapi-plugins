@@ -70,5 +70,19 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       ctx.badRequest(error.message);
     }
+  },
+  async updatePolicy(ctx) {
+    try {
+      console.log(ctx.state.user);
+      const updateBody = ctx.request.body;
+      const policyService = strapi
+        .plugin(PLUGIN)
+        .service("policyService");
+      const userId = ctx.state.user.id
+      const policyResult = await policyService.updatePolicy(updateBody, userId);
+      ctx.body = policyResult;
+    } catch(error) {
+      ctx.badRequest(error.message);
+    }
   }
 });

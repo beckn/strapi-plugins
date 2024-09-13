@@ -104,7 +104,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           id: policy.policyId,
           status: policy.status,
           name: policy.name,
-          description: policy.short_desc,
+          description: policy.short_description,
           startDate: policy?.coverage[0].temporal[0].range.start,
           endDate: policy?.coverage[0].temporal[0].range.end,
         }
@@ -120,7 +120,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } else {
       console.log('No policies found');
       return {
-        policies: []
+        policies: [],
+        meta: {
+          start,
+          limit,
+          total
+        }
       }
     }
   },
@@ -144,11 +149,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         "status": result.status,
         "domain": result.domain,
         "owner": result?.pp_owner.name,
-        "descriptor": result.descriptor,
+        "descriptor": result.short_description,
         "type": result.type,
         "coverage": result.coverage,
         "geofences": result.geofences,
-        "rules": result.rules
+        "rules": result.rules,
+        "name": result.name,
+        "media": { url: result.mediaUrl, type: result.mediaMimeType }
       }
       return {
         policy
@@ -157,5 +164,43 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw error;
     }
     
+  },
+  async updatePolicy({ policyId = '', status = '', modifiedBy = '' }, userId ) {
+    try {
+      if (!policyId) {
+        throw new Error('No policy id provided to update');
+      }
+      const data = await strapi.entityService.findMany('api::pp-policy.pp-policy', {
+        start: 0,
+        limit: 1,
+        filters: {
+          policyId
+        }
+      });
+      if(!data.length) {
+        throw new Error('No Policy found for this id to update');
+      }
+      const policy = data[0];
+      const id = policy.id;
+      if(status!=="active" && status!=="inactive" && status!=="published")
+      {
+        throw new Error('Invalud status provided to update the policy');
+      }
+      const updateBody = {
+        data: {
+          policyId,
+          status,
+          updatedByUser: userId
+        }
+      }
+      const updatedPolicy = await strapi.entityService.update('api::pp-policy.pp-policy', id, updateBody);
+      console.log('Policy Updated', updatedPolicy);
+      return {
+        policy: updatedPolicy
+      }
+
+    } catch(error) {
+      throw error;
+    }
   }
 });
