@@ -1,5 +1,4 @@
 import { Strapi } from "@strapi/strapi";
-import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
@@ -17,7 +16,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         type,
         geofences,
         rules,
-        createdBy,
+        applicableTo,
+        createdBy
       } = policyData;
 
       const ownerName = owner.descriptor?.name;
@@ -53,6 +53,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         policyId: uuidv4(),
         mediaMimeType: media.mimetype,
         mediaUrl: media.url,
+        applicableTo,
         publishedAt
         // createdByUser: createdBy ? createdBy : "system"
       };
@@ -83,22 +84,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
-  async getPolicies({start, limit, status}) {
+  async getPolicies({ start, limit, status }) {
     let filters;
-    if(status) {
+    if (status) {
       filters = {
         status
       }
-    } 
+    }
     const policies = await strapi.entityService.findMany('api::pp-policy.pp-policy', {
-      filters : status ? { status } : {},
+      filters: status ? { status } : {},
       start,
       limit,
     });
     const total = await strapi.entityService.count('api::pp-policy.pp-policy', {
-      filters : status ? { status } : {},
+      filters: status ? { status } : {},
     });
-    if(policies.length) {
+    if (policies.length) {
       const allPolicies = policies.map(policy => {
         return {
           id: policy.policyId,
@@ -140,7 +141,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           policyId
         }
       });
-      if(!data.length) {
+      if (!data.length) {
         throw new Error('No Policy found for this id');
       }
       const result = data[0];
@@ -160,12 +161,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       return {
         policy
       }
-    } catch(error) {
+    } catch (error) {
       throw error;
     }
-    
   },
-  async updatePolicy({ policyId = '', status = '', modifiedBy = '' }, userId ) {
+  async updatePolicy({ policyId = '', status = '', modifiedBy = '' }, userId) {
     try {
       if (!policyId) {
         throw new Error('No policy id provided to update');
@@ -177,13 +177,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           policyId
         }
       });
-      if(!data.length) {
+      if (!data.length) {
         throw new Error('No Policy found for this id to update');
       }
       const policy = data[0];
       const id = policy.id;
-      if(status!=="active" && status!=="inactive" && status!=="published")
-      {
+      if (status !== "active" && status !== "inactive" && status !== "published") {
         throw new Error('Invalud status provided to update the policy');
       }
       const updateBody = {
@@ -199,7 +198,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         policy: updatedPolicy
       }
 
-    } catch(error) {
+    } catch (error) {
       throw error;
     }
   }

@@ -6,7 +6,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     try {
       const { policy = {} } = ctx.request?.body;
       const { coverage = [] } = policy;
-      // const { coverage = [] } = ctx.request?.body?.policy;
       // coverage validation
       // coverage temporal validation
       // coverage temporal range validation
