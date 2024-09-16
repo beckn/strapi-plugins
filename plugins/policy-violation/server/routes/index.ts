@@ -16,5 +16,14 @@ export default [
       policies: [],
       auth: false
     },
+  },
+  {
+    method: 'POST',
+    path: '/:applicableTo/policy/checkViolation',
+    handler: 'policyController.checkViolation',
+    config: {
+      policies: [],
+      auth: false
+    },
   }
 ];
