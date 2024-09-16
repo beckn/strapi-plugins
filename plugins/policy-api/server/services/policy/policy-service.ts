@@ -57,7 +57,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         publishedAt
         // createdByUser: createdBy ? createdBy : "system"
       };
-      console.log('abhi', ownerData, insertData);
       const policy = await strapi.entityService.create('api::pp-policy.pp-policy', { data: insertData });
       return policy;
     } catch (error) {

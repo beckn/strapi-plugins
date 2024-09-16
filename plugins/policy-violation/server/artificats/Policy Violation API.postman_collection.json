@@ -1,0 +1,114 @@
+{
+	"info": {
+		"_postman_id": "1cf222bc-9330-47b6-a8de-58441ebd9097",
+		"name": "Policy Violation API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13127879"
+	},
+	"item": [
+		{
+			"name": "Get Policy",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/bap/policies/3",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"bap",
+						"policies",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accept/Reject",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"action\": \"accept\",\n    \"bap_id\": \"mit-ps-bap.becknprotocol.io\",\n    \"bap_uri\": \"https://mit-ps-bap.becknprotocol.io\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/bap/policy/3",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"bap",
+						"policy",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check Violation",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"locations\": [\n        \"13.198909,77.7068926\"\n    ],\n    \"bap_id\": \"mit-ps-bap.becknprotocol.io\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/bap/policy/checkViolation",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"bap",
+						"policy",
+						"checkViolation"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:1337/policy-violation",
+			"type": "string"
+		}
+	]
+}

@@ -1,6 +1,7 @@
 import { Strapi } from '@strapi/strapi';
 import axios from 'axios';
 import { APPLICABLETO, POLICYACTIONS } from '../../contstants';
+import { isInsidePolygon } from '../util';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async getPolicy(ctx) {
@@ -59,6 +60,49 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ctx.body = policy;
     } catch (error) {
       ctx.badRequest(error.message);
+    }
+  },
+  async checkViolation(ctx) {
+    const { applicableTo } = ctx.request?.params;
+    const { locations = [], bap_id } = ctx.request.body;
+    if (!locations.length || !bap_id) {
+      throw new Error("Locations and BAP ID are required ");
+    }
+    const policyCheckResult = [];
+    const applicablePolicies = (await axios.get(`${process.env.STRAPI_BPP_URL}/api/pp-actions?filters[bap_id][$eq]=${bap_id}&populate=*`))?.data?.data;
+    for (let i = 0; i < locations.length; i++) {
+      if (!applicablePolicies.length) {
+        policyCheckResult.push({
+          "location": locations[i],
+          "violation": false,
+          "violatedPolicies": []
+        });
+      } else {
+        for (let j = 0; j < applicablePolicies.length; j++) {
+          const applicablePolicy = applicablePolicies[j];
+          const location = locations[i]?.replace(/\s/g, "").split(",");
+          const point: [number, number] = [parseFloat(location[0]), parseFloat(location[1])];
+          const policy = applicablePolicy.attributes?.pp_policy?.data || {};
+          const geofence = policy.attributes?.geofences[0]?.polygon || [];
+          const polygon = geofence.map((fence) => {
+            const pointArr = fence?.replace(/\s/g, "").split(",");
+            return [parseFloat(pointArr[0]), parseFloat(pointArr[1])];
+          });
+          policyCheckResult.push({
+            "location": locations[i],
+            "violation": isInsidePolygon(point, polygon),
+            "violatedPolicies": [
+              {
+                id: policy.id,
+                name: policy.attributes?.name
+              }
+            ]
+          });
+        }
+      }
+    }
+    ctx.body = {
+      policyCheckResult
     }
   }
 });
