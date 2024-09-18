@@ -19,7 +19,7 @@ export const CHECK_IN: string = "check-in";
 export const CHECK_OUT: string = "check-out";
 export const START: string = "start";
 export const END: string = "end";
-export const RADIUS: number = 50;
+export const RADIUS: number = 2;
 export const TOLERANCE_RADIUS: number = 5000; // meter
 export const MAX_DISTANCE: number = 10000; // meter
 
