@@ -13,7 +13,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
       let url = '';
       if (policyId) {
-        url = `${process.env.STRAPI_BPP_URL}/api/pp-policies/${policyId}`;
+        url = `${process.env.STRAPI_BPP_URL}/api/pp-policies?filters[policyId][$eq]=${policyId}`;
       } else {
         url = `${process.env.STRAPI_BPP_URL}/api/pp-policies?pagination[page]=${page}&pagination[pageSize]=${pageSize}&filters[applicableTo][$containsi]=${applicableTo}`;
       }
@@ -38,19 +38,21 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ) {
         throw new Error("Invalid params");
       }
-      const policy = (await axios.get(`${process.env.STRAPI_BPP_URL}/api/pp-policies/${policyId}?populate=*`))?.data;
+      const policy = (await axios.get(`${process.env.STRAPI_BPP_URL}/api/pp-policies?filters[policyId][$eq]=${policyId}&populate=*`))?.data;
+      
       if (!policy) {
         throw new Error("Policy not found");
       }
       const policyActionUrl = `${process.env.STRAPI_BPP_URL}/api/pp-actions`;
-      let policyAction = (await axios.get(`${policyActionUrl}?filters[pp_policy][id][$eq]=${policyId}&filters[bap_id][$eq]=${bap_id}&pagination[pageSize]=1`))?.data;
+      let policyAction = (await axios.get(`${policyActionUrl}?filters[pp_policy][policyId][$eq]=${policyId}&filters[bap_id][$eq]=${bap_id}&pagination[pageSize]=1`))?.data;
       if (policyAction?.data?.length) {
-        await axios.delete(`${policyActionUrl}/${policyAction?.data?.id}`);
+        
+        await axios.delete(`${policyActionUrl}/${policyAction?.data?.[0]?.id}`);
       }
       const policyActionData = {
         data: {
           accepted_by: applicableTo.toLowerCase(),
-          pp_policy: policy.data?.id,
+          pp_policy: policy.data?.[0]?.id,
           bap_id,
           bap_uri,
           action: action.toLowerCase()
