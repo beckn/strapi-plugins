@@ -40,6 +40,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         });
 
       }
+      const subscribers = coverage[0]?.subscribers?.map((subscriber) => subscriber?.type).filter((subscriber) => subscriber);
       const insertData = {
         coverage,
         status,
@@ -53,7 +54,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         policyId: uuidv4(),
         mediaMimeType: media.mimetype,
         mediaUrl: media.url,
-        applicableTo,
+        applicableTo: applicableTo || (subscribers.join(',')),
         publishedAt
         // createdByUser: createdBy ? createdBy : "system"
       };
