@@ -84,8 +84,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const applicablePolicy = applicablePolicies[j];
           const location = locations[i]?.replace(/\s/g, "").split(",");
           const point: [number, number] = [parseFloat(location[0]), parseFloat(location[1])];
-          const policy = applicablePolicy.attributes?.pp_policy?.data || {};
-          const geofence = policy.attributes?.geofences[0]?.polygon || [];
+          const policy = applicablePolicy?.attributes?.pp_policy?.data || {};
+          const geofence = policy?.attributes?.geofences?.[0]?.polygon || [];
           const polygon = geofence.map((fence) => {
             const pointArr = fence?.replace(/\s/g, "").split(",");
             return [parseFloat(pointArr[0]), parseFloat(pointArr[1])];
