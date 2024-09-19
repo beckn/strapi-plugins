@@ -95,8 +95,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "violation": isInsidePolygon(point, polygon),
             "violatedPolicies": [
               {
-                id: policy.id,
-                name: policy.attributes?.name
+                id: policy?.attributes?.policyId,
+                name: policy?.attributes?.name
               }
             ]
           });
