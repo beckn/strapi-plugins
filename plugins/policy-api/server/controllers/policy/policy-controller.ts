@@ -42,13 +42,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async getPolicies(ctx) {
     try {
-      let { start = 0, limit = 10, status } = ctx.request?.query;
+      let { start = 0, limit = 10, status, sortBy } = ctx.request?.query;
       start = Number(start);
       limit = Number(limit);
       const policyService = strapi
         .plugin(PLUGIN)
         .service("policyService");
-      const policyResult = await policyService.getPolicies({ start, limit, status });
+      const policyResult = await policyService.getPolicies({ start, limit, status, sortBy });
       ctx.body = policyResult;
     } catch (error) {
       console.log('Get policies error: ', error);

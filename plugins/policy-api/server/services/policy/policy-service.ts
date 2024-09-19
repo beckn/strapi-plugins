@@ -84,18 +84,39 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
-  async getPolicies({ start, limit, status }) {
+  async getPolicies({ start, limit, status, sortBy }) {
+    
     let filters;
     if (status) {
       filters = {
         status
       }
     }
+    
+    let sortArr = [];
+    if(sortBy) {
+      if(!Array.isArray(sortBy)) {       
+        sortBy = [JSON.parse(sortBy)];
+      }
+      
+      sortBy.forEach(obj => {        
+        obj = typeof obj === 'string' ? JSON.parse(obj) : obj;
+        const sortObj = {
+          [obj.key] : obj.order ? obj.order : 'asc'
+        }
+        sortArr.push(sortObj);
+      })
+    }
+    if(!sortArr.length) {
+      sortArr.push({"updatedAt": "desc"});
+    }
     const policies = await strapi.entityService.findMany('api::pp-policy.pp-policy', {
       filters: status ? { status } : {},
       start,
       limit,
+      sort : sortArr
     });
+    
     const total = await strapi.entityService.count('api::pp-policy.pp-policy', {
       filters: status ? { status } : {},
     });
@@ -108,6 +129,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           description: policy.short_description,
           startDate: policy?.coverage[0].temporal[0].range.start,
           endDate: policy?.coverage[0].temporal[0].range.end,
+          updatedAt: policy.updatedAt
         }
       })
       return {

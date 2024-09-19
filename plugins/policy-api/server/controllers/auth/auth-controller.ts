@@ -62,7 +62,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ctx.body = response;
     } catch(error) {
       console.error(error);
-      ctx.badRequest('Unable to Reset Password');
+      ctx.badRequest('Link invalid or already used!');
     }
   }
 });
