@@ -13,9 +13,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
       let url = '';
       if (policyId) {
-        url = `${process.env.STRAPI_BPP_URL}/api/pp-policies?filters[policyId][$eq]=${policyId}`;
+        url = `${process.env.STRAPI_BPP_URL}/api/pp-policies?filters[policyId][$eq]=${policyId}&populate[0]=pp_actions`;
       } else {
-        url = `${process.env.STRAPI_BPP_URL}/api/pp-policies?pagination[page]=${page}&pagination[pageSize]=${pageSize}&filters[applicableTo][$containsi]=${applicableTo}`;
+        url = `${process.env.STRAPI_BPP_URL}/api/pp-policies?pagination[page]=${page}&pagination[pageSize]=${pageSize}&filters[applicableTo][$containsi]=${applicableTo}&populate[0]=pp_actions`;
       }
       const response = await axios.get(url);
       const policies = response?.data;
@@ -46,7 +46,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const policyActionUrl = `${process.env.STRAPI_BPP_URL}/api/pp-actions`;
       let policyAction = (await axios.get(`${policyActionUrl}?filters[pp_policy][policyId][$eq]=${policyId}&filters[bap_id][$eq]=${bap_id}&pagination[pageSize]=1`))?.data;
       if (policyAction?.data?.length) {
-        
         await axios.delete(`${policyActionUrl}/${policyAction?.data?.[0]?.id}`);
       }
       const policyActionData = {
