@@ -40,7 +40,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
       const policy = (await axios.get(`${process.env.STRAPI_BPP_URL}/api/pp-policies?filters[policyId][$eq]=${policyId}&populate=*`))?.data;
       
-      if (!policy) {
+      if (!policy?.data.length) {
         throw new Error("Policy not found");
       }
       const policyActionUrl = `${process.env.STRAPI_BPP_URL}/api/pp-actions`;
@@ -58,6 +58,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
       };
       policyAction = await axios.post(policyActionUrl, policyActionData);
+      policy.data[0].attributes.pp_actions = policyAction.data;
       ctx.body = policy;
     } catch (error) {
       ctx.badRequest(error.message);
