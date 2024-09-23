@@ -77,7 +77,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         },
         fulfilment_id: {},
         customer_id: {},
-        agent_id: {},
+        agent_id: {
+          populate: {
+            agent_profile: {}
+          }
+        },
         stops: {}
       };
 

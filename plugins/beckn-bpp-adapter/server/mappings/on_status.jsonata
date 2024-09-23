@@ -136,7 +136,22 @@
                     "contact": {
                         "phone": %.message.order_id.order_address.phone
                     }
-                }[]    
+                }[],
+                "agent": {
+                    "person": {
+                        "id": $string(agent_id.id),
+                        "name": agent_id.first_name & " " & agent_id.last_name
+                    },
+                    "contact": {
+                        "phone": $string(agent_id.agent_profile.phone_number),
+                        "email": agent_id.agent_profile.email
+                    }
+                },
+                "vehicle": {
+                    "make": agent_id.agent_profile.vehicle_make,
+                    "model": agent_id.agent_profile.vehicle_model,
+                    "registration": agent_id.agent_profile.registration_no
+                }
             }[],
             "billing": message.order_id.{
                 "name": order_address.first_name,
