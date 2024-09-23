@@ -16,12 +16,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             ...(status_code ? { state_value: { $eq: status_code } } : {}),
             ...(agent_id
               ? {
-                  fulfilment_id: {
-                    service: {
-                      agent_id
-                    }
+                fulfilment_id: {
+                  service: {
+                    agent_id
                   }
                 }
+              }
               : {}),
             order_id: {
               items: {
@@ -173,7 +173,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             ...(order_status === RIDE_STATUS_CODE.RIDE_ACCEPTED
               ? { fulfilment_id: fulfilmentService.fulfilment_id.id }
               : {}),
-            state_value: order_status
+            state_value: order_status,
+            agent_id
           }
         }
       );

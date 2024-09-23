@@ -204,7 +204,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .rideService({ strapi })
         .getOrderFulfillment(id);
       // @ts-ignore
-      strapi.io.emit("ride-status", order);
+      strapi.io?.emit("ride-status", order);
     } catch (error) {
       console.log("Error:", error);
     }
