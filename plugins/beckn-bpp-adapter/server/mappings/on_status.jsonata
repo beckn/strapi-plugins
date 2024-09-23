@@ -151,7 +151,9 @@
                     "make": agent_id.agent_profile.vehicle_make,
                     "model": agent_id.agent_profile.vehicle_model,
                     "registration": agent_id.agent_profile.registration_no
-                }
+                },
+                "rating": $string(fulfilment_id.rating),
+                "rateable": fulfilment_id.rateable
             }[],
             "billing": message.order_id.{
                 "name": order_address.first_name,
