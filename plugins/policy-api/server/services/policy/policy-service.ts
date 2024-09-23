@@ -207,11 +207,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       if (status !== "active" && status !== "inactive" && status !== "published") {
         throw new Error('Invalud status provided to update the policy');
       }
-      const updateBody = {
+      const updateBody: any = {
         data: {
           policyId,
           status,
           updatedByUser: userId
+        }
+      }
+      if(status !== 'published') {
+        updateBody.data = {
+          ...updateBody.data,
+          pp_actions: null
         }
       }
       const updatedPolicy = await strapi.entityService.update('api::pp-policy.pp-policy', id, updateBody);
