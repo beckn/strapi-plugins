@@ -15,6 +15,7 @@ export const actions: string[] = [
 export const HOSPITALITY_DOMAINS: string[] = ["hospitality"];
 export const TOURISM_DOMAINS: string[] = ["tourism"];
 export const MOBILITY_DOMAINS: string[] = ["mobility:1.1.0"];
+export const ENERGY_DOMAINS: string[] = ["uei:p2p-trading"];
 export const CHECK_IN: string = "check-in";
 export const CHECK_OUT: string = "check-out";
 export const START: string = "start";

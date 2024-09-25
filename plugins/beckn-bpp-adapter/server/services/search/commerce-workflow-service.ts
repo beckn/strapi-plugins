@@ -73,6 +73,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       populate.items.filters = filters.items = itemFilter
     }
 
+    const scRetailFilter = ObjectUtil.removeEmptyObjectKeys(FilterUtil.getSCRetailFilter(item));
+    if (Object.keys(scRetailFilter).length) {
+      populate.items.populate.sc_retail_product.filters = scRetailFilter
+      filters.items = {
+        ...(filters.items || {}),
+        sc_retail_product: scRetailFilter
+      }
+    }
+
     if (category) {
       const categoryFilter = ObjectUtil.removeEmptyObjectKeys(FilterUtil.getCategoryFilter(category));
       if (Object.keys(categoryFilter).length) {

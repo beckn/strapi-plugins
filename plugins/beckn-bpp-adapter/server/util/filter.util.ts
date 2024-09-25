@@ -41,6 +41,23 @@ export class FilterUtil {
         return filter;
     };
 
+    static getSCRetailFilter = (item) => {
+        const filter: any = {}
+        if (item.quantity?.available?.measure?.value) {
+            const value = item.quantity?.available?.measure?.value;
+            filter.stock_quantity = {
+                $gte: parseInt(value)
+            }
+        }
+        if (item.price?.maximum_value) {
+            const maximum_value = item.price?.maximum_value;
+            filter.min_price = {
+                $gte: parseInt(maximum_value)
+            }
+        }
+        return filter;
+    }
+
     static getProviderFilter = (provider: KeyValuePair = {}) => {
         const filter: KeyValuePair = {
             id: "",

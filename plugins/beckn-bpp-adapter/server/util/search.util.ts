@@ -1,7 +1,7 @@
 import moment from "moment";
 import { KeyValuePair } from "../types";
-import { CHECK_IN, CHECK_OUT, START } from "../constants";
-import { isHospitality, isMobility, isTourism } from "./domain.util";
+import { CHECK_IN, CHECK_OUT, START, END } from "../constants";
+import { isHospitality, isMobility, isTourism, isEnergy } from "./domain.util";
 import { isInRange, findStoresAlongRouteWithinDistance } from "./location.util";
 
 export class SearchUtil {
@@ -125,12 +125,12 @@ export class SearchUtil {
                 moment(checkInReq?.time?.timestamp).format("YYYY-MM-DD"),
                 moment(checkInItem?.timestamp).format("YYYY-MM-DD"),
                 checkInGps.length &&
-                  itemGps.length &&
-                  !isInRange(checkInLat, checkInLong, itemLat, itemLong)
+                itemGps.length &&
+                !isInRange(checkInLat, checkInLong, itemLat, itemLong)
               );
               if (
                 moment(checkInReq?.time?.timestamp).format("YYYY-MM-DD") !==
-                  moment(checkInItem?.timestamp).format("YYYY-MM-DD") ||
+                moment(checkInItem?.timestamp).format("YYYY-MM-DD") ||
                 (checkInGps.length &&
                   itemGps.length &&
                   !isInRange(checkInLat, checkInLong, itemLat, itemLong))
@@ -188,6 +188,70 @@ export class SearchUtil {
                 }
               );
               return item.item_fulfillment_ids.length > 0;
+            }
+          );
+          return providerItem.items.length > 0;
+        });
+      } else {
+        filteredProviders = [];
+      }
+    } else if (isEnergy(context)) {
+      const timeRange = fulfillment?.stops[0]?.time.range || {};
+      const startReq = timeRange.start;
+      const endReq = timeRange.end;
+      if (startReq && endReq) {
+        filteredProviders = providers.filter((providerItem: KeyValuePair) => {
+          providerItem.items = providerItem.items.filter(
+            (item: KeyValuePair) => {
+              let startItem: any = null;
+              let endItem: any = null;
+              item?.item_fulfillment_ids?.forEach(
+                (fulfillment: KeyValuePair) => {
+                  if (
+                    fulfillment?.fulfilment_id?.type?.toLowerCase() === START
+                  ) {
+                    startItem = fulfillment;
+                  } else if (
+                    fulfillment?.fulfilment_id?.type?.toLowerCase() ===
+                    END
+                  ) {
+                    endItem = fulfillment;
+                  }
+                }
+              );
+              console.log({
+                startReq,
+                endReq,
+                startItem,
+                endItem
+              });
+              console.log(
+                !startItem,
+                !endItem,
+                !moment(startReq).isBetween(
+                  startItem?.timestamp,
+                  endItem?.timestamp
+                ),
+                !moment(endReq).isBetween(
+                  startItem?.timestamp,
+                  endItem?.timestamp
+                )
+              );
+              if (
+                !startItem ||
+                !endItem ||
+                !moment(startReq).isBetween(
+                  startItem?.timestamp,
+                  endItem?.timestamp
+                ) ||
+                !moment(endReq).isBetween(
+                  startItem?.timestamp,
+                  endItem?.timestamp
+                )
+              ) {
+                return false;
+              }
+              return true;
             }
           );
           return providerItem.items.length > 0;
