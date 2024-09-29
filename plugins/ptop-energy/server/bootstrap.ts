@@ -71,6 +71,9 @@ async function reduceProductUnits(
   currentStockQuantity: number,
   unitsold: number
 ) {
+  console.log("Reducing Stock Quantity===>");
+  console.log("Current Quantity===>", currentStockQuantity);
+  console.log("Reduced Quantity===>", currentStockQuantity - unitsold);
   return await strapi.entityService.update(
     "api::sc-product.sc-product",
     productId,
