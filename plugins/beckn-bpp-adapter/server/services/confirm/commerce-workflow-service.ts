@@ -188,30 +188,30 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::order-fulfillment.order-fulfillment",
             { data: orderFulfillmentDetail }
           );
-          const getScRetailProduct = await strapi.entityService.findMany(
-            "api::sc-product.sc-product",
-            {
-              filters: {
-                item_id: message.order.items[0].id
-              }
-            }
-          );
+          // const getScRetailProduct = await strapi.entityService.findMany(
+          //   "api::sc-product.sc-product",
+          //   {
+          //     filters: {
+          //       item_id: message.order.items[0].id
+          //     }
+          //   }
+          // );
 
-          const scRetailProductUpdateRes = await strapi.entityService.update(
-            "api::sc-product.sc-product",
-            getScRetailProduct[0].id,
-            {
-              data: {
-                stock_quantity:
-                  Number(
-                    provider[0].items[0].sc_retail_product.stock_quantity
-                  ) -
-                  Number(
-                    message.order?.items[0]?.quantity?.selected?.count || 5
-                  )
-              }
-            }
-          );
+          // const scRetailProductUpdateRes = await strapi.entityService.update(
+          //   "api::sc-product.sc-product",
+          //   getScRetailProduct[0].id,
+          //   {
+          //     data: {
+          //       stock_quantity:
+          //         Number(
+          //           provider[0].items[0].sc_retail_product.stock_quantity
+          //         ) -
+          //         Number(
+          //           message.order?.items[0]?.quantity?.selected?.count || 5
+          //         )
+          //     }
+          //   }
+          // );
 
           orderFulFillmentId = orderFulfillmentRes.id;
           trx.commit();

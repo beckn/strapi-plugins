@@ -29,11 +29,12 @@ export default ({ strapi }: { strapi: Strapi }) => {
         if (!scProduct || !provider)
           throw new Error("Product or Provider information is missing.");
 
-        // await reduceProductUnits(
-        //   strapi,
-        //   scProduct.id,
-        //   scProduct.stock_quantity
-        // );
+        await reduceProductUnits(
+          strapi,
+          scProduct.id,
+          scProduct.stock_quantity,
+          orderDetails[0].quantity
+        );
         await sendWebhook(
           buildPayload(
             provider.short_desc,
@@ -67,13 +68,14 @@ async function getOrderDetails(strapi: Strapi, fulfillmentId: number) {
 async function reduceProductUnits(
   strapi: Strapi,
   productId: number,
-  currentStockQuantity: number
+  currentStockQuantity: number,
+  unitsold: number
 ) {
   return await strapi.entityService.update(
     "api::sc-product.sc-product",
     productId,
     {
-      data: { stock_quantity: Number(currentStockQuantity) - 5 }
+      data: { stock_quantity: Number(currentStockQuantity) - unitsold }
     }
   );
 }
