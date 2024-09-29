@@ -1,6 +1,12 @@
 import { Strapi } from "@strapi/strapi";
 import axios from "axios";
 
+const sleep = (timer: number) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => resolve, timer);
+  });
+};
+
 export default ({ strapi }: { strapi: Strapi }) => {
   strapi.db.lifecycles.subscribe({
     //@ts-ignore
@@ -14,6 +20,7 @@ export default ({ strapi }: { strapi: Strapi }) => {
     "order-fulfillment-event-emitter.created",
     async (event) => {
       try {
+        await sleep(1000);
         const orderDetails = await getOrderDetails(strapi, event.result.id);
         const item = orderDetails[0]?.order_id.items[0];
         const scProduct = item?.sc_retail_product;
