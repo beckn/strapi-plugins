@@ -21,7 +21,8 @@ module.exports = (config, { strapi }) => {
             role: true,
             agent: {
               populate: {
-                agent_profile: true
+                agent_profile: true,
+                provider_id: true
               }
             },
             provider: true

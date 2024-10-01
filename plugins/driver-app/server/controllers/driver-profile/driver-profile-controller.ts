@@ -82,15 +82,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         user_details: {
           email: user.email,
           username: user.username,
-          name: `${user.agent.first_name} ${user.agent.last_name}`,
-          description: user.agent.description,
-          phone_number: user.agent.agent_profile.phone_number
+          name: `${user?.agent?.first_name} ${user?.agent?.last_name}`,
+          description: user?.agent?.description,
+          phone_number: user?.agent?.agent_profile?.phone_number
         },
         vehicle_details: {
-          registration_no: user.agent.agent_profile.registration_no,
-          vehicle_make: user.agent.agent_profile.vehicle_make,
-          vehicle_model: user.agent.agent_profile.vehicle_model,
-          power_source: user.agent.agent_profile.power_source
+          registration_no: user?.agent?.agent_profile?.registration_no,
+          vehicle_make: user?.agent?.agent_profile?.vehicle_make,
+          vehicle_model: user?.agent?.agent_profile?.vehicle_model,
+          power_source: user?.agent?.agent_profile?.power_source
+        },
+        provider_details: {
+          id: user?.agent?.provider_id?.id,
+          name: user?.agent?.provider_id?.provider_name,
+          short_desc: user?.agent?.provider_id?.short_desc,
+          long_desc: user?.agent?.provider_id?.long_desc,
+          rating: user?.agent?.provider_id?.provider_rating
         }
       };
       return (ctx.body = profile);
