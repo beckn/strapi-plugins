@@ -77,7 +77,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async myProfile(ctx) {
     try {
-      const { user } = ctx.state;
+
+      const user = ctx.state.user;
+      console.log('User: ', ctx.state.user);
+      
+      const agentId = user?.agent?.id;
+      
       const profile = {
         user_details: {
           email: user.email,
@@ -92,14 +97,24 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           vehicle_model: user?.agent?.agent_profile?.vehicle_model,
           power_source: user?.agent?.agent_profile?.power_source
         },
-        provider_details: {
-          id: user?.agent?.provider_id?.id,
-          name: user?.agent?.provider_id?.provider_name,
-          short_desc: user?.agent?.provider_id?.short_desc,
-          long_desc: user?.agent?.provider_id?.long_desc,
-          rating: user?.agent?.provider_id?.provider_rating
+        provider_details: {}
+      }
+      
+      if (agentId) {
+        const providerDetails = await driverProfileService
+        .driverProfileService({ strapi }).fetchProviderDetails(agentId);
+        console.log('Provider details fetched: ', providerDetails);
+        
+        if(providerDetails && Object.keys(providerDetails).length) {      
+          profile.provider_details = {
+            id: providerDetails?.id,
+            name: providerDetails?.provider_name,
+            short_desc: providerDetails?.short_desc,
+            long_desc: providerDetails?.long_desc,
+            rating: providerDetails?.provider_rating
+          }
         }
-      };
+      }
       return (ctx.body = profile);
     } catch (error) {
       ctx.badRequest(error.message);

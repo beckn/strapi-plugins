@@ -112,5 +112,46 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       throw new Error(error.message);
     }
+  },
+  async fetchProviderDetails(agent_id: number) {
+    try {
+      const agentServices = await strapi.entityService.findMany(
+        "api::service.service",
+        {
+          filters: {
+            agent_id
+          },
+          populate: {
+            agent: {},
+          }
+        }
+      );
+      if (!agentServices.length) {
+        return {};
+      }
+      const agentService = agentServices[0];
+      const getProviderDetails = await strapi.entityService.findOne("api::service.service", agentService.id, {
+        populate: {
+          fulfilment: {
+            populate: {
+              item_fulfillment_ids: {
+                populate: {
+                  item_id: {
+                    populate: {
+                      provider: true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+    const providerData = getProviderDetails?.fulfilment?.item_fulfillment_ids?.[0]?.item_id?.provider;
+    return providerData || {};
+    } catch(error) {
+      console.log('Failed to fetch agent services');
+      return {};
+    }
   }
 });
