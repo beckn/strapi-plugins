@@ -7,7 +7,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     try {
       const { body = {} } = ctx.request;
       const { context } = body;
-      const { action } = context;
+      const { action, domain } = context;
 
       if (process.env.SYNC_RESPONSE === "true") {
         const workflowService = WorkflowProvider.get(body);
@@ -20,6 +20,23 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             !Object.keys(result).length)
         ) {
           console.log("No Data Found");
+          try {
+            const result = await strapi
+              .plugin("beckn-bpp-adapter")
+              .service("webhookService")
+              .index(body, domain);
+            ctx.body = {
+              status: "SUCCESS",
+              data: result,
+            };
+          } catch (error) {
+            console.error("Error in creating catalogue:", error);
+            ctx.status = error.status || 500;
+            ctx.body = {
+              status: "FAILED",
+              message: error.message,
+            };
+          }
         } else {
           const transformedResult = await TLService.transform(
             { message: result, context },
@@ -31,8 +48,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         await strapi.eventHub.emit("webhook.request", body);
         ctx.body = {
           ack: {
-            status: "ACK"
-          }
+            status: "ACK",
+          },
         };
       }
     } catch (error) {
@@ -49,11 +66,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
       ctx.body = {
         ack: {
-          status: "ACK"
-        }
+          status: "ACK",
+        },
       };
     } catch (error) {
       // throw error;
     }
-  }
+  },
 });
