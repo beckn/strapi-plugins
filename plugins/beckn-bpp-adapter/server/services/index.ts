@@ -23,6 +23,7 @@ import ratingAppointmentWorkflowService from './rating/appointment-workflow-serv
 import ratingService from './rating/rating-service';
 import updateCommerceWorkflowService from './update/commerce-workflow-service'
 import updateAppointmentWorkflowService from './update/appointment-workflow-service';
+import webhookService from './webhook/webhook-service';
 
 export default {
   healthService,
@@ -49,5 +50,6 @@ export default {
   ratingAppointmentWorkflowService,
   ratingService,
   updateCommerceWorkflowService,
-  updateAppointmentWorkflowService
+  updateAppointmentWorkflowService,
+  webhookService
 };
