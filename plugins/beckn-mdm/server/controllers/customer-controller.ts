@@ -7,4 +7,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       .service('myService')
       .getWelcomeMessage();
   },
+  async getCustomer(ctx) {
+    try {
+      const mdmService = strapi
+        .plugin("beckn-mdm")
+        .service("customerService");
+      const result = await mdmService.getCustomer(ctx.request.body);
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
 });

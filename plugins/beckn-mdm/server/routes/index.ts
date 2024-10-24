@@ -1,10 +1,11 @@
 export default [
   {
-    method: 'GET',
-    path: '/',
-    handler: 'customerController.customer',
+    method: 'POST',
+    path: '/getCustomer',
+    handler: 'customerController.getCustomer',
     config: {
       policies: [],
+      auth: false
     },
   },
 ];

@@ -1,5 +1,5 @@
-import myService from './my-service';
+import customerService from './customer-service';
 
 export default {
-  myService,
+  customerService,
 };
