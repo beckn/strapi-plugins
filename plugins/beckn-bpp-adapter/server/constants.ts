@@ -10,7 +10,8 @@ export const actions: string[] = [
   "cancel",
   "track",
   "rating",
-  "update"
+  "update",
+  "cred"
 ];
 export const HOSPITALITY_DOMAINS: string[] = ["hospitality"];
 export const TOURISM_DOMAINS: string[] = ["tourism"];
