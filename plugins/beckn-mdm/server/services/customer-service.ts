@@ -23,7 +23,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
       );
       if (!customerServices?.length) {
-        return { data: {} };
+        throw new Error("No customer found");
       }
       const agentService = customerServices[0];
       return {
