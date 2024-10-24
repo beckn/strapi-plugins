@@ -8,4 +8,22 @@ export default [
       auth: false
     },
   },
+  // {
+  //   method: 'POST',
+  //   path: '/createConsumptionLog',
+  //   handler: 'logController.createConsumptionLog',
+  //   config: {
+  //     policies: [],
+  //     auth: false
+  //   },
+  // },
+  // {
+  //   method: 'POST',
+  //   path: '/createProductionLog',
+  //   handler: 'logController.createProductionLog',
+  //   config: {
+  //     policies: [],
+  //     auth: false
+  //   },
+  // },
 ];
