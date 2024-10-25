@@ -114,7 +114,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             //     }
             // );
             //get credentails
-            const vc = await this.getCredential(signupDto);
+            const vc = await this.generateCredential(signupDto);
             //store the credential and update it in agent profile
             const cred = await strapi
             .entityService
@@ -145,7 +145,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             throw new Error(error.message);
         }
     },
-    async getCredential(credDto: any) {
+    async generateCredential(credDto: any) {
         const { first_name, last_name, email } = credDto;
         // const payload = {
         //     schemaId: "schema:cord:s31vxjAmMazwHtGY6hn2f9nNkcuD9yxMDCGirRuzYCVFjGq5M",
@@ -165,5 +165,51 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         );
         console.log('cred generated: ', cred.data);
         return cred.data.vc;
+    },
+    async getCredential(userId: number) {
+        try {
+            if(!userId) {
+                throw new Error('No userId provided to get credential');
+            }
+            console.log('UserId: ', userId);
+            
+            const userInfo = await strapi.entityService.findOne('plugin::users-permissions.user', userId, {
+                populate: { 
+                  agent: {
+                    populate: {
+                      agent_profile: {
+                        populate: {
+                          credential: true,
+                          ders: {
+                            populate: {
+                              credential: true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              });
+              const cred = userInfo.agent.agent_profile.credential;
+              let ders = userInfo.agent.agent_profile.ders;
+              ders = ders.map(der => {
+                const der_id = der.id;
+                return  {
+                    der_id,
+                    type: 'DER',
+                    credential: der.credential
+                }
+              });
+              const userCred = {
+                cred_id: cred.id,
+                type: 'USER_CREDENTIAL',
+                credential: cred.vc
+              }
+              return [ userCred, ...ders];
+
+        } catch(error) {
+
+        }
     }
 });
