@@ -6,7 +6,7 @@ export default ({ strapi }: { strapi: Strapi }) => {
   // Scheduled the job to run every 15 minutes
   const logController = strapi.plugin("beckn-mdm").controller("logController");
 
-  cron.schedule('*/1 * * * *', async () => {
+  cron.schedule('*/15 * * * *', async () => {
     try {
       await logController.createLog();
     } catch (error) {
