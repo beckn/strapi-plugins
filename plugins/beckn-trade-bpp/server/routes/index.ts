@@ -16,5 +16,14 @@ export default [
       policies: [],
       auth: false
     }
+  },
+  {
+    method: "GET",
+    path: "/cred",
+    handler: "energyController.getCredential",
+    config: {
+      policies: [],
+      auth: false
+    }
   }
 ];

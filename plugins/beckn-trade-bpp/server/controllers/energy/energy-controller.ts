@@ -21,5 +21,20 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         } catch (error) {
             ctx.badRequest(error.message);
         }
+    },
+    async getCredential(ctx) {
+        try {
+            const energyService = strapi
+                .plugin("beckn-trade-bpp")
+                .service("energyService");
+            const { userId } = ctx.request.query;
+            console.log('Req: ', ctx.request);
+            console.log('query: ', ctx.request.query);
+            
+            const result = await energyService.getCredential(Number(userId));
+            ctx.body = result;
+        } catch (error) {
+            ctx.badRequest(error.message);
+        }
     }
 });
