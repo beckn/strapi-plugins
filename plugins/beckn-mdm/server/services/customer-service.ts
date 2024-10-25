@@ -42,4 +42,101 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
+  async getStatistics({ customerId }) {
+    try {
+      let customer = await strapi.entityService.findMany(
+        "api::customer.customer",
+        {
+          filters: { customer_id: customerId },
+        }
+      );
+
+      if (!customer?.length) {
+        throw new Error("Customer not found");
+      }
+
+      const { customer_id } = customer[0];
+
+      const now = new Date();
+      const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const endOfCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+      const startOfPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      // const endOfPreviousMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+
+      const consumptionLogs = await strapi.entityService.findMany(
+        "api::consumption-log.consumption-log",
+        {
+          filters: {
+            customer: {
+              customer_id: { $eq: customer_id },
+              createdAt: {
+                $gte: startOfPreviousMonth,
+                $lte: endOfCurrentMonth,
+              },
+            },
+          },
+          sort: { createdAt: "desc" },
+        }
+      );
+      const productionLogs = await strapi.entityService.findMany(
+        "api::production-log.production-log",
+        {
+          filters: {
+            customer: {
+              customer_id: { $eq: customer_id },
+              createdAt: {
+                $gte: startOfPreviousMonth,
+                $lte: endOfCurrentMonth,
+              },
+            },
+          },
+          sort: { createdAt: "desc" },
+        }
+      );
+
+      let consumption = {
+        previous_month: 0,
+        current_month: 0,
+        average: 0,
+      };
+      let production = {
+        previous_month: 0,
+        current_month: 0,
+        average: 0,
+      };
+
+      if (consumptionLogs?.length) {
+        consumptionLogs.forEach((log) => {
+          const logDate = new Date(log.createdAt);
+          if (logDate >= startOfCurrentMonth) {
+            consumption.current_month += Number(log.unit_consumed);
+          } else if (logDate >= startOfPreviousMonth && logDate < startOfCurrentMonth) {
+            consumption.previous_month += Number(log.unit_consumed);
+          }
+        });
+        consumption.previous_month = Number(consumption.previous_month.toFixed(2));
+        consumption.current_month = Number(consumption.current_month.toFixed(2));
+        consumption.average = Number((consumption.current_month / consumptionLogs.length).toFixed(2));
+      }
+      if (productionLogs?.length) {
+        productionLogs.forEach((log) => {
+          const logDate = new Date(log.createdAt);
+          if (logDate >= startOfCurrentMonth) {
+            production.current_month += Number(log.unit_produced);
+          } else if (logDate >= startOfPreviousMonth && logDate < startOfCurrentMonth) {
+            production.previous_month += Number(log.unit_produced);
+          }
+        });
+        production.previous_month = Number(production.previous_month.toFixed(2));
+        production.current_month = Number(production.current_month.toFixed(2));
+        production.average = Number((production.current_month / productionLogs.length).toFixed(2));
+      }
+      return {
+        data: { consumption, production }
+      };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
 });
