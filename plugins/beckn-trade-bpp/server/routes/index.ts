@@ -25,5 +25,23 @@ export default [
       policies: [],
       auth: false
     }
+  },
+  {
+    method: "POST",
+    path: "/der",
+    handler: "energyController.createDer",
+    config: {
+      policies: [],
+      auth: false
+    }
+  },
+  {
+    method: "GET",
+    path: "/der",
+    handler: "energyController.getDer",
+    config: {
+      policies: [],
+      auth: false
+    }
   }
 ];
