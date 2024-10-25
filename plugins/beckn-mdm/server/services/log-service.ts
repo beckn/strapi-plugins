@@ -2,25 +2,14 @@ import { Strapi } from "@strapi/strapi";
 import axios from "axios";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async createConsumptionLog({ customerId }) {
+  async createConsumptionLog({ id, customer_id }) {
     try {
-      let customer = await strapi.entityService.findMany(
-        "api::customer.customer",
-        {
-          filters: { customer_id: customerId, role: {$eqi: "consumer"}  },
-        }
-      );
-
-      if (!customer?.length) {
-        throw new Error("Customer not found");
-      }
-
       const lastLog = await strapi.entityService.findMany(
         "api::consumption-log.consumption-log",
         {
           filters: {
             customer: {
-              customer_id: { $eq: customerId },
+              customer_id: { $eq: customer_id },
             },
           },
           sort: { createdAt: "desc" },
@@ -34,18 +23,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         previousMeterReading = Number(lastLog?.[0].current_meter_reading);
       }
 
-      const unitConsumed = Number((Math.random() * (2 - 0.5) + 0.5).toFixed(2));
-      const currentMeterReading = (previousMeterReading + unitConsumed).toFixed(1);
-
+      const unitConsumed = Number((Math.random() * (0.2 - 0.08) + 0.08).toFixed(2));
+      const currentMeterReading = (previousMeterReading + unitConsumed).toFixed(2);
       const newLog = await strapi.entityService.create(
         "api::consumption-log.consumption-log",
         {
           data: {
-            customer: customer[0].id,
+            customer: id,
             unit_consumed: unitConsumed.toString(),
             current_meter_reading: currentMeterReading,
             publishedAt: new Date(),
-            createdAt: new Date()
+            createdAt: new Date(),
           },
         }
       );
@@ -56,25 +44,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
-  async createProductionLog({ customerId }) {
+  async createProductionLog({ id, customer_id }) {
     try {
-      let customer = await strapi.entityService.findMany(
-        "api::customer.customer",
-        {
-          filters: { customer_id: customerId, role: {$eqi: "prosumer"} },
-        }
-      );
-
-      if (!customer?.length) {
-        throw new Error("Customer not found");
-      }
-
       const lastLog = await strapi.entityService.findMany(
         "api::production-log.production-log",
         {
           filters: {
             customer: {
-              customer_id: { $eq: customerId },
+              customer_id: { $eq: customer_id },
             },
           },
           sort: { createdAt: "desc" },
@@ -88,14 +65,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         previousMeterReading = Number(lastLog?.[0].current_meter_reading);
       }
 
-      const unitProduced = Number((Math.random() * (1 - 0.25) + 0.25).toFixed(2));
-      const currentMeterReading = (previousMeterReading + unitProduced).toFixed(1);
+      const unitProduced = Number((Math.random() * (0.1 - 0.05) + 0.05).toFixed(2));
+      const currentMeterReading = (previousMeterReading + unitProduced).toFixed(2);
 
       const newLog = await strapi.entityService.create(
         "api::production-log.production-log",
         {
           data: {
-            customer: customer[0].id,
+            customer: id,
             unit_produced: unitProduced.toString(),
             current_meter_reading: currentMeterReading,
             publishedAt: new Date(),

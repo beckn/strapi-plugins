@@ -1,26 +1,29 @@
-import { Strapi } from '@strapi/strapi';
+import { Strapi } from "@strapi/strapi";
+import { ROLES } from "../../constants";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async createConsumptionLog (requestBody) {
+  async createLog() {
     try {
-      const logService = strapi
-        .plugin("beckn-mdm")
-        .service("logService");
-      const result = await logService.createConsumptionLog(requestBody);
-      return result;
+      let customers = await strapi.entityService.findMany("api::customer.customer", {});
+
+      if (!customers?.length) {
+        throw new Error("No customer found");
+      }
+
+      const logService = strapi.plugin("beckn-mdm").service("logService");
+      
+      customers.forEach(async (customer) => {
+        if (customer.role === ROLES.CONSUMER) {
+          const result = await logService.createConsumptionLog(customer);
+          console.log("Consumer Log created:", result);
+        } else if (customer.role === ROLES.PROSUMER) {
+          const result = await logService.createProductionLog(customer);
+          console.log("Prosumer Log created:", result);
+        }
+      });
+      return;
     } catch (error) {
       throw error;
     }
   },
-  async createProductionLog (requestBody) {
-    try {
-      const logService = strapi
-        .plugin("beckn-mdm")
-        .service("logService");
-      const result = await logService.createProductionLog(requestBody);
-      return result;
-    } catch (error) {
-      throw error;
-    }
-  }
 });
