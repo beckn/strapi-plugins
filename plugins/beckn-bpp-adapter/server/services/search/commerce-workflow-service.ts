@@ -101,6 +101,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       providers = SearchUtil.filterByFulfillment(providers, fulfillment, context);
     }
 
+    providers = await SearchUtil.filterTrustedSource(providers, context);
+
     const commonService = strapi
       .plugin(PLUGIN)
       .service('commonService');

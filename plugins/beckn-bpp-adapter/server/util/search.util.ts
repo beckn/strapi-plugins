@@ -1,4 +1,6 @@
 import moment from "moment";
+import axiosInstance from "axios";
+import https from "https";
 import { KeyValuePair } from "../types";
 import { CHECK_IN, CHECK_OUT, START, END } from "../constants";
 import { isHospitality, isMobility, isTourism, isEnergy } from "./domain.util";
@@ -355,4 +357,62 @@ export class SearchUtil {
     });
     return stores;
   };
+
+  private static verifyCertificate = async (vc: any) => {
+    try {
+      const axios = axiosInstance.create({
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: false,
+        }),
+      });
+      const verificationResp = await axios.post(
+        `${process.env.DHIWAY_VERIFIER_URL}/api/v1/verify/credentials/verify`,
+        vc
+      );
+      return !(verificationResp.data.error && verificationResp.data.error.length);
+    } catch (error: any) {
+      return false;
+    }
+  }
+
+  static filterTrustedSource = async (
+    providers: KeyValuePair[],
+    context: KeyValuePair
+  ) => {
+    let filteredProviders: KeyValuePair[] = [];
+    if (isEnergy(context)) {
+      for (const provider of providers) {
+        const isTrustedSourcePreffered = provider.items?.find(item => item.sc_retail_product?.trusted_source);
+        if (isTrustedSourcePreffered) {
+          try {
+            const axios = axiosInstance.create({
+              httpsAgent: new https.Agent({
+                rejectUnauthorized: false,
+              }),
+            });
+            const bapHeaders = {
+              "Content-Type": "application/json",
+            };
+            // const bapUrl = `${context.bap_uri}/beckn.json`;
+            const bapUrl = `http://127.0.0.1:1337/beckn-bpp-adapter/health-check`;
+            const vc: KeyValuePair = await axios.get(bapUrl, { headers: bapHeaders });
+            console.log('abhi', JSON.stringify(vc));
+            if (vc) {
+              const verifiableCredential = vc.credentials?.filter((credential) => credential.type.toLowerCase() === 'organization')?.verifiableCredential;
+              const isVCVerified = await this.verifyCertificate(verifiableCredential);
+              if (isVCVerified) {
+                filteredProviders.push(provider);
+              }
+            }
+          } catch (e) {
+            console.log('Error while calling BAP beckn.json', e?.message);
+          }
+        } else {
+          filteredProviders.push(provider);
+        }
+      }
+      return filteredProviders;
+    }
+    return providers;
+  }
 }

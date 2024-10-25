@@ -1,5 +1,5 @@
 import { Strapi } from '@strapi/strapi';
-import { ObjectUtil, FilterUtil } from '../../util';
+import { ObjectUtil, FilterUtil, SearchUtil } from '../../util';
 import { KeyValuePair } from '.././../types';
 import { PLUGIN } from '../../constants';
 
@@ -92,10 +92,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     }
     ObjectUtil.removeEmptyObjectKeys(filters);
     ObjectUtil.removeEmptyKeys(populate);
-    const providers = await strapi.entityService.findMany('api::provider.provider', {
+    let providers = await strapi.entityService.findMany('api::provider.provider', {
       filters,
       populate
     });
+    providers = await SearchUtil.filterTrustedSource(providers, context);
 
     const commonService = strapi
       .plugin(PLUGIN)
