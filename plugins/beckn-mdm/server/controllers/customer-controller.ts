@@ -9,13 +9,24 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async getCustomer(ctx) {
     try {
-      const mdmService = strapi
+      const customerService = strapi
         .plugin("beckn-mdm")
         .service("customerService");
-      const result = await mdmService.getCustomer(ctx.request.body);
+      const result = await customerService.getCustomer(ctx.request.body);
       ctx.body = result;
     } catch (error) {
       ctx.badRequest(error.message);
     }
   },
+  async getStatistics(ctx) {
+    try {
+      const customerService = strapi
+       .plugin("beckn-mdm")
+       .service("customerService");
+      const result = await customerService.getStatistics(ctx.request.body);
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  }
 });

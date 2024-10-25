@@ -8,4 +8,13 @@ export default [
       auth: false
     },
   },
+  {
+    method: 'POST',
+    path: '/getStatistics',
+    handler: 'customerController.getStatistics',
+    config: {
+      policies: [],
+      auth: false
+    },
+  },
 ];
