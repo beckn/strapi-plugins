@@ -1,0 +1,399 @@
+{
+	"info": {
+		"_postman_id": "be502d44-547f-4d24-baf4-c399c6e50dcf",
+		"name": "Hyperbeckn BPP Dev",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32470739",
+		"_collection_link": "https://upvrd-quonscious.postman.co/workspace/upvrd-strapi~d8551adb-d0d9-4524-9c3d-7d6b428554d2/collection/32470739-be502d44-547f-4d24-baf4-c399c6e50dcf?action=share&source=collection_link&creator=32470739"
+	},
+	"item": [
+		{
+			"name": "MDM",
+			"item": [
+				{
+					"name": "Get Customer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"phone_no\": \"9718329617\",\n    \"utility_name\": \"Reliance Power\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://mock-mdm.becknprotocol.io/beckn-mdm/getCustomer",
+							"protocol": "https",
+							"host": [
+								"mock-mdm",
+								"becknprotocol",
+								"io"
+							],
+							"path": [
+								"beckn-mdm",
+								"getCustomer"
+							]
+						},
+						"description": "Generated from cURL: curl --location 'https://mock-mdm.becknprotocol.io/beckn-mdm/getCustomer' \\\n--header 'Content-Type: application/json' \\\n--data '{\n    \"phone_no\": \"9718329617\",\n    \"utility_name\": \"Reliance Power\"\n}'"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "signup",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"first_name\": \"Leela\",\n    \"last_name\": \"Maharani\",\n    \"email\": \"leela@gmail.com\",\n    \"password\": \"Test@123\",\n    \"phone_no\": \"9718329617\",\n    \"utility_name\": \"Reliance Power\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_uri}}/signup",
+					"host": [
+						"{{base_uri}}"
+					],
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Credentials",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_uri}}/cred",
+					"host": [
+						"{{base_uri}}"
+					],
+					"path": [
+						"cred"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "profile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"provider_name\": \"Leela Energy Corp\",\n    \"domain_id\": 12,\n    \"short_desc\": \"Leela Energy Company\",\n    \"long_desc\": \"Big Leela Energy Company\",\n    \"items\": {\n        \"name\": \"Leela Solar Energy Item\",\n        \"short_desc\": \"Leela Solar Energy\",\n        \"code\": \"lseco\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_uri}}/profile",
+					"host": [
+						"{{base_uri}}"
+					],
+					"path": [
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "trade",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"quantity\": \"15\",\n  \"unit\": \"KWH\",\n  \"item_name\": \"energy\",\n  \"trusted_source\": true,\n  \"cred_required\": true,\n  \"recurring\": false\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_uri}}/trade",
+					"host": [
+						"{{base_uri}}"
+					],
+					"path": [
+						"trade"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"leela@gmail.com\",\n    \"password\": \"Test@123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_uri}}/login",
+					"host": [
+						"{{base_uri}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create der",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "type",
+							"value": "prosumer",
+							"type": "text"
+						},
+						{
+							"key": "category",
+							"value": "Solar panel Aniket",
+							"type": "text"
+						},
+						{
+							"key": "proof",
+							"type": "file",
+							"src": "/Users/rahulkumr/Desktop/Screenshot 2024-02-12 at 8.33.37 PM.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_uri}}/der",
+					"host": [
+						"{{base_uri}}"
+					],
+					"path": [
+						"der"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get der",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_uri}}/der",
+					"host": [
+						"{{base_uri}}"
+					],
+					"path": [
+						"der"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All trade",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_uri}}/trade",
+					"host": [
+						"{{base_uri}}"
+					],
+					"path": [
+						"trade"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get trade by id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_uri}}/trade?id=1",
+					"host": [
+						"{{base_uri}}"
+					],
+					"path": [
+						"trade"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"",
+					"if (pm.response.code === 200) { // Check if the request was successful",
+					"    const responseBody = pm.response.json(); // Parse the JSON response",
+					"",
+					"    if (responseBody && responseBody.jwt) {",
+					"        // Store the JWT token in an environment variable",
+					"        pm.environment.set(\"token\", responseBody.jwt);",
+					"        console.log(\"JWT token saved to environment variable 'authToken'.\");",
+					"    } else {",
+					"        console.log(\"JWT token not found in the response.\");",
+					"    }",
+					"} else {",
+					"    console.log(\"Request was not successful.\");",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTcyOTk1NjQyMywiZXhwIjoxNzI5OTYzNjIzfQ.p9AQJROn75iOVPrtz1uZv4AVemLl-syr7dmvLB-Hv2g",
+			"type": "string"
+		},
+		{
+			"key": "base_uri",
+			"value": "https://bpp-unified-strapi-dev.becknprotocol.io/beckn-trade-bpp",
+			"type": "string"
+		},
+		{
+			"value": "",
+			"type": "string",
+			"disabled": true
+		}
+	]
+}
