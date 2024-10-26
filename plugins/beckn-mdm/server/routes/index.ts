@@ -1,6 +1,15 @@
 export default [
   {
     method: 'POST',
+    path: '/createUtilities',
+    handler: 'customerController.createUtilities',
+    config: {
+      policies: [],
+      auth: false
+    },
+  },
+  {
+    method: 'POST',
     path: '/getCustomer',
     handler: 'customerController.getCustomer',
     config: {

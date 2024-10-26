@@ -17,7 +17,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
       );
 
-      let previousMeterReading = 0;
+      let previousMeterReading = 1900;
 
       if (lastLog?.length > 0) {
         previousMeterReading = Number(lastLog?.[0].current_meter_reading);
@@ -59,7 +59,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
       );
 
-      let previousMeterReading = 0;
+      let previousMeterReading = 2000;
 
       if (lastLog?.length > 0) {
         previousMeterReading = Number(lastLog?.[0].current_meter_reading);

@@ -5,12 +5,28 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   getWelcomeMessage() {
     return "Welcome to Strapi 🚀";
   },
+  async createUtilities({ utilities }) {
+    try {
+      if (!utilities.length) {
+        throw new Error("please provide at least one utility");
+      }
+
+      utilities.forEach(async (utility) => {
+        await strapi.entityService.create("api::utility-master.utility-master", {
+          data: { ...utility, publishedAt: new Date() },
+        });
+      });
+      return { message: "Utilities created successfully" };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
   async getCustomer({ phone_no, utility_name }) {
     try {
       if (!(phone_no && utility_name)) {
         throw new Error("phone_no and utility_name should not be empty");
       }
-      const customerServices = await strapi.entityService.findMany(
+      const customers = await strapi.entityService.findMany(
         "api::customer.customer",
         {
           filters: {
@@ -22,10 +38,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate: "utility",
         }
       );
-      if (!customerServices?.length) {
+      if (!customers?.length) {
         throw new Error("No customer found");
       }
-      const agentService = customerServices[0];
+      const agentService = customers[0];
       return {
         data: {
           customer_id: agentService.customer_id,
@@ -107,30 +123,47 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       };
 
       if (consumptionLogs?.length) {
+        const currentMonthFromDate = new Date(consumptionLogs[consumptionLogs.length - 1].createdAt)
+        const currentMonthToDate = new Date(consumptionLogs[0].createdAt)
+        
+        const diffInMilliseconds = currentMonthToDate.getTime() - currentMonthFromDate.getTime()
+        const totalDaysInCurrentMonth = Math.round(diffInMilliseconds / (1000 * 60 * 60 * 24)) + 1;
+      
         consumptionLogs.forEach((log) => {
           const logDate = new Date(log.createdAt);
+          const units = Number(log.unit_consumed);
+
           if (logDate >= startOfCurrentMonth) {
-            consumption.current_month += Number(log.unit_consumed);
+            consumption.current_month += units;
           } else if (logDate >= startOfPreviousMonth && logDate < startOfCurrentMonth) {
-            consumption.previous_month += Number(log.unit_consumed);
+            consumption.previous_month += units;
           }
         });
         consumption.previous_month = Number(consumption.previous_month.toFixed(2));
         consumption.current_month = Number(consumption.current_month.toFixed(2));
-        consumption.average = Number((consumption.current_month / consumptionLogs.length).toFixed(2));
+        consumption.average = Number((consumption.current_month / totalDaysInCurrentMonth).toFixed(2));
       }
+      
       if (productionLogs?.length) {
+        const currentMonthFromDate = new Date(productionLogs[productionLogs.length - 1].createdAt)
+        const currentMonthToDate = new Date(productionLogs[0].createdAt)
+
+        const diffInMilliseconds = currentMonthToDate.getTime() - currentMonthFromDate.getTime()
+        const totalDaysInCurrentMonth = Math.round(diffInMilliseconds / (1000 * 60 * 60 * 24)) + 1;
+
         productionLogs.forEach((log) => {
           const logDate = new Date(log.createdAt);
+          const units = Number(log.unit_produced);
+
           if (logDate >= startOfCurrentMonth) {
-            production.current_month += Number(log.unit_produced);
+            production.current_month += units;
           } else if (logDate >= startOfPreviousMonth && logDate < startOfCurrentMonth) {
-            production.previous_month += Number(log.unit_produced);
+            production.previous_month += units;
           }
         });
         production.previous_month = Number(production.previous_month.toFixed(2));
         production.current_month = Number(production.current_month.toFixed(2));
-        production.average = Number((production.current_month / productionLogs.length).toFixed(2));
+        production.average = Number((production.current_month / totalDaysInCurrentMonth).toFixed(2));
       }
       return {
         data: { consumption, production }
