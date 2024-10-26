@@ -7,6 +7,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       .service('myService')
       .getWelcomeMessage();
   },
+  async createUtilities(ctx) {
+    try {
+      const customerService = strapi
+        .plugin("beckn-mdm")
+        .service("customerService");
+      const result = await customerService.createUtilities(ctx.request.body);
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
   async getCustomer(ctx) {
     try {
       const customerService = strapi

@@ -5,12 +5,28 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   getWelcomeMessage() {
     return "Welcome to Strapi 🚀";
   },
+  async createUtilities({ utilities }) {
+    try {
+      if (!utilities.length) {
+        throw new Error("please provide at least one utility");
+      }
+
+      utilities.forEach(async (utility) => {
+        await strapi.entityService.create("api::utility-master.utility-master", {
+          data: { ...utility, publishedAt: new Date() },
+        });
+      });
+      return { message: "Utilities created successfully" };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
   async getCustomer({ phone_no, utility_name }) {
     try {
       if (!(phone_no && utility_name)) {
         throw new Error("phone_no and utility_name should not be empty");
       }
-      const customerServices = await strapi.entityService.findMany(
+      const customers = await strapi.entityService.findMany(
         "api::customer.customer",
         {
           filters: {
@@ -22,10 +38,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate: "utility",
         }
       );
-      if (!customerServices?.length) {
+      if (!customers?.length) {
         throw new Error("No customer found");
       }
-      const agentService = customerServices[0];
+      const agentService = customers[0];
       return {
         data: {
           customer_id: agentService.customer_id,
