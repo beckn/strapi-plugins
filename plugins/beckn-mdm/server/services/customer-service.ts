@@ -30,9 +30,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         "api::customer.customer",
         {
           filters: {
-            phone_no: { $containsi: phone_no },
+            phone_no: { $eq: phone_no },
             utility: {
-              name: { $containsi: utility_name },
+              name: { $eqi: utility_name },
             },
           },
           populate: "utility",
