@@ -14,23 +14,19 @@ type AddTradeDto = {
 export default ({ strapi }: { strapi: Strapi }) => ({
     async login(loginDto: any) {
         try {
-            const { email, password } = loginDto;
-
+            const { email, password } = loginDto;           
             const user = await strapi
                 .query("plugin::users-permissions.user")
                 .findOne({
                     where: { email: { $eqi: email } },
                     populate: {
-                        role: true,
                         agent: true,
                         provider: true,
                     },
                 });
-            console.log("User info::: ", user);
             if (!user) {
                 throw new Error("Email Not found");
             }
-
             // Request API.
             const response = await axios.post(
                 `${process.env.STRAPI_BPP_URL}/api/auth/local`,
@@ -51,7 +47,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     async generateCredential(credDto: any) {
         const { first_name, last_name, email } = credDto;
 
-        const cred = await axios.post(`${process.env.ISSUER_URL}`,
+        const cred = await axios.post(`${process.env.ISSUER_URL}/cred`,
             {
                 schemaId: "schema:cord:s31vxjAmMazwHtGY6hn2f9nNkcuD9yxMDCGirRuzYCVFjGq5M",
                 properties: {
@@ -108,104 +104,115 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
     },
     async signup(signupDto: any) {
-        const trx: any = await strapi.db.transaction();
-        try {  
-            const { phone_no, utility_name } = signupDto
-            const mdm = await axios.post(`${process.env.MDM_URL}/getCustomer`, {
-                phone_no,
-                utility_name
-            });
-            const mdmUser = mdm?.data;
-            if (!mdmUser || !Object.keys(mdmUser).length) {
-                throw new Error("No MDM user found");
-            }
-            let user = await strapi
-                .query("plugin::users-permissions.user")
-                .findOne({ where: { email: { $eqi: signupDto.email } } });
-            if (user) {
-                throw new Error("Email already used. Signup with other email!");
-            }
-            const { email, password, first_name, last_name, phone_number } =
-                signupDto;
+        try {
+            let result = {};
+            await strapi.db.transaction(async ({ trx }) => {
+                try {
+                    const { phone_no, utility_name } = signupDto;
+                    let mdmUser: any = {};
+                    try {
+                        const mdm = await axios.post(`${process.env.MDM_URL}/getCustomer`, {
+                            phone_no,
+                            utility_name
+                        });
+                        mdmUser = mdm?.data?.data;
+                        console.log('MDM User', mdmUser);
+                        if (!mdmUser || !mdmUser?.customer_id) {
+                            throw new Error("No MDM user found");
+                        }
+                    } catch(error) {
+                        throw new Error(error?.response?.data?.error?.message || "No MDM user found");
+                    }
+                    let user = await strapi
+                        .query("plugin::users-permissions.user")
+                        .findOne({ where: { email: { $eqi: signupDto.email } } });
+                    if (user) {
+                        throw new Error("Email already used. Signup with other email!");
+                    }
+                    const { email, password, first_name, last_name, phone_number } =
+                        signupDto;
 
-            const agentProfile = await strapi.entityService.create(
-                "api::agent-profile.agent-profile",
-                {
-                    data: {
-                        phone_number,
-                        customer_id: mdmUser.customer_id,
-                        publishedAt: new Date()
-                    },
-                    transaction: trx,
+                    const agentProfile = await strapi.entityService.create(
+                        "api::agent-profile.agent-profile",
+                        {
+                            data: {
+                                phone_number,
+                                customer_id: mdmUser.customer_id,
+                                publishedAt: new Date()
+                            },
+
+                        }
+                    );
+                    console.log("Created agent profile: ", agentProfile);
+                    const agent = await strapi.entityService.create("api::agent.agent", {
+                        data: {
+                            first_name,
+                            last_name,
+                            agent_profile: agentProfile.id,
+                            publishedAt: new Date()
+                        },
+
+                    });
+                    console.log("Created agent : ", agent);
+                    const createdUser = await strapi.entityService.create(
+                        "plugin::users-permissions.user",
+                        {
+                            data: {
+                                email,
+                                password,
+                                username: email,
+                                confirmed: true,
+                                agent: agent.id,
+                                provider: 'local',
+                                publishedAt: new Date()
+                            },
+                        }
+                    );
+                    const jwt = await strapi.plugins['users-permissions'].services.jwt.issue({
+                        id: createdUser.id,
+                    });
+                    console.log("Created user: ", createdUser);
+                    //Issue Credential using Dhiway SDK
+                    const vc = await this.generateCredential({ email, first_name, last_name });
+                    //store the credential and update it in agent profile
+                    const cred = await strapi.entityService.create(
+                        "api::credential.credential",
+                        {
+                            data: {
+                                vc,
+                                publishedAt: new Date()
+                            },
+                        }
+                    );
+                    //update the agent profile table
+                    const agentProfileUpdated = await strapi.entityService.update(
+                        "api::agent-profile.agent-profile",
+                        agentProfile.id,
+                        {
+                            data: {
+                                credential: cred.id,
+                                publishedAt: new Date()
+                            },
+                        }
+                    );
+
+                    delete createdUser.password;
+                    //add catalogues
+                    const { providerData } = signupDto;
+                    if (providerData && Object.keys(providerData).length > 0) {
+                        providerData.agents = [agent.id];
+                        await this.createCatalogue(providerData, agent.id);
+                    }
+                    await trx.commit();
+                    return result = { jwt, user: createdUser };
+                } catch (error) {
+                    await trx.rollback();
+                    throw error;
                 }
-            );
-            console.log("Created agent profile: ", agentProfile);
-            const agent = await strapi.entityService.create("api::agent.agent", {
-                data: {
-                    first_name,
-                    last_name,
-                    agent_profile: agentProfile.id,
-                    publishedAt: new Date()
-                },
-                transaction: trx,
             });
-            console.log("Created agent : ", agent);
-            const createdUser = await strapi.entityService.create(
-                "plugin::users-permissions.user",
-                {
-                    data: {
-                        email,
-                        password,
-                        username: email,
-                        confirmed: true,
-                        agent: agent.id,
-                        publishedAt: new Date()
-                    },
-                    transaction: trx,
-                }
-            );
-            const jwt = await strapi.plugins['users-permissions'].services.jwt.issue({
-                id: createdUser.id,
-              });
-            console.log("Created user: ", createdUser);
-            //Issue Credential using Dhiway SDK
-            const vc = await this.generateCredential({ email, first_name, last_name });
-            //store the credential and update it in agent profile
-            const cred = await strapi.entityService.create(
-                "api::credential.credential",
-                {
-                    data: {
-                        vc,
-                        publishedAt: new Date()
-                    },
-                    transaction: trx,
-                }
-            );
-            //update the agent profile table
-            const agentProfileUpdated = await strapi.entityService.update(
-                "api::agent-profile.agent-profile",
-                agentProfile.id,
-                {
-                    data: {
-                        credential: cred.id,
-                        publishedAt: new Date()
-                    },
-                    transaction: trx,
-                }
-            );
-            
-            delete createdUser.password;
-            //add catalogues
-            const { providerData } = signupDto;
-            if(providerData && Object.keys(providerData).length > 0) {
-                providerData.agents = [agent.id];
-                await this.createCatalogue(providerData, agent.id);
-            }
-            await trx.commit();
-            return { accessToken: jwt, user: createdUser };
+            return result;
         } catch (error) {
-            await trx.rollback();
-            console.log("Error Occured while signup", error);
+            console.log("Error Occured while signup", error.message);
             if (error.message === "Email Not found") {
                 throw error;
             }
@@ -235,124 +242,128 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         });
     },
     async createDer(createDerDto, filesDto, user) {
-        const trx: any = await strapi.db.transaction();
+
         try {
-            // Step 0: Generate hash from buffer
-            const hash = await this.createHashFromFile(filesDto.path);
+            let result = {};
+            await strapi.db.transaction(async ({ trx }) => {
+                try {
+                    // Step 0: Generate hash from buffer
+                    const hash = await this.createHashFromFile(filesDto.path);
 
-            // Step 1: Generate credentials (as per your existing code)
-            const getCreds = await axios.post(
-                `${process.env.ISSUER_URI}/cred`,
-                {
-                    schemaId:
-                        "schema:cord:s356EvHMCEdivwpM2srB7s5etUAJB69erN8vHKzoog8E1VkBv",
-                    properties: {
-                        type: createDerDto.type,
-                        category: createDerDto.category,
-                        proof: hash,
-                    },
-                }
-            );
-            console.log("Credential generated:", getCreds.data);
+                    // Step 1: Generate credentials (as per your existing code)
+                    const getCreds = await axios.post(
+                        `${process.env.ISSUER_URL}/cred`,
+                        {
+                            schemaId:
+                                "schema:cord:s356EvHMCEdivwpM2srB7s5etUAJB69erN8vHKzoog8E1VkBv",
+                            properties: {
+                                type: createDerDto.type,
+                                category: createDerDto.category,
+                                proof: hash,
+                            },
+                        }
+                    );
+                    console.log("Credential generated:", getCreds.data);
 
-            // Step 2: Store the credential
-            const cred = await strapi.entityService.create(
-                "api::credential.credential",
-                {
-                    data: {
-                        vc: getCreds.data.vc,
-                    },
-                    transaction: trx,
-                }
-            );
+                    // Step 2: Store the credential
+                    const cred = await strapi.entityService.create(
+                        "api::credential.credential",
+                        {
+                            data: {
+                                vc: getCreds.data.vc,
+                            },
+                        }
+                    );
 
-            console.log("file path", filesDto.path);
-            const fileBuffer = fs.readFileSync(filesDto.path);
-            console.log("fileBuffer", fileBuffer);
-            // Step 3: Upload the file
-            const fileToUpload = {
-                path: filesDto.path,
-                name: filesDto.name,
-                type: filesDto.type,
-                size: filesDto.size,
-            };
-
-            const uploadedFiles = await strapi.plugins.upload.services.upload.upload({
-                data: {
-                    fileInfo: {
+                    console.log("file path", filesDto.path);
+                    const fileBuffer = fs.readFileSync(filesDto.path);
+                    console.log("fileBuffer", fileBuffer);
+                    // Step 3: Upload the file
+                    const fileToUpload = {
+                        path: filesDto.path,
                         name: filesDto.name,
                         type: filesDto.type,
-                    },
-                }, 
-                files: fileToUpload, // The binary file object
-                transaction: trx,
-            });
-            console.log("UploadedFiles", uploadedFiles);
+                        size: filesDto.size,
+                    };
 
-            // Ensure a file was uploaded
-            if (!uploadedFiles || uploadedFiles.length === 0) {
-                throw new Error("File upload failed");
-            }
-
-            const uploadedFile = uploadedFiles[0];
-
-            // Step 4: Create the der entity and associate the uploaded file
-            const der = await strapi.entityService.create("api::der.der", {
-                data: {
-                    proof: uploadedFile.id,
-                    credential: cred.id,
-                    type:
-                        createDerDto.type.toUpperCase() === "CONSUMER"
-                            ? "CONSUMER"
-                            : "PROSUMER",
-                    category: createDerDto.category,
-                },
-                transaction: trx,
-            });
-            if (!user) {
-                throw new Error("User id not found");
-            }
-            console.log('Der id: ', der.id);
-            
-            const agentProfile = await strapi.entityService.update(
-                "api::agent-profile.agent-profile",
-                user.agent.agent_profile.id,
-                {
-                    data: {
-                        ders: {
-                            connect: [der.id],
+                    const uploadedFiles = await strapi.plugins.upload.services.upload.upload({
+                        data: {
+                            fileInfo: {
+                                name: filesDto.name,
+                                type: filesDto.type,
+                            },
                         },
-                        publishedAt: new Date()
-                    },
+                        files: fileToUpload, // The binary file object
+                    });
+                    console.log("UploadedFiles", uploadedFiles);
+
+                    // Ensure a file was uploaded
+                    if (!uploadedFiles || uploadedFiles.length === 0) {
+                        throw new Error("File upload failed");
+                    }
+
+                    const uploadedFile = uploadedFiles[0];
+
+                    // Step 4: Create the der entity and associate the uploaded file
+                    const der = await strapi.entityService.create("api::der.der", {
+                        data: {
+                            proof: uploadedFile.id,
+                            credential: cred.id,
+                            type:
+                                createDerDto.type.toUpperCase() === "CONSUMER"
+                                    ? "CONSUMER"
+                                    : "PROSUMER",
+                            category: createDerDto.category,
+                        }
+                    });
+                    if (!user) {
+                        throw new Error("User id not found");
+                    }
+                    console.log('Der id: ', der.id);
+
+                    const agentProfile = await strapi.entityService.update(
+                        "api::agent-profile.agent-profile",
+                        user.agent.agent_profile.id,
+                        {
+                            data: {
+                                ders: {
+                                    connect: [der.id],
+                                },
+                                publishedAt: new Date()
+                            },
+                        }
+                    );
+                    console.log('Agent profile: ', agentProfile);
+
+                    // Step 6: Commit the transaction
+                    await trx.commit();
+                    return result = der;
+                } catch (error) {
+                    await trx.rollback();
+                    throw error;
                 }
-            );
-            console.log('Agent profile: ',agentProfile);
-            
-            // Step 6: Commit the transaction
-            await trx.commit();
-            return der;
+            });
+            return result;
+
         } catch (error) {
             // Roll back the transaction in case of error
-            await trx.rollback();
             console.error("Error in createDer:", error);
             throw new Error(`Error while creating der: ${error.message}`);
         }
     },
-    async getDer(id) {
+    async getDer({ agentProfileId } ) {
         try {
-            if (!id) {
-                throw new Error("ID is required to retrieve the der entity.");
+            console.log('Agent profile: ', agentProfileId);
+            
+            const agentProfile = await strapi.entityService.findOne("api::agent-profile.agent-profile", agentProfileId,
+                {
+                    populate: ["ders", "ders.credential"],
+                });
+
+            if (!agentProfile.ders.length) {
+                throw new Error(`No Ders found for this user`);
             }
-
-            const der = await strapi.entityService.findOne("api::der.der", id, {
-                populate: ["proof", "credential"],
-            });
-
-            if (!der) {
-                throw new Error(`Der entity with ID ${id} not found.`);
-            }
-
-            return der;
+            return agentProfile.ders;
         } catch (error) {
             console.error("Error in getDer:", error);
             throw new Error(`Error while retrieving der: ${error.message}`);
@@ -536,5 +547,83 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             throw new Error(`Unable to add trade data', ${error}`);
         } 
 
+    },
+    async getDashboard(customerId: number) {
+        try {
+            const dashboardData = await axios.post(`${process.env.MDM_URL}/statistics`, {
+                customerId
+            });
+            return dashboardData.data;
+        } catch (error) {
+            throw new Error('Failed to fetch dashboard data from MDM');
+        }
+    },
+    async getTrade({ tradeId, agentId }) {
+        try {
+
+            //get trade by id
+            const trade = await strapi.entityService.findMany
+                (
+                    "api::trade.trade",
+                    {
+                        filters: {
+                            ...(tradeId && {
+                                id: tradeId,
+                            }),
+                            agent: {
+                                id: agentId
+                            }
+                        },
+                        populate: {
+                            trade_events: true
+                        }
+                    }
+                );
+            if (!trade || !Object.keys(trade).length) {
+                throw new Error("Trade not found");
+            }
+            return trade;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+
+    async addTradeLog({ transactionId, event_name, description, data = {} }) {
+        try {
+            if(!transactionId) {
+                throw new Error('Transaction id not provided to add trade logs');
+            } 
+            //fetch trade details by transactionId
+            const trade = await strapi.entityService.findMany
+                (
+                    "api::trade.trade",
+                    {
+                        filters: {
+                            transaction_id: transactionId
+                        },
+                    }
+                );
+            
+            if (!trade || !Object.keys(trade).length) {
+                throw new Error("Trade not found");
+            }
+            const tradeId = trade[0].id;
+            const tradeEvent = await strapi.entityService.create(
+                "api::trade-event.trade-event",
+                {
+                    data: {
+                        event_name,
+                        description,
+                        data,
+                        trade: tradeId,
+                        publishedAt: new Date()
+                    },
+                }
+            );
+            return tradeEvent;
+        } catch(error) {
+            throw new Error(error.message);
+        }
+        
     }
 });

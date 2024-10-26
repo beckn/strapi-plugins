@@ -52,7 +52,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             const energyService = strapi
                 .plugin("beckn-trade-bpp")
                 .service("energyService");
-            const result = await energyService.getDer(ctx.query.id);
+            const agentProfileId = ctx?.state?.user?.agent?.agent_profile?.id;
+            
+            const result = await energyService.getDer({ agentProfileId });
             ctx.body = result;
         } catch (error) {
             ctx.badRequest(error.message);
@@ -88,12 +90,24 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             const energyService = strapi
                 .plugin("beckn-trade-bpp")
                 .service("energyService");
-            const providerId = ctx.state.user.agent?.provider_id?.id;
-            const userId = ctx.state.user.id;
-            const result = await energyService.addTradeRequest(ctx.request.body, { providerId, userId } );
+            const { id: tradeId } = ctx.request.query;
+            const agentId = ctx.state.user.agent.id;
+            const result = await energyService.getTrade({  tradeId, agentId });
             ctx.body = result;
         } catch (error) {
             ctx.badRequest(error.message);
         }
-    }
+    },
+    async getDashboard(ctx) {
+        try {
+            const energyService = strapi
+                .plugin("beckn-trade-bpp")
+                .service("energyService");
+            const customerId = ctx.state.user.agent?.agent_profile.customer_id;
+            const result = await energyService.getDashboard(customerId);
+            ctx.body = result;
+        } catch (error) {
+            ctx.badRequest(error.message);
+        }
+    },
 });

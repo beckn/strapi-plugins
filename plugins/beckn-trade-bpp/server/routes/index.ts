@@ -62,5 +62,31 @@ export default [
       auth: false
     }
   },
-  
+  {
+    method: "GET",
+    path: "/dashboard",
+    handler: "energyController.getDashboard",
+    config: {
+      middlewares: ["plugin::beckn-trade-bpp.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "GET",
+    path: "/trade",
+    handler: "energyController.getTrade",
+    config: {
+      middlewares: ["plugin::beckn-trade-bpp.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "GET",
+    path: "/trade/:id",
+    handler: "energyController.getTrade",
+    config: {
+      middlewares: ["plugin::beckn-trade-bpp.authMiddleware"],
+      auth: false
+    }
+  },
 ];
