@@ -22,7 +22,7 @@ export default [
     path: "/cred",
     handler: "energyController.getCredential",
     config: {
-      policies: [],
+      middlewares: ["plugin::beckn-trade-bpp.authMiddleware"],
       auth: false
     }
   },
@@ -31,7 +31,25 @@ export default [
     path: "/der",
     handler: "energyController.createDer",
     config: {
-      policies: [],
+      middlewares: ["plugin::beckn-trade-bpp.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "POST",
+    path: "/profile",
+    handler: "energyController.addProfile",
+    config: {
+      middlewares: ["plugin::beckn-trade-bpp.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "POST",
+    path: "/trade",
+    handler: "energyController.addTradeRequest",
+    config: {
+      middlewares: ["plugin::beckn-trade-bpp.authMiddleware"],
       auth: false
     }
   },
@@ -40,8 +58,9 @@ export default [
     path: "/der",
     handler: "energyController.getDer",
     config: {
-      policies: [],
+      middlewares: ["plugin::beckn-trade-bpp.authMiddleware"],
       auth: false
     }
-  }
+  },
+  
 ];

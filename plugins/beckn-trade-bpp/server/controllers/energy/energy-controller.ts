@@ -27,9 +27,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             const energyService = strapi
                 .plugin("beckn-trade-bpp")
                 .service("energyService");
-            const { userId } = ctx.request.query;
-            console.log('Req: ', ctx.request);
-            console.log('query: ', ctx.request.query);
+            const userId = ctx.state.user.id;
             const result = await energyService.getCredential(Number(userId));
             ctx.body = result;
         } catch (error) {
@@ -43,7 +41,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             const energyService = strapi
                 .plugin("beckn-trade-bpp")
                 .service("energyService");
-            const result = await energyService.createDer(body, files.proof);
+            const result = await energyService.createDer(body, files.proof, ctx.state.user);
             ctx.body = result;
         } catch (error) {
             ctx.badRequest(error.message);
@@ -55,6 +53,44 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 .plugin("beckn-trade-bpp")
                 .service("energyService");
             const result = await energyService.getDer(ctx.query.id);
+            ctx.body = result;
+        } catch (error) {
+            ctx.badRequest(error.message);
+        }
+    },
+    async addProfile(ctx) {
+        try {
+            const energyService = strapi
+                .plugin("beckn-trade-bpp")
+                .service("energyService");
+            const agentId = ctx.state.user.agent.id;
+            const result = await energyService.createCatalogue(ctx.request.body, agentId);
+            ctx.body = result;
+        } catch (error) {
+            ctx.badRequest(error.message);
+        }
+    },
+    async addTradeRequest(ctx) {
+        try {
+            const energyService = strapi
+                .plugin("beckn-trade-bpp")
+                .service("energyService");
+            const providerId = ctx.state.user.agent?.provider_id?.id;
+            const userId = ctx.state.user.id;
+            const result = await energyService.addTradeRequest(ctx.request.body, { providerId, userId } );
+            ctx.body = result;
+        } catch (error) {
+            ctx.badRequest(error.message);
+        }
+    },
+    async getTrade(ctx) {
+        try {
+            const energyService = strapi
+                .plugin("beckn-trade-bpp")
+                .service("energyService");
+            const providerId = ctx.state.user.agent?.provider_id?.id;
+            const userId = ctx.state.user.id;
+            const result = await energyService.addTradeRequest(ctx.request.body, { providerId, userId } );
             ctx.body = result;
         } catch (error) {
             ctx.badRequest(error.message);
