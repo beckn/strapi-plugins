@@ -8,7 +8,8 @@ type AddTradeDto = {
     item_name: string;
     trusted_source: boolean;
     cred_required: boolean;
-    recurring: boolean
+    recurring: boolean;
+    price: number;
 };
 
 export default ({ strapi }: { strapi: Strapi }) => ({
@@ -577,7 +578,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               
             if (provider.items.length > 0) {
                 let id = provider.items[0].sc_retail_product.id;
-                const { quantity, unit, item_name, trusted_source = false, cred_required = false, recurring = false  } = tradeDto;
+                const { quantity, unit, item_name, price, trusted_source = false, cred_required = false, recurring = false  } = tradeDto;
                 const updateScProduct = await strapi.entityService.update(
                     "api::sc-product.sc-product",
                     id,
@@ -586,6 +587,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                             stock_quantity: 
                                 Number(provider.items[0].sc_retail_product.stock_quantity) +
                                 Number(quantity),
+                            min_price: price.toString(),
                             quantity_unit: unit,
                             trusted_source,
                             cred_required,
@@ -657,7 +659,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             throw new Error(error.message);
         }
     },
-
     async addTradeLog({ transactionId, event_name, description, data = {} }) {
         try {
             if(!transactionId) {
