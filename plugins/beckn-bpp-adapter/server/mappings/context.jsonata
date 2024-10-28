@@ -1,6 +1,15 @@
 {
     "domain": domain,
-    "location": location,
+    "location": location ? location : {
+            "country": {
+                "name": "India",
+                "code": "IND"
+            },
+            "city": {
+                "name": "Bangalore",
+                "code": "std:080"
+            }
+        },
     "transaction_id": transaction_id ? transaction_id : $uuid(),
     "message_id": message_id ? message_id : $uuid(),
     "action": $action,
