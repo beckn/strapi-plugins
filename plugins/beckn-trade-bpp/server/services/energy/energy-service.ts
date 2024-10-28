@@ -1,5 +1,5 @@
 import { Strapi } from "@strapi/strapi";
-const fs = require("fs");
+const fs = require("fs").promises;
 import axios from "axios";
 
 type AddTradeDto = {
@@ -69,7 +69,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                         populate: {
                             agent_profile: {
                                 populate: {
-                                    credential: true,
+                                    credentials: true,
                                     ders: {
                                         populate: {
                                             credential: true
@@ -81,22 +81,26 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     }
                 }
             });
-            const cred = userInfo.agent.agent_profile.credential;
+            let creds = userInfo.agent.agent_profile.credentials;
             let ders = userInfo.agent.agent_profile.ders;
+            creds = creds.map(cred => {
+                const cred_id = cred.id;
+                return {
+                    cred_id,
+                    type: 'USER_CREDENTIAL',
+                    credential: cred?.vc
+                }
+            });
             ders = ders.map(der => {
                 const der_id = der.id;
                 return {
                     der_id,
                     type: 'DER',
-                    credential: der.credential
+                    credential: der?.credential?.vc
                 }
             });
-            const userCred = {
-                cred_id: cred.id,
-                type: 'USER_CREDENTIAL',
-                credential: cred.vc
-            }
-            return [userCred, ...ders];
+            
+            return [...creds, ...ders];
 
         } catch (error) {
 
@@ -123,15 +127,24 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     } catch(error) {
                         throw new Error(error?.response?.data?.error?.message || "No MDM user found");
                     }
-                    let user = await strapi
-                        .query("plugin::users-permissions.user")
-                        .findOne({ where: { email: { $eqi: signupDto.email } } });
-                    if (user) {
-                        throw new Error("Email already used. Signup with other email!");
-                    }
-                    const { email, password, first_name, last_name, phone_number } =
+                    const { email, password, first_name, last_name, phone_no: phone_number } =
                         signupDto;
-
+                    if (!first_name) {
+                        throw new Error('First name not provided for signup');
+                    }
+                    const users = await strapi.entityService.findMany('plugin::users-permissions.user', {
+                        filters: {
+                            $or: [
+                                { email: { $eqi: email } },
+                                { agent: { agent_profile: { phone_number: { $eq: phone_number } } } }
+                            ]
+                        },
+                    });
+                    console.log('Users', users);
+                    
+                    if(users && users.length) {
+                        throw new Error('Email or Phone already taken');
+                    }
                     const agentProfile = await strapi.entityService.create(
                         "api::agent-profile.agent-profile",
                         {
@@ -190,12 +203,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                         agentProfile.id,
                         {
                             data: {
-                                credential: cred.id,
+                                credentials: [cred.id],
                                 publishedAt: new Date()
                             },
                         }
                     );
-
                     delete createdUser.password;
                     //add catalogues
                     const { providerData } = signupDto;
@@ -276,7 +288,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     );
 
                     console.log("file path", filesDto.path);
-                    const fileBuffer = fs.readFileSync(filesDto.path);
+                    const fileBuffer = await fs.readFile(filesDto.path, 'utf8');
                     console.log("fileBuffer", fileBuffer);
                     // Step 3: Upload the file
                     const fileToUpload = {
@@ -453,10 +465,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                         "api::sc-product.sc-product",
                         {
                             data: {
-                                minPrice: 7,
-                                maxPrice: 8,
+                                min_price: item.price,
                                 stock_quantity: 0,
-                                quantity_unit: "kWH",
+                                quantity_unit: "KWh",
+                                currency: item.currency,
                                 publishedAt: new Date()
                             },
                         }
@@ -606,7 +618,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         try {
             console.log('Customer id: ', customerId);
             
-            const dashboardData = await axios.post(`${process.env.MDM_URL}/statistics`, {
+            const dashboardData = await axios.post(`${process.env.MDM_URL}/getStatistics`, {
                 customerId
             });
             return dashboardData.data;
@@ -715,5 +727,68 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             
             throw new Error(`${error.message}`);
         }  
-    }
+    },
+    async uploadUserCredential(jsonFile, user) {
+
+        try {
+            let result = {};
+            await strapi.db.transaction(async ({ trx }) => {
+                try {   
+                    const fileContent = await fs.readFile(jsonFile.path, 'utf8');
+                    const vc = JSON.parse(fileContent);
+                    console.log('Parsed JSON file: ', vc);
+                    
+                    // Step 1: Verify credentials
+                    const getCreds = await axios.post(
+                        `${process.env.VERIFY_CRED_URL}`,
+                        vc,
+                    );
+                    console.log("Credential Verified:", getCreds.data);
+                    const verfiedCred = getCreds.data;
+                    if(!verfiedCred || verfiedCred.error.length) {
+                        throw new Error('Could not verify the provided credential, Unable to upload it!');
+                    }
+                    // Step 4: Create the der entity and associate the uploaded file
+                    const cred = await strapi.entityService.create(
+                        "api::credential.credential",
+                        {
+                            data: {
+                                vc,
+                                publishedAt: new Date()
+                            },
+                        }
+                    );
+                    
+                    console.log('Cred id: ', cred.id);
+
+                    const agentProfile = await strapi.entityService.update(
+                        "api::agent-profile.agent-profile",
+                        user.agent.agent_profile.id,
+                        {
+                            data: {
+                                credentials: {
+                                    connect: [cred.id],
+                                },
+                                publishedAt: new Date()
+                            },
+                        }
+                    );
+                    console.log('Agent profile: ', agentProfile);
+
+                    // Step 6: Commit the transaction
+                    await trx.commit();
+                    return result = cred;
+                } catch (error) {
+                    await trx.rollback();
+                    throw error;
+                }
+            });
+            return result;
+
+        } catch (error) {
+            // Roll back the transaction in case of error
+            console.error("Error in uploading credential:", error);
+            throw new Error(`${error.message}`);
+        }
+    },
 });

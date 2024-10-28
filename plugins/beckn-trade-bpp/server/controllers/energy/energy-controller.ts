@@ -123,5 +123,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         } catch (error) {
             ctx.badRequest(error.message);
         }
+    },
+    async uploadUserCred(ctx) {
+        try {
+            const { files, body } = ctx.request;
+            if (!files || !files.credential) {
+                return ctx.badRequest('No JSON file provided');
+              }
+            const jsonFile = files.credential;
+            console.log(": ", jsonFile);
+            const energyService = strapi
+                .plugin("beckn-trade-bpp")
+                .service("energyService");
+            const result = await energyService.uploadUserCredential(jsonFile, ctx.state.user);
+            ctx.body = result;
+        } catch (error) {
+            ctx.badRequest(error.message);
+        }
     }
 });

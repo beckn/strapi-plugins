@@ -98,4 +98,13 @@ export default [
       auth: false
     }
   },
+  {
+    method: "POST",
+    path: "/upload-cred",
+    handler: "energyController.uploadUserCred",
+    config: {
+      middlewares: ["plugin::beckn-trade-bpp.authMiddleware"],
+      auth: false
+    }
+  },
 ];
