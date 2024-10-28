@@ -604,18 +604,20 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     },
     async getDashboard(customerId: number) {
         try {
+            console.log('Customer id: ', customerId);
+            
             const dashboardData = await axios.post(`${process.env.MDM_URL}/statistics`, {
                 customerId
             });
             return dashboardData.data;
         } catch (error) {
+            console.log('Error dash: ', error);
+            
             throw new Error('Failed to fetch dashboard data from MDM');
         }
     },
     async getTrade({ tradeId, agentId }) {
         try {
-
-            //get trade by id
             const trade = await strapi.entityService.findMany
                 (
                     "api::trade.trade",
@@ -681,5 +683,37 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             throw new Error(error.message);
         }
         
+    },
+    async deleteDerById(agentProfileId: number, derId: number) {
+        try {
+            console.log('AgentProfileId: ', agentProfileId, '-- ', derId, ': ', derId);
+            
+            if(!derId) {
+                throw new Error('Der Id not provided to delete');
+            }
+            //check if this der belongs to this user or not
+            let agentProfile = await strapi.entityService.findMany("api::agent-profile.agent-profile",
+                {
+                    filters: {
+                        id: agentProfileId,
+                        ders: {
+                            id: derId
+                        }
+                    },
+                    populate: ["ders"],
+                }
+            );
+
+            if(agentProfile && agentProfile.length) {
+                const der = await strapi.entityService.delete("api::der.der", derId);
+                return der;
+            } else {
+                throw new Error('This der is not linked to your profile. You cannot delete it');
+            }
+        } catch(error) {
+            console.log("Delete DER error: ", error);
+            
+            throw new Error(`${error.message}`);
+        }  
     }
 });

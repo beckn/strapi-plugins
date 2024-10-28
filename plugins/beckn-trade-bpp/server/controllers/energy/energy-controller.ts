@@ -110,4 +110,18 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             ctx.badRequest(error.message);
         }
     },
+    async deleteDerById(ctx) {
+        try {
+            const energyService = strapi
+                .plugin("beckn-trade-bpp")
+                .service("energyService");
+            const derId = ctx.params.id;
+            console.log('DER ID: ', derId);
+            const agentProfileId = ctx?.state?.user?.agent?.agent_profile?.id;
+            const result = await energyService.deleteDerById(agentProfileId, derId);
+            ctx.body = result;
+        } catch (error) {
+            ctx.badRequest(error.message);
+        }
+    }
 });

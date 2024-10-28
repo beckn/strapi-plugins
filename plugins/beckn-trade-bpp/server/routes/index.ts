@@ -63,6 +63,15 @@ export default [
     }
   },
   {
+    method: "DELETE",
+    path: "/der/:id",
+    handler: "energyController.deleteDerById",
+    config: {
+      middlewares: ["plugin::beckn-trade-bpp.authMiddleware"],
+      auth: false
+    }
+  },
+  {
     method: "GET",
     path: "/dashboard",
     handler: "energyController.getDashboard",
