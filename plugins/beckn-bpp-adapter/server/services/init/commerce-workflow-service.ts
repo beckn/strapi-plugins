@@ -1,5 +1,5 @@
 import { Strapi } from "@strapi/strapi";
-import { FilterUtil, ObjectUtil, SearchUtil } from "../../util";
+import { FilterUtil, ObjectUtil, SearchUtil, InitUtil, TradeUtil, isEnergy } from "../../util";
 import { KeyValuePair } from ".././../types";
 import { PLUGIN } from "../../constants";
 
@@ -20,6 +20,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
       };
       const populate: KeyValuePair = {
+        agents: {
+          populate: {
+            agent_profile: {
+              credential: {}
+            }
+          }
+        },
         category_ids: {},
         location_id: {},
         fulfillments: {
@@ -105,7 +112,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
 
       itemDetails = await SearchUtil.filterTrustedSource(itemDetails, context);
-
+      await InitUtil.createTrade(context, message.order, itemDetails[0]);
       const commonService = strapi.plugin(PLUGIN).service("commonService");
       await Promise.all(
         itemDetails.map(async (itemDetail) => {
@@ -141,6 +148,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         billing: billingInfo,
         fulfillments: fulfillments || []
       }));
+      if (isEnergy(context)) {
+        TradeUtil.addTradeLog({
+          transactionId: context.transaction_id,
+          event_name: 'beckn_on_init',
+          description: 'Sending Order terms',
+          data: initDetails
+        });
+      }
       return initDetails;
     } catch (error) {
       console.error("An error occurred:", error);

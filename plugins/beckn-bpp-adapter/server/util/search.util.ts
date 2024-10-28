@@ -370,7 +370,8 @@ export class SearchUtil {
         vc
       );
       return !(verificationResp.data.error && verificationResp.data.error.length);
-    } catch (error: any) {
+    } catch (e: any) {
+      console.log('Error while verifying credentials', e?.message);
       return false;
     }
   }
@@ -383,6 +384,7 @@ export class SearchUtil {
     if (isEnergy(context)) {
       for (const provider of providers) {
         const isTrustedSourcePreffered = provider.items?.find(item => item.sc_retail_product?.trusted_source);
+        console.log();
         if (isTrustedSourcePreffered) {
           try {
             const axios = axiosInstance.create({
@@ -393,12 +395,10 @@ export class SearchUtil {
             const bapHeaders = {
               "Content-Type": "application/json",
             };
-            // const bapUrl = `${context.bap_uri}/beckn.json`;
-            const bapUrl = `http://127.0.0.1:1337/beckn-bpp-adapter/health-check`;
-            const vc: KeyValuePair = await axios.get(bapUrl, { headers: bapHeaders });
-            console.log('abhi', JSON.stringify(vc));
-            if (vc) {
-              const verifiableCredential = vc.credentials?.filter((credential) => credential.type.toLowerCase() === 'organization')?.verifiableCredential;
+            const bapUrl = `${context.bap_uri}/beckn.json`;
+            const response: KeyValuePair = await axios.get(bapUrl, { headers: bapHeaders });
+            if (response?.data) {
+              const verifiableCredential = response.data.credentials?.filter((credential) => credential.type.toLowerCase() === 'organization')[0]?.verifiableCredential;
               const isVCVerified = await this.verifyCertificate(verifiableCredential);
               if (isVCVerified) {
                 filteredProviders.push(provider);

@@ -24,9 +24,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       return {
         asset: {
           type,
-          id,
-          proofs
-        }
+          id
+        },
+        proofs
       };
     } catch (e) {
       console.log("Error", e);

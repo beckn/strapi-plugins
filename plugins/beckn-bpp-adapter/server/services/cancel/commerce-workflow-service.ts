@@ -1,6 +1,7 @@
 import { Strapi } from "@strapi/strapi";
 import { KeyValuePair } from "../../types";
 import { PLUGIN } from "../../constants";
+import { isEnergy, TradeUtil } from "../../util";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message, context }) {
@@ -151,7 +152,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
         })
       );
-
+      if (isEnergy(context)) {
+        TradeUtil.addTradeLog({
+          transactionId: context.transaction_id,
+          event_name: 'trade_cancelled',
+          description: "Trade is cancelled",
+          data: {}
+        });
+      }
       return cancelDetails;
     } catch (error) {
       console.error("An error occurred:", error);

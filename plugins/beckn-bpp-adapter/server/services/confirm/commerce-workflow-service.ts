@@ -1,11 +1,19 @@
 import { Strapi } from "@strapi/strapi";
-import { FilterUtil, ObjectUtil } from "../../util";
+import { FilterUtil, isEnergy, ObjectUtil, TradeUtil } from "../../util";
 import { KeyValuePair } from "../../types";
 import { PLUGIN, DEFAULT_INITIAL_STATE } from "../../constants";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message, context }) {
     try {
+      if (isEnergy(context)) {
+        await TradeUtil.addTradeLog({
+          transactionId: context.transaction_id,
+          event_name: 'beckn_confirm',
+          description: 'Order confirmation received',
+          data: {}
+        });
+      }
       const { items, provider, billing, fulfillments } = message.order;
       const { domain, transaction_id, bap_id, bap_uri } = context;
       const currentDate = new Date();
@@ -333,7 +341,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         },
         order_id: orderId
       }));
-
+      if (isEnergy(context)) {
+        TradeUtil.addTradeLog({
+          transactionId: context.transaction_id,
+          event_name: 'beckn_on_confirm',
+          description: 'Order Confirmation sent',
+          data: {}
+        });
+      }
       return confirmDetails;
     } catch (error) {
       console.error("An error occurred:", error);
