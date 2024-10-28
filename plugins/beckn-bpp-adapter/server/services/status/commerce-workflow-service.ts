@@ -1,6 +1,7 @@
 import { Strapi } from "@strapi/strapi";
 import { KeyValuePair } from "../../types";
 import { PLUGIN } from "../../constants";
+import { isEnergy, TradeUtil } from "../../util";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message, context }) {
@@ -127,6 +128,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         domain: orderDetails[0]?.order_id.domain
       };
       strapi.eventHub.emit("status.request", eventData);
+      if (isEnergy(context)) {
+        let eventDescription = '';
+        if (orderDetails[0]?.state_value.toLowerCase() === 'transmission') {
+          eventDescription = 'Energy transmission started'
+        }
+
+        if (orderDetails[0]?.state_value.toLowerCase() === 'completed') {
+          eventDescription = 'Energy transmission completed'
+        }
+        TradeUtil.addTradeLog({
+          transactionId: context.transaction_id,
+          event_name: 'beckn_on_status',
+          description: eventDescription,
+          data: {}
+        });
+      }
       return orderDetails;
     } catch (error) {
       console.error("An error occurred:", error);

@@ -2,13 +2,13 @@ import { Strapi } from '@strapi/strapi';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   getHealthMessage() {
-    // return 'Added support for Mobility 🚀';
+    return 'Added support for Mobility 🚀';
+    // TODO: Remove below comments after 30th October 2024
     return {
       credentials: [
         {
           type: "organization",
           verifiableCredential: {
-
             "@context": [
               "https://www.w3.org/2018/credentials/v1",
               "https://cord.network/2023/cred/v1"
