@@ -175,7 +175,7 @@
                     "bank_account_name": bank_name
                 },
                 "status": "PAID",
-                "type": "PRE_ORDER",
+                "type": "PRE-ORDER",
                 "transaction_id": transaction_id
             }[],
             "quote": $quote(message.order_id.items),
