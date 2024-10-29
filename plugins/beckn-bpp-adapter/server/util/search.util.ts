@@ -372,7 +372,7 @@ export class SearchUtil {
       return !(verificationResp.data.error && verificationResp.data.error.length);
     } catch (e: any) {
       console.log('Error while verifying credentials', e?.message);
-      return false;
+      throw new Error(`Error while verifying credentials: ${e?.message}`);
     }
   }
 
@@ -395,7 +395,7 @@ export class SearchUtil {
             const bapHeaders = {
               "Content-Type": "application/json",
             };
-            const bapUrl = `${context.bap_uri}/beckn.json`;
+            const bapUrl = `${context.bap_uri}/pulic/beckn.json`;
             const response: KeyValuePair = await axios.get(bapUrl, { headers: bapHeaders });
             if (response?.data) {
               const verifiableCredential = response.data.credentials?.filter((credential) => credential.type.toLowerCase() === 'organization')[0]?.verifiableCredential;
@@ -405,7 +405,7 @@ export class SearchUtil {
               }
             }
           } catch (e) {
-            console.log('Error while calling BAP beckn.json', e?.message);
+            console.log(`Error while calling BAP beckn.json for provider ${provider.id}`, e?.message);
           }
         } else {
           filteredProviders.push(provider);
