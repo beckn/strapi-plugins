@@ -130,11 +130,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       strapi.eventHub.emit("status.request", eventData);
       if (isEnergy(context)) {
         let eventDescription = '';
-        if (orderDetails[0]?.state_value.toLowerCase() === 'order_placed') {
+        if (orderDetails[0]?.state_code.toLowerCase() === 'order_placed') {
           eventDescription = 'Energy transmission started'
         }
 
-        if (orderDetails[0]?.state_value.toLowerCase() === 'order_completed') {
+        if (orderDetails[0]?.state_code.toLowerCase() === 'order_completed') {
           eventDescription = 'Energy transmission completed'
         }
         TradeUtil.addTradeLog({
