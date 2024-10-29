@@ -26,6 +26,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         ]
       };
+      console.log('abhi', credData);
       return {
         asset: {
           type,
