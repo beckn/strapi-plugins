@@ -22,7 +22,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         requested: requested_proofs,
         attachments: [
           {
-            ...(credData?.agents[0]?.agent_profile?.credential?.vc || {})
+            ...(credData?.agents[0]?.agent_profile?.credentials?.[0]?.vc || {})
           }
         ]
       };
@@ -48,7 +48,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             populate: {
               agent_profile: {
                 populate: {
-                  credential: {}
+                  credentials: {}
                 }
               }
             }
