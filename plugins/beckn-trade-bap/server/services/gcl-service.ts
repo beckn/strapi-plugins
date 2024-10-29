@@ -200,7 +200,7 @@ const confirm = async (
                       bank_account_name: provider?.name
                     },
                     status: "PAID",
-                    type: "PRE_ORDER"
+                    type: "PRE-ORDER"
                   }
                 ]
               }
