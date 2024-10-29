@@ -4,10 +4,13 @@ import { KeyValuePair } from "../../types";
 export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message }) {
     try {
-      const { asset: { type, id }, requested_proofs } = message;
+      const {
+        asset: { type, id },
+        requested_proofs
+      } = message;
       let credData: KeyValuePair = {};
       switch (type.toLowerCase()) {
-        case 'provider':
+        case "provider":
           credData = await this.getProviderCred(id);
           break;
 
@@ -17,10 +20,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
       const proofs = {
         requested: requested_proofs,
-        attachments: [{
-          ...(credData?.agents[0]?.agent_profile?.credential?.vc || {})
-        }]
-      }
+        attachments: [
+          {
+            verifiableCredential: {
+              ...(credData?.agents[0]?.agent_profile?.credentials?.[0]?.vc || {})
+            }
+          }
+        ]
+      };
+      console.log('abhi', JSON.stringify(credData));
       return {
         asset: {
           type,
@@ -33,19 +41,23 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     }
   },
   async getProviderCred(id: string) {
-    const provider = await strapi.entityService.findOne('api::provider.provider', id, {
-      populate: {
-        agents: {
-          populate: {
-            agent_profile: {
-              populate: {
-                credential: {}
+    const provider = await strapi.entityService.findOne(
+      "api::provider.provider",
+      id,
+      {
+        populate: {
+          agents: {
+            populate: {
+              agent_profile: {
+                populate: {
+                  credentials: {}
+                }
               }
             }
           }
         }
       }
-    });
+    );
     return provider;
   }
 });
