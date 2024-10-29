@@ -395,10 +395,12 @@ export class SearchUtil {
             const bapHeaders = {
               "Content-Type": "application/json",
             };
-            const bapUrl = `${context.bap_uri}/pulic/beckn.json`;
+            const bapUrl = `${context.bap_uri}/public/beckn.json`;
             const response: KeyValuePair = await axios.get(bapUrl, { headers: bapHeaders });
+            console.log('abhi', bapUrl, JSON.stringify(response?.data));
             if (response?.data) {
-              const verifiableCredential = response.data.credentials?.filter((credential) => credential.type.toLowerCase() === 'organization')[0]?.verifiableCredential;
+              // const verifiableCredential = response.data.credentials?.filter((credential) => credential.type.toLowerCase() === 'organization')[0]?.verifiableCredential;
+              const verifiableCredential = response.data;
               const isVCVerified = await this.verifyCertificate(verifiableCredential);
               if (isVCVerified) {
                 filteredProviders.push(provider);
