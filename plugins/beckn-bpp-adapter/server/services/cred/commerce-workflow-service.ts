@@ -22,7 +22,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         requested: requested_proofs,
         attachments: [
           {
-            ...(credData?.agents[0]?.agent_profile?.credentials?.[0]?.vc || {})
+            verifiableCredential: {
+              ...(credData?.agents[0]?.agent_profile?.credentials?.[0]?.vc || {})
+            }
           }
         ]
       };
