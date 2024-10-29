@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 import { Strapi } from '@strapi/strapi';
 import { PLUGIN } from '../../constants'
+import { isEnergy, TradeUtil } from '../../util';
 
 export default ({ }: { strapi: Strapi }) => ({
     async orderStatusUpdate(data: any) {
@@ -16,8 +17,8 @@ export default ({ }: { strapi: Strapi }) => ({
             }
         ) || {};
         console.log("Order details fetched: ", orderDetails.order_id);
-        const { id, domain, bap_id, bap_uri } = orderDetails?.order_id;
-        
+        const { id, domain, bap_id, bap_uri, order_transaction_id } = orderDetails?.order_id;
+
         const payload = {
             message: {
                 order_id: id
@@ -30,14 +31,30 @@ export default ({ }: { strapi: Strapi }) => ({
             }
         };
         try {
+            if (isEnergy({ domain })) {
+                let eventDescription = '';
+                if (orderDetails[0]?.state_code.toLowerCase() === 'order_transmission') {
+                    eventDescription = 'Energy transmission started'
+                }
+
+                if (orderDetails[0]?.state_value.toLowerCase() === 'order_completed') {
+                    eventDescription = 'Energy transmission completed'
+                }
+                TradeUtil.addTradeLog({
+                    transactionId: order_transaction_id,
+                    event_name: 'beckn_on_status',
+                    description: eventDescription,
+                    data: {}
+                });
+            }
             await strapi
                 .plugin(PLUGIN)
                 .controller("eventHandlerController")
                 .index(payload);
-        } catch(error) {
+        } catch (error) {
             console.log("Unsolicited Controller Order Status Update Error calling external API: ", error);
         }
-        
+
     }
-        
+
 });
