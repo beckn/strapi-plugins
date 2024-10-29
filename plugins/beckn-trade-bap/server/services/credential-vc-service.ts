@@ -22,16 +22,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async verifyCertificate(vc: any) {
     try {
-      // const verificationResp = await axios.post(
-      //   `${process.env.DHIWAY_VERIFIER_URL}/api/v1/verify/credentials/verify`,
-      //   vc
-      // );
-      // if (verificationResp.data.error && verificationResp.data.error.length) {
-      //   return {
-      //     isVerified: false,
-      //     vc
-      //   };
-      // }
+      const verificationResp = await axios.post(
+        `${process.env.DHIWAY_VERIFIER_URL}/api/v1/verify/credentials/verify`,
+        vc
+      );
+      if (verificationResp.data.error && verificationResp.data.error.length) {
+        return {
+          isVerified: false,
+          vc
+        };
+      }
       return { isVerified: true, vc };
     } catch (error: any) {
       console.log(error);
