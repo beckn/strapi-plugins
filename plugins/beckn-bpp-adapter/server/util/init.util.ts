@@ -9,6 +9,7 @@ export class InitUtil {
     provider: KeyValuePair
   ) => {
     if (isEnergy(context)) {
+      console.log('abhi', order);
       for (const item of provider.items) {
         const selectedItem = order.items.filter((i) => i.id == item.id)[0] || {};
         const scRetailProduct = item.sc_retail_product || {};
