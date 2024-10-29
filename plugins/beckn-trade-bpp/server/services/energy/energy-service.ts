@@ -272,132 +272,133 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     });
   },
   async createDer(createDerDto, filesDto, user) {
+
     try {
-      let result = {};
-      await strapi.db.transaction(async ({ trx }) => {
-        try {
-          // Step 0: Generate hash from buffer
-          const hash = await this.createHashFromFile(filesDto.path);
-
-          // Step 1: Generate credentials (as per your existing code)
-          const getCreds = await axios.post(`${process.env.ISSUER_URL}/cred`, {
-            schemaId:
-              "schema:cord:s356EvHMCEdivwpM2srB7s5etUAJB69erN8vHKzoog8E1VkBv",
-            properties: {
-              type: createDerDto.type,
-              category: createDerDto.category,
-              proof: hash
-            }
-          });
-          console.log("Credential generated:", getCreds.data);
-
-          // Step 2: Store the credential
-          const cred = await strapi.entityService.create(
-            "api::credential.credential",
-            {
-              data: {
-                vc: getCreds.data.vc
-              }
-            }
-          );
-
-          console.log("file path", filesDto.path);
-          const fileBuffer = await fs.readFile(filesDto.path, "utf8");
-          console.log("fileBuffer", fileBuffer);
-          // Step 3: Upload the file
-          const fileToUpload = {
-            path: filesDto.path,
-            name: filesDto.name,
-            type: filesDto.type,
-            size: filesDto.size
-          };
-
-          const uploadedFiles =
-            await strapi.plugins.upload.services.upload.upload({
-              data: {
-                fileInfo: {
-                  name: filesDto.name,
-                  type: filesDto.type
+        let result = {};
+        await strapi.db.transaction(async ({ trx }) => {
+            try {
+                // Step 0: Generate hash from buffer
+                if(!Array.isArray(filesDto)) {
+                    filesDto = [filesDto];
                 }
-              },
-              files: fileToUpload // The binary file object
-            });
-          console.log("UploadedFiles", uploadedFiles);
+                const hash = await this.createHashFromFile(filesDto[0].path);
 
-          // Ensure a file was uploaded
-          if (!uploadedFiles || uploadedFiles.length === 0) {
-            throw new Error("File upload failed");
-          }
+                // Step 1: Generate credentials (as per your existing code)
+                const getCreds = await axios.post(
+                    `${process.env.ISSUER_URL}/cred`,
+                    {
+                        schemaId:
+                            "schema:cord:s356EvHMCEdivwpM2srB7s5etUAJB69erN8vHKzoog8E1VkBv",
+                        properties: {
+                            type: createDerDto.type,
+                            category: createDerDto.category,
+                            proof: hash,
+                        },
+                    }
+                );
+                console.log("Credential generated:", getCreds.data);
+                // Step 2: Store the credential
+                const cred = await strapi.entityService.create(
+                    "api::credential.credential",
+                    {
+                        data: {
+                            vc: getCreds.data.vc,
+                        },
+                    }
+                );
 
-          const uploadedFile = uploadedFiles[0];
+                const uploadedFiles = await Promise.all(
+                    filesDto.map(async (fileDto) => {
+                        const fileToUpload = {
+                            path: fileDto.path,
+                            name: fileDto.name,
+                            type: fileDto.type,
+                            size: fileDto.size,
+                        };
+                        return await strapi.plugins.upload.services.upload.upload({
+                            data: { fileInfo: { name: fileDto.name, type: fileDto.type } },
+                            files: fileToUpload,
+                        });
+                    })
+                );
+                console.log("Uploaded Files:", uploadedFiles);
 
-          // Step 4: Create the der entity and associate the uploaded file
-          const der = await strapi.entityService.create("api::der.der", {
-            data: {
-              proof: uploadedFile.id,
-              credential: cred.id,
-              type:
-                createDerDto.type.toUpperCase() === "CONSUMER"
-                  ? "CONSUMER"
-                  : "PROSUMER",
-              category: createDerDto.category
+                if (uploadedFiles.some((fileArray) => !fileArray || fileArray.length === 0)) {
+                    throw new Error("File upload failed for one or more files");
+                }
+
+                const fileProofIds = uploadedFiles.flat().map((file) => file.id);
+
+                // Step 4: Create the der entity and associate the uploaded file
+                const der = await strapi.entityService.create("api::der.der", {
+                    data: {
+                        proof: fileProofIds,
+                        credential: cred.id,
+                        type:
+                            createDerDto.type.toUpperCase() === "CONSUMER"
+                                ? "CONSUMER"
+                                : "PROSUMER",
+                        category: createDerDto.category,
+                    }
+                });
+                console.log('Created Der id: ', der.id);
+
+                const agentProfile = await strapi.entityService.update(
+                    "api::agent-profile.agent-profile",
+                    user.agent.agent_profile.id,
+                    {
+                        data: {
+                            ders: {
+                                connect: [der.id],
+                            },
+                            publishedAt: new Date()
+                        },
+                    }
+                );
+                console.log('Agent profile updated: ', agentProfile);
+
+                // Step 6: Commit the transaction
+                await trx.commit();
+                return result = der;
+            } catch (error) {
+                await trx.rollback();
+                throw error;
             }
-          });
-          if (!user) {
-            throw new Error("User id not found");
-          }
-          console.log("Der id: ", der.id);
+        });
+        return result;
 
-          const agentProfile = await strapi.entityService.update(
-            "api::agent-profile.agent-profile",
-            user.agent.agent_profile.id,
-            {
-              data: {
-                ders: {
-                  connect: [der.id]
-                },
-                publishedAt: new Date()
-              }
-            }
-          );
-          console.log("Agent profile: ", agentProfile);
-
-          // Step 6: Commit the transaction
-          await trx.commit();
-          return (result = der);
-        } catch (error) {
-          await trx.rollback();
-          throw error;
-        }
-      });
-      return result;
     } catch (error) {
-      // Roll back the transaction in case of error
-      console.error("Error in createDer:", error);
-      throw new Error(`Error while creating der: ${error.message}`);
+        console.error("Error in createDer:", error);
+        throw new Error(`Error while creating der: ${error.message}`);
     }
   },
-  async getDer({ agentProfileId }) {
+  async getDer({ agentProfileId } ) {
     try {
-      console.log("Agent profile: ", agentProfileId);
+        console.log('Agent profile: ', agentProfileId);
+        
+        const agentProfile = await strapi.entityService.findOne("api::agent-profile.agent-profile", agentProfileId,
+            {
+                populate: {
+                    ders: {
+                        populate: {
+                            credential: true,
+                            proof: {
+                                fields: ["id", "name", "url", "mime"]
+                            }
+                        }
+                    }
+                }
+            });
 
-      const agentProfile = await strapi.entityService.findOne(
-        "api::agent-profile.agent-profile",
-        agentProfileId,
-        {
-          populate: ["ders", "ders.credential"]
+        if (!agentProfile.ders.length) {
+            throw new Error(`No Ders found for this user`);
         }
-      );
-
-      if (!agentProfile.ders.length) {
-        throw new Error(`No Ders found for this user`);
-      }
-      return agentProfile.ders;
+        return agentProfile.ders;
     } catch (error) {
-      console.error("Error in getDer:", error);
-      throw new Error(`Error while retrieving der: ${error.message}`);
+        console.error("Error in getDer:", error);
+        throw new Error(`Error while retrieving der: ${error.message}`);
     }
-  },
+  }, 
   async createCatalogue(providerData: any, agentId: number) {
     try {
       let result = {};
@@ -433,6 +434,20 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             console.log("createdCategory:: ", createdCategory);
             categoryId = createdCategory.id;
           }
+          if(!providerData.domain_name) {
+            throw new Error('Domain Name not provided');
+          }
+          const domain = await strapi.entityService.findMany("api::domain.domain", {
+            filters: {
+                DomainName: providerData.domain_name
+            }
+          });
+          let domainId;
+          if (domain && domain.length) {
+            domainId = domain[0].id;
+          } else {
+            throw new Error('Create Catalogue: Domain Not Found');
+          }
           const createProvider = await strapi.db
             .query("api::provider.provider")
             .create({
@@ -440,9 +455,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 ...(providerData.provider_name && {
                   provider_name: providerData.provider_name
                 }),
-                ...(providerData.domain_id && {
-                  domain_id: providerData.domain_id
-                }),
+                domain_id: domainId,
                 ...(providerData.location_id && {
                   location_id: providerData.location_id
                 }),
