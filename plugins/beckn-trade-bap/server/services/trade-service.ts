@@ -236,71 +236,80 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 for (let i = 0; i < required_bpps.length; i++) {
                   const bpp = required_bpps[i];
                   for (let j = 0; j < bpp.message.providers.length; j++) {
-                    const provider = bpp.message.providers[j];
+                    try {
+                      const provider = bpp.message.providers[j];
 
-                    const becknCredBapEvent = await strapi.entityService.create(
-                      "api::trade-event.trade-event",
-                      {
-                        data: {
-                          trade: trade.id,
-                          event_name: TRADE_EVENTS.beckn_cred_bap.event_name,
-                          description: TRADE_EVENTS.beckn_cred_bap.description,
-                          data: provider,
-                          publishedAt: new Date()
-                        }
-                      }
-                    );
-
-                    console.log(
-                      `\nSending cred request for Trade Id: ${trade.id} to ${bpp.context.bpp_uri}\n`
-                    );
-
-                    const on_credResp = await gclService.cred(
-                      bpp.context.bpp_id,
-                      bpp.context.bpp_uri,
-                      trasaction_id,
-                      trade,
-                      provider.id
-                    );
-
-                    console.log(
-                      `\nTradeId:${trade.id} On Cred Resp===>`,
-                      JSON.stringify(on_credResp),
-                      "\n"
-                    );
-
-                    const becknOnCredBapEvent =
-                      await strapi.entityService.create(
-                        "api::trade-event.trade-event",
-                        {
-                          data: {
-                            trade: trade.id,
-                            event_name:
-                              TRADE_EVENTS.beckn_on_cred_bap.event_name,
-                            description:
-                              TRADE_EVENTS.beckn_on_cred_bap.description,
-                            data: { provider, on_credResp },
-                            publishedAt: new Date()
+                      const becknCredBapEvent =
+                        await strapi.entityService.create(
+                          "api::trade-event.trade-event",
+                          {
+                            data: {
+                              trade: trade.id,
+                              event_name:
+                                TRADE_EVENTS.beckn_cred_bap.event_name,
+                              description:
+                                TRADE_EVENTS.beckn_cred_bap.description,
+                              data: provider,
+                              publishedAt: new Date()
+                            }
                           }
-                        }
+                        );
+
+                      console.log(
+                        `\nSending cred request for Trade Id: ${trade.id} to ${bpp.context.bpp_uri}\n`
                       );
 
-                    console.log(`\nVerifying cred for Trade Id: ${trade.id}\n`);
-                    const verifyVCResp =
-                      await credentialVcService.verifyCertificate(
-                        on_credResp.data[0].message.proofs.attachments[0]
-                          .verifiableCredential
+                      const on_credResp = await gclService.cred(
+                        bpp.context.bpp_id,
+                        bpp.context.bpp_uri,
+                        trasaction_id,
+                        trade,
+                        provider.id
                       );
-                    if (verifyVCResp.isVerified) {
-                      required_providers.push({
-                        context: bpp.context,
-                        message: {
-                          name: bpp?.message?.name || "BPP 1",
-                          providers: [provider]
-                        }
-                      });
+
+                      console.log(
+                        `\nTradeId:${trade.id} On Cred Resp===>`,
+                        JSON.stringify(on_credResp),
+                        "\n"
+                      );
+
+                      const becknOnCredBapEvent =
+                        await strapi.entityService.create(
+                          "api::trade-event.trade-event",
+                          {
+                            data: {
+                              trade: trade.id,
+                              event_name:
+                                TRADE_EVENTS.beckn_on_cred_bap.event_name,
+                              description:
+                                TRADE_EVENTS.beckn_on_cred_bap.description,
+                              data: { provider, on_credResp },
+                              publishedAt: new Date()
+                            }
+                          }
+                        );
+
+                      console.log(
+                        `\nVerifying cred for Trade Id: ${trade.id}\n`
+                      );
+                      const verifyVCResp =
+                        await credentialVcService.verifyCertificate(
+                          on_credResp.data[0].message.proofs.attachments[0]
+                            .verifiableCredential
+                        );
+                      if (verifyVCResp.isVerified) {
+                        required_providers.push({
+                          context: bpp.context,
+                          message: {
+                            name: bpp?.message?.name || "BPP 1",
+                            providers: [provider]
+                          }
+                        });
+                        continue;
+                      } else continue;
+                    } catch (error) {
                       continue;
-                    } else continue;
+                    }
                   }
                 }
               } else {

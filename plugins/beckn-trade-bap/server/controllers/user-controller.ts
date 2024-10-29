@@ -80,9 +80,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const { type, category } = ctx.request.body;
       const filesUploadResps = (
         await Promise.all(
-          ctx.request.files.proofs.map((file: any) =>
-            filesService.uploadFile(file)
-          )
+          (Array.isArray(ctx.request.files.proofs)
+            ? ctx.request.files.proofs
+            : [ctx.request.files.proofs]
+          ).map((file: any) => filesService.uploadFile(file))
         )
       ).flatMap((resp: any) => resp);
 
