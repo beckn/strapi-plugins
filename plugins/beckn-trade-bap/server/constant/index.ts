@@ -2,7 +2,7 @@ export const DHIWAY_BECKN_TRADE_BAP_CONSUMER_SCHEMA =
   "schema:cord:s32RFVbQcksXQ1ctPDp6ixTBgdx3WWFwFLAkYBPk1qUMY4apr";
 
 export const DHIWAY_BECKN_TRADE_BAP_DER_SCHEMA =
-  "schema:cord:s35uM3GacjjJBVC29gKeH1RRBWci8TwrFcnZXevVroBLYkYQ1";
+  "schema:cord:s32WKVYVDsmnDZoXihnMQLM5stuRNwzs5xHH3vpigQ8TfuBAg";
 
 export enum ETradeStatus {
   RECEIVED = "RECEIVED",
@@ -28,6 +28,10 @@ export const TRADE_EVENTS = {
   beckn_on_search: {
     event_name: "beckn_on_search",
     description: "Energy Catalogue found"
+  },
+  request_beckn_json: {
+    event_name: "verify_beckn_json",
+    description: "Requesting BPP Platform Trusted Source Certificate"
   },
   beckn_cred_bap: {
     event_name: "beckn_cred_bap",

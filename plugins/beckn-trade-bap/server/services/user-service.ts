@@ -1,5 +1,7 @@
 import { Strapi } from "@strapi/strapi";
 import axios from "axios";
+// import { ValidationError } from "yup";
+import { YupValidationError } from "@strapi/utils/dist/errors";
 import {
   DHIWAY_BECKN_TRADE_BAP_CONSUMER_SCHEMA,
   DHIWAY_BECKN_TRADE_BAP_DER_SCHEMA
@@ -14,6 +16,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .findOne({
           where: { email: { $eqi: email } }
         });
+      const profile = await strapi.entityService.findMany(
+        "api::profile.profile",
+        {
+          filters: {
+            user: user.id
+          }
+        }
+      );
       console.log("User info::: ", user);
       if (!user) {
         throw new Error("Email Not found");
@@ -30,9 +40,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
 
       delete user.password;
-      return { ...response.data, user };
+      return { ...response?.data, user, profile: profile?.[0] || {} };
     } catch (error) {
-      console.log("Error Occured:: ", error.response.data);
+      console.log("Error Occured:: ", error);
       if (error.message === "Email Not found") {
         throw error;
       }
@@ -48,7 +58,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   }) {
     return axios.post(`${process.env.BECKN_MDM_URL}/beckn-mdm/getCustomer`, {
       phone_no: phone_number,
-      utility_name: utility
+      utility_name: utility,
+      role: "CONSUMER"
     });
   },
   async createUser({
@@ -148,13 +159,21 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
           trx.commit();
         } catch (error: any) {
+          console.log(error);
           trx.rollback();
+          if (error instanceof YupValidationError) {
+            throw new Error(JSON.stringify((error.details as any).errors));
+          }
           throw new Error(error.message);
         }
         return newUserProfile;
       });
       return newUserProfile;
     } catch (error: any) {
+      await strapi.entityService.delete(
+        "plugin::users-permissions.user",
+        userId
+      );
       throw new Error(error.message);
     }
   },
@@ -204,7 +223,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             {
               name: user.name,
               email: user.email,
-              category: category
+              category: category,
+              file_hash: proofs[0]?.hash || ""
             }
           );
           const newCredential = await strapi.entityService.create(
@@ -237,7 +257,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           trx.rollback();
           throw new Error(error.message);
         }
-        return newDer;
+        newDer = { der: { ...newDer }, message: "New DER Created" };
       });
       return newDer;
     } catch (error: any) {
@@ -260,6 +280,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           {
             filters: {
               profile: profile[0].id
+            },
+            populate: {
+              proofs: true
             }
           }
         );
@@ -366,10 +389,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
 
       if (profile && profile.length) {
-        return await strapi.entityService.delete(
-          "api::distributed-supply-network-member.distributed-supply-network-member",
-          derId
-        );
+        return {
+          der: await strapi.entityService.delete(
+            "api::distributed-supply-network-member.distributed-supply-network-member",
+            derId
+          ),
+          message: "Requested DER deleted Successfully"
+        };
       }
       throw new Error("No Profile Found");
     } catch (error: any) {

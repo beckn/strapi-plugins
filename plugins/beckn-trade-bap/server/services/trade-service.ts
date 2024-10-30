@@ -23,6 +23,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     domain: string;
   }) {
     try {
+      if (quantity <= 0) {
+        throw new Error("Trade Quantity must be greater than 0");
+      }
       let newTrade: any = {};
       await strapi.db.transaction(async ({ trx }) => {
         try {
@@ -195,16 +198,29 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 throw new Error("No Catalog Found");
               }
               let required_bpps: any[] = [];
+
               // Check trusted source for BPPs
               if (trade.trusted_source) {
                 for (let i = 0; i < searchResp.data.length; i++) {
+                  const requestBecknJson = await strapi.entityService.create(
+                    "api::trade-event.trade-event",
+                    {
+                      data: {
+                        trade: trade.id,
+                        event_name: TRADE_EVENTS.request_beckn_json.event_name,
+                        description:
+                          TRADE_EVENTS.request_beckn_json.description,
+                        data: searchResp,
+                        publishedAt: new Date()
+                      }
+                    }
+                  );
                   const bpp = searchResp.data[i];
                   const vc = await credentialVcService.getBecknJson(
                     bpp.context.bpp_uri
                   );
                   console.log(
-                    "i===>",
-                    i,
+                    `\n\nGot Beckn Json from `,
                     bpp.context.bpp_uri,
                     JSON.stringify(vc),
                     `Trade ID: ${trade.id}`

@@ -85,9 +85,9 @@ const CORD_NETWORK_BASE_URL = "https://api.cord.network/api/v1";
 const DEDI_BASE_URL = "https://lookup.dedi.global/dedi";
 
 // constant for now. can be changed in future
-const namespace = "Hyperbecknenergy";
+const namespace = "HyperbecknEnergy";
 const registryId =
-  "registry:cord:bdoaMSfG3VjjRES3eg9iETiyozma9cgCm84gtiYCNQUuTqfsJ";
+  "registry:cord:bdqt8vxH3E9mAiWdeybZeJPgpo4yCRvF4ecTUKi96UWqAfwWA";
 const authorization =
   "registryauth:cord:X8JY6GM9eY9qbsXmT27ARZXhf2Hkj31UjLjStf4AFVWNsvNhn";
 

@@ -1,4 +1,5 @@
 import { Strapi } from "@strapi/strapi";
+import { ETradeStatus } from "../constant";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async createTrade(ctx: any) {
@@ -44,15 +45,23 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async startTrade(ctx: any) {
     try {
-      ctx.body = { message: "ACK" };
       if (ctx.state.user.role.name !== "Admin") {
         throw new Error("Only admin Can start the trade");
       }
+      const trades = await strapi.entityService.findMany("api::trade.trade", {
+        filters: {
+          status: ETradeStatus.RECEIVED
+        },
+        populate: {
+          profile: {}
+        }
+      });
       const tradeService = strapi
         .plugin("beckn-trade-bap")
         .service("tradeService");
-      const trades = await tradeService.startTrade();
-      //   ctx.body = trades;
+      tradeService.startTrade();
+
+      ctx.body = { message: "Trades will be executed", trades };
     } catch (error) {
       ctx.badRequest(error.message);
     }
