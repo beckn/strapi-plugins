@@ -21,10 +21,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
-  async getCustomer({ phone_no, utility_name }) {
+  async getCustomer({ phone_no, utility_name, role }) {
     try {
-      if (!(phone_no && utility_name)) {
-        throw new Error("phone_no and utility_name should not be empty");
+      if (!(phone_no && utility_name && role)) {
+        throw new Error("phone_no, utility_name and role should not be empty");
       }
       const customers = await strapi.entityService.findMany(
         "api::customer.customer",
@@ -34,6 +34,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             utility: {
               name: { $eqi: utility_name },
             },
+            role: { $eqi: role }
           },
           populate: "utility",
         }
