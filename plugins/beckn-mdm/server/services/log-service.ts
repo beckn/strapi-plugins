@@ -65,7 +65,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         previousMeterReading = Number(lastLog?.[0].current_meter_reading);
       }
 
-      const unitProduced = Number((Math.random() * (0.1 - 0.05) + 0.05).toFixed(2));
+      const unitProduced = Number((Math.random() * (0.4 - 0.2) + 0.2).toFixed(2));
       const currentMeterReading = (previousMeterReading + unitProduced).toFixed(2);
 
       const newLog = await strapi.entityService.create(
