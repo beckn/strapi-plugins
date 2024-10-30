@@ -117,7 +117,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           try {
             const mdm = await axios.post(`${process.env.MDM_URL}/getCustomer`, {
               phone_no,
-              utility_name
+              utility_name,
+              role: 'PROSUMER'
             });
             mdmUser = mdm?.data?.data;
             console.log("MDM User", mdmUser);
@@ -278,6 +279,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         await strapi.db.transaction(async ({ trx }) => {
             try {
                 // Step 0: Generate hash from buffer
+                if(createDerDto.type.toUpperCase() !== 'PROSUMER' || createDerDto.type.toUpperCase() !== 'CONSUMER') {
+                    throw new Error('Invalid type provided for creating DER');
+                }
                 if(!Array.isArray(filesDto)) {
                     filesDto = [filesDto];
                 }
@@ -628,6 +632,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           cred_required = false,
           recurring = false
         } = tradeDto;
+        if(quantity < 0) {
+            throw new Error('Quantity must be greater than 0');
+        }
         const updateScProduct = await strapi.entityService.update(
           "api::sc-product.sc-product",
           id,

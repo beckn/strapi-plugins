@@ -1,0 +1,1597 @@
+{
+	"info": {
+		"_postman_id": "a7a2d77a-5d66-4825-9969-2734f538fe57",
+		"name": "Beckn One",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4049356"
+	},
+	"item": [
+		{
+			"name": "DeDi",
+			"item": [
+				{
+					"name": "Add a Namespace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let requestBody = JSON.parse(pm.request.body.raw);",
+									"let fieldValue = requestBody.namespace;",
+									"pm.collectionVariables.set(\"NAMESPACE\", fieldValue);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"namespace\": \"HyperbecknEnergy\",\n    \"namespaceId\": \"HyperBecknEnergy\",\n    \"description\": \"This is a namespace representing utilization of hyper beckn for energy use cases\",\n    \"created_by\": \"did:cord:3jsdnvjnbj8sn23kjnHJjksaj\",\n    \"version_count\": \"1.0.0\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DEDI_BASE_URL}}/addNamespace",
+							"host": [
+								"{{DEDI_BASE_URL}}"
+							],
+							"path": [
+								"addNamespace"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Registry to Namespace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseBody = pm.response.json();",
+									"",
+									"",
+									"let registryId = responseBody.registryId;",
+									"let authorization = responseBody.authorization;",
+									"",
+									"",
+									"pm.collectionVariables.set(\"REGISTRY_ID\", registryId);",
+									"pm.collectionVariables.set(\"REGISTRY_AUTH\", authorization);",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"registryName\": \"utility-provider\",\n  \"description\": \"A registry for utility providers\",\n  \"created_by\": \"admin_user\",\n  \"schemaId\":\"schema:cord:s31PBLJLEMidrsLj1do3XEZLisQo7Q1bYqPSNgPDFD8CTPFoy\",\n  \"schema\": {\n    \"fields\": [\n    {\n        \"name\": \"company_id\",\n        \"type\": \"string\"\n    },\n    {\n        \"name\": \"company_name\",\n        \"type\": \"string\"\n    },\n    {\n        \"name\": \"state_region\",\n        \"type\": \"string\"\n    },\n    {\n        \"name\": \"headquarters\",\n        \"type\": \"string\"\n    },\n    {\n        \"name\": \"contact_email\",\n        \"type\": \"string\"\n    },\n    {\n        \"name\": \"contact_phone\",\n        \"type\": \"string\"\n    },\n    {\n        \"name\": \"customer_service_portal_url\",\n        \"type\": \"string\"\n    },\n    {\n        \"name\": \"status\",\n        \"type\": \"string\"\n    },\n    {\n        \"name\": \"der_participation\",\n        \"type\": \"string\"\n    },\n    {\n        \"name\": \"established_year\",\n        \"type\": \"number\"\n    }\n]\n\n  },\n  \"version_count\": \"1.0.0\",\n  \"query_allowed\": true\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DEDI_BASE_URL}}/{{NAMESPACE}}/addDir",
+							"host": [
+								"{{DEDI_BASE_URL}}"
+							],
+							"path": [
+								"{{NAMESPACE}}",
+								"addDir"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Record to Registry",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"authorization\":\"{{REGISTRY_AUTH}}\",\n  \"recordName\": \"Utility company 1 - ELC034\",\n  \"description\": \"Utility company data\",\n  \"details\":  {\n        \"company_id\": \"ELC034\",\n        \"company_name\": \"Gujarat Electricity Corp. Ltd\",\n        \"state_region\": \"Gujarat\",\n        \"headquarters\": \"Gandhinagar\",\n        \"contact_email\": \"info@gujelectricity.com\",\n        \"contact_phone\": \"079-87654321\",\n        \"customer_service_portal_url\": \"https://www.gujelectricity.com\",\n        \"status\": \"Active\",\n        \"der_participation\": \"Yes\",\n        \"established_year\": 1970\n    },\n  \"version_count\": \"1.0.0\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DEDI_BASE_URL}}/{{NAMESPACE}}/{{REGISTRY_ID}}/addRecord",
+							"host": [
+								"{{DEDI_BASE_URL}}"
+							],
+							"path": [
+								"{{NAMESPACE}}",
+								"{{REGISTRY_ID}}",
+								"addRecord"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Query Records of a Registry",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DEDI_BASE_URL}}/query/{{NAMESPACE}}/{{REGISTRY_ID}}",
+							"host": [
+								"{{DEDI_BASE_URL}}"
+							],
+							"path": [
+								"query",
+								"{{NAMESPACE}}",
+								"{{REGISTRY_ID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Non-Beckn-APIs",
+			"item": [
+				{
+					"name": "BAP",
+					"item": [
+						{
+							"name": "Admin",
+							"item": [
+								{
+									"name": "Start Trade",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{BAP_LOGIN_TOKEN_ADMIN}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BAP_BASE_URL}}/beckn-trade-bap/start-trade",
+											"host": [
+												"{{BAP_BASE_URL}}"
+											],
+											"path": [
+												"beckn-trade-bap",
+												"start-trade"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Pending Trades",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{BAP_LOGIN_TOKEN_ADMIN}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BAP_BASE_URL}}/beckn-trade-bap/get-pending-trades",
+											"host": [
+												"{{BAP_BASE_URL}}"
+											],
+											"path": [
+												"beckn-trade-bap",
+												"get-pending-trades"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Login",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var responsedata = pm.response.json();",
+													"var BAP_LOGIN_TOKEN = responsedata.jwt;",
+													"",
+													"pm.collectionVariables.set(\"BAP_LOGIN_TOKEN_ADMIN\", BAP_LOGIN_TOKEN)"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"email\":\"admin@becknprotocol.io\",\n    \"password\":\"Abcd@1234\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BAP_BASE_URL}}/beckn-trade-bap/login",
+											"host": [
+												"{{BAP_BASE_URL}}"
+											],
+											"path": [
+												"beckn-trade-bap",
+												"login"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Customer",
+							"item": [
+								{
+									"name": "Sign Up",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"fullname\": \"Shreya Vishal\",\n    \"phone_number\": \"9718329616\",\n    \"email\": \"shreya1.vishal@eminds.ai\",\n    \"password\": \"Abcd@1234\",\n    \"utility\": \"MSEB\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BAP_BASE_URL}}/beckn-trade-bap/signup",
+											"host": [
+												"{{BAP_BASE_URL}}"
+											],
+											"path": [
+												"beckn-trade-bap",
+												"signup"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Login",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var responsedata = pm.response.json();",
+													"var BAP_LOGIN_TOKEN = responsedata.jwt;",
+													"",
+													"pm.collectionVariables.set(\"BAP_LOGIN_TOKEN\", BAP_LOGIN_TOKEN)"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"email\":\"shreya1.vishal@eminds.ai\",\n    \"password\":\"Abcd@1234\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BAP_BASE_URL}}/beckn-trade-bap/login",
+											"host": [
+												"{{BAP_BASE_URL}}"
+											],
+											"path": [
+												"beckn-trade-bap",
+												"login"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create DER",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{BAP_LOGIN_TOKEN}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "proofs",
+													"type": "file",
+													"src": [
+														"/Users/shreyavishal/Desktop/Screenshot 2024-10-28 at 6.00.31 PM.png",
+														"/Users/shreyavishal/Desktop/Screenshot 2024-10-22 at 3.30.19 PM.png"
+													]
+												},
+												{
+													"key": "type",
+													"value": "CONSUMER",
+													"type": "text"
+												},
+												{
+													"key": "category",
+													"value": "Storage battery2",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{BAP_BASE_URL}}/beckn-trade-bap/der",
+											"host": [
+												"{{BAP_BASE_URL}}"
+											],
+											"path": [
+												"beckn-trade-bap",
+												"der"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get DERs",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{BAP_LOGIN_TOKEN}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": []
+										},
+										"url": {
+											"raw": "{{BAP_BASE_URL}}/beckn-trade-bap/der?id=2",
+											"host": [
+												"{{BAP_BASE_URL}}"
+											],
+											"path": [
+												"beckn-trade-bap",
+												"der"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "2"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete DER",
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{BAP_LOGIN_TOKEN}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BAP_BASE_URL}}/beckn-trade-bap/der?id=2",
+											"host": [
+												"{{BAP_BASE_URL}}"
+											],
+											"path": [
+												"beckn-trade-bap",
+												"der"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "2"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Trade",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{BAP_LOGIN_TOKEN}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"quantity\": 12,\n    \"unit\": \"kwh\",\n    \"item_name\": \"energy\",\n    \"trusted_source\": true,\n    \"cred_required\": true,\n    \"recurring\": false,\n    \"domain\": \"uei:p2p_trading\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BAP_BASE_URL}}/beckn-trade-bap/trade",
+											"host": [
+												"{{BAP_BASE_URL}}"
+											],
+											"path": [
+												"beckn-trade-bap",
+												"trade"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Trades",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{BAP_LOGIN_TOKEN}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BAP_BASE_URL}}/beckn-trade-bap/trade",
+											"host": [
+												"{{BAP_BASE_URL}}"
+											],
+											"path": [
+												"beckn-trade-bap",
+												"trade"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Trade by Id",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{BAP_LOGIN_TOKEN}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BAP_BASE_URL}}/beckn-trade-bap/trade?id=1",
+											"host": [
+												"{{BAP_BASE_URL}}"
+											],
+											"path": [
+												"beckn-trade-bap",
+												"trade"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Upload User Credential",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{BAP_LOGIN_TOKEN}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "credential",
+													"type": "file",
+													"src": "/Users/shreyavishal/Desktop/certificate.json"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{BAP_BASE_URL}}/beckn-trade-bap/upload-user-credential",
+											"host": [
+												"{{BAP_BASE_URL}}"
+											],
+											"path": [
+												"beckn-trade-bap",
+												"upload-user-credential"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get User Credential",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{BAP_LOGIN_TOKEN}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BAP_BASE_URL}}/beckn-trade-bap/get-user-credential",
+											"host": [
+												"{{BAP_BASE_URL}}"
+											],
+											"path": [
+												"beckn-trade-bap",
+												"get-user-credential"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Dashboard Data",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{BAP_LOGIN_TOKEN}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BAP_BASE_URL}}/beckn-trade-bap/dashboard",
+											"host": [
+												"{{BAP_BASE_URL}}"
+											],
+											"path": [
+												"beckn-trade-bap",
+												"dashboard"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "BPP",
+					"item": [
+						{
+							"name": "signup",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"first_name\": \"Rahul\",\n    \"last_name\": \"Singh\",\n    \"email\": \"rahul.s@gmail.com\",\n    \"password\": \"Test@123\",\n    \"phone_no\": \"9909988765\",\n    \"utility_name\": \"Reliance Power\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BPP_BASE_URL}}/signup",
+									"host": [
+										"{{BPP_BASE_URL}}"
+									],
+									"path": [
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Credentials",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{BPP_LOGIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BPP_BASE_URL}}/cred",
+									"host": [
+										"{{BPP_BASE_URL}}"
+									],
+									"path": [
+										"cred"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "profile",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{BPP_LOGIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"provider_name\": \"Rahul Energy\",\n    \"domain_id\": 12,\n    \"short_desc\": \"Rahul Energy Company\",\n    \"long_desc\": \"Big Rahul Energy Company\",\n    \"domain_name\": \"uei:p2p_trading\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BPP_BASE_URL}}/profile",
+									"host": [
+										"{{BPP_BASE_URL}}"
+									],
+									"path": [
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "trade",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{BPP_LOGIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"quantity\": \"15\",\n  \"unit\": \"KWH\",\n  \"item_name\": \"energy\",\n  \"trusted_source\": false,\n  \"cred_required\": false,\n  \"recurring\": true,\n  \"price\": 13\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BPP_BASE_URL}}/trade",
+									"host": [
+										"{{BPP_BASE_URL}}"
+									],
+									"path": [
+										"trade"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"leela@gmail.com\",\n    \"password\": \"Test@123\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BPP_BASE_URL}}/login",
+									"host": [
+										"{{BPP_BASE_URL}}"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create der",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{BPP_LOGIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "type",
+											"value": "prosumer",
+											"type": "text"
+										},
+										{
+											"key": "category",
+											"value": "Solar panel 2",
+											"type": "text"
+										},
+										{
+											"key": "proof",
+											"type": "file",
+											"src": [
+												"/Users/rahulkumr/Desktop/Screenshot 2023-11-28 at 5.20.00 PM.png",
+												"/Users/rahulkumr/Desktop/Screenshot 2024-02-12 at 8.33.37 PM.png"
+											]
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BPP_BASE_URL}}/der",
+									"host": [
+										"{{BPP_BASE_URL}}"
+									],
+									"path": [
+										"der"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get der",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{BPP_LOGIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BPP_BASE_URL}}/der",
+									"host": [
+										"{{BPP_BASE_URL}}"
+									],
+									"path": [
+										"der"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All trade",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{BPP_LOGIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BPP_BASE_URL}}/trade",
+									"host": [
+										"{{BPP_BASE_URL}}"
+									],
+									"path": [
+										"trade"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get trade by id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{BPP_LOGIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BPP_BASE_URL}}/trade?id=20",
+									"host": [
+										"{{BPP_BASE_URL}}"
+									],
+									"path": [
+										"trade"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "20"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete DER by Id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{BPP_LOGIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BPP_BASE_URL}}/der/1",
+									"host": [
+										"{{BPP_BASE_URL}}"
+									],
+									"path": [
+										"der",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dashboard",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{BPP_LOGIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BPP_BASE_URL}}/dashboard",
+									"host": [
+										"{{BPP_BASE_URL}}"
+									],
+									"path": [
+										"dashboard"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "upload user credential",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{BPP_LOGIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "credential",
+											"type": "file",
+											"src": "/Users/rahulkumr/Desktop/my-cred.json"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BPP_BASE_URL}}/upload-cred",
+									"host": [
+										"{{BPP_BASE_URL}}"
+									],
+									"path": [
+										"upload-cred"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "MDM",
+					"item": [
+						{
+							"name": "Get Customer",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"phone_no\": \"9718329616\",\n    \"utility_name\": \"MSEB\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{MDM_BASE_URL}}/beckn-mdm/getCustomer",
+									"host": [
+										"{{MDM_BASE_URL}}"
+									],
+									"path": [
+										"beckn-mdm",
+										"getCustomer"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dashboard",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"customerId\": \"12346\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{MDM_BASE_URL}}/beckn-mdm/getStatistics",
+									"host": [
+										"{{MDM_BASE_URL}}"
+									],
+									"path": [
+										"beckn-mdm",
+										"getStatistics"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Common",
+					"item": [
+						{
+							"name": "Get Utilitites",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BAP_BASE_URL}}/beckn-trade-bap/get-utilities",
+									"host": [
+										"{{BAP_BASE_URL}}"
+									],
+									"path": [
+										"beckn-trade-bap",
+										"get-utilities"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Credentialing",
+			"item": [
+				{
+					"name": "Schema",
+					"item": [
+						{
+							"name": "Create Schema",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let responseBody = pm.response.json();",
+											"",
+											"",
+											"let schemaId = responseBody.schemaId;",
+											"",
+											"",
+											"",
+											"pm.collectionVariables.set(\"SCHEMA_ID\", schemaId);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"schema\": {\n    \"title\": \"Test Schema\",\n    \"description\": \"This is a Test Schema\",\n    \"properties\": {\n      \"firstName\": { \"type\": \"string\"},\n      \"lastName\": { \"type\": \"string\"}\n    }\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ISSUER_BASE_URL}}/schema",
+									"host": [
+										"{{ISSUER_BASE_URL}}"
+									],
+									"path": [
+										"schema"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Schema",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ISSUER_BASE_URL}}/schema/{{SCHEMA_ID}}",
+									"host": [
+										"{{ISSUER_BASE_URL}}"
+									],
+									"path": [
+										"schema",
+										"{{SCHEMA_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Issuer",
+					"item": [
+						{
+							"name": "Create Cred",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let responseBody = pm.response.json();",
+											"",
+											"",
+											"let credId = responseBody.identifier;",
+											"let credContent = JSON.stringify(responseBody.vc);",
+											"",
+											"",
+											"",
+											"pm.collectionVariables.set(\"CRED_ID\", credId);",
+											"pm.collectionVariables.set('CRED_CONTENT',credContent);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"schemaId\": \"schema:cord:s35n99iTJqihH9akBaX5XPW1oqFsNSeW6xwtEJ7XFmAyx9ZUG\",\n  \"properties\": {\n   \"name\": \"Anand\",\n    \"email\": \"anand@pulseenergy.io\",\n    \"id\": \"did:web:anand@pulseenergy.io\",\n    \"Certificate\": {\n      \"name\": \"ISO 50001 Certificate\",\n      \"value\": \"ISO Certified\",\n      \"Description\": \"an ISO 50001 certificate can provide assurance to sellers or energy providers that a buyer is committed to managing their energy responsibly.\"\n    }\n  \n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ISSUER_BASE_URL}}/cred",
+									"host": [
+										"{{ISSUER_BASE_URL}}"
+									],
+									"path": [
+										"cred"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Cred",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ISSUER_BASE_URL}}/cred/{{CRED_ID}}",
+									"host": [
+										"{{ISSUER_BASE_URL}}"
+									],
+									"path": [
+										"cred",
+										"{{CRED_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Verify",
+					"item": [
+						{
+							"name": "Verify Cred",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{{CRED_CONTENT}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CORD_BASE_URL}}/verify/credentials/verify",
+									"host": [
+										"{{CORD_BASE_URL}}"
+									],
+									"path": [
+										"verify",
+										"credentials",
+										"verify"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Beckn",
+			"item": [
+				{
+					"name": "Discovery",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responsedata = pm.response.json();",
+									"var TRANSACTION_ID = responsedata.context.transaction_id;",
+									"",
+									"pm.collectionVariables.set(\"TRANSACTION_ID\", TRANSACTION_ID)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{DOMAIN}}\",\n        \"bap_id\": \"{{BAP_ID}}\",\n        \"action\": \"search\",\n        \"bap_uri\": \"{{BAP_URI}}\",\n        \"version\": \"1.1.0\",\n        \"transaction_id\": \"{{$randomUUID}}\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"location\": {\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            },\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            }\n        },\n        \"ttl\": \"PT10M\",\n        \"timestamp\": \"2024-10-30T07:34:57.476Z\"\n    },\n    \"message\": {\n        \"intent\": {\n            \"item\": {\n                \"quantity\": {\n                    \"available\": {\n                        \"measure\": {\n                            \"value\": \"12\",\n                            \"unit\": \"kwh\"\n                        }\n                    }\n                }\n            },\n            \"location\": {\n                \"circle\": {\n                    \"gps\": \"12.423423,77.325647\",\n                    \"radius\": {\n                        \"type\": \"CONSTANT\",\n                        \"value\": \"5\",\n                        \"unit\": \"km\"\n                    }\n                }\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BAP_CLIENT_BASE_URL}}/search",
+							"host": [
+								"{{BAP_CLIENT_BASE_URL}}"
+							],
+							"path": [
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cred",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{DOMAIN}}\",\n        \"bap_id\": \"{{BAP_ID}}\",\n        \"bpp_id\": \"{{BPP_ID}}\",\n        \"bpp_uri\": \"{{BPP_URI}}\",\n        \"action\": \"cred\",\n        \"bap_uri\": \"{{BAP_URI}}\",\n        \"version\": \"1.1.0\",\n        \"transaction_id\": \"{{TRANSACTION_ID}}\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"location\": {\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            },\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            }\n        },\n        \"ttl\": \"PT10M\",\n        \"timestamp\": \"2024-10-30T07:35:20.122Z\"\n    },\n    \"message\": {\n        \"asset\": {\n            \"type\": \"provider\",\n            \"id\": \"2\"\n        },\n        \"requested_proofs\": [\n            {\n                \"descriptor\": {\n                    \"name\": \"some name\",\n                    \"code\": \"some code\",\n                    \"short_desc\": \"some short desc\"\n                }\n            }\n        ]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BAP_CLIENT_BASE_URL}}/cred",
+							"host": [
+								"{{BAP_CLIENT_BASE_URL}}"
+							],
+							"path": [
+								"cred"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Init",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{DOMAIN}}\",\n        \"bap_id\": \"{{BAP_ID}}\",\n        \"bpp_id\": \"{{BPP_ID}}\",\n        \"bpp_uri\": \"{{BPP_URI}}\",\n        \"action\": \"init\",\n        \"bap_uri\": \"{{BAP_URI}}\",\n        \"version\": \"1.1.0\",\n        \"transaction_id\": \"{{TRANSACTION_ID}}\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"location\": {\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            },\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            }\n        },\n        \"ttl\": \"PT10M\",\n        \"timestamp\": \"2024-10-30T07:35:20.122Z\"\n    },\n    \"message\": {\n        \"order\": {\n            \"provider\": {\n                \"id\": \"2\"\n            },\n            \"items\": [\n                {\n                    \"id\": \"2\",\n                    \"quantity\": {\n                        \"selected\": {\n                            \"count\": 12\n                        }\n                    }\n                }\n            ],\n            \"fulfillments\": [\n                {\n                    \"id\": \"1\",\n                    \"type\": \"START\"\n                },\n                {\n                    \"id\": \"2\",\n                    \"type\": \"END\"\n                }\n            ],\n            \"billing\": {\n                \"phone\": \"9718329616\",\n                \"name\": \"Shreya Vishal\",\n                \"email\": \"shreya.vishal@eminds.ai\"\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BAP_CLIENT_BASE_URL}}/init",
+							"host": [
+								"{{BAP_CLIENT_BASE_URL}}"
+							],
+							"path": [
+								"init"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"context\": {\n        \"domain\": \"{{DOMAIN}}\",\n        \"bap_id\": \"{{BAP_ID}}\",\n        \"bpp_id\": \"{{BPP_ID}}\",\n        \"bpp_uri\": \"{{BPP_URI}}\",\n        \"action\": \"confirm\",\n        \"bap_uri\": \"{{BAP_URI}}\",\n        \"version\": \"1.1.0\",\n        \"transaction_id\": \"{{TRANSACTION_ID}}\",\n        \"message_id\": \"{{$randomUUID}}\",\n        \"location\": {\n            \"country\": {\n                \"name\": \"India\",\n                \"code\": \"IND\"\n            },\n            \"city\": {\n                \"name\": \"Bangalore\",\n                \"code\": \"std:080\"\n            }\n        },\n        \"ttl\": \"PT10M\",\n        \"timestamp\": \"2024-10-30T07:35:20.122Z\"\n    },\n    \"message\": {\n        \"order\": {\n            \"provider\": {\n                \"id\": \"2\"\n            },\n            \"items\": [\n                {\n                    \"id\": \"2\",\n                    \"quantity\": {\n                        \"selected\": {\n                            \"count\": 12\n                        }\n                    }\n                }\n            ],\n            \"fulfillments\": [\n                {\n                    \"id\": \"1\",\n                    \"type\": \"START\"\n                },\n                {\n                    \"id\": \"2\",\n                    \"type\": \"END\"\n                }\n            ],\n            \"billing\": {\n                \"phone\": \"9718329616\",\n                \"name\": \"Shreya Vishal\",\n                \"email\": \"shreya.vishal@eminds.ai\"\n            },\n            \"payments\": [\n                {\n                    \"id\": \"payment-id-c879cfc1-ff9e-4770-9866-b9d8ba68a75e\",\n                    \"collected_by\": \"BPP\",\n                    \"params\": {\n                        \"amount\": \"84\",\n                        \"currency\": \"INR\",\n                        \"bank_account_number\": \"1234002341\",\n                        \"bank_code\": \"INB0004321\",\n                        \"bank_account_name\": \"Leela Energy Corp\"\n                    },\n                    \"status\": \"PAID\",\n                    \"type\": \"PRE-ORDER\"\n                }\n            ]\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BAP_CLIENT_BASE_URL}}/confirm",
+							"host": [
+								"{{BAP_CLIENT_BASE_URL}}"
+							],
+							"path": [
+								"confirm"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "MDM_BASE_URL",
+			"value": "https://mock-mdm.becknprotocol.io",
+			"type": "string"
+		},
+		{
+			"key": "BAP_BASE_URL",
+			"value": "https://bap-backend-dev.becknprotocol.io",
+			"type": "string"
+		},
+		{
+			"key": "BAP_LOGIN_TOKEN",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "BAP_LOGIN_TOKEN_ADMIN",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "DEDI_BASE_URL",
+			"value": "https://lookup.dedi.global/dedi",
+			"type": "string"
+		},
+		{
+			"key": "namespace",
+			"value": ""
+		},
+		{
+			"key": "NAMESPACE",
+			"value": ""
+		},
+		{
+			"key": "REGISTRY_ID",
+			"value": ""
+		},
+		{
+			"key": "REGISTRY_AUTH",
+			"value": ""
+		},
+		{
+			"key": "SCHEMA_ID",
+			"value": ""
+		},
+		{
+			"key": "ISSUER_BASE_URL",
+			"value": "https://issuer-agent.demo.dhiway.com/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "CRED_ID",
+			"value": ""
+		},
+		{
+			"key": "CRED_CONTENT",
+			"value": ""
+		},
+		{
+			"key": "CORD_BASE_URL",
+			"value": "https://api.cord.network/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "BPP_BASE_URL",
+			"value": "https://bpp-unified-strapi-dev.becknprotocol.io/beckn-trade-bpp",
+			"type": "string"
+		},
+		{
+			"key": "BPP_LOGIN_TOKEN",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTcyOTk1NjQyMywiZXhwIjoxNzI5OTYzNjIzfQ.p9AQJROn75iOVPrtz1uZv4AVemLl-syr7dmvLB-Hv2g",
+			"type": "string"
+		},
+		{
+			"key": "BAP_ID",
+			"value": "bap-ps-network-dev.becknprotocol.io",
+			"type": "string"
+		},
+		{
+			"key": "BAP_URI",
+			"value": "https://bap-ps-network-dev.becknprotocol.ioa",
+			"type": "string"
+		},
+		{
+			"key": "BPP_ID",
+			"value": "bpp-ps-network-strapi2-dev.becknprotocol.io",
+			"type": "string"
+		},
+		{
+			"key": "BPP_URI",
+			"value": "http://bpp-ps-network-strapi2-dev.becknprotocol.io",
+			"type": "string"
+		},
+		{
+			"key": "BAP_CLIENT_BASE_URL",
+			"value": "https://bap-ps-client-dev.becknprotocol.io",
+			"type": "string"
+		},
+		{
+			"key": "DOMAIN",
+			"value": "uei:p2p_trading",
+			"type": "string"
+		},
+		{
+			"key": "TRANSACTION_ID",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
