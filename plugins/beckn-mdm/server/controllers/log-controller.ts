@@ -13,10 +13,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const logService = strapi.plugin("beckn-mdm").service("logService");
       
       customers.forEach(async (customer) => {
-        if (customer.role === ROLES.CONSUMER) {
+        if (customer.role === ROLES.CONSUMER || customer.role === ROLES.PROSUMER) {
           const result = await logService.createConsumptionLog(customer);
           console.log("Consumer Log created:", result);
-        } else if (customer.role === ROLES.PROSUMER) {
+        }
+        if (customer.role === ROLES.PROSUMER) {
           const result = await logService.createProductionLog(customer);
           console.log("Prosumer Log created:", result);
         }
