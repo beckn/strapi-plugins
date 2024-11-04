@@ -41,7 +41,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         },
         contact: {
           email: billing?.email,
-          phone: billing?.phone,
+          phone: billing?.phone
         }
       };
       const custEmail = customer?.contact?.email;
@@ -58,7 +58,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const shipping =
         (fulfillments[0]?.stops
           ? fulfillments[0]?.stops.find((elem: any) => elem.type === "start") ||
-          fulfillments[0]?.stops[0]
+            fulfillments[0]?.stops[0]
           : undefined) || billing;
       const shippingDetail = {
         gps: shipping?.location?.gps || "",
@@ -139,10 +139,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const custId = existingCustomer
             ? existingCustomer.id
             : (
-              await strapi.entityService.create("api::customer.customer", {
-                data: custData
-              })
-            ).id;
+                await strapi.entityService.create("api::customer.customer", {
+                  data: custData
+                })
+              ).id;
 
           // Create shipping location
           const createShipping = await strapi.entityService.create(
@@ -188,13 +188,39 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             order_tracking_id: trackingId,
             state_code: defaultState.state.state_code,
             state_value: defaultState.state.state_value,
-            publishedAt: isoString
+            publishedAt: isoString,
+            quantity: message.order?.items[0]?.quantity?.selected?.count || 5
           };
 
           const orderFulfillmentRes = await strapi.entityService.create(
             "api::order-fulfillment.order-fulfillment",
             { data: orderFulfillmentDetail }
           );
+          // const getScRetailProduct = await strapi.entityService.findMany(
+          //   "api::sc-product.sc-product",
+          //   {
+          //     filters: {
+          //       item_id: message.order.items[0].id
+          //     }
+          //   }
+          // );
+
+          // const scRetailProductUpdateRes = await strapi.entityService.update(
+          //   "api::sc-product.sc-product",
+          //   getScRetailProduct[0].id,
+          //   {
+          //     data: {
+          //       stock_quantity:
+          //         Number(
+          //           provider[0].items[0].sc_retail_product.stock_quantity
+          //         ) -
+          //         Number(
+          //           message.order?.items[0]?.quantity?.selected?.count || 5
+          //         )
+          //     }
+          //   }
+          // );
+
           orderFulFillmentId = orderFulfillmentRes.id;
           trx.commit();
         } catch (err) {

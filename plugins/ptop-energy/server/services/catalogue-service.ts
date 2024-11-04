@@ -10,48 +10,48 @@ export default ({ strapi: any }: { strapi: Strapi }) => {
           .create({
             data: {
               ...(providerData.provider_name && {
-                provider_name: providerData.provider_name,
+                provider_name: providerData.provider_name
               }),
               ...(providerData.domain_id && {
-                domain_id: providerData.domain_id,
+                domain_id: providerData.domain_id
               }),
               ...(providerData.location_id && {
-                location_id: providerData.location_id,
+                location_id: providerData.location_id
               }),
               ...(providerData.short_desc && {
-                short_desc: providerData.short_desc,
+                short_desc: providerData.short_desc
               }),
               ...(providerData.long_desc && {
-                long_desc: providerData.long_desc,
+                long_desc: providerData.long_desc
               }),
               ...(providerData.logo && { logo: providerData.logo }),
               ...(providerData.provider_id && {
-                provider_id: providerData.provider_id,
+                provider_id: providerData.provider_id
               }),
               ...(providerData.provider_url && {
-                provider_url: providerData.provider_url,
+                provider_url: providerData.provider_url
               }),
               ...(providerData.category_ids && {
-                category_ids: providerData.category_ids,
+                category_ids: providerData.category_ids
               }),
               ...(providerData.agents &&
                 providerData.agents.length > 0 && {
-                  agents: providerData.agents,
+                  agents: providerData.agents
                 }),
               ...(providerData.items && { items: providerData.items }),
               ...(providerData.input &&
                 providerData.input.length > 0 && { input: providerData.input }),
               ...(providerData.fullfillments &&
                 providerData.fullfillments.length > 0 && {
-                  fullfillments: providerData.fullfillments,
+                  fullfillments: providerData.fullfillments
                 }),
               ...(providerData.provider_rating && {
-                provider_rating: providerData.provider_rating,
+                provider_rating: providerData.provider_rating
               }),
               ...(providerData.payment_methods && {
-                payment_methods: providerData.payment_methods,
-              }),
-            },
+                payment_methods: providerData.payment_methods
+              })
+            }
           });
         return createProvider;
       } catch (error) {
@@ -66,14 +66,14 @@ export default ({ strapi: any }: { strapi: Strapi }) => {
           "api::provider.provider",
           {
             filters: {
-              short_desc: energyData.phone,
+              short_desc: energyData.phone
             },
-            populate: ["items", "items.sc_retail_product"],
+            populate: ["items", "items.sc_retail_product"]
           }
         );
 
-        if (!provider) {
-          throw new Error("Provider not found");
+        if (!provider.length) {
+          throw new Error("Provider is not Registered as Seller");
         }
         console.log("provider::", provider);
         console.log(
@@ -82,18 +82,18 @@ export default ({ strapi: any }: { strapi: Strapi }) => {
         );
 
         if (provider[0].items.length > 0) {
-            let id = provider[0].items[0].sc_retail_product.id;
+          let id = provider[0].items[0].sc_retail_product.id;
           const updateScProduct = await strapi.entityService.update(
-              "api::sc-product.sc-product",
-              
-              id,
-              {
+            "api::sc-product.sc-product",
+
+            id,
+            {
               data: {
-                sku: (
-                  Number(provider[0].items[0].sc_retail_product.sku) +
-                  Number(energyData.unit)
-                ).toString(),
-              },
+                stock_quantity:
+                  Number(
+                    provider[0].items[0].sc_retail_product.stock_quantity
+                  ) + Number(energyData.unit)
+              }
             }
           );
           return { "sc-product": updateScProduct, provider };
@@ -108,8 +108,8 @@ export default ({ strapi: any }: { strapi: Strapi }) => {
                 stock_quantity: 10,
                 sku: energyData.unit.toString(),
                 quantity_unit: "kWH",
-                publishedAt: new Date().toISOString(),
-              },
+                publishedAt: new Date().toISOString()
+              }
             }
           );
           console.log("createScProduct::", createScProduct);
@@ -125,8 +125,8 @@ export default ({ strapi: any }: { strapi: Strapi }) => {
                 provider: provider[0].id,
                 max_quantity: 10,
                 min_quantity: 20,
-                publishedAt: new Date().toISOString(),
-              },
+                publishedAt: new Date().toISOString()
+              }
             }
           );
 
@@ -137,26 +137,27 @@ export default ({ strapi: any }: { strapi: Strapi }) => {
                 item_id: createEnergyItem.id,
                 fulfilment_id: 1,
                 location_id: provider[0].location_id.id,
-                timestamp: new Date().toISOString(),
-              },
+                timestamp: new Date().toISOString()
+              }
             }
           );
 
-          console.log('createFullfillmentIds::',createFullfillmentIds)
+          console.log("createFullfillmentIds::", createFullfillmentIds);
           const nextYear = new Date();
-            nextYear.setFullYear(nextYear.getFullYear() + 1); 
+          nextYear.setFullYear(nextYear.getFullYear() + 1);
 
-            const createFullfillmentIdsNextYear = await strapi.entityService.create(
-            "api::item-fulfillment.item-fulfillment",
-            {
+          const createFullfillmentIdsNextYear =
+            await strapi.entityService.create(
+              "api::item-fulfillment.item-fulfillment",
+              {
                 data: {
-                item_id: createEnergyItem.id,
-                fulfilment_id: 2,
-                location_id: provider[0].location_id.id,
-                timestamp: nextYear.toISOString(),
-                },
-            }
-);
+                  item_id: createEnergyItem.id,
+                  fulfilment_id: 2,
+                  location_id: provider[0].location_id.id,
+                  timestamp: nextYear.toISOString()
+                }
+              }
+            );
 
           return { item: createEnergyItem, "sc-product": createScProduct };
         }
@@ -164,6 +165,6 @@ export default ({ strapi: any }: { strapi: Strapi }) => {
         console.error("Error in updating catalogue:", error);
         throw error;
       }
-    },
+    }
   };
 };
