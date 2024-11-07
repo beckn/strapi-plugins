@@ -29,11 +29,20 @@ export const xInput = async (context: KeyValuePair) => {
     formId = "dsepScholarshipDetailsForm";
   } else if (action === "init" && domain === "dsep:jobs") {
     formId = "dsepJobsApplyForm";
-  } else if (action === "select" && domain === "online-dispute-resolution:0.1.0") {
+  } else if (
+    action === "select" &&
+    domain === "online-dispute-resolution:0.1.0"
+  ) {
     formId = "odrDisputeDetailsForm";
-  } else if (action === "init" && domain === "online-dispute-resolution:0.1.0") {
+  } else if (
+    action === "init" &&
+    domain === "online-dispute-resolution:0.1.0"
+  ) {
     formId = "odrConsentForm";
-  } else if (action === "select" && domain === "supply-chain-services:assembly") {
+  } else if (
+    action === "select" &&
+    domain === "supply-chain-services:assembly"
+  ) {
     formId = "industryAssemblyDetailsForm";
   } else if (action === "rating" && isMobility(context)) {
     formId = "ratingForm";
@@ -42,7 +51,9 @@ export const xInput = async (context: KeyValuePair) => {
   //   formId = action === "select" ? "itemDetailsForm" : "ratingForm";
   // }
 
-  return formId ? `${process.env.BPP_ADAPTER_PLUGIN_URL}/x-input/form?form_id=${formId}` : null;
+  return formId
+    ? `${process.env.BPP_ADAPTER_PLUGIN_URL}/x-input/form?form_id=${formId}`
+    : null;
 };
 
 export const quote = async (items: KeyValuePair[]) => {
@@ -116,6 +127,7 @@ export const payments = async (
 };
 
 export const price = (sc_retail_product: KeyValuePair = {}) => {
+  console.log("sc_retail_product===>", JSON.stringify(sc_retail_product));
   const { min_price = 0, currency = "INR" } = sc_retail_product || {};
   return {
     value: min_price ? min_price + "" : "0",
@@ -141,11 +153,14 @@ export const cancellationTerms = (items: KeyValuePair[]) => {
   return cancelTerms;
 };
 
-export const fulfillments = (fulfillments: KeyValuePair[], items: KeyValuePair[] = []) => {
+export const fulfillments = (
+  fulfillments: KeyValuePair[],
+  items: KeyValuePair[] = []
+) => {
   const allFulfillments = fulfillments || [];
   items.forEach((item: KeyValuePair) => {
     item?.item_fulfillment_ids?.forEach((item_fulfillment_id) => {
-      allFulfillments.push(item_fulfillment_id?.fulfilment_id)
+      allFulfillments.push(item_fulfillment_id?.fulfilment_id);
     });
   });
   return allFulfillments.map((fulfillment) => {
@@ -165,12 +180,14 @@ export const fulfillments = (fulfillments: KeyValuePair[], items: KeyValuePair[]
       agent: {
         person: {
           id: agent?.id ? agent?.id + "" : "",
-          name: agent?.first_name ? `${agent?.first_name} ${agent?.last_name}` : ""
+          name: agent?.first_name
+            ? `${agent?.first_name} ${agent?.last_name}`
+            : ""
         },
         contact: {
           phone: agent?.agent_profile?.phone_number,
           email: agent?.agent_profile?.email
-        },
+        }
       },
       vehicle: {
         make: agent?.agent_profile?.vehicle_make,
@@ -202,7 +219,11 @@ export const fulfillments = (fulfillments: KeyValuePair[], items: KeyValuePair[]
 export const locations = (locations: KeyValuePair[]) => {
   const formatedLocations: KeyValuePair[] = [];
   locations.map((location) => {
-    if (!formatedLocations.find((lc: KeyValuePair) => lc?.id === (location?.id + ""))) {
+    if (
+      !formatedLocations.find(
+        (lc: KeyValuePair) => lc?.id === location?.id + ""
+      )
+    ) {
       formatedLocations.push({
         id: location?.id ? location?.id + "" : "",
         gps: location?.gps || null,
@@ -221,4 +242,4 @@ export const locations = (locations: KeyValuePair[]) => {
     }
   });
   return formatedLocations;
-}
+};
