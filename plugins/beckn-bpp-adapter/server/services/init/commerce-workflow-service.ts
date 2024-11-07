@@ -1,5 +1,12 @@
 import { Strapi } from "@strapi/strapi";
-import { FilterUtil, ObjectUtil, SearchUtil, InitUtil, TradeUtil, isEnergy } from "../../util";
+import {
+  FilterUtil,
+  ObjectUtil,
+  SearchUtil,
+  InitUtil,
+  TradeUtil,
+  isEnergy
+} from "../../util";
 import { KeyValuePair } from ".././../types";
 import { PLUGIN } from "../../constants";
 
@@ -111,7 +118,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
       );
 
-      itemDetails = await SearchUtil.filterTrustedSource(itemDetails, context);
+      // Request for Cred from BPP is not required as of now
+      // itemDetails = await SearchUtil.filterTrustedSource(itemDetails, context);
+
       await InitUtil.createTrade(context, message.order, itemDetails[0]);
       const commonService = strapi.plugin(PLUGIN).service("commonService");
       await Promise.all(
@@ -151,8 +160,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       if (isEnergy(context)) {
         TradeUtil.addTradeLog({
           transactionId: context.transaction_id,
-          event_name: 'beckn_on_init',
-          description: 'Sending Order terms',
+          event_name: "beckn_on_init",
+          description: "Sending Order terms",
           data: initDetails
         });
       }
