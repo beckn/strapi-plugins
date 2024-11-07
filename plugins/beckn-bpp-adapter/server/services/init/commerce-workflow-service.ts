@@ -152,7 +152,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
 
       const billingInfo = billing;
-      const initDetails = itemDetails.map((item) => ({
+      let initDetails = itemDetails.map((item) => ({
         ...item,
         billing: billingInfo,
         fulfillments: fulfillments || []
@@ -165,6 +165,23 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           data: initDetails
         });
       }
+      initDetails = initDetails.map((provider) => {
+        provider.items = provider.items.map((responseItem) => {
+          const bodyItem = items.find((item) => Number(item.id) === responseItem.id);
+          if (bodyItem && bodyItem?.tags?.length) {
+            responseItem.cat_attr_tag_relations = responseItem.cat_attr_tag_relations.filter((relation) => {
+              return bodyItem.tags.some((tagGroup) =>
+                tagGroup.list.some((tag) =>
+                  tag.value === relation.taxanomy_id.value
+                )
+              );
+            });
+          }
+          return responseItem;
+        });
+
+        return provider;
+      });
       return initDetails;
     } catch (error) {
       console.error("An error occurred:", error);

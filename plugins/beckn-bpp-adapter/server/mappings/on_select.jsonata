@@ -67,27 +67,7 @@
                         $string($v.fulfilment_id.id)
                     })[] :
                 [],
-                "tags": $map(
-                    $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'TAG'}),
-                    function($v) {
-                        {
-                            "display": true,
-                            "descriptor": {
-                                "description": $v.taxanomy_id.tag_group_id.tag_group_name
-                            },
-                            "list": [
-                                {
-                                    "descriptor": {
-                                       "description": $v.taxanomy_id.tag_name,
-                                        "code": $v.taxanomy_id.code
-                                    },
-                                    "value": $v.taxanomy_id.value,
-                                    "display": true
-                                }
-                            ]
-                        }
-                    }
-                )[],
+                "tags": $groupTags(cat_attr_tag_relations),
                 "xinput": {
                     "form": {
                         "url": $xInput(%.%.context),
