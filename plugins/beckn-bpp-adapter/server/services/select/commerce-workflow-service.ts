@@ -96,7 +96,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ObjectUtil.removeEmptyKeys(filters);
       ObjectUtil.removeEmptyKeys(populate);
 
-      const itemDetails = await strapi.entityService.findMany(
+      let itemDetails = await strapi.entityService.findMany(
         "api::provider.provider",
         {
           filters,
@@ -134,6 +134,35 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
       const quantitySelected = { quantity: items[0]?.quantity?.selected?.measure?.value || 0 }
       itemDetails[0] = { ...itemDetails[0], ...quantitySelected }
+
+      console.log('Hello before: ', JSON.stringify(itemDetails));
+
+      itemDetails = itemDetails.map((provider) => {
+        provider.items = provider.items.map((responseItem) => {
+          // Find the matching item in request body by id
+          console.log("Response item: ", responseItem);
+
+          const bodyItem = items.find((item) => Number(item.id) === responseItem.id);
+          console.log("Body Item: ", bodyItem);
+
+          if (bodyItem && bodyItem?.tags?.length) {
+            // Filter `cat_attr_tag_relations` based on the tags in the body item
+            responseItem.cat_attr_tag_relations = responseItem.cat_attr_tag_relations.filter((relation) => {
+              return bodyItem.tags.some((tagGroup) =>
+                tagGroup.list.some((tag) =>
+                  tag.value === relation.taxanomy_id.value  // Check code if provided in request
+                )
+              );
+            });
+          }
+          return responseItem;
+        });
+
+        return provider;
+      });
+
+
+      console.log('Hello after: ', JSON.stringify(itemDetails));
       return itemDetails;
     } catch (error) {
       console.error("An error occurred:", error);

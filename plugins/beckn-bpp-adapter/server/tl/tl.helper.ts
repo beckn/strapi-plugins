@@ -242,3 +242,30 @@ export const locations = (locations: KeyValuePair[]) => {
   });
   return formatedLocations;
 };
+
+export const groupTags = (tagRelations) => {
+  const groupedRelationsMap = new Map();
+
+  tagRelations.forEach((taxanomy) => {
+    const tagGroupId = taxanomy.taxanomy_id?.tag_group_id?.id;
+    if (taxanomy.taxanomy === "TAG" && tagGroupId) {
+      if (!groupedRelationsMap.has(tagGroupId)) {
+        groupedRelationsMap.set(tagGroupId, {
+          descriptor: {
+            description: taxanomy.taxanomy_id.tag_group_id.tag_group_name,
+            code: taxanomy.taxanomy_id.tag_group_id.code
+          },
+          list: []
+        });
+      }
+      groupedRelationsMap.get(tagGroupId).list.push({
+        value: taxanomy?.taxanomy_id?.tag_name || "",
+        code: taxanomy?.taxanomy_id?.code || "",
+        display: taxanomy?.taxanomy_id?.display
+      });
+    }
+  });
+
+  return Array.from(groupedRelationsMap.values());
+};
+
