@@ -97,7 +97,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
       );
 
-      itemDetails = await SearchUtil.filterTrustedSource(itemDetails, context);
+      // Request for Cred from BPP is not required as of now
+      // itemDetails = await SearchUtil.filterTrustedSource(itemDetails, context);
 
       const commonService = strapi.plugin(PLUGIN).service("commonService");
       await Promise.all(
