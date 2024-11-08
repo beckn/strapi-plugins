@@ -66,7 +66,13 @@ export default ({ strapi: any }: { strapi: Strapi }) => {
           "api::provider.provider",
           {
             filters: {
-              short_desc: energyData.phone
+              agents: {
+                filters: {
+                  agent_profile: {
+                    phone_number: energyData.phone
+                  }
+                }
+              }
             },
             populate: ["items", "items.sc_retail_product"]
           }
