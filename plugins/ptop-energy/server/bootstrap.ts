@@ -18,6 +18,11 @@ export default ({ strapi }: { strapi: Strapi }) => {
       try {
         await delay(500);
         const orderDetails = await getOrderDetails(strapi, event.result.id);
+        console.log(
+          "\n\n====>orderDetails",
+          JSON.stringify(orderDetails),
+          "\n\n\n"
+        );
         const item = orderDetails[0]?.order_id.items[0];
         const scProduct = item?.sc_retail_product;
         const provider = item?.provider;
