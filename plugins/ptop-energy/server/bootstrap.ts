@@ -45,7 +45,7 @@ export default ({ strapi }: { strapi: Strapi }) => {
           )
         );
       } catch (error) {
-        console.error("ptop-energy-plugin Error:", error.message);
+        console.error("ptop-energy-plugin Error:", error);
       }
     }
   );
