@@ -67,10 +67,8 @@ export default ({ strapi: any }: { strapi: Strapi }) => {
           {
             filters: {
               agents: {
-                filters: {
-                  agent_profile: {
-                    phone_number: energyData.phone
-                  }
+                agent_profile: {
+                  phone_number: energyData.phone
                 }
               }
             },
