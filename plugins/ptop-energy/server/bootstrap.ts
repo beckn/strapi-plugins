@@ -38,7 +38,7 @@ export default ({ strapi }: { strapi: Strapi }) => {
         );
         await sendWebhook(
           buildPayload(
-            provider.short_desc,
+            provider?.agents?.[0]?.agent_profile?.phone_number || "1234567890",
             scProduct.stock_quantity,
             Number(scProduct.min_price),
             orderDetails[0].quantity
@@ -60,7 +60,9 @@ async function getOrderDetails(strapi: Strapi, fulfillmentId: number) {
         "order_id",
         "order_id.items",
         "order_id.items.sc_retail_product",
-        "order_id.items.provider"
+        "order_id.items.provider",
+        "order_id.items.provider.agent",
+        "order_id.items.provider.agent.agent_profile"
       ]
     }
   );
