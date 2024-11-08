@@ -61,8 +61,8 @@ async function getOrderDetails(strapi: Strapi, fulfillmentId: number) {
         "order_id.items",
         "order_id.items.sc_retail_product",
         "order_id.items.provider",
-        "order_id.items.provider.agent",
-        "order_id.items.provider.agent.agent_profile"
+        "order_id.items.provider.agents",
+        "order_id.items.provider.agents.agent_profile"
       ]
     }
   );
