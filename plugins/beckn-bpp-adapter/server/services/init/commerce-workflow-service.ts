@@ -172,7 +172,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             responseItem.cat_attr_tag_relations = responseItem.cat_attr_tag_relations.filter((relation) => {
               return bodyItem.tags.some((tagGroup) =>
                 tagGroup.list.some((tag) =>
-                  tag.value === relation.taxanomy_id.value
+                  tag.value === relation.taxanomy_id.tag_name
                 )
               );
             });
