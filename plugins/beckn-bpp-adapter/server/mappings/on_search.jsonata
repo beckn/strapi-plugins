@@ -70,7 +70,7 @@
                             $string($v.location_id.id)
                         })[] :
                     [],
-                    "tags": $groupTags(cat_attr_tag_relations),
+                    "tags": $tags(cat_attr_tag_relations),
                     "time": {
                         "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
                     }

@@ -58,7 +58,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const shipping =
         (fulfillments[0]?.stops
           ? fulfillments[0]?.stops.find((elem: any) => elem.type === "start") ||
-            fulfillments[0]?.stops[0]
+          fulfillments[0]?.stops[0]
           : undefined) || billing;
       const shippingDetail = {
         gps: shipping?.location?.gps || "",
@@ -139,10 +139,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const custId = existingCustomer
             ? existingCustomer.id
             : (
-                await strapi.entityService.create("api::customer.customer", {
-                  data: custData
-                })
-              ).id;
+              await strapi.entityService.create("api::customer.customer", {
+                data: custData
+              })
+            ).id;
 
           // Create shipping location
           const createShipping = await strapi.entityService.create(
@@ -196,32 +196,53 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::order-fulfillment.order-fulfillment",
             { data: orderFulfillmentDetail }
           );
-          // const getScRetailProduct = await strapi.entityService.findMany(
-          //   "api::sc-product.sc-product",
-          //   {
-          //     filters: {
-          //       item_id: message.order.items[0].id
-          //     }
-          //   }
-          // );
-
-          // const scRetailProductUpdateRes = await strapi.entityService.update(
-          //   "api::sc-product.sc-product",
-          //   getScRetailProduct[0].id,
-          //   {
-          //     data: {
-          //       stock_quantity:
-          //         Number(
-          //           provider[0].items[0].sc_retail_product.stock_quantity
-          //         ) -
-          //         Number(
-          //           message.order?.items[0]?.quantity?.selected?.count || 5
-          //         )
-          //     }
-          //   }
-          // );
-
           orderFulFillmentId = orderFulfillmentRes.id;
+
+          const onConfirm = async (orderData) => {
+            try {
+              if (
+                orderData.items &&
+                orderData.items.length > 0 &&
+                orderData.items[0].tags &&
+                orderData.items[0].tags.length > 0 &&
+                orderData.items[0].tags[0].descriptor &&
+                orderData.items[0].tags[0].descriptor.code
+              ) {
+                const code = orderData.items[0].tags[0].descriptor.code;
+                // Search for tags matching the code
+                const matchingTags = await strapi.entityService.findMany("api::tag.tag", {
+                  filters: { tag_name: code },
+                  limit: 1,
+                });
+
+                if (matchingTags.length > 0) {
+                  const tagId = matchingTags[0].id;
+                  // Replace the code with the tag ID in the desired JSON field
+                  const updatedData = {
+                    ...orderData,
+                    processedData: {
+                      ...orderData.processedData,
+                      tagId: tagId,
+                    },
+                  };
+
+                  // Update the order with the new JSON field
+                  await strapi.entityService.update("api::order.order", orderId, {
+                    data: {
+                      tags: updatedData.processedData,
+                    },
+                  });
+                } else {
+                  strapi.log.warn(`No matching tags found for code: ${code}`);
+                }
+              } else {
+                strapi.log.warn("Order items or tags are missing.");
+              }
+            } catch (error) {
+              strapi.log.error("Error in onConfirm service:", error);
+            }
+          }
+          await onConfirm(orderData);
           trx.commit();
         } catch (err) {
           trx.rollback();
