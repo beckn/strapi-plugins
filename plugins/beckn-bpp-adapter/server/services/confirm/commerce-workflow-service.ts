@@ -120,6 +120,86 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           orderId = createOrder.id;
 
           // Create order address
+          const onConfirm = async (message) => {
+            try {
+              // Ensure that the orderData has the expected structure
+              if (
+                message &&
+                message.order &&
+                Array.isArray(message.order.items) &&
+                message.order.items.length > 0
+              ) {
+                const items = message.order.items;
+          
+                console.log("message", message);
+                // Iterate over each item in the order
+                for (const item of items) {
+                  // Validate that the item has tags
+                  if (Array.isArray(item.tags) && item.tags.length > 0) {
+                    // Iterate over each tag within the item
+                    for (const tag of item.tags) {
+                      // Validate that the tag has a list
+                      if (Array.isArray(tag.list) && tag.list.length > 0) {
+                        // Iterate over each entry in the tag's list
+                        for (const listEntry of tag.list) {
+                          const code = listEntry.code;
+          
+                          if (code) {
+                            // Search for the tag in Strapi by code
+                            const matchingTags = await strapi.entityService.findMany("api::tag.tag", {
+                              filters: { tag_name: code },
+                              limit: 1,
+                            });
+                            console.log('matchingTags',matchingTags);
+          
+                            if (matchingTags.length > 0) {
+                              const tagId = matchingTags[0].id;
+          
+                              // Add the tagId to the list entry
+                              listEntry.id = tagId;
+          
+                              strapi.log.info(`Added tag ID ${tagId} to list entry with code: ${code}`);
+                            } else {
+                              strapi.log.warn(`No matching tags found for code: ${code}`);
+                            }
+                          } else {
+                            strapi.log.warn("List entry is missing the 'code' property.");
+                          }
+                        }
+                      } else {
+                        strapi.log.warn(`Tag is missing the 'list' array or it is empty for tag descriptor code: ${tag.descriptor.code}`);
+                      }
+                    }
+                  } else {
+                    strapi.log.warn(`Item with ID ${item.id} is missing 'tags' or 'tags' is not an array.`);
+                  }
+                }
+          
+                // After processing all items, update the order in Strapi
+                // Assuming you have the order ID available; adjust accordingly
+                // const orderId = message.order.id; // Adjust this path based on actual order ID location
+          
+                if (!orderId) {
+                  strapi.log.warn("Order ID is missing in orderData.message.order.");
+                  return;
+                }
+          
+                // Update the order with the modified tags
+                console.log('Orderis', orderId);
+                await strapi.entityService.update("api::order.order", orderId, {
+                  data: {
+                    tags: items, // Assuming 'items' is a writable field; adjust based on your Strapi schema
+                  },
+                });
+          
+                strapi.log.info(`Order ${orderId} has been successfully updated with tag IDs.`);
+              } else {
+                strapi.log.warn("OrderData structure is invalid or missing required fields.");
+              }
+            } catch (error) {
+              strapi.log.error("Error in onConfirm service:", error);
+            }
+          };
           const orderAddressData = {
             order_id: orderId.toString(),
             ...billingInfo,
@@ -198,51 +278,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
           orderFulFillmentId = orderFulfillmentRes.id;
 
-          const onConfirm = async (orderData) => {
-            try {
-              if (
-                orderData.items &&
-                orderData.items.length > 0 &&
-                orderData.items[0].tags &&
-                orderData.items[0].tags.length > 0 &&
-                orderData.items[0].tags[0].descriptor &&
-                orderData.items[0].tags[0].descriptor.code
-              ) {
-                const code = orderData.items[0].tags[0].descriptor.code;
-                // Search for tags matching the code
-                const matchingTags = await strapi.entityService.findMany("api::tag.tag", {
-                  filters: { tag_name: code },
-                  limit: 1,
-                });
-
-                if (matchingTags.length > 0) {
-                  const tagId = matchingTags[0].id;
-                  // Replace the code with the tag ID in the desired JSON field
-                  const updatedData = {
-                    ...orderData,
-                    processedData: {
-                      ...orderData.processedData,
-                      tagId: tagId,
-                    },
-                  };
-
-                  // Update the order with the new JSON field
-                  await strapi.entityService.update("api::order.order", orderId, {
-                    data: {
-                      tags: updatedData.processedData,
-                    },
-                  });
-                } else {
-                  strapi.log.warn(`No matching tags found for code: ${code}`);
-                }
-              } else {
-                strapi.log.warn("Order items or tags are missing.");
-              }
-            } catch (error) {
-              strapi.log.error("Error in onConfirm service:", error);
-            }
-          }
-          await onConfirm(orderData);
+          await onConfirm(message);
           trx.commit();
         } catch (err) {
           trx.rollback();
