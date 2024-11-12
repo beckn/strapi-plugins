@@ -100,6 +100,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       // Extract item values
       const itemValue = items.map((obj: { id: string }) => `${obj.id}`);
 
+
       // Start transaction
       await strapi.db.transaction(async ({ trx }) => {
         try {
@@ -222,8 +223,65 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           // );
 
           orderFulFillmentId = orderFulfillmentRes.id;
+
+          //write your code here
+          
+
+          const onConfirm =  async(orderData) =>{
+            try {
+              console.log('orderdata::', orderData);
+              if (
+                orderData.items &&
+                orderData.items.length > 0 &&
+                orderData.items[0].tags &&
+                orderData.items[0].tags.length > 0 &&
+                orderData.items[0].tags[0].descriptor &&
+                orderData.items[0].tags[0].descriptor.code
+              ) {
+                const code = orderData.items[0].tags[0].descriptor.code;
+                
+                console.log('orderdata::', code);
+                // Search for tags matching the code
+                const matchingTags = await strapi.entityService.findMany("api::tag.tag", {
+                  filters: { tag_name: code },
+                  limit: 1,
+                });
+        
+
+                if (matchingTags.length > 0) {
+                  const tagId = matchingTags[0].id;
+        
+                  // Replace the code with the tag ID in the desired JSON field
+                  const updatedData = {
+                    ...orderData,
+                    processedData: {
+                      ...orderData.processedData,
+                      tagId: tagId,
+                    },
+                  };
+        
+                  // Update the order with the new JSON field
+                  await strapi.entityService.update("api::order.order", orderId, {
+                    data: {
+                      tags: updatedData.processedData,
+                    },
+                  });
+                } else {
+                  strapi.log.warn(`No matching tags found for code: ${code}`);
+                }
+              } else {
+                strapi.log.warn("Order items or tags are missing.");
+              }
+            } catch (error) {
+              strapi.log.error("Error in onConfirm service:", error);
+            }
+          }
+
+          await onConfirm(orderData);
+          
           trx.commit();
         } catch (err) {
+          console.log(err);
           trx.rollback();
         }
       });
