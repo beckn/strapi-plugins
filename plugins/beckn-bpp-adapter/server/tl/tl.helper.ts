@@ -243,7 +243,7 @@ export const locations = (locations: KeyValuePair[]) => {
   return formatedLocations;
 };
 
-export const groupTags = (tagRelations) => {
+export const tags = (tagRelations) => {
   const groupedRelationsMap = new Map();
 
   tagRelations.forEach((taxanomy) => {

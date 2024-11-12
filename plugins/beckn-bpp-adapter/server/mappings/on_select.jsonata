@@ -67,7 +67,7 @@
                         $string($v.fulfilment_id.id)
                     })[] :
                 [],
-                "tags": $groupTags(cat_attr_tag_relations),
+                "tags": $tags(cat_attr_tag_relations),
                 "xinput": {
                     "form": {
                         "url": $xInput(%.%.context),
