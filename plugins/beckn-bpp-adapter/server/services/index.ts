@@ -25,6 +25,7 @@ import updateCommerceWorkflowService from './update/commerce-workflow-service'
 import updateAppointmentWorkflowService from './update/appointment-workflow-service';
 import credCommerceWorkflowService from './cred/commerce-workflow-service'
 import credAppointmentWorkflowService from './cred/appointment-workflow-service';
+import webhookService from './webhook/webhook-service';
 
 export default {
   healthService,
@@ -53,5 +54,6 @@ export default {
   updateCommerceWorkflowService,
   updateAppointmentWorkflowService,
   credCommerceWorkflowService,
-  credAppointmentWorkflowService
+  credAppointmentWorkflowService,
+  webhookService
 };
