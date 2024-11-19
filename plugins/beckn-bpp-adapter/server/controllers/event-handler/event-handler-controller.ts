@@ -21,6 +21,17 @@ export default ({}: { strapi: Strapi }) => ({
             !Object.keys(result).length)
         ) {
           console.log("No Data Found");
+          try {
+            const result = await strapi
+              .plugin("beckn-bpp-adapter")
+              .service("webhookService")
+              .index(filter, context.domain);
+
+            return;
+          } catch (error) {
+            console.error("Error in creating catalogue:", error);
+            return;
+          }
         } else {
           const transformedResult = await TLService.transform(
             { message: result, context },
