@@ -21,16 +21,18 @@ export default ({}: { strapi: Strapi }) => ({
             !Object.keys(result).length)
         ) {
           console.log("No Data Found");
-          try {
-            const result = await strapi
-              .plugin("beckn-bpp-adapter")
-              .service("webhookService")
-              .index(filter, context.domain);
+          if (process.env?.BECKN_ENV && process.env.BECKN_ENV === "BOC") {
+            try {
+              const result = await strapi
+                .plugin("beckn-bpp-adapter")
+                .service("webhookService")
+                .index(filter, context.domain);
 
-            return;
-          } catch (error) {
-            console.error("Error in creating catalogue:", error);
-            return;
+              return;
+            } catch (error) {
+              console.error("Error in creating catalogue:", error);
+              throw error;
+            }
           }
         } else {
           const transformedResult = await TLService.transform(
