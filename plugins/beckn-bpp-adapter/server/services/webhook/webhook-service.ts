@@ -120,6 +120,12 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
         result.image = imageUrl;
 
         if (jsonContent) {
+          console.log("Media Payload ---->", {
+            data: {
+              url: imageUrl,
+              publishedAt: new Date()
+            }
+          });
           //Create Image entry
           const createImageUrlEntry = await strapi.entityService.create(
             "api::media.media",
