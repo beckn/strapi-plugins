@@ -223,6 +223,18 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
 
 const createItemAndOtherComponents = async (item, pid, imageId) => {
   try {
+    const createdPriceBreakup = await strapi.entityService.create(
+      "api::price-bareakup.price-bareakup",
+      {
+        data: {
+          currency: "INR",
+          value: "1000",
+          title: "BASE PRICE",
+          publishedAt: new Date().toISOString()
+        }
+      }
+    );
+
     const createScProduct = await strapi.entityService.create(
       "api::sc-product.sc-product",
       {
@@ -231,6 +243,7 @@ const createItemAndOtherComponents = async (item, pid, imageId) => {
           maxPrice: item.max_price || 8,
           stock_quantity: item.stock_quantity || 10,
           sku: item.sku || 18,
+          price_bareakup_ids: [createdPriceBreakup.id],
           quantity_unit: item.unit_type || "kWH",
           publishedAt: new Date().toISOString()
         }
