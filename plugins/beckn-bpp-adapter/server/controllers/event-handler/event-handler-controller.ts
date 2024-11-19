@@ -21,7 +21,8 @@ export default ({}: { strapi: Strapi }) => ({
             !Object.keys(result).length)
         ) {
           console.log("No Data Found");
-          if (process.env?.BECKN_ENV && process.env.BECKN_ENV === "BOC") {
+          if (process.env?.BECKN_ENV && process.env?.BECKN_ENV === "BOC") {
+            console.log("ENV is ", process.env.BECKN_ENV);
             try {
               const result = await strapi
                 .plugin("beckn-bpp-adapter")
