@@ -88,7 +88,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ObjectUtil.removeEmptyKeys(filters);
       ObjectUtil.removeEmptyKeys(populate);
 
-      const itemDetails = await strapi.entityService.findMany(
+      let itemDetails = await strapi.entityService.findMany(
         "api::provider.provider",
         {
           filters,
@@ -124,6 +124,27 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
         })
       );
+      itemDetails = itemDetails.map((provider) => {
+        provider.items = provider.items.map((responseItem) => {
+          // Find the matching item in request body by id
+          const bodyItem = items.find(
+            (item) => Number(item.id) === responseItem.id
+          );
+          if (bodyItem && bodyItem?.tags?.length) {
+            // Filter `cat_attr_tag_relations` based on the tags in the body item
+            responseItem.cat_attr_tag_relations =
+              responseItem?.cat_attr_tag_relations?.filter((relation) => {
+                return bodyItem?.tags?.some((tagGroup) =>
+                  tagGroup?.list?.some(
+                    (tag) => tag?.code === relation?.taxanomy_id?.tag_name
+                  )
+                );
+              });
+          }
+          return responseItem;
+        });
+        return provider;
+      });
       return itemDetails;
     } catch (error) {
       console.error("An error occurred:", error);

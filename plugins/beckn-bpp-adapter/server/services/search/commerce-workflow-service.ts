@@ -56,7 +56,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       payment_methods: {},
       category_ids: {},
       location_id: {},
-      fulfillments: {}
+      fulfillments: {},
+      tags: {
+        populate: {
+          tag_group_id: {}
+        }
+      }
     };
 
     if (domain) {
@@ -117,6 +122,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     const commonService = strapi.plugin(PLUGIN).service("commonService");
     await Promise.all(
       providers.map(async (provider) => {
+        provider.tags = provider.tags.map((tag) => ({
+          taxanomy: "TAG",
+          taxanomy_id: tag,
+        }));
         await Promise.all(
           await provider.items.map(async (item) => {
             await Promise.all(

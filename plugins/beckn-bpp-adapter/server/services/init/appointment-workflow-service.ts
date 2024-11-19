@@ -129,10 +129,29 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         })
       );
       const billingInfo = billing;
-      const initDetails = itemDetails.map((item) => ({
+      let initDetails = itemDetails.map((item) => ({
         ...item,
         billing: billingInfo
       }));
+      initDetails = initDetails.map((provider) => {
+        provider.items = provider.items.map((responseItem) => {
+          const bodyItem = items.find(
+            (item) => Number(item.id) === responseItem.id
+          );
+          if (bodyItem && bodyItem?.tags?.length) {
+            responseItem.cat_attr_tag_relations =
+              responseItem?.cat_attr_tag_relations?.filter((relation) => {
+                return bodyItem?.tags?.some((tagGroup) =>
+                  tagGroup?.list?.some(
+                    (tag) => tag?.code === relation?.taxanomy_id?.tag_name
+                  )
+                );
+              });
+          }
+          return responseItem;
+        });
+        return provider;
+      });
       return initDetails;
     } catch (error) {
       console.error("An error occurred:", error);
