@@ -111,15 +111,20 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
       try {
         // const jsonContent = convertStringToJson(textContent);
         let imageUrl: string = "";
+        console.log("imageUrl1===>", imageUrl);
         try {
           imageUrl = await generateImage(jsonContent.item.short_desc);
+          console.log("imageUrl2===>", imageUrl);
         } catch (error) {
+          console.log("imageUrl3===>", imageUrl);
           imageUrl =
             "https://cdn.dribbble.com/userupload/13122412/file/original-1c0cc292b76bdcbdc1286a9008e572ef.png?crop=35x0-830x596";
         }
         result.image = imageUrl;
+        console.log("imageUrl4===>", imageUrl);
 
         if (jsonContent) {
+          console.log("imageUrl5===>", imageUrl);
           console.log("Media Payload ---->", {
             data: {
               url: imageUrl,
