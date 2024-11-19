@@ -246,7 +246,7 @@ export const locations = (locations: KeyValuePair[]) => {
 export const tags = (tagRelations) => {
   const groupedRelationsMap = new Map();
 
-  tagRelations.forEach((taxanomy) => {
+  tagRelations?.forEach((taxanomy) => {
     const tagGroupId = taxanomy.taxanomy_id?.tag_group_id?.id;
     if (taxanomy.taxanomy === "TAG" && tagGroupId) {
       if (!groupedRelationsMap.has(tagGroupId)) {
@@ -286,7 +286,7 @@ export const providerTags = (tagRelations) => {
       }
       groupedRelationsMap.get(tagGroupId).list.push({
         descriptor: {
-          name: taxanomy?.taxanomy_id?.tag_name || "",
+          name: taxanomy?.taxanomy_id?.tag_name || ""
         },
         value: taxanomy?.taxanomy_id?.value || "",
         code: taxanomy?.taxanomy_id?.code || "",
@@ -297,4 +297,3 @@ export const providerTags = (tagRelations) => {
 
   return Array.from(groupedRelationsMap.values());
 };
-
