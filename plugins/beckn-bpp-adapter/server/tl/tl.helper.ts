@@ -272,7 +272,7 @@ export const tags = (tagRelations) => {
 export const providerTags = (tagRelations) => {
   const groupedRelationsMap = new Map();
 
-  tagRelations.forEach((taxanomy) => {
+  tagRelations?.forEach((taxanomy) => {
     const tagGroupId = taxanomy.taxanomy_id?.tag_group_id?.id;
     if (taxanomy.taxanomy === "TAG" && tagGroupId) {
       if (!groupedRelationsMap.has(tagGroupId)) {
