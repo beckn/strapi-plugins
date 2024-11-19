@@ -125,11 +125,12 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
             "api::media.media",
             {
               data: {
-                url: imageUrl
+                url: imageUrl,
+                publishedAt: new Date()
               }
             }
           );
-
+          console.log("createImageUrlEntry===>", createImageUrlEntry);
           //create provider
           let providerData;
           if (providerExists.length != 0) {
