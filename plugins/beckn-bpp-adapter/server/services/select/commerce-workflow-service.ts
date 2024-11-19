@@ -16,8 +16,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         : {};
       const itemFilter = {
         id: {
-          $in: itemValue,
-        },
+          $in: itemValue
+        }
       };
       const populate: KeyValuePair = {
         category_ids: {},
@@ -37,9 +37,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             cat_attr_tag_relations: {
               filters: {
                 taxanomy: {
-                  $in: ["TAG", "CATEGORY"],
-                },
-              },
+                  $in: ["TAG", "CATEGORY"]
+                }
+              }
             },
             image: {},
             sc_retail_product: {
@@ -70,21 +70,21 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                   }
                 },
                 location_id: {}
-              },
+              }
             },
             item_meta_id: {
               populate: {
                 fulfilment_id: {},
-                location_id: {},
-              },
-            },
-          },
-        },
+                location_id: {}
+              }
+            }
+          }
+        }
       };
 
       if (domain) {
         filters.domain_id = {
-          DomainName: domain,
+          DomainName: domain
         };
       }
 
@@ -100,7 +100,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         "api::provider.provider",
         {
           filters,
-          populate,
+          populate
         }
       );
 
@@ -115,14 +115,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     taxanomy.taxanomy_id = await commonService.getCategoryById(
                       taxanomy.taxanomy_id,
                       {
-                        parent_id: {},
+                        parent_id: {}
                       }
                     );
                   } else if (taxanomy.taxanomy === "TAG") {
                     taxanomy.taxanomy_id = await commonService.getTagById(
                       taxanomy.taxanomy_id,
                       {
-                        tag_group_id: {},
+                        tag_group_id: {}
                       }
                     );
                   }
@@ -132,22 +132,27 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
         })
       );
-      const quantitySelected = { quantity: items[0]?.quantity?.selected?.measure?.value || 0 }
-      itemDetails[0] = { ...itemDetails[0], ...quantitySelected }
+      const quantitySelected = {
+        quantity: items[0]?.quantity?.selected?.measure?.value || 0
+      };
+      itemDetails[0] = { ...itemDetails[0], ...quantitySelected };
 
       itemDetails = itemDetails.map((provider) => {
         provider.items = provider.items.map((responseItem) => {
           // Find the matching item in request body by id
-          const bodyItem = items.find((item) => Number(item.id) === responseItem.id);
+          const bodyItem = items.find(
+            (item) => Number(item.id) === responseItem.id
+          );
           if (bodyItem && bodyItem?.tags?.length) {
             // Filter `cat_attr_tag_relations` based on the tags in the body item
-            responseItem.cat_attr_tag_relations = responseItem.cat_attr_tag_relations.filter((relation) => {
-              return bodyItem.tags.some((tagGroup) =>
-                tagGroup.list.some((tag) =>
-                  tag.code === relation.taxanomy_id.tag_name  // Check code if provided in request
-                )
-              );
-            });
+            responseItem.cat_attr_tag_relations =
+              responseItem?.cat_attr_tag_relations?.filter((relation) => {
+                return bodyItem?.tags?.some((tagGroup) =>
+                  tagGroup?.list?.some(
+                    (tag) => tag?.code === relation?.taxanomy_id?.tag_name // Check code if provided in request
+                  )
+                );
+              });
           }
           return responseItem;
         });
@@ -159,5 +164,5 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       console.error("An error occurred:", error);
       throw error;
     }
-  },
+  }
 });
