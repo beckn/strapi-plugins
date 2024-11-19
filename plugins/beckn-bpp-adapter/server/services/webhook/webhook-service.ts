@@ -1,11 +1,10 @@
 import { Strapi } from "@strapi/strapi";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 const OpenAIApi = require("openai");
-require('dotenv').config();
-
+require("dotenv").config();
 
 const openai = new OpenAIApi.OpenAI({
-  apiKey: process.env.OPEN_AI_KEY || strapi.config.get("OPEN_AI_KEY"),
+  apiKey: process.env.OPEN_AI_KEY || strapi.config.get("OPEN_AI_KEY")
 });
 
 export default ({ strapi: any }: { strapi: Strapi }) => ({
@@ -26,7 +25,7 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
         Country: "Sample Country",
         zip: "12345",
         provider_rating: 4.8,
-        gps: "37.7749, -122.4194",
+        gps: "37.7749, -122.4194"
       };
 
       const dummyItem = {
@@ -48,7 +47,7 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
         stock_quantity: 50,
         stock_status: "In Stock",
         fulfillments: "Delivery in 3-5 business days",
-        unit_type: "kwh",
+        unit_type: "kwh"
       };
 
       //call Gemini to get intent
@@ -57,7 +56,7 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
       );
 
       const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-pro-001",
+        model: "gemini-1.5-pro-001"
       });
 
       //   let imagen = genai.getGenerativeModel("getGenerativeModel");
@@ -92,8 +91,8 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
         "api::domain.domain",
         {
           filters: {
-            DomainName: domain,
-          },
+            DomainName: domain
+          }
         }
       );
       console.log("DomainName::", domaiName);
@@ -102,16 +101,22 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
         "api::provider.provider",
         {
           filters: {
-            domain_id: domaiName[0].id,
+            domain_id: domaiName[0].id
           },
-          populate: ["items", "items.sc_retail_product"],
+          populate: ["items", "items.sc_retail_product"]
         }
       );
 
       console.log(domaiName);
       try {
         // const jsonContent = convertStringToJson(textContent);
-        const imageUrl = await generateImage(jsonContent.item.short_desc);
+        let imageUrl: string = "";
+        try {
+          imageUrl = await generateImage(jsonContent.item.short_desc);
+        } catch (error) {
+          imageUrl =
+            "https://cdn.dribbble.com/userupload/13122412/file/original-1c0cc292b76bdcbdc1286a9008e572ef.png?crop=35x0-830x596";
+        }
         result.image = imageUrl;
 
         if (jsonContent) {
@@ -120,8 +125,8 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
             "api::media.media",
             {
               data: {
-                url: imageUrl,
-              },
+                url: imageUrl
+              }
             }
           );
 
@@ -153,7 +158,13 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
         let resultFirstIteration: any = await model.generateContent(
           regenerateJson
         );
-        const imageUrl = await generateImage(jsonContent.item.short_desc);
+        let imageUrl: string = "";
+        try {
+          imageUrl = await generateImage(jsonContent.item.short_desc);
+        } catch (error) {
+          imageUrl =
+            "https://cdn.dribbble.com/userupload/13122412/file/original-1c0cc292b76bdcbdc1286a9008e572ef.png?crop=35x0-830x596";
+        }
         result.image = imageUrl;
 
         if (resultFirstIteration.startsWith("```")) {
@@ -168,8 +179,8 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
             "api::media.media",
             {
               data: {
-                url: imageUrl,
-              },
+                url: imageUrl
+              }
             }
           );
 
@@ -199,7 +210,7 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
     } catch (e) {
       console.log("Error", e);
     }
-  },
+  }
 });
 
 const createItemAndOtherComponents = async (item, pid, imageId) => {
@@ -213,8 +224,8 @@ const createItemAndOtherComponents = async (item, pid, imageId) => {
           stock_quantity: item.stock_quantity || 10,
           sku: item.sku || 18,
           quantity_unit: item.unit_type || "kWH",
-          publishedAt: new Date().toISOString(),
-        },
+          publishedAt: new Date().toISOString()
+        }
       }
     );
 
@@ -231,8 +242,8 @@ const createItemAndOtherComponents = async (item, pid, imageId) => {
           image: imageId,
           max_quantity: item.max_quantity || 20,
           min_quantity: item.min_quantity || 10,
-          publishedAt: new Date().toISOString(),
-        },
+          publishedAt: new Date().toISOString()
+        }
       }
     );
 
@@ -243,8 +254,8 @@ const createItemAndOtherComponents = async (item, pid, imageId) => {
           item_id: createEnergyItem.id,
           fulfilment_id: 1,
           location_id: 1,
-          timestamp: new Date().toISOString(),
-        },
+          timestamp: new Date().toISOString()
+        }
       }
     );
   } catch (error) {
@@ -273,8 +284,8 @@ const createProvider = async (data, imageId, domain_id) => {
           input: [],
           fullfillments: [],
           provider_rating: data.provider_rating.toString(),
-          payment_methods: 1,
-        },
+          payment_methods: 1
+        }
       }
     );
 
@@ -293,7 +304,7 @@ const generateImage = async (result) => {
       and words matches the given result`,
       n: 1, // Number of images to generate
       size: "512x512", // Size of the image
-      response_format: "url", // Can be 'url' or 'b64_json'
+      response_format: "url" // Can be 'url' or 'b64_json'
     });
 
     // Access the image URL from the response
