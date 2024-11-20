@@ -179,7 +179,8 @@
                 "transaction_id": transaction_id
             }[],
             "quote": $quote(message.order_id.items),
-            "cancellation_terms": $cancellationTerms(message.order_id.items)
+            "cancellation_terms": $cancellationTerms(message.order_id.items),
+            "status": message.order_id.status
         }
     }
 }
