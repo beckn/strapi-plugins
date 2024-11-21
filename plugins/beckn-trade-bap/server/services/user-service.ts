@@ -14,7 +14,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const user = await strapi
         .query("plugin::users-permissions.user")
         .findOne({
-          where: { email: { $eqi: email } }
+          where: {
+            email: { $eqi: email },
+            role: { name: { $eq: "Consumer" } }
+          }
         });
       const profile = await strapi.entityService.findMany(
         "api::profile.profile",
@@ -76,7 +79,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         "plugin::users-permissions.user",
         {
           filters: {
-            email
+            email,
+            role: { name: { $eq: "Consumer" } }
           }
         }
       );

@@ -19,7 +19,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const user = await strapi
         .query("plugin::users-permissions.user")
         .findOne({
-          where: { email: { $eqi: email } },
+          where: {
+            email: { $eqi: email },
+            role: { name: { $eq: "Prosumer" } }
+          },
           populate: {
             agent: true,
             provider: true
@@ -145,7 +148,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             {
               filters: {
                 $or: [
-                  { email: { $eqi: email } },
+                  {
+                    $and: [
+                      { email: { $eqi: email } }, // Filter by email and role
+                      { role: { name: { $eq: "Prosumer" } } }
+                    ]
+                  },
                   {
                     agent: {
                       agent_profile: { phone_number: { $eq: phone_number } }
