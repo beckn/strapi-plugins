@@ -245,6 +245,7 @@ const createItemAndOtherComponents = async (item, pid, imageId) => {
         }
       }
     );
+    console.log("createdPriceBreakup===>", createdPriceBreakup);
 
     const createScProduct = await strapi.entityService.create(
       "api::sc-product.sc-product",
@@ -260,7 +261,7 @@ const createItemAndOtherComponents = async (item, pid, imageId) => {
         }
       }
     );
-
+    console.log("createScProduct===>", createScProduct);
     const createEnergyItem = await strapi.entityService.create(
       "api::item.item",
       {
@@ -278,6 +279,7 @@ const createItemAndOtherComponents = async (item, pid, imageId) => {
         }
       }
     );
+    console.log("createEnergyItem===>", createEnergyItem);
 
     // create fulfillment
     const createFullfillmentIds = await strapi.entityService.create(
@@ -291,6 +293,7 @@ const createItemAndOtherComponents = async (item, pid, imageId) => {
         }
       }
     );
+    console.log("createFullfillmentIds===>", createFullfillmentIds);
 
     // create cattegory
     const createdCategoryIds = await strapi.entityService.create(
@@ -305,6 +308,8 @@ const createItemAndOtherComponents = async (item, pid, imageId) => {
         }
       }
     );
+    console.log("createdCategoryIds===>", createdCategoryIds);
+
     // create tag
     const createdTagIds = await strapi.entityService.create("api::tag.tag", {
       data: {
@@ -314,6 +319,8 @@ const createItemAndOtherComponents = async (item, pid, imageId) => {
         publishedAt: new Date().toISOString()
       }
     });
+    console.log("createdTagIds===>", createdTagIds);
+
     // create cattegory attribute tag mapping
     if (createdCategoryIds.id) {
       const createdCategoryItemRel = await strapi.entityService.create(
@@ -328,6 +335,7 @@ const createItemAndOtherComponents = async (item, pid, imageId) => {
           }
         }
       );
+      console.log("createdCategoryItemRel===>", createdCategoryItemRel);
     }
     if (createdCategoryIds.id) {
       const createdTagItemRel = await strapi.entityService.create(
@@ -342,6 +350,7 @@ const createItemAndOtherComponents = async (item, pid, imageId) => {
           }
         }
       );
+      console.log("createdTagItemRel===>", createdTagItemRel);
     }
   } catch (error) {
     console.log("Error while creating Item and Other Components", error);
