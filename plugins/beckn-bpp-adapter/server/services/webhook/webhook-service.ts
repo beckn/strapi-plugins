@@ -361,7 +361,7 @@ const createItemAndOtherComponents = async (item, pid, imageId, provider) => {
     // create cattegory attribute tag mapping
     if (createdCategoryIds.id) {
       const createdCategoryItemRel = await strapi.entityService.create(
-        "api::tag.tag",
+        "api::cat-attr-tag-relation.cat-attr-tag-relation",
         {
           data: {
             taxanomy: `CATEGORY`,
@@ -376,7 +376,7 @@ const createItemAndOtherComponents = async (item, pid, imageId, provider) => {
     }
     if (createdCategoryIds.id) {
       const createdTagItemRel = await strapi.entityService.create(
-        "api::tag.tag",
+        "api::cat-attr-tag-relation.cat-attr-tag-relation",
         {
           data: {
             taxanomy: `TAG`,
