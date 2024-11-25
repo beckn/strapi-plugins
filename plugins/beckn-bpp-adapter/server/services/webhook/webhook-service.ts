@@ -166,7 +166,8 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
             jsonContent.item,
             providerData.id,
             createImageUrlEntry.id,
-            jsonContent.provider
+            jsonContent.provider,
+            body
           );
 
           return { result, jsonContent: jsonContent };
@@ -221,7 +222,8 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
             resultFirstIteration.item,
             providerData.id,
             createImageUrlEntry.id,
-            resultFirstIteration.provider
+            resultFirstIteration.provider,
+            body
           );
 
           return { result, jsonContent: resultFirstIteration };
@@ -233,7 +235,13 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
   }
 });
 
-const createItemAndOtherComponents = async (item, pid, imageId, provider) => {
+const createItemAndOtherComponents = async (
+  item,
+  pid,
+  imageId,
+  provider,
+  requestBody
+) => {
   try {
     console.log("Create Item ");
     const createdPriceBreakup = await strapi.entityService.create(
@@ -268,7 +276,11 @@ const createItemAndOtherComponents = async (item, pid, imageId, provider) => {
       "api::item.item",
       {
         data: {
-          name: item.item_name,
+          name:
+            `${item.item_name} ` +
+            requestBody?.message?.intent?.item?.descriptor?.name
+              ? requestBody?.message?.intent?.item?.descriptor?.name
+              : "",
           short_desc: item.short_desc,
           long_desc: item.long_desc,
           code: item.code,
