@@ -365,7 +365,7 @@ const createItemAndOtherComponents = async (item, pid, imageId, provider) => {
         {
           data: {
             taxanomy: `CATEGORY`,
-            taxanomy_id: createdCategoryIds.id,
+            taxanomy_id: `${createdCategoryIds.id}`,
             provider: pid,
             item: createEnergyItem.id,
             publishedAt: new Date().toISOString()
@@ -380,7 +380,7 @@ const createItemAndOtherComponents = async (item, pid, imageId, provider) => {
         {
           data: {
             taxanomy: `TAG`,
-            taxanomy_id: createdTagIds.id,
+            taxanomy_id: `${createdTagIds.id}`,
             provider: pid,
             item: createEnergyItem.id,
             publishedAt: new Date().toISOString()
