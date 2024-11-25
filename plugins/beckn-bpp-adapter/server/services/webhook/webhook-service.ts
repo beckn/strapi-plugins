@@ -165,7 +165,8 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
           const item = await createItemAndOtherComponents(
             jsonContent.item,
             providerData.id,
-            createImageUrlEntry.id
+            createImageUrlEntry.id,
+            jsonContent.provider
           );
 
           return { result, jsonContent: jsonContent };
@@ -219,7 +220,8 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
           const item = await createItemAndOtherComponents(
             resultFirstIteration.item,
             providerData.id,
-            createImageUrlEntry.id
+            createImageUrlEntry.id,
+            resultFirstIteration.provider
           );
 
           return { result, jsonContent: resultFirstIteration };
@@ -231,7 +233,7 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
   }
 });
 
-const createItemAndOtherComponents = async (item, pid, imageId) => {
+const createItemAndOtherComponents = async (item, pid, imageId, provider) => {
   try {
     console.log("Create Item ");
     const createdPriceBreakup = await strapi.entityService.create(
@@ -281,19 +283,54 @@ const createItemAndOtherComponents = async (item, pid, imageId) => {
     );
     console.log("createEnergyItem===>", createEnergyItem);
 
-    // create fulfillment
-    const createFullfillmentIds = await strapi.entityService.create(
-      "api::item-fulfillment.item-fulfillment",
+    // create location
+    const createLocationIds = await strapi.entityService.create(
+      "api::location.location",
       {
         data: {
-          item_id: createEnergyItem.id,
-          fulfilment_id: 1,
-          location_id: 1,
-          timestamp: new Date().toISOString()
+          address: provider.Address,
+          city: provider.City,
+          state: provider.State,
+          country: provider.Country,
+          zip: provider.zip,
+          gps: provider.gps,
+          timestamp: new Date().toISOString(),
+          publishedAt: new Date().toISOString()
+        }
+      }
+    );
+    console.log("createLocationIds===>", createLocationIds);
+
+    // create fulfillment
+    const createFullfillmentIds = await strapi.entityService.create(
+      "api::fulfilment.fulfilment",
+      {
+        data: {
+          type: item.fulfillments,
+          provider_ids: pid,
+          rating: "4",
+          rateable: true,
+          timestamp: new Date().toISOString(),
+          publishedAt: new Date().toISOString()
         }
       }
     );
     console.log("createFullfillmentIds===>", createFullfillmentIds);
+
+    // create item-fulfillment
+    const createItemFullfillmentIds = await strapi.entityService.create(
+      "api::item-fulfillment.item-fulfillment",
+      {
+        data: {
+          item_id: createEnergyItem.id,
+          fulfilment_id: createFullfillmentIds.id,
+          location_id: createLocationIds.id,
+          timestamp: new Date().toISOString(),
+          publishedAt: new Date().toISOString()
+        }
+      }
+    );
+    console.log("createItemFullfillmentIds===>", createItemFullfillmentIds);
 
     // create cattegory
     const createdCategoryIds = await strapi.entityService.create(
