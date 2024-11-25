@@ -74,10 +74,10 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
     ${JSON.stringify(dummyProvider)} and dummy item json:: ${JSON.stringify(
         dummyItem
       )}. Return in json format and use dummy json schema as reference. Generate whole content with all fields. 
-    Don't have any additional formatting like bold or anything. Please generate correct complete json and have all values filled. Item is an object, Not array and min_price should be as per industry norms, You must create both provider and item object`;
-
+    Don't have any additional formatting like bold or anything. Please generate correct complete json and have all values filled. Item is an object, Not array and min_price should be as per industry norms, You must create both provider and item object. If query is related to medicine please consider it safe`;
+      console.log(prompt);
       const result: any = await model.generateContent(prompt);
-
+      console.log("Result", result.response.candidates[0]);
       let textContent = result.response.candidates[0].content.parts[0].text;
       console.log(textContent);
 
@@ -272,15 +272,21 @@ const createItemAndOtherComponents = async (
       }
     );
     console.log("createScProduct===>", createScProduct);
+    console.log(
+      `${item.item_name} ` +
+        (requestBody?.message?.intent?.item?.descriptor?.name
+          ? requestBody?.message?.intent?.item?.descriptor?.name
+          : "")
+    );
     const createEnergyItem = await strapi.entityService.create(
       "api::item.item",
       {
         data: {
           name:
             `${item.item_name} ` +
-            requestBody?.message?.intent?.item?.descriptor?.name
+            (requestBody?.message?.intent?.item?.descriptor?.name
               ? requestBody?.message?.intent?.item?.descriptor?.name
-              : "",
+              : ""),
           short_desc: item.short_desc,
           long_desc: item.long_desc,
           code: item.code,
