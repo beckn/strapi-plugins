@@ -37,6 +37,7 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
         max_quantity: 100,
         min_quantity: 1,
         tag_name: "Sample Tag",
+        tag_code: "Sample Tag Code related to item details",
         code: "ITEM12345",
         value: "Tag Value",
         category_name: "Sample Category",
@@ -73,7 +74,7 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
     ${JSON.stringify(dummyProvider)} and dummy item json:: ${JSON.stringify(
         dummyItem
       )}. Return in json format and use dummy json schema as reference. Generate whole content with all fields. 
-    Don't have any additional formatting like bold or anything. Please generate correct complete json and have all values filled. Item is an object, Not array`;
+    Don't have any additional formatting like bold or anything. Please generate correct complete json and have all values filled. Item is an object, Not array and min_price should be as per industry norms, You must create both provider and item object`;
 
       const result: any = await model.generateContent(prompt);
 
@@ -85,9 +86,8 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
       }
       console.log("Parsed Json", textContent);
       let jsonContent = textContent;
-
-      //find domain name
-      const domaiName = await strapi.entityService.findMany(
+      // find domain name
+      let domainName = await strapi.entityService.findMany(
         "api::domain.domain",
         {
           filters: {
@@ -95,19 +95,29 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
           }
         }
       );
-      console.log("DomainName::", domaiName);
+      console.log("DomainName::", domainName);
+      if (!domainName.length) {
+        domainName = [
+          await strapi.entityService.create("api::domain.domain", {
+            data: {
+              DomainName: domain,
+              publishedAt: new Date().toISOString()
+            }
+          })
+        ];
+      }
 
       const providerExists = await strapi.entityService.findMany(
         "api::provider.provider",
         {
           filters: {
-            domain_id: domaiName[0].id
+            domain_id: domainName[0].id
           },
           populate: ["items", "items.sc_retail_product"]
         }
       );
 
-      console.log(domaiName);
+      console.log(domainName);
       try {
         // const jsonContent = convertStringToJson(textContent);
         let imageUrl: string = "";
@@ -146,7 +156,7 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
             providerData = await createProvider(
               jsonContent.provider,
               createImageUrlEntry.id,
-              domaiName[0].id
+              domainName[0].id
             );
           }
 
@@ -201,7 +211,7 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
             providerData = await createProvider(
               jsonContent.provider,
               createImageUrlEntry.id,
-              domaiName[0].id
+              domainName[0].id
             );
           }
 
@@ -223,12 +233,13 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
 
 const createItemAndOtherComponents = async (item, pid, imageId) => {
   try {
+    console.log("Create Item ");
     const createdPriceBreakup = await strapi.entityService.create(
       "api::price-bareakup.price-bareakup",
       {
         data: {
           currency: "INR",
-          value: "1000",
+          value: `${item.min_price || 1000}`,
           title: "BASE PRICE",
           publishedAt: new Date().toISOString()
         }
@@ -268,6 +279,7 @@ const createItemAndOtherComponents = async (item, pid, imageId) => {
       }
     );
 
+    // create fulfillment
     const createFullfillmentIds = await strapi.entityService.create(
       "api::item-fulfillment.item-fulfillment",
       {
@@ -279,6 +291,58 @@ const createItemAndOtherComponents = async (item, pid, imageId) => {
         }
       }
     );
+
+    // create cattegory
+    const createdCategoryIds = await strapi.entityService.create(
+      "api::category.category",
+      {
+        data: {
+          value:
+            item?.category_name || `${item.item_name}-${item.provider_name}`,
+          category_code:
+            item?.category_code || `${item.item_name}-${item.provider_name}`,
+          publishedAt: new Date().toISOString()
+        }
+      }
+    );
+    // create tag
+    const createdTagIds = await strapi.entityService.create("api::tag.tag", {
+      data: {
+        tag_name: item?.tag_name || `${item.item_name}-${item.provider_name}`,
+        code: item?.tag_code || `${item.item_name}-${item.provider_name}`,
+        value: item?.value || `${item.item_name}-${item.provider_name}`,
+        publishedAt: new Date().toISOString()
+      }
+    });
+    // create cattegory attribute tag mapping
+    if (createdCategoryIds.id) {
+      const createdCategoryItemRel = await strapi.entityService.create(
+        "api::tag.tag",
+        {
+          data: {
+            taxanomy: `CATEGORY`,
+            taxanomy_id: createdCategoryIds.id,
+            provider: pid,
+            item: createEnergyItem.id,
+            publishedAt: new Date().toISOString()
+          }
+        }
+      );
+    }
+    if (createdCategoryIds.id) {
+      const createdTagItemRel = await strapi.entityService.create(
+        "api::tag.tag",
+        {
+          data: {
+            taxanomy: `TAG`,
+            taxanomy_id: createdTagIds.id,
+            provider: pid,
+            item: createEnergyItem.id,
+            publishedAt: new Date().toISOString()
+          }
+        }
+      );
+    }
   } catch (error) {
     console.log("Error while creating Item and Other Components", error);
     throw error;
