@@ -256,6 +256,7 @@ const createItemAndOtherComponents = async (
 ) => {
   try {
     console.log("Create Item ");
+    console.log("Provider Data--->", provider);
     const createdPriceBreakup = await strapi.entityService.create(
       "api::price-bareakup.price-bareakup",
       {
