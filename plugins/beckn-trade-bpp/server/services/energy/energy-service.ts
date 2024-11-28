@@ -188,6 +188,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             }
           });
           console.log("Created agent : ", agent);
+          //Fetch role id
+          const role = await strapi.entityService.findMany("plugin::users-permissions.role", {
+            filters: { name: "Prosumer" },
+          });
+          if (!role.length) {
+            throw new Error("Role not found");
+          }
+          const roleId = role[0].id;
           const createdUser = await strapi.entityService.create(
             "plugin::users-permissions.user",
             {
@@ -198,6 +206,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 confirmed: true,
                 agent: agent.id,
                 provider: "local",
+                role: roleId,
                 publishedAt: new Date()
               }
             }

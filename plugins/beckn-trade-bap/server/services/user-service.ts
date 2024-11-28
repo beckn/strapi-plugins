@@ -87,6 +87,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       if (existingUser && existingUser.length) {
         throw new Error("User Already Exist");
       }
+      const role = await strapi.entityService.findMany("plugin::users-permissions.role", {
+        filters: { name: "Consumer" },
+      });
+      if (!role.length) {
+        throw new Error("Role not found");
+      }
+      const roleId = role[0].id;
       const newUserCreated = await strapi.entityService.create(
         "plugin::users-permissions.user",
         {
@@ -97,7 +104,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             name: fullname,
             confirmed: true,
             blocked: false,
-            role: 1,
+            role: roleId,
             provider: "local"
           }
         }
