@@ -25,7 +25,14 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
         Country: "Sample Country",
         zip: "12345",
         provider_rating: 4.8,
-        gps: "37.7749, -122.4194"
+        gps: "37.7749, -122.4194",
+        payment_gateway: "Sample Dummy Payment Gateway",
+        gateway_url: "Sample Dummy Payment Gateway URL",
+        bank_account_number: "Sample Dummy Payment Bank Account Number",
+        bank_code: "Sample Dummy Bank Code",
+        bank_name: "Sample Dummy Bank Name",
+        payment_type: "Online",
+        payment_method_description: "Sample Payment Description"
       };
 
       const dummyItem = {
@@ -113,7 +120,12 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
           filters: {
             domain_id: domainName[0].id
           },
-          populate: ["items", "items.sc_retail_product"]
+          populate: [
+            "items",
+            "items.sc_retail_product",
+            "location_id",
+            "category_ids"
+          ]
         }
       );
 
@@ -376,6 +388,24 @@ const createItemAndOtherComponents = async (
     });
     console.log("createdTagIds===>", createdTagIds);
 
+    const updatedProvider = await strapi.entityService.update(
+      "api::provider.provider",
+      pid,
+      {
+        data: {
+          ...(provider?.location_id
+            ? {}
+            : { location_id: createLocationIds.id }),
+          category_ids: [
+            ...(provider?.category_ids?.length
+              ? provider?.category_ids?.map((category) => category.id)
+              : []),
+            createdCategoryIds.id
+          ]
+        }
+      }
+    );
+
     // create cattegory attribute tag mapping
     if (createdCategoryIds.id) {
       const createdCategoryItemRel = await strapi.entityService.create(
@@ -414,26 +444,45 @@ const createItemAndOtherComponents = async (
 };
 const createProvider = async (data, imageId, domain_id) => {
   try {
-    //create logo in logo table
+    //Create Payment Method
 
+    const createPaymentMethod = await strapi.entityService.create(
+      "api::payment-method.payment-method",
+      {
+        data: {
+          type: data.payment_type,
+          description: data.payment_method_description,
+          payment_gateway: data.payment_gateway,
+          gateway_url: data.gateway_url,
+          bank_account_number: data.bank_account_number,
+          bank_code: data.bank_code,
+          bank_name: data.bank_name,
+          timestamp: new Date().toISOString(),
+          publishedAt: new Date().toISOString()
+        }
+      }
+    );
+
+    //create logo in logo table
     const createProvider = await strapi.entityService.create(
       "api::provider.provider",
       {
         data: {
           domain_id: domain_id,
-          location_id: 1,
           short_desc: data.provider_short_desc,
           provider_name: data.provider_name,
           long_desc: data.provider_long_desc,
           provider_id: data.provider_id,
           provider_url: data.provider_uri,
-          category_ids: [1, 2, 3],
+          category_ids: [],
           logo: [imageId],
           agents: [],
           input: [],
           fullfillments: [],
           provider_rating: data.provider_rating.toString(),
-          payment_methods: 1
+          payment_methods: createPaymentMethod.id,
+          timestamp: new Date().toISOString(),
+          publishedAt: new Date().toISOString()
         }
       }
     );
