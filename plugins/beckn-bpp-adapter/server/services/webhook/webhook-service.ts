@@ -388,6 +388,17 @@ const createItemAndOtherComponents = async (
     });
     console.log("createdTagIds===>", createdTagIds);
 
+    console.log("Existing Category IDs Mapped to Provider====>", [
+      ...(provider?.category_ids?.length
+        ? provider?.category_ids?.map((category) => category.id)
+        : [])
+    ]);
+    console.log("New Category IDs Mapped to Provider====>", [
+      ...(provider?.category_ids?.length
+        ? provider?.category_ids?.map((category) => category.id)
+        : []),
+      createdCategoryIds.id
+    ]);
     const updatedProvider = await strapi.entityService.update(
       "api::provider.provider",
       pid,
