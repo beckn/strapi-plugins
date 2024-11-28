@@ -209,32 +209,32 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           });
           console.log("Created user: ", createdUser);
           //Issue Credential using Dhiway SDK
-          const vc = await this.generateCredential({
-            email,
-            first_name,
-            last_name
-          });
-          //store the credential and update it in agent profile
-          const cred = await strapi.entityService.create(
-            "api::credential.credential",
-            {
-              data: {
-                vc,
-                publishedAt: new Date()
-              }
-            }
-          );
+          // const vc = await this.generateCredential({
+          //   email,
+          //   first_name,
+          //   last_name
+          // });
+          // //store the credential and update it in agent profile
+          // const cred = await strapi.entityService.create(
+          //   "api::credential.credential",
+          //   {
+          //     data: {
+          //       vc,
+          //       publishedAt: new Date()
+          //     }
+          //   }
+          // );
           //update the agent profile table
-          const agentProfileUpdated = await strapi.entityService.update(
-            "api::agent-profile.agent-profile",
-            agentProfile.id,
-            {
-              data: {
-                credentials: [cred.id],
-                publishedAt: new Date()
-              }
-            }
-          );
+          // const agentProfileUpdated = await strapi.entityService.update(
+          //   "api::agent-profile.agent-profile",
+          //   agentProfile.id,
+          //   {
+          //     data: {
+          //       credentials: [cred.id],
+          //       publishedAt: new Date()
+          //     }
+          //   }
+          // );
           delete createdUser.password;
           //add catalogues
           const { providerData } = signupDto;
@@ -287,7 +287,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         await strapi.db.transaction(async ({ trx }) => {
             try {
                 // Step 0: Generate hash from buffer
-                if(createDerDto.type.toUpperCase() !== 'PROSUMER' || createDerDto.type.toUpperCase() !== 'CONSUMER') {
+                if(createDerDto.type.toUpperCase() !== 'PROSUMER' && createDerDto.type.toUpperCase() !== 'CONSUMER') {
                     throw new Error('Invalid type provided for creating DER');
                 }
                 if(!Array.isArray(filesDto)) {
@@ -437,6 +437,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               "api::category.category",
               {
                 data: {
+                  title: "SOLAR ENERGY",
                   value: "SOLAR ENERGY",
                   category_code: "SOLAR_ENERGY",
                   publishedAt: new Date()
@@ -548,7 +549,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 item_id: createEnergyItem?.id,
                 fulfilment_id: 1,
                 location_id: createProvider?.location_id?.id,
-                timestamp: new Date()
+                timestamp: new Date(),
+                publishedAt: new Date()
               }
             }
           );
