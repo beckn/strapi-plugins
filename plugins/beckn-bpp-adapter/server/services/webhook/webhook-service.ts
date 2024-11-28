@@ -179,7 +179,8 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
             providerData.id,
             createImageUrlEntry.id,
             jsonContent.provider,
-            body
+            body,
+            providerData
           );
 
           return { result, jsonContent: jsonContent };
@@ -235,7 +236,8 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
             providerData.id,
             createImageUrlEntry.id,
             resultFirstIteration.provider,
-            body
+            body,
+            providerData
           );
 
           return { result, jsonContent: resultFirstIteration };
@@ -252,7 +254,8 @@ const createItemAndOtherComponents = async (
   pid,
   imageId,
   provider,
-  requestBody
+  requestBody,
+  providerDataFromStrapi
 ) => {
   try {
     console.log("Create Item ");
@@ -390,13 +393,13 @@ const createItemAndOtherComponents = async (
     console.log("createdTagIds===>", createdTagIds);
 
     console.log("Existing Category IDs Mapped to Provider====>", [
-      ...(provider?.category_ids?.length
-        ? provider?.category_ids?.map((category) => category.id)
+      ...(providerDataFromStrapi?.category_ids?.length
+        ? providerDataFromStrapi?.category_ids?.map((category) => category.id)
         : [])
     ]);
     console.log("New Category IDs Mapped to Provider====>", [
-      ...(provider?.category_ids?.length
-        ? provider?.category_ids?.map((category) => category.id)
+      ...(providerDataFromStrapi?.category_ids?.length
+        ? providerDataFromStrapi?.category_ids?.map((category) => category.id)
         : []),
       createdCategoryIds.id
     ]);
@@ -405,12 +408,14 @@ const createItemAndOtherComponents = async (
       pid,
       {
         data: {
-          ...(provider?.location_id
+          ...(providerDataFromStrapi?.location_id
             ? {}
             : { location_id: createLocationIds.id }),
           category_ids: [
-            ...(provider?.category_ids?.length
-              ? provider?.category_ids?.map((category) => category.id)
+            ...(providerDataFromStrapi?.category_ids?.length
+              ? providerDataFromStrapi?.category_ids?.map(
+                  (category) => category.id
+                )
               : []),
             createdCategoryIds.id
           ]
