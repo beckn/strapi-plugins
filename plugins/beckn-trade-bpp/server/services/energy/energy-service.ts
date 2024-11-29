@@ -33,7 +33,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
       // Request API.
       const response = await axios.post(
-        `${process.env.STRAPI_BPP_URL}/api/auth/local`,
+        `${process.env.STRAPI_URL}/api/auth/local`,
         {
           identifier: email,
           password

@@ -35,7 +35,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       // Request Strapi Native Auth API.
       console.log("password", password);
       const response = await axios.post(
-        `${process.env.STRAPI_BAP_URL}/api/auth/local`,
+        `${process.env.STRAPI_URL}/api/auth/local`,
         {
           identifier: email,
           password
@@ -59,7 +59,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     phone_number: string;
     utility: string;
   }) {
-    return axios.post(`${process.env.BECKN_MDM_URL}/beckn-mdm/getCustomer`, {
+    return axios.post(`${process.env.MDM_URL}/getCustomer`, {
       phone_no: phone_number,
       utility_name: utility,
       role: "CONSUMER"
@@ -133,26 +133,26 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       let newUserProfile = {};
       await strapi.db.transaction(async ({ trx }) => {
         try {
-          const credentialVcService = strapi
-            .plugin("beckn-trade-bap")
-            .service("credentialVcService");
-          const consumerVc = await credentialVcService.issueCertificate(
-            DHIWAY_BECKN_TRADE_BAP_CONSUMER_SCHEMA,
-            {
-              name: fullname,
-              email,
-              utility
-            }
-          );
-          const newCredential = await strapi.entityService.create(
-            "api::credential.credential",
-            {
-              data: {
-                credential: consumerVc,
-                publishedAt: new Date()
-              }
-            }
-          );
+          // const credentialVcService = strapi
+          //   .plugin("beckn-trade-bap")
+          //   .service("credentialVcService");
+          // const consumerVc = await credentialVcService.issueCertificate(
+          //   DHIWAY_BECKN_TRADE_BAP_CONSUMER_SCHEMA,
+          //   {
+          //     name: fullname,
+          //     email,
+          //     utility
+          //   }
+          // );
+          // const newCredential = await strapi.entityService.create(
+          //   "api::credential.credential",
+          //   {
+          //     data: {
+          //       credential: consumerVc,
+          //       publishedAt: new Date()
+          //     }
+          //   }
+          // );
           newUserProfile = await strapi.entityService.create(
             "api::profile.profile",
             {
@@ -160,7 +160,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 name: fullname,
                 phone: phone_number,
                 user: userId,
-                credentials: [newCredential.id],
+                //credentials: [newCredential.id],
                 utility_name: utility,
                 customer_id,
                 publishedAt: new Date()
@@ -426,7 +426,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       if (profile && profile.length) {
         const dashboardData = await axios.post(
-          `${process.env.BECKN_MDM_URL}/beckn-mdm/getStatistics`,
+          `${process.env.MDM_URL}/getStatistics`,
           {
             customerId: profile[0].customer_id
           }
