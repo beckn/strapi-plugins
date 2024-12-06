@@ -39,5 +39,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       ctx.badRequest(error.message);
     }
+  },
+  async getEnergyData(ctx) {
+    try {
+      const customerService = strapi
+       .plugin("beckn-mdm")
+       .service("customerService");
+      const result = await customerService.getEnergyData(ctx.request.body);
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
   }
 });

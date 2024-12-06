@@ -1,7 +1,7 @@
 import { Strapi } from "@strapi/strapi";
 import axios from "axios";
 // import { ValidationError } from "yup";
-import { YupValidationError } from "@strapi/utils/dist/errors";
+const { ValidationError } = require('@strapi/utils').errors;
 import {
   DHIWAY_BECKN_TRADE_BAP_CONSUMER_SCHEMA,
   DHIWAY_BECKN_TRADE_BAP_DER_SCHEMA
@@ -120,7 +120,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     email,
     utility,
     userId,
-    customer_id
+    customer_id,
+    address
   }: {
     fullname: string;
     phone_number: string;
@@ -128,6 +129,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     utility: string;
     userId: number;
     customer_id: string;
+    address: string;
   }) {
     try {
       let newUserProfile = {};
@@ -163,6 +165,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 //credentials: [newCredential.id],
                 utility_name: utility,
                 customer_id,
+                address,
                 publishedAt: new Date()
               }
             }
@@ -172,7 +175,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         } catch (error: any) {
           console.log(error);
           trx.rollback();
-          if (error instanceof YupValidationError) {
+          if (error instanceof ValidationError) {
             throw new Error(JSON.stringify((error.details as any).errors));
           }
           throw new Error(error.message);
@@ -437,5 +440,66 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error: any) {
       throw new Error(error.message);
     }
-  }
+  },
+  async getUserProfile(userId: number, email: string) {
+    try {
+      let profile = await strapi.entityService.findMany(
+        "api::profile.profile",
+        {
+          filters: {
+            user: userId
+          }
+        }
+      );
+      if (profile && profile.length) {
+        profile = profile[0];
+        return {
+          fullname: profile.name,
+          address: profile.address,
+          customer_id: profile.customer_id,
+          phone_number: profile.phone,
+          email,
+          utility_name: profile.utility_name
+        }
+      }
+      throw new Error("No Profile Found");
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  },
+  async updateUserProfile({ fullname, address },userId: number) {
+    try {
+      let profile = await strapi.entityService.findMany(
+        "api::profile.profile",
+        {
+          filters: {
+            user: userId
+          }
+        }
+      );
+      if (profile && profile.length) {
+        profile = profile[0];
+        const updatedProfile = await strapi.entityService.update(
+          "api::profile.profile",
+          profile.id,
+          {
+            data: {
+              name: fullname,
+              address,
+              publishedAt: new Date()
+            }
+          }
+        );
+        console.log('Updated Profile: ', updatedProfile);
+        return {
+          fullname,
+          address
+        }
+      }
+      throw new Error("No Profile Found");     
+    } catch (error: any) {
+      console.log('Failed to update user profile: ', error.message);
+      throw new Error(error.message);
+    }
+  },
 });

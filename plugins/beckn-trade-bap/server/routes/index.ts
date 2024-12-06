@@ -126,5 +126,25 @@ export default [
       middlewares: [],
       auth: false
     }
-  }
+  },
+  {
+    method: "GET",
+    path: "/user-profile",
+    handler: "userController.getUserProfile",
+    config: {
+      policies: [],
+      middlewares: ["plugin::beckn-trade-bap.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "PUT",
+    path: "/user-profile",
+    handler: "userController.updateUserProfile",
+    config: {
+      policies: [],
+      middlewares: ["plugin::beckn-trade-bap.authMiddleware"],
+      auth: false
+    }
+  },
 ];

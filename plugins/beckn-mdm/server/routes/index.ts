@@ -26,4 +26,13 @@ export default [
       auth: false
     },
   },
+  {
+    method: 'POST',
+    path: '/getEnergyLog',
+    handler: 'customerController.getEnergyData',
+    config: {
+      policies: [],
+      auth: false
+    },
+  },
 ];

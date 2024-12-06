@@ -21,7 +21,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async signup(ctx: any) {
     try {
-      const { fullname, phone_number, email, password, utility } =
+      const { fullname, phone_number, email, password, utility, address } =
         ctx.request.body;
 
       const userService = strapi
@@ -44,7 +44,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             email,
             utility,
             userId: newUser.id,
-            customer_id: customerMDM.data.data.customer_id
+            customer_id: customerMDM.data.data.customer_id,
+            address
           });
           if (newUserProfile.id) {
             delete newUser.password;
@@ -195,5 +196,33 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       console.log(error);
       return ctx.badRequest(error.message);
     }
-  }
+  },
+  async getUserProfile(ctx: any) {
+    try {
+      const userService = strapi
+        .plugin("beckn-trade-bap")
+        .service("userService");
+      const getUserCredsResp = await userService.getUserProfile(
+        ctx.state.user.id, ctx.state.user.email
+      );
+      return (ctx.body = getUserCredsResp);
+    } catch (error: any) {
+      console.log(error);
+      return ctx.badRequest(error.message);
+    }
+  },
+  async updateUserProfile(ctx: any) {
+    try {
+      const userService = strapi
+        .plugin("beckn-trade-bap")
+        .service("userService");
+      const getUserCredsResp = await userService.updateUserProfile(
+        ctx.state.user.id
+      );
+      return (ctx.body = getUserCredsResp);
+    } catch (error: any) {
+      console.log(error);
+      return ctx.badRequest(error.message);
+    }
+  },
 });

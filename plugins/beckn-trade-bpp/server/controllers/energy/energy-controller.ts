@@ -153,5 +153,41 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       ctx.badRequest(error.message);
     }
-  }
+  },
+  async getUserProfile(ctx) {
+    try {
+      const energyService = strapi
+        .plugin("beckn-trade-bpp")
+        .service("energyService");
+      const user = ctx.state.user;
+      const result = await energyService.getUserProfile(user);
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
+  async updateUserProfile(ctx) {
+    try {
+      const energyService = strapi
+        .plugin("beckn-trade-bpp")
+        .service("energyService");
+      const user = ctx.state.user;
+      const result = await energyService.updateUserProfile(user);
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
+  async getTradePreference(ctx) {
+    try {
+      const energyService = strapi
+        .plugin("beckn-trade-bpp")
+        .service("energyService");
+      const user = ctx.state.user;
+      const result = await energyService.getTradePreference(user);
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
 });

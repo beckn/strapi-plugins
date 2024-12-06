@@ -138,10 +138,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             password,
             first_name,
             last_name,
+            fullname,
+            address,
             phone_no: phone_number
           } = signupDto;
-          if (!first_name) {
-            throw new Error("First name not provided for signup");
+          if (!fullname && !first_name) {
+            throw new Error("Name not provided for signup");
           }
           const users = await strapi.entityService.findMany(
             "plugin::users-permissions.user",
@@ -174,6 +176,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               data: {
                 phone_number,
                 customer_id: mdmUser.customer_id,
+                address,
+                utility_name,
                 publishedAt: new Date()
               }
             }
@@ -181,8 +185,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           console.log("Created agent profile: ", agentProfile);
           const agent = await strapi.entityService.create("api::agent.agent", {
             data: {
-              first_name,
-              last_name,
+              first_name: fullname,
               agent_profile: agentProfile.id,
               publishedAt: new Date()
             }
@@ -869,5 +872,93 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       console.error("Error in uploading credential:", error);
       throw new Error(`${error.message}`);
     }
-  }
+  },
+  getUserProfile(user) {
+    const agentProfile = user.agent?.agent_profile;
+    const agent = user.agent;
+    if(!agent || !agentProfile) {
+      throw new Error('No Profile Exists for this user');
+    }
+    return {
+      fullname: agent.first_name,
+      customer_id: agentProfile.customer_id,
+      address: agentProfile.address,
+      phone_number: agentProfile.phone_number,
+      email: user.email,
+      utility_name: agentProfile.utility_name
+    }
+  },
+  async updateUserProfile({ fullname, address }, user) {
+    try {
+      const agentProfile = user.agent?.agent_profile;
+      const agent = user.agent;
+      if (!agent || !agentProfile) {
+        throw new Error('No Profile Exists for this user');
+      }
+      const updatedAgent = await strapi.entityService.update(
+        "api::agent.agent",
+        user.agent.id,
+        {
+          data: {
+            first_name: fullname,
+            publishedAt: new Date()
+          }
+        }
+      );
+      console.log('Updated Agent: ', updatedAgent);
+      const updatedProfile = await strapi.entityService.update(
+        "api::agent-profile.agent-profile",
+        user.agent.agent_profile.id,
+        {
+          data: {
+            address,
+            publishedAt: new Date()
+          }
+        }
+      );
+      console.log('Updated Agent Profile: ', updatedProfile);
+      return {
+        fullname,
+        address
+      }
+    } catch (error) {
+      console.log('Failed to update user profile: ', error);
+      throw new Error(`Failed to update user profile: ${error.message}`);
+    }
+  },
+  async getTradePreference(user) {
+    try {
+      const provider = user?.agent?.provider_id;
+      if(!provider) {
+        throw new Error('No Provider found');
+      }
+      const providerId = provider.id;
+      const providerData = await strapi.entityService.findOne(
+        "api::provider.provider",
+        providerId,
+        {
+          populate: ["items", "items.sc_retail_product"]
+        }
+      );
+      if(providerData.items.length > 0) {
+        const prefData = providerData.items[0].sc_retail_product;
+        if(!prefData) {
+          throw new Error('No preference found');
+        }
+        return {
+          prefId: prefData.id,
+          price: prefData.min_price,
+          quantity: prefData.stock_quantity,
+          unit: prefData.quantity_unit,
+          trusted_source: prefData.trusted_source,
+          cred_required: prefData.cred_required,
+          recurring: prefData.recurring
+        } 
+      }
+      throw new Error('No preference found');
+    } catch(error) {
+      console.log('Get Trade Pref Error: ', error.message);
+      throw new Error(error.message);
+    }
+  },
 });

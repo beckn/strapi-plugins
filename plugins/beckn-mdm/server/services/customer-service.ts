@@ -173,4 +173,56 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
+  async getEnergyData({ customerId, startDate, endDate }) {
+    //make sure startDate and endDate is in standard format: YYYY-MM-DD, not DD-MM-YYYY
+    try {
+      const consumptionLogs = await strapi.entityService.findMany(
+        "api::consumption-log.consumption-log",
+        {
+          filters: {
+            customer: { customer_id: { $eq: customerId } },
+            createdAt: { $gte: new Date(startDate).toISOString(), $lte: new Date(endDate).toISOString() }
+          },
+          populate: ["unit_consumed"],
+          sort: { createdAt: "desc" },
+        }
+      );
+      const productionLogs = await strapi.entityService.findMany(
+        "api::production-log.production-log",
+        {
+          filters: {
+            customer: { customer_id: { $eq: customerId } },
+            createdAt: { $gte: new Date(startDate).toISOString(), $lte: new Date(endDate).toISOString() }
+          },
+          populate: ["unit_produced"],
+          sort: { createdAt: "desc" },
+        }
+      );
+
+      console.log("Consumption Logs:", consumptionLogs.length);
+      console.log("Production Logs:", productionLogs.length);
+
+      // Calculate the sum of `unit_consumed`
+      const totalConsumed = consumptionLogs.reduce(
+        (acc, log) => Number(acc) + (Number(log.unit_consumed) || 0),
+        0
+      );
+
+      // Calculate the sum of `unit_produced`
+      const totalProduced = productionLogs.reduce(
+        (acc, log) => Number(acc) + (Number(log.unit_produced) || 0),
+        0
+      );
+
+      return {
+        data: {
+          customerId,
+          totalConsumed,
+          totalProduced,
+        },
+      }
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 });
