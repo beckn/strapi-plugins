@@ -179,8 +179,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const userService = strapi
         .plugin("beckn-trade-bap")
         .service("userService");
+      const { startDate, endDate } = ctx.query;
       const dashboardResp = await userService.getDashboardData(
-        ctx.state.user.id
+        ctx.state.user.id,
+        startDate,
+        endDate
       );
       return (ctx.body = dashboardResp);
     } catch (error: any) {

@@ -416,7 +416,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
-  async getDashboardData(userId: number) {
+  async getDashboardData(userId: number, startDate: string, endDate: string) {
     try {
       const profile = await strapi.entityService.findMany(
         "api::profile.profile",
@@ -431,7 +431,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         const dashboardData = await axios.post(
           `${process.env.MDM_URL}/getStatistics`,
           {
-            customerId: profile[0].customer_id
+            customerId: profile[0].customer_id,
+            startDate,
+            endDate
           }
         );
         return dashboardData.data;

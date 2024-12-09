@@ -114,7 +114,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .plugin("beckn-trade-bpp")
         .service("energyService");
       const customerId = ctx.state.user.agent?.agent_profile.customer_id;
-      const result = await energyService.getDashboard(customerId);
+      const { startDate, endDate } = ctx.query;
+      const result = await energyService.getDashboard(customerId, startDate, endDate);
       ctx.body = result;
     } catch (error) {
       ctx.badRequest(error.message);
