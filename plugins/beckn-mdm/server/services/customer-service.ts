@@ -59,7 +59,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
-  async getStatistics({ customerId }) {
+  async getStatistics({ customerId, startDate, endDate }) {
     try {
       let customer = await strapi.entityService.findMany(
         "api::customer.customer",
@@ -112,16 +112,27 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
       );
 
-      let consumption = {
+      let consumption: any = {
         previous_month: 0,
         current_month: 0,
         average: 0,
       };
-      let production = {
+      let production: any = {
         previous_month: 0,
         current_month: 0,
         average: 0,
       };
+      if(startDate && endDate) {
+        const total = await this.getEnergyData({ customerId, startDate, endDate });
+        consumption = {
+          ...consumption,
+          totalInRange: total.totalConsumed
+        };
+        production = {
+          ...production,
+          totalInRange: total.totalProduced
+        }
+      }
 
       if (consumptionLogs?.length) {
         const currentMonthFromDate = new Date(consumptionLogs[consumptionLogs.length - 1].createdAt)
@@ -215,11 +226,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
 
       return {
-        data: {
-          customerId,
-          totalConsumed,
-          totalProduced,
-        },
+        customerId,
+        totalConsumed,
+        totalProduced,
       }
     } catch (error) {
       throw new Error(error.message);

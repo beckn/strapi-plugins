@@ -171,8 +171,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const energyService = strapi
         .plugin("beckn-trade-bpp")
         .service("energyService");
+      const { fullname, address } = ctx.request.body
       const user = ctx.state.user;
-      const result = await energyService.updateUserProfile(user);
+      const result = await energyService.updateUserProfile({fullname, address}, user);
       ctx.body = result;
     } catch (error) {
       ctx.badRequest(error.message);

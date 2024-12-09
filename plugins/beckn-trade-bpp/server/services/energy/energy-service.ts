@@ -693,14 +693,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(`Unable to add trade data', ${error}`);
     }
   },
-  async getDashboard(customerId: number) {
+  async getDashboard(customerId: number, startDate: string, endDate: string) {
     try {
-      console.log("Customer id: ", customerId);
+      console.log("Dashboard body: ", customerId, startDate, endDate);
 
       const dashboardData = await axios.post(
         `${process.env.MDM_URL}/getStatistics`,
         {
-          customerId
+          customerId,
+          startDate,
+          endDate
         }
       );
       return dashboardData.data;
