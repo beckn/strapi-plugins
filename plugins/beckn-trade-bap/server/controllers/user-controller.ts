@@ -228,4 +228,19 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       return ctx.badRequest(error.message);
     }
   },
+  async deleteCredById(ctx: any) {
+    try {
+      const userService = strapi
+        .plugin("beckn-trade-bap")
+        .service("userService");
+      const deleteDerResp = await userService.deleteCredById(
+        ctx.state.user.id,
+        ctx.params.id
+      );
+      return (ctx.body = deleteDerResp);
+    } catch (error: any) {
+      console.log(error);
+      return ctx.badRequest(error.message);
+    }
+  },
 });

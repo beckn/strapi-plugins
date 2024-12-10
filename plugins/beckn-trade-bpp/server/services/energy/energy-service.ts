@@ -76,11 +76,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 agent_profile: {
                   populate: {
                     credentials: true,
-                    ders: {
-                      populate: {
-                        credential: true
-                      }
-                    }
                   }
                 }
               }
@@ -89,7 +84,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
       );
       let creds = userInfo.agent.agent_profile.credentials;
-      let ders = userInfo.agent.agent_profile.ders;
       creds = creds.map((cred) => {
         const cred_id = cred.id;
         return {
@@ -98,16 +92,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           credential: cred?.vc
         };
       });
-      ders = ders.map((der) => {
-        const der_id = der.id;
-        return {
-          der_id,
-          type: "DER",
-          credential: der?.credential?.vc
-        };
-      });
 
-      return [...creds, ...ders];
+      return creds;
     } catch (error) {}
   },
   async signup(signupDto: any) {
@@ -963,4 +949,36 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
+  async deleteCredById(agentProfileId, credId) {
+    try {
+      if (!credId) {
+        throw new Error("Der Id not provided to delete");
+      }
+      //check if this credential belongs to this user or not
+      let agentProfile = await strapi.entityService.findMany(
+        "api::agent-profile.agent-profile",
+        {
+          filters: {
+            id: agentProfileId,
+            credentials: {
+              id: credId
+            }
+          },
+          populate: ["credentials"]
+        }
+      );
+
+      if (agentProfile && agentProfile.length) {
+        const der = await strapi.entityService.delete("api::credential.credential", credId);
+        return der;
+      } else {
+        throw new Error(
+          "This Credential is not linked to your profile. You are not authorized to delete it!"
+        );
+      }
+    } catch (error) {
+      console.log('Delete Cred Error: ', error);
+      throw new Error(`Unable to delete Cred: ${error.message}`);
+    }
+  }
 });

@@ -89,6 +89,16 @@ export default [
   },
   {
     method: "DELETE",
+    path: "/cred/:id",
+    handler: "userController.deleteCredById",
+    config: {
+      policies: [],
+      middlewares: ["plugin::beckn-trade-bap.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "DELETE",
     path: "/der",
     handler: "userController.deleteDer",
     config: {

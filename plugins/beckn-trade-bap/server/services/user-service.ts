@@ -504,4 +504,38 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
+  async deleteCredById(userId: number, credId: number) {
+    try {
+      if (!credId) {
+        throw new Error("Der Id not provided to delete");
+      }
+      const profile = await strapi.entityService.findMany(
+        "api::profile.profile",
+        {
+          filters: {
+            user: userId,
+            credentials: {
+              id: credId
+            }
+          },
+          populate: {
+            credentials: true,
+          }
+        }
+      );
+
+      if (profile && profile.length) {
+        return {
+          cred: await strapi.entityService.delete(
+            "api::credential.credential",
+            credId
+          ),
+          message: "Requested CRED deleted Successfully"
+        };
+      }
+      throw new Error("No Profile Found");
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  },
 });

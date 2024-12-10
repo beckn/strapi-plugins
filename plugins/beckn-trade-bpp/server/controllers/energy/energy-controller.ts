@@ -192,4 +192,18 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ctx.badRequest(error.message);
     }
   },
+  async deleteCredById(ctx) {
+    try {
+      const energyService = strapi
+        .plugin("beckn-trade-bpp")
+        .service("energyService");
+      const credId = ctx.params.id;
+      console.log("CRED ID: ", credId);
+      const agentProfileId = ctx?.state?.user?.agent?.agent_profile?.id;
+      const result = await energyService.deleteCredById(agentProfileId, credId);
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
 });

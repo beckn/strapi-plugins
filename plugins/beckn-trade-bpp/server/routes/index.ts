@@ -27,6 +27,15 @@ export default [
     }
   },
   {
+    method: "DELETE",
+    path: "/cred/:id",
+    handler: "energyController.deleteCredById",
+    config: {
+      middlewares: ["plugin::beckn-trade-bpp.authMiddleware"],
+      auth: false
+    }
+  },
+  {
     method: "GET",
     path: "/user-profile",
     handler: "energyController.getUserProfile",
