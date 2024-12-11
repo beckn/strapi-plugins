@@ -545,5 +545,64 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       console.log(error);
       throw new Error(error.message);
     }
-  }
+  },
+  async updateTradeById(userId: number, tradeId: number, tradeDto: any) {
+    try {
+      const { unit, quantity, trusted_source, cred_required, recurring } = tradeDto;
+      const profile = await strapi.entityService.findMany(
+        "api::profile.profile",
+        {
+          filters: {
+            user: userId
+          }
+        }
+      );
+      if (!profile || !profile.length) {
+        throw new Error("No Profile Found");
+      }
+      let filterAndPopulate: any = {
+        filters: {
+          profile: profile[0].id
+        }
+      };
+      if (tradeId) {
+        filterAndPopulate = {
+          filters: {
+            profile: profile[0].id,
+            id: tradeId
+          },
+          populate: {
+            trade_events: true
+          }
+        };
+      } else {
+        throw new Error('No trade Id provided to update');
+      }
+      const trades = await strapi.entityService.findMany("api::trade.trade", {
+        ...filterAndPopulate
+      });
+      if(trades && trades.length) {
+        if(trades[0].status !== 'RECEIVED') {
+          throw new Error('Trade cutoff time has passed, you cannot update it!');
+        }
+        const updateData = {
+          ...(unit && { unit }),
+          ...(quantity && { quantity }),
+          ...(trusted_source && { trusted_source }),
+          ...(cred_required && { cred_required }),
+          ...(recurring && { recurring }),
+        };
+        console.log('Update body: ', updateData);
+        return {
+          updatedTrade: await strapi.entityService.update("api::trade.trade", tradeId, {
+            data: updateData
+          })
+        }
+      }
+      throw new Error('Trade does not exist or not linked to your profile');
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  },
 });

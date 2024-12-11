@@ -79,5 +79,21 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       ctx.badRequest(error.message);
     }
-  }
+  },
+  async updateTradeById(ctx: any) {
+    try {
+      const userService = strapi
+        .plugin("beckn-trade-bap")
+        .service("userService");
+      const deleteDerResp = await userService.updateTradeById(
+        ctx.state.user.id,
+        ctx.params.id,
+        ctx.request.body
+      );
+      return (ctx.body = deleteDerResp);
+    } catch (error: any) {
+      console.log(error);
+      return ctx.badRequest(error.message);
+    }
+  },
 });

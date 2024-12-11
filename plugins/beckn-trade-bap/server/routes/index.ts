@@ -58,6 +58,16 @@ export default [
     }
   },
   {
+    method: "PUT",
+    path: "/trade/:id",
+    handler: "tradeController.updateTradeById",
+    config: {
+      policies: [],
+      middlewares: ["plugin::beckn-trade-bap.authMiddleware"],
+      auth: false
+    }
+  },
+  {
     method: "POST",
     path: "/start-trade",
     handler: "tradeController.startTrade",
