@@ -59,14 +59,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     }
   },
   async getCustomerMDM({
-    phone_number,
+    phone_no,
     utility
   }: {
-    phone_number: string;
+    phone_no: string;
     utility: string;
   }) {
     return axios.post(`${process.env.MDM_URL}/getCustomer`, {
-      phone_no: phone_number,
+      phone_no,
       utility_name: utility,
       role: "CONSUMER"
     });
@@ -122,7 +122,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async createUserProfile({
     fullname,
-    phone_number,
+    phone_no,
     email,
     utility,
     userId,
@@ -130,7 +130,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     address
   }: {
     fullname: string;
-    phone_number: string;
+    phone_no: string;
     email: string;
     utility: string;
     userId: number;
@@ -166,7 +166,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             {
               data: {
                 name: fullname,
-                phone: phone_number,
+                phone: phone_no,
                 user: userId,
                 //credentials: [newCredential.id],
                 utility_name: utility,

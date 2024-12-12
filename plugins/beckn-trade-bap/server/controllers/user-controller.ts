@@ -21,32 +21,35 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async signup(ctx: any) {
     try {
-      const { fullname, phone_number, email, password, utility, address } =
+      const { fullname, phone_no, email, password, utility_name: utility, address } =
         ctx.request.body;
 
       const userService = strapi
         .plugin("beckn-trade-bap")
         .service("userService");
       const customerMDM = await userService.getCustomerMDM({
-        phone_number,
+        phone_no,
         utility
       });
+      console.log('MDM Customer: ', customerMDM.data);
       if (customerMDM.data.data && customerMDM.data.data.customer_id) {
         const newUser = await userService.createUser({
           email,
           fullname,
           password
         });
+        console.log('New user created: ', newUser);
         if (newUser.id) {
           const newUserProfile = await userService.createUserProfile({
             fullname,
-            phone_number,
+            phone_no,
             email,
             utility,
             userId: newUser.id,
             customer_id: customerMDM.data.data.customer_id,
             address
           });
+          console.log('New user profile created: ', newUserProfile);
           if (newUserProfile.id) {
             delete newUser.password;
             return (ctx.body = {
