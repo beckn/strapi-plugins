@@ -21,11 +21,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .findOne({
           where: {
             email: { $eqi: email },
-            role: { name: { $eq: "Prosumer" } }
+            role: { name: { $eqi: "Prosumer" } }
           },
           populate: {
             agent: true,
-            provider: true
+            provider: true,
+            role: true
           }
         });
       if (!user) {

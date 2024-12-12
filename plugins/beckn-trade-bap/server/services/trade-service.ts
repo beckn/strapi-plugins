@@ -427,6 +427,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                   }
                 }
               );
+              console.log(
+                `\Beckn on confirm event trade for Trade Id: ${trade.id} with ORDER_ID : ${
+                  JSON.stringify(becknOnConfirmEvent)
+                } from ${
+                  required_providers[0].context.bpp_uri
+                } : ${JSON.stringify(on_confirm_resp)}\n`
+              );
 
               // Call BAP-Orders API for creating order
               const orderService: any = strapi.service("api::order.order");
@@ -446,6 +453,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 {
                   data: { ...createOrderPayload, publishedAt: new Date() }
                 }
+              );
+              console.log(
+                `\Create trade for Trade Id: ${trade.id} with ORDER_ID : ${
+                  createOrder.id
+                } from ${
+                  required_providers[0].context.bpp_uri
+                } : ${JSON.stringify(on_confirm_resp)}\n`
               );
               const updateTrade = await strapi.entityService.update(
                 "api::trade.trade",
@@ -469,7 +483,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             } catch (error: any) {
               console.log(
                 `Error in Start Transaction for TradeId : ${trade.id}==>\n`,
-                error
+                JSON.stringify(error.message)
               );
               trx.rollback();
               const updateTrade = await strapi.entityService.update(

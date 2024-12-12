@@ -16,8 +16,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .findOne({
           where: {
             email: { $eqi: email },
-            role: { name: { $eq: "Consumer" } }
-          }
+            role: {
+              $or: [
+                { name: { $eqi: "Consumer" } },
+                { name: { $eqi: "Admin" } }
+              ]
+            }
+          },
+          populate: ["role"],
         });
       const profile = await strapi.entityService.findMany(
         "api::profile.profile",
