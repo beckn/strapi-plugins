@@ -388,7 +388,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
       );
       if (profile && profile.length) {
-        return profile[0];
+        let creds = profile[0].credentials;
+        creds = creds.map((cred) => {
+          const cred_id = cred.id;
+          return {
+            cred_id,
+            type: "USER_CREDENTIAL",
+            credential: cred?.vc
+          };
+        });
+        return creds;
       }
       throw new Error("No Profile Found");
     } catch (error: any) {

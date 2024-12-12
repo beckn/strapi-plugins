@@ -79,7 +79,7 @@ export default [
   },
   {
     method: "POST",
-    path: "/upload-user-credential",
+    path: "/upload-cred",
     handler: "userController.uploadUserCred",
     config: {
       policies: [],
@@ -89,7 +89,7 @@ export default [
   },
   {
     method: "GET",
-    path: "/get-user-credential",
+    path: "/cred",
     handler: "userController.getUserCreds",
     config: {
       policies: [],
