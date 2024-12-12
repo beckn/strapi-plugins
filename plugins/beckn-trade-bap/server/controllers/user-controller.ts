@@ -220,7 +220,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .plugin("beckn-trade-bap")
         .service("userService");
       const getUserCredsResp = await userService.updateUserProfile(
-        ctx.state.user.id
+        ctx.request.body, ctx.state.user.id
       );
       return (ctx.body = getUserCredsResp);
     } catch (error: any) {

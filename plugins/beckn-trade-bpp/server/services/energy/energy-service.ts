@@ -808,18 +808,20 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const vc = JSON.parse(fileContent);
           console.log("Parsed JSON file: ", vc);
 
+          // NOTE: Commenting the verify certificates since DHIWAY api is down, uncomment it later
+
           // Step 1: Verify credentials
-          const getCreds = await axios.post(
-            `${process.env.VERIFY_CRED_URL}`,
-            vc
-          );
-          console.log("Credential Verified:", getCreds.data);
-          const verfiedCred = getCreds.data;
-          if (!verfiedCred || verfiedCred.error.length) {
-            throw new Error(
-              "Could not verify the provided credential, Unable to upload it!"
-            );
-          }
+          // const getCreds = await axios.post(
+          //   `${process.env.VERIFY_CRED_URL}`,
+          //   vc
+          // );
+          // console.log("Credential Verified:", getCreds.data);
+          // const verfiedCred = getCreds.data;
+          // if (!verfiedCred || verfiedCred.error.length) {
+          //   throw new Error(
+          //     "Could not verify the provided credential, Unable to upload it!"
+          //   );
+          // }
           // Step 4: Create the der entity and associate the uploaded file
           const cred = await strapi.entityService.create(
             "api::credential.credential",

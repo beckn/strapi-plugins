@@ -330,10 +330,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         const credentialVcService = strapi
           .plugin("beckn-trade-bap")
           .service("credentialVcService");
-        const verifyResp = await credentialVcService.verifyCertificate(vc);
-        if (!verifyResp.isVerified) {
-          throw new Error("Uploaded Credential is Invalid");
-        }
+
+        // NOTE: Commenting the verify certificates since DHIWAY api is down, uncomment it later
+
+        // const verifyResp = await credentialVcService.verifyCertificate(vc);
+        // if (!verifyResp.isVerified) {
+        //   throw new Error("Uploaded Credential is Invalid");
+        // }
         let updatedProfile: any = profile[0];
         await strapi.db.transaction(async ({ trx }) => {
           try {
@@ -341,7 +344,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               "api::credential.credential",
               {
                 data: {
-                  credential: vc,
+                  vc,
                   publishedAt: new Date()
                 }
               }
@@ -481,7 +484,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         "api::profile.profile",
         {
           filters: {
-            user: userId
+            user: { id: userId }
           }
         }
       );
@@ -492,8 +495,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           profile.id,
           {
             data: {
-              name: fullname,
-              address,
+              ...(fullname && { name: fullname }),
+              ...(address && { address }), 
               publishedAt: new Date()
             }
           }
