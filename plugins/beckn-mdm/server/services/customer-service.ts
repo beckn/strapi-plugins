@@ -75,10 +75,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const { customer_id } = customer[0];
 
       const now = new Date();
-      const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-      const endOfCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      const endOfCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
 
-      const startOfPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      const startOfPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
       // const endOfPreviousMonth = new Date(now.getFullYear(), now.getMonth(), 0);
 
       const consumptionLogs = await strapi.entityService.findMany(
@@ -87,10 +87,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           filters: {
             customer: {
               customer_id: { $eq: customer_id },
-              createdAt: {
-                $gte: startOfPreviousMonth,
-                $lte: endOfCurrentMonth,
-              },
+            },
+            createdAt: {
+              $gte: startOfPreviousMonth,
+              $lte: endOfCurrentMonth,
             },
           },
           sort: { createdAt: "desc" },
@@ -102,10 +102,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           filters: {
             customer: {
               customer_id: { $eq: customer_id },
-              createdAt: {
-                $gte: startOfPreviousMonth,
-                $lte: endOfCurrentMonth,
-              },
+            },
+            createdAt: {
+              $gte: startOfPreviousMonth,
+              $lte: endOfCurrentMonth,
             },
           },
           sort: { createdAt: "desc" },
@@ -135,14 +135,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
 
       if (consumptionLogs?.length) {
-        const currentMonthFromDate = new Date(consumptionLogs[consumptionLogs.length - 1].createdAt)
-        const currentMonthToDate = new Date(consumptionLogs[0].createdAt)
+        const currentMonthFromDate = new Date(consumptionLogs[consumptionLogs.length - 1].createdAt);
+        const currentMonthToDate = new Date(consumptionLogs[0].createdAt);
         
         const diffInMilliseconds = currentMonthToDate.getTime() - currentMonthFromDate.getTime()
         const totalDaysInCurrentMonth = Math.round(diffInMilliseconds / (1000 * 60 * 60 * 24)) + 1;
       
         consumptionLogs.forEach((log) => {
-          const logDate = new Date(log.createdAt);
+          const logDate = new Date(log.createdAt).toISOString();;
           const units = Number(log.unit_consumed);
 
           if (logDate >= startOfCurrentMonth) {
@@ -164,7 +164,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         const totalDaysInCurrentMonth = Math.round(diffInMilliseconds / (1000 * 60 * 60 * 24)) + 1;
 
         productionLogs.forEach((log) => {
-          const logDate = new Date(log.createdAt);
+          const logDate = new Date(log.createdAt).toISOString();;
           const units = Number(log.unit_produced);
 
           if (logDate >= startOfCurrentMonth) {

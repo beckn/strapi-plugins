@@ -37,7 +37,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const tradeService = strapi
         .plugin("beckn-trade-bap")
         .service("tradeService");
-      const trades = await tradeService.getTrade(id, ctx.state.user.id);
+      const trades = await tradeService.getTrade(id, ctx.state.user);
       ctx.body = trades;
     } catch (error) {
       ctx.badRequest(error.message);

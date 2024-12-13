@@ -156,7 +156,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           //   "api::credential.credential",
           //   {
           //     data: {
-          //       credential: consumerVc,
+          //       vc: consumerVc,
           //       publishedAt: new Date()
           //     }
           //   }
@@ -251,7 +251,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::credential.credential",
             {
               data: {
-                credential: derVC,
+                vc: derVC,
                 publishedAt: new Date()
               }
             }

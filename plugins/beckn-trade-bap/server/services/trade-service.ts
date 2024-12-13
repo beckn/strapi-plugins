@@ -11,7 +11,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     cred_required,
     recurring,
     userId,
-    domain
+    domain,
+    price
   }: {
     quantity: number;
     unit: string;
@@ -21,6 +22,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     recurring: boolean;
     userId: number;
     domain: string;
+    price: number
   }) {
     try {
       if (quantity <= 0) {
@@ -41,7 +43,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             throw new Error("No Profile Found");
           }
 
-          newTrade = await strapi.entityService.create("api::trade.trade", {
+          newTrade = await strapi.entityService.create("api::trade-bap.trade-bap", {
             data: {
               quantity,
               unit,
@@ -53,11 +55,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               domain,
               status: ETradeStatus.RECEIVED,
               type: ETradeType.BUY,
+              price,
               publishedAt: new Date()
             }
           });
           const newTradeEvent = await strapi.entityService.create(
-            "api::trade-event.trade-event",
+            "api::trade-event-bap.trade-event-bap",
             {
               data: {
                 trade: newTrade.id,
@@ -82,8 +85,19 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
-  async getTrade(tradeId: number | null, userId: number) {
+  async getTrade(tradeId: number | null, user: any) {
     try {
+      //check if user is admin
+      if (user.role.name === 'Admin') {
+        if (!tradeId) {
+          throw new Error('No trade id provided for admin to fetch trade details');
+        }
+        const trade = await strapi.entityService.findOne("api::trade-bap.trade-bap", tradeId, {
+          populate: ["trade_events"]
+        });
+        return trade;
+      }
+      const userId = user.id;
       const profile = await strapi.entityService.findMany(
         "api::profile.profile",
         {
@@ -111,7 +125,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         };
       }
-      const trades = await strapi.entityService.findMany("api::trade.trade", {
+      const trades = await strapi.entityService.findMany("api::trade-bap.trade-bap", {
         ...filterAndPopulate
       });
       return tradeId ? (trades && trades.length ? trades[0] : []) : trades;
@@ -122,7 +136,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async startTrade() {
     try {
-      const trades = await strapi.entityService.findMany("api::trade.trade", {
+      const trades = await strapi.entityService.findMany("api::trade-bap.trade-bap", {
         filters: {
           status: ETradeStatus.RECEIVED
         },
@@ -147,7 +161,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             try {
               const becknTradeInprogressStatus =
                 await strapi.entityService.update(
-                  "api::trade-event.trade-event",
+                  "api::trade-bap.trade-bap",
                   trade.id,
                   {
                     data: {
@@ -158,7 +172,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
               // Search Catalog
               const becknSearchTradeEvent = await strapi.entityService.create(
-                "api::trade-event.trade-event",
+                "api::trade-event-bap.trade-event-bap",
                 {
                   data: {
                     trade: trade.id,
@@ -182,7 +196,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 "\n"
               );
               const becknOnSearchTradeEvent = await strapi.entityService.create(
-                "api::trade-event.trade-event",
+                "api::trade-event-bap.trade-event-bap",
                 {
                   data: {
                     trade: trade.id,
@@ -203,7 +217,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               if (trade.trusted_source) {
                 for (let i = 0; i < searchResp.data.length; i++) {
                   const requestBecknJson = await strapi.entityService.create(
-                    "api::trade-event.trade-event",
+                    "api::trade-event-bap.trade-event-bap",
                     {
                       data: {
                         trade: trade.id,
@@ -257,7 +271,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
                       const becknCredBapEvent =
                         await strapi.entityService.create(
-                          "api::trade-event.trade-event",
+                          "api::trade-event-bap.trade-event-bap",
                           {
                             data: {
                               trade: trade.id,
@@ -291,7 +305,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
                       const becknOnCredBapEvent =
                         await strapi.entityService.create(
-                          "api::trade-event.trade-event",
+                          "api::trade-event-bap.trade-event-bap",
                           {
                             data: {
                               trade: trade.id,
@@ -335,7 +349,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               // Start Init Call
 
               const becknInitEvent = await strapi.entityService.create(
-                "api::trade-event.trade-event",
+                "api::trade-event-bap.trade-event-bap",
                 {
                   data: {
                     trade: trade.id,
@@ -367,7 +381,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               );
 
               const becknOnInitEvent = await strapi.entityService.create(
-                "api::trade-event.trade-event",
+                "api::trade-event-bap.trade-event-bap",
                 {
                   data: {
                     trade: trade.id,
@@ -385,7 +399,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               // Start Confirm Call
 
               const becknConfirmEvent = await strapi.entityService.create(
-                "api::trade-event.trade-event",
+                "api::trade-event-bap.trade-event-bap",
                 {
                   data: {
                     trade: trade.id,
@@ -413,7 +427,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               );
 
               const becknOnConfirmEvent = await strapi.entityService.create(
-                "api::trade-event.trade-event",
+                "api::trade-event-bap.trade-event-bap",
                 {
                   data: {
                     trade: trade.id,
@@ -436,7 +450,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               );
 
               // Call BAP-Orders API for creating order
-              const orderService: any = strapi.service("api::order.order");
+              const orderService: any = strapi.service("api::order-bap.order-bap");
               const modified_on_confirm_message = {
                 order: {
                   ...on_confirm_resp.data[0].message,
@@ -449,7 +463,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 user: trade.profile.user.id
               });
               const createOrder = await strapi.entityService.create(
-                "api::order.order",
+                "api::order-bap.order-bap",
                 {
                   data: { ...createOrderPayload, publishedAt: new Date() }
                 }
@@ -462,7 +476,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 } : ${JSON.stringify(on_confirm_resp)}\n`
               );
               const updateTrade = await strapi.entityService.update(
-                "api::trade.trade",
+                "api::trade-bap.trade-bap",
                 trade.id,
                 {
                   data: {
@@ -487,7 +501,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               );
               trx.rollback();
               const updateTrade = await strapi.entityService.update(
-                "api::trade.trade",
+                "api::trade-bap.trade-bap",
                 trade.id,
                 {
                   data: {
@@ -509,7 +523,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async updateTradeEventAndStatus(order_id: string | number, on_status: any) {
     try {
-      const trade = await strapi.entityService.findMany("api::trade.trade", {
+      const trade = await strapi.entityService.findMany("api::trade-bap.trade-bap", {
         filters: {
           order: order_id
         }
@@ -523,7 +537,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         } : ${JSON.stringify(on_status)}\n`
       );
       const becknOnStatusEvent = await strapi.entityService.create(
-        "api::trade-event.trade-event",
+        "api::trade-event-bap.trade-event-bap",
         {
           data: {
             trade: trade[0].id,
@@ -546,7 +560,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async getPendingTrades() {
     try {
-      const trades = await strapi.entityService.findMany("api::trade.trade", {
+      const trades = await strapi.entityService.findMany("api::trade-bap.trade-bap", {
         filters: {
           status: ETradeStatus.RECEIVED
         },
@@ -562,7 +576,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async updateTradeById(userId: number, tradeId: number, tradeDto: any) {
     try {
-      const { unit, quantity, trusted_source, cred_required, recurring } = tradeDto;
+      const { unit, quantity, trusted_source, cred_required, recurring, price } = tradeDto;
       const profile = await strapi.entityService.findMany(
         "api::profile.profile",
         {
@@ -592,7 +606,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       } else {
         throw new Error('No trade Id provided to update');
       }
-      const trades = await strapi.entityService.findMany("api::trade.trade", {
+      const trades = await strapi.entityService.findMany("api::trade-bap.trade-bap", {
         ...filterAndPopulate
       });
       if(trades && trades.length) {
@@ -605,10 +619,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           ...(trusted_source && { trusted_source }),
           ...(cred_required && { cred_required }),
           ...(recurring && { recurring }),
+          ...(price && { price }),
         };
         console.log('Update body: ', updateData);
         return {
-          updatedTrade: await strapi.entityService.update("api::trade.trade", tradeId, {
+          updatedTrade: await strapi.entityService.update("api::trade-bap.trade-bap", tradeId, {
             data: updateData
           })
         }
