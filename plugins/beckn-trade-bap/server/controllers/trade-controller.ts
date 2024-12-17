@@ -11,7 +11,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         trusted_source,
         cred_required,
         recurring,
-        domain
+        domain,
+        price
       } = ctx.request.body;
       const tradeService = strapi
         .plugin("beckn-trade-bap")
@@ -24,7 +25,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         cred_required,
         recurring,
         userId: ctx.state.user.id,
-        domain
+        domain,
+        price
       });
       ctx.body = createTradeResp;
     } catch (error) {

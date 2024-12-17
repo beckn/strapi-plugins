@@ -701,7 +701,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async getTrade({ tradeId, agentId }) {
     try {
-      const trade = await strapi.entityService.findMany("api::trade.trade", {
+      let trades = await strapi.entityService.findMany("api::trade.trade", {
         filters: {
           ...(tradeId && {
             id: tradeId
@@ -714,12 +714,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           trade_events: true
         }
       });
-      console.log("Trade:, ", trade);
+      console.log("Trade:, ", trades);
 
-      if (!trade || !trade.length) {
+      if (!trades || !trades.length) {
         throw new Error("Trade not found");
       }
-      return trade;
+      const updatedTrades = trades.map(trade => ({
+        ...trade,
+        status: 'SUCCESS'
+      }));
+      return updatedTrades;
     } catch (error) {
       throw new Error(error.message);
     }

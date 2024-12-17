@@ -372,6 +372,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate
         }
       );
+      const itemPrice = itemDetails[0]?.items[0]?.sc_retail_product?.min_price;
       const commonService = strapi.plugin(PLUGIN).service("commonService");
       await Promise.all(
         itemDetails.map(async (itemDetail) => {
@@ -429,7 +430,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           transactionId: context.transaction_id,
           event_name: 'beckn_on_confirm',
           description: 'Order Confirmation sent',
-          data: {}
+          data: { price: itemPrice }
         });
       }
       return confirmDetails;

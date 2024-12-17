@@ -109,8 +109,8 @@ export default [
   },
   {
     method: "DELETE",
-    path: "/der",
-    handler: "userController.deleteDer",
+    path: "/der/:id",
+    handler: "userController.deleteDerById",
     config: {
       policies: [],
       middlewares: ["plugin::beckn-trade-bap.authMiddleware"],

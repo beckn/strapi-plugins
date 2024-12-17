@@ -1,5 +1,5 @@
 export class TradeUtil {
-  static addTradeLog = async ({ transactionId, event_name, description, data = {} }) => {
+  static addTradeLog = async ({ transactionId, event_name, description, data }) => {
     try {
       if (!transactionId) {
         throw new Error('Transaction id not provided to add trade logs');
@@ -41,7 +41,8 @@ export class TradeUtil {
         tradeId,
         {
           data: {
-            trade_events: eventIds
+            trade_events: eventIds,
+            price: data.price
           }
         }
       );

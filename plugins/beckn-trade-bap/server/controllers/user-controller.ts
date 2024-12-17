@@ -84,9 +84,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const { type, category } = ctx.request.body;
       const filesUploadResps = (
         await Promise.all(
-          (Array.isArray(ctx.request.files.proofs)
-            ? ctx.request.files.proofs
-            : [ctx.request.files.proofs]
+          (Array.isArray(ctx.request.files.proof)
+            ? ctx.request.files.proof
+            : [ctx.request.files.proof]
           ).map((file: any) => filesService.uploadFile(file))
         )
       ).flatMap((resp: any) => resp);
@@ -94,7 +94,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const createDERResp = await userService.createDER({
         category,
         type,
-        proofs: filesUploadResps,
+        proof: filesUploadResps,
         user: ctx.state.user
       });
 
@@ -162,14 +162,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       return ctx.badRequest(error.message);
     }
   },
-  async deleteDer(ctx: any) {
+  async deleteDerById(ctx: any) {
     try {
       const userService = strapi
         .plugin("beckn-trade-bap")
         .service("userService");
       const deleteDerResp = await userService.deleteDer(
         ctx.state.user.id,
-        ctx.request.query.id || 0
+        ctx.params.id || 0
       );
       return (ctx.body = deleteDerResp);
     } catch (error: any) {

@@ -89,13 +89,21 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     try {
       //check if user is admin
       if (user.role.name === 'Admin') {
-        if (!tradeId) {
-          throw new Error('No trade id provided for admin to fetch trade details');
-        }
-        const trade = await strapi.entityService.findOne("api::trade-bap.trade-bap", tradeId, {
-          populate: ["trade_events"]
+        const trades = await strapi.entityService.findMany("api::trade-bap.trade-bap", {
+          filters: {
+            ...(tradeId && { id: { $eq: tradeId } }),
+            status: {
+              $eq: 'RECEIVED'
+            }
+          },
+          populate: {
+            trade_events: true,
+            order: {
+              fields: ['id']
+            }
+          }
         });
-        return trade;
+        return tradeId ? (trades && trades.length ? trades[0] : []) : trades;  
       }
       const userId = user.id;
       const profile = await strapi.entityService.findMany(
@@ -121,7 +129,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             id: tradeId
           },
           populate: {
-            trade_events: true
+            trade_events: true,
+            order: {
+              fields: ['id']
+            }
           }
         };
       }

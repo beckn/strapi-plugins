@@ -200,12 +200,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async createDER({
     category,
     type,
-    proofs,
+    proof,
     user
   }: {
     category: string;
-    type: "CONSUMER" | "PROSUMER";
-    proofs: any[];
+    type: string;
+    proof: any[];
     user: {
       id: number;
       username: string;
@@ -244,7 +244,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               name: user.name,
               email: user.email,
               category: category,
-              file_hash: proofs[0]?.hash || ""
+              file_hash: proof[0]?.hash || ""
             }
           );
           const newCredential = await strapi.entityService.create(
@@ -261,10 +261,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::distributed-supply-network-member.distributed-supply-network-member",
             {
               data: {
-                type,
+                type: type.toUpperCase(),
                 profile: profile[0].id,
                 credential: newCredential,
-                proofs,
+                proofs: proof,
                 publishedAt: new Date(),
                 category
               }
