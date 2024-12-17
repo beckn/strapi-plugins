@@ -723,7 +723,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         ...trade,
         status: 'SUCCESS'
       }));
-      return updatedTrades;
+      return tradeId ? (updatedTrades && updatedTrades.length ? updatedTrades[0] : []) : updatedTrades;
     } catch (error) {
       throw new Error(error.message);
     }

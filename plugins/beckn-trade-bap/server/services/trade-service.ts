@@ -98,9 +98,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           },
           populate: {
             trade_events: true,
-            order: {
-              fields: ['id']
-            }
+            order: true
           }
         });
         return tradeId ? (trades && trades.length ? trades[0] : []) : trades;  
@@ -120,6 +118,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       let filterAndPopulate: any = {
         filters: {
           profile: profile[0].id
+        },
+        populate: {
+          order: true
         }
       };
       if (tradeId) {
@@ -130,9 +131,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           },
           populate: {
             trade_events: true,
-            order: {
-              fields: ['id']
-            }
+            order: true
           }
         };
       }
