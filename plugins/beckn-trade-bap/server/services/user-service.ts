@@ -100,7 +100,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         throw new Error("Role not found");
       }
       const roleId = role[0].id;
-      const newUserCreated = await strapi.entityService.create(
+      const user = await strapi.entityService.create(
         "plugin::users-permissions.user",
         {
           data: {
@@ -115,7 +115,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         }
       );
-      return newUserCreated;
+      const jwt = await strapi.plugins[
+        "users-permissions"
+      ].services.jwt.issue({
+        id: user.id
+      });
+      return { user, jwt };
     } catch (error: any) {
       throw new Error(error.message);
     }
@@ -306,7 +311,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             }
           }
         );
-        return ders;
+        return ders && ders.length ? ders : [];
       }
       throw new Error("No Profile Found");
     } catch (error: any) {
@@ -389,6 +394,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
       if (profile && profile.length) {
         let creds = profile[0].credentials;
+        if (!(creds && creds.length)) {
+          return [];
+        }
         creds = creds.map((cred) => {
           const cred_id = cred.id;
           return {

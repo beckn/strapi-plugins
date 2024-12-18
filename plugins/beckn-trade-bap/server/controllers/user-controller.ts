@@ -33,11 +33,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       });
       console.log('MDM Customer: ', customerMDM.data);
       if (customerMDM.data.data && customerMDM.data.data.customer_id) {
-        const newUser = await userService.createUser({
+        const { user: newUser, jwt } = await userService.createUser({
           email,
           fullname,
           password
         });
+        delete newUser.password;
         console.log('New user created: ', newUser);
         if (newUser.id) {
           const newUserProfile = await userService.createUserProfile({
@@ -51,13 +52,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           });
           console.log('New user profile created: ', newUserProfile);
           if (newUserProfile.id) {
-            delete newUser.password;
             return (ctx.body = {
               success: true,
               message: "User Signed Up Successfully",
               data: {
                 user: newUser,
-                profile: newUserProfile
+                profile: newUserProfile,
+                jwt
               }
             });
           }

@@ -712,7 +712,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         },
         populate: {
           trade_events: true
-        }
+        },
+        sort: { updatedAt: 'desc' }
       });
       console.log("Trade:, ", trades);
 

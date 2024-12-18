@@ -99,7 +99,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate: {
             trade_events: true,
             order: true
-          }
+          },
+          sort: { updatedAt: 'desc' }
         });
         return tradeId ? (trades && trades.length ? trades[0] : []) : trades;  
       }
@@ -121,7 +122,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         },
         populate: {
           order: true
-        }
+        },
+        sort: { updatedAt: 'desc' }
       };
       if (tradeId) {
         filterAndPopulate = {

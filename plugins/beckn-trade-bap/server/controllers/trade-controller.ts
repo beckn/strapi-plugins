@@ -84,10 +84,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async updateTradeById(ctx: any) {
     try {
-      const userService = strapi
+      const tradeService = strapi
         .plugin("beckn-trade-bap")
-        .service("userService");
-      const deleteDerResp = await userService.updateTradeById(
+        .service("tradeService");
+      const deleteDerResp = await tradeService.updateTradeById(
         ctx.state.user.id,
         ctx.params.id,
         ctx.request.body
