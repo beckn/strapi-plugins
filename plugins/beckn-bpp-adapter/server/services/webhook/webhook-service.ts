@@ -285,17 +285,24 @@ const createItemAndOtherComponents = async (
       }
     );
     console.log("createdPriceBreakup===>", createdPriceBreakup);
-
+    // console.log("Create SC Retail PRoduct Payload===>", createScProduct)
     const createScProduct = await strapi.entityService.create(
       "api::sc-product.sc-product",
       {
         data: {
-          minPrice: item.min_price || 7,
-          maxPrice: item.max_price || 8,
+          min_price: item.min_price || 7,
+          max_price: item.max_price || 8,
           stock_quantity: item.stock_quantity || 10,
           sku: item.sku || 18,
           price_bareakup_ids: [createdPriceBreakup.id],
           quantity_unit: item.unit_type || "kWH",
+          downloadable: true,
+          on_sale: false,
+          stock_status: item.stock_status,
+          rating_count: 4,
+          average_rating: 4.5,
+          currency: "INR",
+          trusted_source: true,
           publishedAt: new Date().toISOString()
         }
       }

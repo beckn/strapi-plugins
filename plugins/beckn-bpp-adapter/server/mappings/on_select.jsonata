@@ -52,7 +52,7 @@
                         "count": stock_quantity ? stock_quantity : 0,
                         "measure":{
                             "value": $string(stock_quantity ? stock_quantity : 0),
-                            "unit": "kWh"
+                            "unit": quantity_unit
                         }
                     }
                 },
