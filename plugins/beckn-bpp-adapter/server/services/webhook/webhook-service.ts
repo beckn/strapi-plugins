@@ -292,7 +292,10 @@ const createItemAndOtherComponents = async (
         data: {
           min_price: item.min_price || 7,
           max_price: item.max_price || 8,
-          stock_quantity: item.stock_quantity || 10,
+          stock_quantity:
+            typeof item.stock_quantity === "string"
+              ? 1000
+              : item.stock_quantity || 10,
           sku: item.sku || 18,
           price_bareakup_ids: [createdPriceBreakup.id],
           quantity_unit: item.unit_type || "kWH",
