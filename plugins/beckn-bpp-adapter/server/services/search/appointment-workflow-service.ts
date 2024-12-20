@@ -113,9 +113,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     const commonService = strapi.plugin(PLUGIN).service("commonService");
     await Promise.all(
       providers.map(async (provider) => {
-        provider.tags = provider.tags.map((tag) => ({
+        provider.tags = provider?.tags?.map((tag) => ({
           taxanomy: "TAG",
-          taxanomy_id: tag,
+          taxanomy_id: tag
         }));
         await Promise.all(
           await provider.items.map(async (item) => {
