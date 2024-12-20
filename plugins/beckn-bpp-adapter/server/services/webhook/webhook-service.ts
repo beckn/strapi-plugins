@@ -59,7 +59,7 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
           "Relevant Tag Group name related to tag_name and tag_code and tag_group_name",
         stock_status: "In Stock",
         fulfillments: "Delivery in 3-5 business days",
-        unit_type: "kwh"
+        unit_type: "Suitable Unit as per Item"
       };
 
       //call Gemini to get intent
