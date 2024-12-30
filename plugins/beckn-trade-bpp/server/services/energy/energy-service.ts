@@ -988,5 +988,55 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       console.log('Delete Cred Error: ', error);
       throw new Error(`Unable to delete Cred: ${error.message}`);
     }
-  }
+  },
+  async updateTradePreference({ quantity, price, unit, trusted_source, cred_required, recurring }, user) {
+    try {
+      const provider = user?.agent?.provider_id;
+      if(!provider) {
+        throw new Error('No Provider found');
+      }
+      const providerId = provider.id;
+      const providerData = await strapi.entityService.findOne(
+        "api::provider.provider",
+        providerId,
+        {
+          populate: ["items", "items.sc_retail_product"]
+        }
+      );
+      if(providerData.items.length > 0) {
+        const prefData = providerData.items[0].sc_retail_product;
+        if(!prefData) {
+          throw new Error('No preference found');
+        }
+        const updatedTradePreference = await strapi.entityService.update(
+          "api::sc-product.sc-product", 
+          prefData.id,
+          {
+            data: {
+              ...(quantity && { stock_quantity: Number(quantity) }),
+              ...(price && { min_price: price.toString() }),
+              ...(unit && { quantity_unit: unit }),
+              ...(trusted_source && { trusted_source }),
+              ...(cred_required && { cred_required }),
+              ...(recurring && { recurring }),
+              publishedAt: new Date()
+            }
+          }
+        )
+        return {
+          prefId: updatedTradePreference.id,
+          price: updatedTradePreference.min_price,
+          quantity: updatedTradePreference.stock_quantity,
+          unit: updatedTradePreference.quantity_unit,
+          trusted_source: updatedTradePreference.trusted_source,
+          cred_required: updatedTradePreference.cred_required,
+          recurring: updatedTradePreference.recurring
+        } 
+      }
+      throw new Error('No preference found');
+    } catch(error) {
+      console.log('Update Trade Pref Error: ', error.message);
+      throw new Error(error.message);
+    }
+  },
 });

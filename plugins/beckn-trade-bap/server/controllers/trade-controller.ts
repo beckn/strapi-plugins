@@ -61,9 +61,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const tradeService = strapi
         .plugin("beckn-trade-bap")
         .service("tradeService");
-      tradeService.startTrade();
-
-      ctx.body = { message: "Trades will be executed", trades };
+      const tradeResp = await tradeService.startTrade();
+      ctx.body = tradeResp;
     } catch (error) {
       ctx.badRequest(error.message);
     }

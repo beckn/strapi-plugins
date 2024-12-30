@@ -143,4 +143,13 @@ export default [
       auth: false
     }
   },
+  {
+    method: "PUT",
+    path: "/trade-pref",
+    handler: "energyController.updateTradePreference",
+    config: {
+      middlewares: ["plugin::beckn-trade-bpp.authMiddleware"],
+      auth: false
+    }
+  },
 ];

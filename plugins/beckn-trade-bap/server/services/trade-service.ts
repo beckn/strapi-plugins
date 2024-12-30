@@ -92,9 +92,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         const trades = await strapi.entityService.findMany("api::trade-bap.trade-bap", {
           filters: {
             ...(tradeId && { id: { $eq: tradeId } }),
-            status: {
-              $eq: 'RECEIVED'
-            }
+            ...(!tradeId && { status: { $eq: 'RECEIVED' } }),
           },
           populate: {
             trade_events: true,
@@ -102,7 +100,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           },
           sort: { updatedAt: 'desc' }
         });
-        return tradeId ? (trades && trades.length ? trades[0] : []) : trades;  
+        return tradeId ? (trades && trades.length ? trades[0] : []) : trades;
       }
       const userId = user.id;
       const profile = await strapi.entityService.findMany(
@@ -160,13 +158,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         }
       });
+  
       if (!trades || !trades.length) {
-        return { message: "No Trade Found", success: false, data: {} };
+        return { message: "No Trade Found", success: false, data: [] };
       }
+  
       const credentialVcService = strapi
         .plugin("beckn-trade-bap")
         .service("credentialVcService");
-
+  
+      const tradeResults = [];
+  
       await Promise.all(
         trades.map(async (trade: ITrade) => {
           await strapi.db.transaction(async ({ trx }) => {
@@ -178,7 +180,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                   {
                     data: {
                       status: ETradeStatus.IN_PROGRESS
-                    }
+                    },
+                    trx
                   }
                 );
 
@@ -192,10 +195,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     description: TRADE_EVENTS.beckn_search.description,
                     data: {},
                     publishedAt: new Date()
-                  }
+                  },
+                  trx
                 }
               );
               const searchResp = await gclService.search(trade);
+              if (!searchResp || !searchResp.data || !searchResp.data.length) {
+                throw new Error(`No buyer found for Trade ID: ${trade.id}`);
+              }
               const trasaction_id = searchResp.data[0].context.transaction_id;
               console.log(
                 `\ntransaction_id for TradeId:${trade.id} ===>`,
@@ -216,7 +223,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     description: TRADE_EVENTS.beckn_on_search.description,
                     data: searchResp,
                     publishedAt: new Date()
-                  }
+                  },
+                  trx
                 }
               );
 
@@ -238,7 +246,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                           TRADE_EVENTS.request_beckn_json.description,
                         data: searchResp,
                         publishedAt: new Date()
-                      }
+                      },
+                      trx
                     }
                   );
                   const bpp = searchResp.data[i];
@@ -293,7 +302,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                                 TRADE_EVENTS.beckn_cred_bap.description,
                               data: provider,
                               publishedAt: new Date()
-                            }
+                            },
+                            trx
                           }
                         );
 
@@ -327,7 +337,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                                 TRADE_EVENTS.beckn_on_cred_bap.description,
                               data: { provider, on_credResp },
                               publishedAt: new Date()
-                            }
+                            },
+                            trx
                           }
                         );
 
@@ -369,8 +380,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     description: TRADE_EVENTS.beckn_init.description,
                     data: { target_bpp: required_providers[0] },
                     publishedAt: new Date()
-                  }
-                }
+                  },
+                  trx
+                },
               );
               if (!required_providers.length) {
                 throw new Error("No Provider Matched");
@@ -404,7 +416,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                       on_init: on_init_resp
                     },
                     publishedAt: new Date()
-                  }
+                  },
+                  trx
                 }
               );
 
@@ -419,7 +432,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     description: TRADE_EVENTS.beckn_confirm.description,
                     data: { target_bpp: required_providers[0] },
                     publishedAt: new Date()
-                  }
+                  },
+                  trx
                 }
               );
 
@@ -450,7 +464,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                       on_confirm: on_confirm_resp
                     },
                     publishedAt: new Date()
-                  }
+                  },
+                  trx
                 }
               );
               console.log(
@@ -477,7 +492,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               const createOrder = await strapi.entityService.create(
                 "api::order-bap.order-bap",
                 {
-                  data: { ...createOrderPayload, publishedAt: new Date() }
+                  data: { ...createOrderPayload, publishedAt: new Date() },
+                  trx
                 }
               );
               console.log(
@@ -494,7 +510,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                   data: {
                     status: ETradeStatus.SUCCESS,
                     order: createOrder.id
-                  }
+                  },
+                  trx
                 }
               );
               console.log(
@@ -505,34 +522,53 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 } : ${JSON.stringify(on_confirm_resp)}\n`
               );
 
-              trx.commit();
+              // Add success result for this trade
+              tradeResults.push({
+                tradeId: trade.id,
+                status: "SUCCESS",
+                message: `Trade executed successfully for Trade ID: ${trade.id}`
+              });
+
+              await trx.commit();
             } catch (error: any) {
-              console.log(
-                `Error in Start Transaction for TradeId : ${trade.id}==>\n`,
-                JSON.stringify(error.message)
+              console.error(
+                `Error in processing Trade ID ${trade.id}: ${error.message}`
+
               );
-              trx.rollback();
-              const updateTrade = await strapi.entityService.update(
-                "api::trade-bap.trade-bap",
-                trade.id,
-                {
-                  data: {
-                    status: ETradeStatus.FAILED
-                  }
-                }
-              );
-              throw new Error(error.message);
+              // Add failure result for this trade
+              tradeResults.push({
+                tradeId: trade.id,
+                status: "FAILED",
+                message: error.message
+              });
+              
+              await trx.rollback();
+              // try {
+              //   // Update status to FAILED outside the transaction
+              //   await strapi.entityService.update("api::trade-bap.trade-bap", trade.id, {
+              //     data: {
+              //       status: ETradeStatus.FAILED,
+              //     },
+              //   });
+              // } catch (updateError: any) {
+              //   console.error(
+              //     `Failed to update Trade ID ${trade.id} to FAILED: ${updateError.message}`
+              //   );
+              // }
             }
           });
         })
       );
-
-      return { message: "Trade Found", success: true, data: { trades } };
+      return {
+        message: "Trade processing completed!",
+        data: tradeResults
+      };
     } catch (error: any) {
-      console.log(error);
+      console.error("Error in startTrade:", error.message);
       throw new Error(error.message);
     }
   },
+  
   async updateTradeEventAndStatus(order_id: string | number, on_status: any) {
     try {
       const trade = await strapi.entityService.findMany("api::trade-bap.trade-bap", {

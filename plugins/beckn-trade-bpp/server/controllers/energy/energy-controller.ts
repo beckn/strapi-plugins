@@ -206,4 +206,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ctx.badRequest(error.message);
     }
   },
+  async updateTradePreference(ctx) {
+    try {
+      const energyService = strapi
+        .plugin("beckn-trade-bpp")
+        .service("energyService");
+      const user = ctx.state.user;
+      const updateTradePrefDto = ctx.request.body;
+      const result = await energyService.updateTradePreference(updateTradePrefDto, user);
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
 });
