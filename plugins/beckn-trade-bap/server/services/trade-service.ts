@@ -664,9 +664,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         const updateData = {
           ...(unit && { unit }),
           ...(quantity && { quantity }),
-          ...(trusted_source && { trusted_source }),
-          ...(cred_required && { cred_required }),
-          ...(recurring && { recurring }),
+          trusted_source,
+          cred_required,
+          recurring,
           ...(price && { price }),
         };
         console.log('Update body: ', updateData);
