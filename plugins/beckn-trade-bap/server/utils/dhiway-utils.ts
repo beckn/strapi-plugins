@@ -85,8 +85,8 @@ const CORD_NETWORK_BASE_URL = "https://api.cord.network/api/v1";
 const DEDI_BASE_URL = "https://lookup.dedi.global/dedi";
 
 // constant for now. can be changed in future
-const namespace = "HyperbecknEnergy";
-const registryId =
+const namespace_id = process.env.NAMESPACE_ID;
+const registry_name = process.env.REGISTRY_NAME;
   "registry:cord:bdqt8vxH3E9mAiWdeybZeJPgpo4yCRvF4ecTUKi96UWqAfwWA";
 const authorization =
   "registryauth:cord:X8JY6GM9eY9qbsXmT27ARZXhf2Hkj31UjLjStf4AFVWNsvNhn";
@@ -281,7 +281,7 @@ async function addRegistryRecord<T = any>(
   headers: Record<string, string> = {}
 ): Promise<T> {
   try {
-    const url = `${DEDI_BASE_URL}/${namespace}/${registryId}/addRecord`;
+    const url = `${DEDI_BASE_URL}/${namespace_id}/${registry_name}/addRecord`;
 
     const requestData: AddRecordRequest = {
       authorization,
@@ -318,7 +318,7 @@ async function getRegistryRecords<T = any>(
   headers: Record<string, string> = {}
 ): Promise<T> {
   try {
-    const url = `${process.env.DEDI_BASE_URL}/query/${namespace}/${registryId}`;
+    const url = `${process.env.DEDI_BASE_URL}/query/${namespace_id}/${registry_name}`;
 
     const requestHeaders = {
       "Content-Type": "application/json",
