@@ -402,7 +402,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             });
 
         if (!agentProfile.ders.length) {
-            throw new Error(`No Ders found for this user`);
+            console.log(`No Ders found for this user`);
+            return [];
         }
         return agentProfile.ders;
     } catch (error) {
@@ -718,7 +719,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       console.log("Trade:, ", trades);
 
       if (!trades || !trades.length) {
-        throw new Error("Trade not found");
+        console.log('No trades found for this user');
+        if (tradeId) {
+          throw new Error('No trade details found for this trade id');
+        }
+        return [];
       }
       const updatedTrades = trades.map(trade => ({
         ...trade,
