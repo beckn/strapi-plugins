@@ -82,12 +82,11 @@ interface AddRecordRequest {
 
 const ISSUER_AGENT_BASE_URL = "https://issuer-agent.demo.dhiway.com/api/v1";
 const CORD_NETWORK_BASE_URL = "https://api.cord.network/api/v1";
-const DEDI_BASE_URL = "https://lookup.dedi.global/dedi";
+const DEDI_BASE_URL = process.env.DEDI_BASE_URL;
 
 // constant for now. can be changed in future
 const namespace_id = process.env.NAMESPACE_ID;
 const registry_name = process.env.REGISTRY_NAME;
-  "registry:cord:bdqt8vxH3E9mAiWdeybZeJPgpo4yCRvF4ecTUKi96UWqAfwWA";
 const authorization =
   "registryauth:cord:X8JY6GM9eY9qbsXmT27ARZXhf2Hkj31UjLjStf4AFVWNsvNhn";
 
