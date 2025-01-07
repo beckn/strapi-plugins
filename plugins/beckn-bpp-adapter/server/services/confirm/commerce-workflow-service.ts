@@ -16,6 +16,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
       const { items, provider, billing, fulfillments } = message.order;
       const { domain, transaction_id, bap_id, bap_uri } = context;
+      //only for p2p energy trade
+      const itemQuantity = items[0]?.quantity?.selected?.count;
       const currentDate = new Date();
       const isoString = currentDate.toISOString();
       let orderId;
@@ -372,7 +374,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate
         }
       );
-      const itemPrice = itemDetails[0]?.items[0]?.sc_retail_product?.min_price;
       const commonService = strapi.plugin(PLUGIN).service("commonService");
       await Promise.all(
         itemDetails.map(async (itemDetail) => {
@@ -426,11 +427,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         order_id: orderId
       }));
       if (isEnergy(context)) {
+        const { min_price: itemPrice, id: scRetailId, stock_quantity: oldItemQuantity } = itemDetails[0].items[0].sc_retail_product;
         TradeUtil.addTradeLog({
           transactionId: context.transaction_id,
           event_name: 'beckn_on_confirm',
           description: 'Order Confirmation sent',
-          data: { price: itemPrice }
+          data: { price: itemPrice, scRetailId, itemQuantity, oldItemQuantity }
         });
       }
       return confirmDetails;
