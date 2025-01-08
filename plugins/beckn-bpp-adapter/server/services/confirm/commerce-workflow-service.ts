@@ -432,8 +432,25 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           transactionId: context.transaction_id,
           event_name: 'beckn_on_confirm',
           description: 'Order Confirmation sent',
-          data: { price: itemPrice, scRetailId, itemQuantity, oldItemQuantity }
+          data: { price: itemPrice }
         });
+        console.log("Quantity Available: ", oldItemQuantity);
+        console.log("Quantity Required: ", itemQuantity);
+        //update quantity in sc retail product
+        if (Number(oldItemQuantity) < Number(itemQuantity)) {
+          throw new Error("Sufficient stocks not available from seller");
+        }
+        console.log("Updating stock quantity in sc-retail-product");
+        await strapi.entityService.update(
+          "api::sc-product.sc-product",
+          scRetailId,
+          {
+            data: {
+              stock_quantity: Number(oldItemQuantity) - Number(itemQuantity),
+              publishedAt: new Date()
+            }
+          }
+        );
       }
       return confirmDetails;
     } catch (error) {

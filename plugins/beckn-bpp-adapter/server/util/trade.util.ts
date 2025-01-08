@@ -47,22 +47,6 @@ export class TradeUtil {
           }
         }
       );
-      //update quantity in sc retail product
-      if(Number(data.oldItemQuantity) < Number(data.itemQuantity)) {
-        console.log("Quantity Available: ", data.oldItemQuantity);
-        console.log("Quantity Required: ", data.itemQuantity);
-        throw new Error("Sufficient stocks not available from seller");
-      }
-      await strapi.entityService.update(
-        "api::sc-product.sc-product",
-        data.scRetailId,
-        {
-          data: {
-            stock_quantity: Number(data.oldItemQuantity) - Number(data.itemQuantity),
-            publishedAt: new Date()
-          }
-        }
-      );
       return tradeEvent;
     } catch (error) {
       console.log('Error while adding trade event', error?.message);

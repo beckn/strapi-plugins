@@ -187,12 +187,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async getEnergyData({ customerId, startDate, endDate }) {
     //make sure startDate and endDate is in standard format: YYYY-MM-DD, not DD-MM-YYYY
     try {
+      const now = new Date();
       const consumptionLogs = await strapi.entityService.findMany(
         "api::consumption-log.consumption-log",
         {
           filters: {
             customer: { customer_id: { $eq: customerId } },
-            createdAt: { $gte: new Date(startDate).toISOString(), $lte: new Date(endDate).toISOString() }
+            createdAt: { 
+              $gte: new Date(new Date(startDate).setHours(0, 0, 0, 0)).toISOString(), 
+              $lte: new Date(new Date(endDate).
+              setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds())).toISOString()
+            }
           },
           populate: ["unit_consumed"],
           sort: { createdAt: "desc" },
@@ -203,7 +208,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         {
           filters: {
             customer: { customer_id: { $eq: customerId } },
-            createdAt: { $gte: new Date(startDate).toISOString(), $lte: new Date(endDate).toISOString() }
+            createdAt: { 
+              $gte: new Date(new Date(startDate).setHours(0, 0, 0, 0)).toISOString(), 
+              $lte: new Date(new Date(endDate).
+              setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds())).toISOString()
+            }
           },
           populate: ["unit_produced"],
           sort: { createdAt: "desc" },
