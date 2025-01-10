@@ -139,7 +139,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         const currentMonthToDate = new Date(consumptionLogs[0].createdAt);
         
         const diffInMilliseconds = currentMonthToDate.getTime() - currentMonthFromDate.getTime()
-        const totalDaysInCurrentMonth = Math.round(diffInMilliseconds / (1000 * 60 * 60 * 24)) + 1;
+        const totalDaysInCurrentMonth = new Date().getDate();
       
         consumptionLogs.forEach((log) => {
           const logDate = new Date(log.createdAt).toISOString();;
@@ -161,7 +161,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         const currentMonthToDate = new Date(productionLogs[0].createdAt)
 
         const diffInMilliseconds = currentMonthToDate.getTime() - currentMonthFromDate.getTime()
-        const totalDaysInCurrentMonth = Math.round(diffInMilliseconds / (1000 * 60 * 60 * 24)) + 1;
+        const totalDaysInCurrentMonth = new Date().getDate();
 
         productionLogs.forEach((log) => {
           const logDate = new Date(log.createdAt).toISOString();;
@@ -195,8 +195,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             customer: { customer_id: { $eq: customerId } },
             createdAt: { 
               $gte: new Date(new Date(startDate).setHours(0, 0, 0, 0)).toISOString(), 
-              $lte: new Date(new Date(endDate).
-              setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds())).toISOString()
+              $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)).toISOString()
             }
           },
           populate: ["unit_consumed"],
@@ -210,8 +209,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             customer: { customer_id: { $eq: customerId } },
             createdAt: { 
               $gte: new Date(new Date(startDate).setHours(0, 0, 0, 0)).toISOString(), 
-              $lte: new Date(new Date(endDate).
-              setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds())).toISOString()
+              $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)).toISOString()
             }
           },
           populate: ["unit_produced"],
