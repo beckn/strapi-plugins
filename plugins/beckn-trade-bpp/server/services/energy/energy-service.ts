@@ -1020,9 +1020,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               ...(quantity && { stock_quantity: Number(quantity) }),
               ...(price && { min_price: price.toString() }),
               ...(unit && { quantity_unit: unit }),
-              ...(trusted_source && { trusted_source }),
-              ...(cred_required && { cred_required }),
-              ...(recurring && { recurring }),
+              trusted_source,
+              cred_required,
+              recurring,
               publishedAt: new Date()
             }
           }
