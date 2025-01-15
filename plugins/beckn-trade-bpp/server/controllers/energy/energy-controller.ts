@@ -141,6 +141,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       if (!files || !files.credential) {
         return ctx.badRequest("No JSON file provided");
       }
+      
+      if (ctx.request.files.credential.type != "application/json") {
+        throw new Error("Invalid file format uploaded, only json file allowed!");
+      }
+
       const jsonFile = files.credential;
       console.log(": ", jsonFile);
       const energyService = strapi

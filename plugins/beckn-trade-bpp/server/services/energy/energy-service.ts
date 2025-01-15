@@ -869,7 +869,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       });
       return result;
     } catch (error) {
-      // Roll back the transaction in case of error
       console.error("Error in uploading credential:", error);
       throw new Error(`${error.message}`);
     }
