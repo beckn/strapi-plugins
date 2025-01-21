@@ -502,7 +502,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               {
                 data: {
                   status: ETradeStatus.SUCCESS,
-                  order: createOrder.id
+                  order: createOrder.id,
+                  provider_details: required_providers[0].message.providers[0]
                 },
                 trx
               }

@@ -1,6 +1,7 @@
 import { Strapi } from "@strapi/strapi";
 const fs = require("fs").promises;
 import axios from "axios";
+const bcrypt = require('bcryptjs');
 
 type AddTradeDto = {
   quantity: number;
@@ -31,6 +32,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         });
       if (!user) {
         throw new Error("Email Not found");
+      }
+      if(!user.isOtpVerified) {
+        throw new Error('Email not Verified Yet, Please verify before login!');
       }
       // Request API.
       const response = await axios.post(
@@ -107,8 +111,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           try {
             const mdm = await axios.post(`${process.env.MDM_URL}/getCustomer`, {
               phone_no,
-              utility_name,
-              role: 'PROSUMER'
+              utility_name
             });
             mdmUser = mdm?.data?.data;
             console.log("MDM User", mdmUser);
@@ -255,6 +258,54 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         throw error;
       }
       throw new Error(error.message);
+    }
+  },
+  async verifyOtp(email, phone_number, password: string, otp: number) {
+  
+    try {
+      const user = await strapi
+        .query("plugin::users-permissions.user")
+        .findOne({
+          where: {
+            email: { $eqi: email },
+            role: { name: { $eqi: "Prosumer" } }
+          },
+          populate: {
+            agent: true,
+            provider: true,
+            role: true
+          }
+        });
+      if (!user) {
+        throw new Error("Email Not Registered Yet");
+      }
+      console.log("Users", user);
+
+      if(!Number.isInteger(otp)) {
+        throw new Error('Invalid otp provided');
+      }
+      // Compare the provided password with the hashed password
+      const isMatch = await bcrypt.compare(password, user.password);
+      if(!isMatch) {
+        throw new Error('Wrong password!');
+      }
+      //update user
+      const updatedUser = await strapi.entityService.update(
+        "plugin::users-permissions.user",
+        user.id,
+        {
+          data: {
+            isOtpVerified: true,
+            publishedAt: new Date()
+          }
+        }
+      );
+      return {
+        message: "Otp Verified Successfully"
+      }
+    } catch (error) {
+      console.log('Verify otp Error: ', error.message);
+      throw error;
     }
   },
   // Helper function using streams

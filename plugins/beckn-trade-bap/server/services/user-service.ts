@@ -2,6 +2,7 @@ import { Strapi } from "@strapi/strapi";
 import axios from "axios";
 // import { ValidationError } from "yup";
 const { ValidationError } = require('@strapi/utils').errors;
+const bcrypt = require('bcryptjs');
 import {
   DHIWAY_BECKN_TRADE_BAP_CONSUMER_SCHEMA,
   DHIWAY_BECKN_TRADE_BAP_DER_SCHEMA
@@ -37,9 +38,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       if (!user) {
         throw new Error("Email Not found");
       }
-
+      if(!user.isOtpVerified) {
+        throw new Error('Email not Verified Yet, Please verify before login!');
+      }
       // Request Strapi Native Auth API.
-      console.log("password", password);
       const response = await axios.post(
         `${process.env.STRAPI_URL}/api/auth/local`,
         {
@@ -123,6 +125,54 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       return { user, jwt };
     } catch (error: any) {
       throw new Error(error.message);
+    }
+  },
+  async verifyOtp(email, password: string, otp: number) {
+    try {
+      const user = await strapi
+        .query("plugin::users-permissions.user")
+        .findOne({
+          where: {
+            email: { $eqi: email },
+            role: {
+              $or: [
+                { name: { $eqi: "Consumer" } },
+                { name: { $eqi: "Admin" } }
+              ]
+            }
+          },
+          populate: ["role"],
+        });
+      if (!user) {
+        throw new Error("Email Not Registered Yet");
+      }
+      console.log("User: ", user);
+
+      if(!Number.isInteger(otp)) {
+        throw new Error('Invalid otp provided');
+      }
+      // Compare the provided password with the hashed password
+      const isMatch = await bcrypt.compare(password, user.password);
+      if(!isMatch) {
+        throw new Error('Wrong password!');
+      }
+      //update user
+      const updatedUser = await strapi.entityService.update(
+        "plugin::users-permissions.user",
+        user.id,
+        {
+          data: {
+            isOtpVerified: true,
+            publishedAt: new Date()
+          }
+        }
+      );
+      return {
+        message: "Otp Verified Successfully"
+      }
+    } catch (error) {
+      console.log('Verify otp Error: ', error.message);
+      throw error;
     }
   },
   async createUserProfile({
