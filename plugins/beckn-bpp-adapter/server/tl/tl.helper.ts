@@ -156,6 +156,7 @@ export const fulfillments = (
   fulfillments: KeyValuePair[],
   items: KeyValuePair[] = []
 ) => {
+  console.log("Temp===>", JSON.stringify({ fulfillments, items }));
   const allFulfillments = fulfillments || [];
   items.forEach((item: KeyValuePair) => {
     item?.item_fulfillment_ids?.forEach((item_fulfillment_id) => {
