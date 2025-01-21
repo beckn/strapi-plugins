@@ -267,7 +267,8 @@ export class SearchUtil {
         filteredProviders = [];
       }
     } else if (isRetail(context)) {
-      return filteredProviders;
+      console.log("Is a retail domain====>");
+      return providers;
     } else {
       const stop =
         fulfillment?.stops?.find((stop: KeyValuePair) => stop?.location?.gps) ||
