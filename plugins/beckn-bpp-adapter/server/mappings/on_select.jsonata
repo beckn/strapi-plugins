@@ -89,7 +89,7 @@
                     "category_code": $v.category_code
                 }
             }),
-            "fulfillments": $fulfillments(fulfillments, items)
+            "fulfillments": $fulfillments(message.fulfillments, message.items)
         }
     }
 }
