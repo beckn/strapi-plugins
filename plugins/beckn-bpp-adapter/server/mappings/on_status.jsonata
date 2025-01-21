@@ -134,7 +134,7 @@
                         }
                     },
                     "contact": {
-                        "phone": %.message.order_id.order_address.phone
+                        "phone": %.order_id.order_address.phone
                     }
                 }[],
                 "agent": {
