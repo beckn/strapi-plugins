@@ -13,6 +13,7 @@ export default ({}: { strapi: Strapi }) => ({
       const workflowService = WorkflowProvider.get(filter);
       if (workflowService) {
         const result = await workflowService.index(filter);
+        console.log('Result---->', result)
         if (
           !result ||
           (Array.isArray(result) && !result.length) ||
