@@ -107,7 +107,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         populate
       }
     );
-
+    console.log("providers====>", JSON.stringify(providers))
     if (fulfillment) {
       providers = SearchUtil.filterByFulfillment(
         providers,
@@ -115,6 +115,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         context
       );
     }
+        console.log("providers after fulfillents filteration====>", JSON.stringify(providers))
 
     // Request for Cred from BPP is not required as of now
     // providers = await SearchUtil.filterTrustedSource(providers, context);
