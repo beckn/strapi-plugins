@@ -57,6 +57,9 @@
                             "value": $string(stock_quantity ? stock_quantity : 0),
                             "unit": quantity_unit
                         }
+                    },
+                    "selected":{
+                        "count":1
                     }
                 },
                 "category_ids": $map(
