@@ -3,7 +3,13 @@ import axiosInstance from "axios";
 import https from "https";
 import { KeyValuePair } from "../types";
 import { CHECK_IN, CHECK_OUT, START, END } from "../constants";
-import { isHospitality, isMobility, isTourism, isEnergy } from "./domain.util";
+import {
+  isHospitality,
+  isMobility,
+  isTourism,
+  isEnergy,
+  isRetail
+} from "./domain.util";
 import { isInRange, findStoresAlongRouteWithinDistance } from "./location.util";
 
 export class SearchUtil {
@@ -127,12 +133,12 @@ export class SearchUtil {
                 moment(checkInReq?.time?.timestamp).format("YYYY-MM-DD"),
                 moment(checkInItem?.timestamp).format("YYYY-MM-DD"),
                 checkInGps.length &&
-                itemGps.length &&
-                !isInRange(checkInLat, checkInLong, itemLat, itemLong)
+                  itemGps.length &&
+                  !isInRange(checkInLat, checkInLong, itemLat, itemLong)
               );
               if (
                 moment(checkInReq?.time?.timestamp).format("YYYY-MM-DD") !==
-                moment(checkInItem?.timestamp).format("YYYY-MM-DD") ||
+                  moment(checkInItem?.timestamp).format("YYYY-MM-DD") ||
                 (checkInGps.length &&
                   itemGps.length &&
                   !isInRange(checkInLat, checkInLong, itemLat, itemLong))
@@ -214,8 +220,7 @@ export class SearchUtil {
                   ) {
                     startItem = fulfillment;
                   } else if (
-                    fulfillment?.fulfilment_id?.type?.toLowerCase() ===
-                    END
+                    fulfillment?.fulfilment_id?.type?.toLowerCase() === END
                   ) {
                     endItem = fulfillment;
                   }
@@ -261,6 +266,8 @@ export class SearchUtil {
       } else {
         filteredProviders = [];
       }
+    } else if (isRetail(context)) {
+      return filteredProviders;
     } else {
       const stop =
         fulfillment?.stops?.find((stop: KeyValuePair) => stop?.location?.gps) ||
@@ -362,19 +369,21 @@ export class SearchUtil {
     try {
       const axios = axiosInstance.create({
         httpsAgent: new https.Agent({
-          rejectUnauthorized: false,
-        }),
+          rejectUnauthorized: false
+        })
       });
       const verificationResp = await axios.post(
         `${process.env.DHIWAY_VERIFIER_URL}/api/v1/verify/credentials/verify`,
         vc
       );
-      return !(verificationResp.data.error && verificationResp.data.error.length);
+      return !(
+        verificationResp.data.error && verificationResp.data.error.length
+      );
     } catch (e: any) {
-      console.log('Error while verifying credentials', e?.message);
+      console.log("Error while verifying credentials", e?.message);
       throw new Error(`Error while verifying credentials: ${e?.message}`);
     }
-  }
+  };
 
   static filterTrustedSource = async (
     providers: KeyValuePair[],
@@ -383,31 +392,40 @@ export class SearchUtil {
     let filteredProviders: KeyValuePair[] = [];
     if (isEnergy(context)) {
       for (const provider of providers) {
-        const isTrustedSourcePreffered = provider.items?.find(item => item.sc_retail_product?.trusted_source);
+        const isTrustedSourcePreffered = provider.items?.find(
+          (item) => item.sc_retail_product?.trusted_source
+        );
         console.log();
         if (isTrustedSourcePreffered) {
           try {
             const axios = axiosInstance.create({
               httpsAgent: new https.Agent({
-                rejectUnauthorized: false,
-              }),
+                rejectUnauthorized: false
+              })
             });
             const bapHeaders = {
-              "Content-Type": "application/json",
+              "Content-Type": "application/json"
             };
             const bapUrl = `${context.bap_uri}/public/beckn.json`;
-            const response: KeyValuePair = await axios.get(bapUrl, { headers: bapHeaders });
-            console.log('abhi', bapUrl, JSON.stringify(response?.data));
+            const response: KeyValuePair = await axios.get(bapUrl, {
+              headers: bapHeaders
+            });
+            console.log("abhi", bapUrl, JSON.stringify(response?.data));
             if (response?.data) {
               // const verifiableCredential = response.data.credentials?.filter((credential) => credential.type.toLowerCase() === 'organization')[0]?.verifiableCredential;
               const verifiableCredential = response.data;
-              const isVCVerified = await this.verifyCertificate(verifiableCredential);
+              const isVCVerified = await this.verifyCertificate(
+                verifiableCredential
+              );
               if (isVCVerified) {
                 filteredProviders.push(provider);
               }
             }
           } catch (e) {
-            console.log(`Error while calling BAP beckn.json for provider ${provider.id}`, e?.message);
+            console.log(
+              `Error while calling BAP beckn.json for provider ${provider.id}`,
+              e?.message
+            );
           }
         } else {
           filteredProviders.push(provider);
@@ -416,5 +434,5 @@ export class SearchUtil {
       return filteredProviders;
     }
     return providers;
-  }
+  };
 }
