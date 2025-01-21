@@ -99,7 +99,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
     ObjectUtil.removeEmptyObjectKeys(filters);
     ObjectUtil.removeEmptyKeys(populate);
-
+    console.log('Filters=====>', JSON.stringify(filters))
     let providers = await strapi.entityService.findMany(
       "api::provider.provider",
       {
