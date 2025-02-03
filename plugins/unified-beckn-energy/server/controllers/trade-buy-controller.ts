@@ -71,13 +71,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async getPendingTrades(ctx: any) {
     try {
-      if (ctx.state.user.role.name !== "Admin") {
-        throw new Error("Only admin Can Access this Details");
-      }
       const tradeBuyService = strapi
         .plugin("unified-beckn-energy")
         .service("tradeBuyService");
-      const trades = await tradeBuyService.getPendingTrades();
+      const trades = await tradeBuyService.getPendingTrades(ctx.state.user);
       ctx.body = trades ?? [];
     } catch (error) {
       ctx.badRequest(error.message);
@@ -89,7 +86,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .plugin("unified-beckn-energy")
         .service("tradeBuyService");
       const deleteDerResp = await tradeBuyService.updateTradeById(
-        ctx.state.user.id,
+        ctx.state.user,
         ctx.params.id,
         ctx.request.body
       );

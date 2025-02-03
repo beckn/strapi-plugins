@@ -1,4 +1,6 @@
 export default [
+
+  //auth-apis
   {
     method: "POST",
     path: "/login",
@@ -26,6 +28,8 @@ export default [
       auth: false
     }
   },
+
+  //user-apis
   {
     method: "GET",
     path: "/cred",
@@ -116,6 +120,60 @@ export default [
       auth: false
     }
   },
+  {
+    method: "GET",
+    path: "/wallet/balance",
+    handler: "userController.getWalletBalance",
+    config: {
+      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "GET",
+    path: "/wallet/transaction",
+    handler: "userController.getWalletTransactions",
+    config: {
+      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "POST",
+    path: "/wallet/add-fund",
+    handler: "userController.addWalletFund",
+    config: {
+      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "POST",
+    path: "/wallet/withdraw-fund",
+    handler: "userController.withdrawWalletFund",
+    config: {
+      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "GET",
+    path: "/user-pref",
+    handler: "userController.getUserPreference",
+    config: {
+      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "PUT",
+    path: "/user-pref",
+    handler: "userController.updateUserPreference",
+    config: {
+      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
+      auth: false
+    }
+  },
   //utilities
   {
     method: "GET",
@@ -200,16 +258,6 @@ export default [
     method: "PUT",
     path: "/buy/trade/:id",
     handler: "tradeBuyController.updateTradeById",
-    config: {
-      policies: [],
-      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
-      auth: false
-    }
-  },
-  {
-    method: "POST",
-    path: "/buy/start-trade",
-    handler: "tradeBuyController.startTrade",
     config: {
       policies: [],
       middlewares: ["plugin::unified-beckn-energy.authMiddleware"],

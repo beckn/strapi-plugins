@@ -161,4 +161,81 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       return ctx.badRequest(error.message);
     }
   },
+
+  //wallet
+  async getWalletBalance(ctx) {
+    try {
+      const userService = strapi
+        .plugin("unified-beckn-energy")
+        .service("userService");
+      const userId = ctx.state.user.id;
+      const result = await userService.getWalletBalance(Number(userId));
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
+  async getWalletTransactions(ctx) {
+    try {
+      const userService = strapi
+        .plugin("unified-beckn-energy")
+        .service("userService");
+      const userId = ctx.state.user.id;
+      const result = await userService.getWalletTransactions(Number(userId), ctx.query.pageNo);
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
+  async addWalletFund(ctx) {
+    try {
+      const userService = strapi
+        .plugin("unified-beckn-energy")
+        .service("userService");
+      const userId = ctx.state.user.id;
+      const result = await userService.addWalletFund(Number(userId));
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
+  async withdrawWalletFund(ctx) {
+    try {
+      const userService = strapi
+        .plugin("unified-beckn-energy")
+        .service("userService");
+      const userId = ctx.state.user.id;
+      const result = await userService.withdrawWalletFund(Number(userId));
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
+
+  //user-preference
+  async getUserPreference(ctx) {
+    try {
+      const userService = strapi
+        .plugin("unified-beckn-energy")
+        .service("userService");
+      const user = ctx.state.user;
+      const result = await userService.getUserPreference(user);
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
+  async updateUserPreference(ctx) {
+    try {
+      const userService = strapi
+        .plugin("unified-beckn-energy")
+        .service("userService");
+      const user = ctx.state.user;
+      const updateUserPrefDto = ctx.request.body;
+      const result = await userService.updateUserPreference(updateUserPrefDto, user);
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
 });

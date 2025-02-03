@@ -107,6 +107,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 customer_id: mdmUser.customer_id,
                 address,
                 utility_name,
+                cred_required: false,
+                trusted_source: false,
                 publishedAt: new Date()
               }
             }
