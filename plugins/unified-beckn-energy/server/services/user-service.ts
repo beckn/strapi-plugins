@@ -1,6 +1,7 @@
 import { Strapi } from "@strapi/strapi";
 const fs = require("fs").promises;
 import axios from "axios";
+import { walletTxnType } from "../constant";
 const bcrypt = require('bcryptjs');
 
 export default ({ strapi }: { strapi: Strapi }) => ({
@@ -641,13 +642,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(`Error while wallet balance: ${error.message}`);
     }
   },
-  async getWalletTransactions(userId: number, pageNo) {
+  async getWalletTransactions(userId: number, pageNo: number | string, startDate: string, endDate: string) {
     try {
       const start = pageNo ? Number(pageNo) - 1 : 0;
       const walletData = await strapi.entityService.findMany("api::wallet.wallet", {
         filters: {
           user: {
             id: userId
+          },
+          updatedAt: { 
+            $gte: new Date(new Date(startDate).setHours(0, 0, 0, 0)).toISOString(), 
+            $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)).toISOString()
           }
         },
         start: start * 10,
@@ -706,4 +711,74 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
+  async updateWalletFund(userId: number, transactionType: string, transactionAmount: number) {
+    try {
+      //Fetch latest wallet fund
+      if (!Object.keys(walletTxnType).includes(transactionType)) {
+        throw new Error(`Invalid transaction type: ${transactionType}.`);
+      }
+      const walletData = await strapi.entityService.findMany("api::wallet.wallet", {
+        filters: {
+          user: {
+            id: userId
+          }
+        },
+        limit: 1,
+        sort: { updatedAt: 'desc' }
+      });
+      let existingBalance = 0;
+      if (walletData && walletData.length) {
+        existingBalance = walletData[0].closing_balance;
+      }
+      let updatedBalance;
+      if(transactionAmount < 0) {
+        throw new Error('Transaction Amount must be greater than 0');
+      }
+      if(transactionType === walletTxnType.ADD) {
+        const resp = await strapi.entityService.create(
+          "api::wallet.wallet",
+          {
+            data: {
+              user: userId,
+              opening_balance: existingBalance,
+              closing_balance: existingBalance + transactionAmount,
+              transaction_amount: transactionAmount,
+              transaction_type: walletTxnType.ADD,
+              publishedAt: new Date()
+            }
+          }
+        );
+        updatedBalance = existingBalance + transactionAmount;
+      } else if(transactionType === walletTxnType.WITHDRAW) {
+        if (existingBalance < transactionAmount) {
+          throw new Error('You do not have sufficient balance to withdraw this amount!');
+        }
+        const resp = await strapi.entityService.create(
+          "api::wallet.wallet",
+          {
+            data: {
+              user: userId,
+              opening_balance: existingBalance,
+              closing_balance: existingBalance - transactionAmount,
+              transaction_amount: transactionAmount,
+              transaction_type: walletTxnType.ADD,
+              publishedAt: new Date()
+            }
+          }
+        );
+        updatedBalance = existingBalance - transactionAmount;
+      }
+      return {
+        message: 'Wallet Updated Successfully',
+        data: {
+          updatedBalance
+        }
+      }
+      
+    } catch (error) {
+      console.log('Update Wallet: ', error.message);
+      throw new Error(error.message);
+    }
+  }
+
 });

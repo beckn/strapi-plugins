@@ -22,9 +22,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       if (!user) {
         throw new Error("Email Not found");
       }
-      // if(!user.isOtpVerified) {
-      //   throw new Error('Email not Verified Yet, Please verify before login!');
-      // }
+      if (user?.role?.name === 'Admin') {
+        throw new Error("Email Not found");
+      }
       // Request API.
       const response = await axios.post(
         `${process.env.STRAPI_URL}/api/auth/local`,

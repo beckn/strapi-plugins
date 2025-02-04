@@ -480,4 +480,57 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
+  async updateUserProfile({ fullname, address }, user) {
+    try {
+      const agentProfile = user.agent?.agent_profile;
+      const agent = user.agent;
+      if (!agent || !agentProfile) {
+        throw new Error('No Profile Exists for this user');
+      }
+      const updatedAgent = await strapi.entityService.update(
+        "api::agent.agent",
+        user.agent.id,
+        {
+          data: {
+            first_name: fullname,
+            publishedAt: new Date()
+          }
+        }
+      );
+      console.log('Updated Agent: ', updatedAgent);
+      const updatedProfile = await strapi.entityService.update(
+        "api::agent-profile.agent-profile",
+        user.agent.agent_profile.id,
+        {
+          data: {
+            address,
+            publishedAt: new Date()
+          }
+        }
+      );
+      console.log('Updated Agent Profile For Admin: ', updatedProfile);
+      return {
+        fullname,
+        address
+      }
+    } catch (error) {
+      console.log('Failed to update user profile for admin: ', error);
+      throw new Error(`Failed to update user profile for admin: ${error.message}`);
+    }
+  },
+  getUserProfile(user) {
+    const agentProfile = user.agent?.agent_profile;
+    const agent = user.agent;
+    if (!agent || !agentProfile) {
+      throw new Error('No Profile Exists for this admin user');
+    }
+    return {
+      fullname: agent?.first_name,
+      customer_id: agentProfile?.customer_id,
+      address: agentProfile?.address,
+      phone_number: agentProfile?.phone_number,
+      email: user.email,
+      utility_name: agentProfile?.utility_name
+    }
+  },
 });

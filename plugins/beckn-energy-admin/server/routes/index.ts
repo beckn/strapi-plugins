@@ -48,4 +48,22 @@ export default [
       auth: false
     }
   },
+  {
+    method: "GET",
+    path: "/user-profile",
+    handler: "userController.getUserProfile",
+    config: {
+      middlewares: ["plugin::beckn-energy-admin.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "PUT",
+    path: "/user-profile",
+    handler: "userController.updateUserProfile",
+    config: {
+      middlewares: ["plugin::beckn-energy-admin.authMiddleware"],
+      auth: false
+    }
+  },
 ];

@@ -99,3 +99,10 @@ export interface ITrade {
   quantity: number;
   profile: any;
 }
+
+export const walletTxnType = {
+  ADD: 'ADD_FUND',
+  WITHDRAW: 'WITHDRAW_FUND',
+  SELLORDER: 'SELLORDER',
+  BUYORDER: 'BUYORDER'
+}

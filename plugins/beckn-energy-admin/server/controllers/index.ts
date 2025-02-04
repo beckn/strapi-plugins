@@ -1,7 +1,7 @@
 import authController from "./auth-controller";
-import tradeController from "./trade-controller";
+import adminController from "./admin-controller";
 
 export default {
   authController,
-  tradeController
+  adminController
 };

@@ -21,7 +21,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       if (!user) {
         throw new Error("Email Not found");
       }
-      if (user.role.name !== 'Admin') {
+      if (user?.role?.name !== 'Admin') {
         throw new Error("Invalid User. Not an admin!");
       }
       const response = await axios.post(

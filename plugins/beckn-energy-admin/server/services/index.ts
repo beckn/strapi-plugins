@@ -1,7 +1,7 @@
 import authService from './auth-service';
-import tradeService from './trade-service';
+import adminService from './admin-service';
 
 export default {
   authService,
-  tradeService
+  adminService
 };
