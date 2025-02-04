@@ -11,7 +11,7 @@ export default [
   {
     method: "GET",
     path: "/trade",
-    handler: "tradeController.getTrade",
+    handler: "adminController.getTrade",
     config: {
       policies: [],
       middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
@@ -21,7 +21,7 @@ export default [
   {
     method: "POST",
     path: "/start-trade",
-    handler: "tradeController.startTrade",
+    handler: "adminController.startTrade",
     config: {
       policies: [],
       middlewares: ["plugin::beckn-energy-admin.authMiddleware"],
@@ -31,7 +31,7 @@ export default [
   {
     method: "GET",
     path: "/get-pending-trades",
-    handler: "tradeController.getPendingTrades",
+    handler: "adminController.getPendingTrades",
     config: {
       policies: [],
       middlewares: ["plugin::beckn-energy-admin.authMiddleware"],
@@ -41,7 +41,7 @@ export default [
   {
     method: "PUT",
     path: "/market-status",
-    handler: "tradeController.updateMarketStatus",
+    handler: "adminController.updateMarketStatus",
     config: {
       policies: [],
       middlewares: ["plugin::beckn-energy-admin.authMiddleware"],
@@ -51,7 +51,7 @@ export default [
   {
     method: "GET",
     path: "/user-profile",
-    handler: "userController.getUserProfile",
+    handler: "adminController.getUserProfile",
     config: {
       middlewares: ["plugin::beckn-energy-admin.authMiddleware"],
       auth: false
@@ -60,7 +60,7 @@ export default [
   {
     method: "PUT",
     path: "/user-profile",
-    handler: "userController.updateUserProfile",
+    handler: "adminController.updateUserProfile",
     config: {
       middlewares: ["plugin::beckn-energy-admin.authMiddleware"],
       auth: false
