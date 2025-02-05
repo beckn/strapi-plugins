@@ -650,17 +650,19 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           user: {
             id: userId
           },
-          updatedAt: { 
-            $gte: new Date(new Date(startDate).setHours(0, 0, 0, 0)).toISOString(), 
-            $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)).toISOString()
-          }
+          ...(startDate || endDate ? {
+            updatedAt: {
+              ...(startDate && { $gte: new Date(new Date(startDate).setHours(0, 0, 0, 0)).toISOString() }),
+              ...(endDate && { $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)).toISOString() })
+            }
+          } : {})
         },
         start: start * 10,
         limit: 10,
         sort: { updatedAt: 'desc' }
       });
       if (!walletData || !walletData.length) {
-        throw new Error('No transaction found for this user');
+        return [];
       }
       return walletData;
     } catch (error) {
@@ -714,7 +716,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async updateWalletFund(userId: number, transactionType: string, transactionAmount: number) {
     try {
       //Fetch latest wallet fund
-      if (!Object.keys(walletTxnType).includes(transactionType)) {
+      if (!Object.values(walletTxnType).includes(transactionType)) {
         throw new Error(`Invalid transaction type: ${transactionType}.`);
       }
       const walletData = await strapi.entityService.findMany("api::wallet.wallet", {
@@ -761,7 +763,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               opening_balance: existingBalance,
               closing_balance: existingBalance - transactionAmount,
               transaction_amount: transactionAmount,
-              transaction_type: walletTxnType.ADD,
+              transaction_type: walletTxnType.WITHDRAW,
               publishedAt: new Date()
             }
           }

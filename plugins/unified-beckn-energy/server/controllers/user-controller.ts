@@ -181,7 +181,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .plugin("unified-beckn-energy")
         .service("userService");
       const userId = ctx.state.user.id;
-      const result = await userService.getWalletTransactions(Number(userId), ctx.query.pageNo);
+      const { pageNo, startDate, endDate } = ctx.query;
+      const result = await userService.getWalletTransactions(Number(userId), pageNo, startDate, endDate);
       ctx.body = result;
     } catch (error) {
       ctx.badRequest(error.message);
@@ -194,7 +195,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .service("userService");
       const userId = ctx.state.user.id;
       const { transactionAmount } = ctx.request.body;
-      const result = await userService.updateWalletFund(Number(userId), "ADD", transactionAmount);
+      const result = await userService.updateWalletFund(Number(userId), "ADD_FUND", transactionAmount);
       ctx.body = result;
     } catch (error) {
       ctx.badRequest(error.message);
@@ -207,7 +208,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .service("userService");
       const userId = ctx.state.user.id;
       const { transactionAmount } = ctx.request.body;
-      const result = await userService.updateWalletFund(Number(userId), "WITHDRAW", transactionAmount);
+      const result = await userService.updateWalletFund(Number(userId), "WITHDRAW_FUND", transactionAmount);
       ctx.body = result;
     } catch (error) {
       ctx.badRequest(error.message);
