@@ -44,16 +44,31 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ctx.badRequest(error.message);
     }
   },
-  async addProfile(ctx) {
+  async createRentCatalogue(ctx) {
     try {
       const userService = strapi
         .plugin("unified-beckn-energy")
         .service("userService");
-      const agentId = ctx.state.user.agent.id;
-      const result = await userService.createCatalogue(
-        ctx.request.body,
-        agentId
+      const { providerDetails, walletId, startTime, endTime, price } = ctx.request.body;
+      const result = await userService.createRentCatalogue(
+        ctx.state.user,
+        providerDetails,
+        walletId,
+        startTime,
+        endTime,
+        price
       );
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
+  async getRentCatalogues(ctx) {
+    try {
+      const userService = strapi
+        .plugin("unified-beckn-energy")
+        .service("userService");
+      const result = await userService.getRentCatalogues(ctx.state.user);
       ctx.body = result;
     } catch (error) {
       ctx.badRequest(error.message);

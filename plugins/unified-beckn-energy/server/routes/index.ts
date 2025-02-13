@@ -77,8 +77,17 @@ export default [
   },
   {
     method: "POST",
-    path: "/profile",
-    handler: "userController.addProfile",
+    path: "/rent-catalogue",
+    handler: "userController.createRentCatalogue",
+    config: {
+      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "GET",
+    path: "/rent-catalogue",
+    handler: "userController.getRentCatalogues",
     config: {
       middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
       auth: false
