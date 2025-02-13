@@ -2,7 +2,7 @@ import { Strapi } from "@strapi/strapi";
 const fs = require("fs").promises;
 import axios from "axios";
 import { walletTxnType } from "../constant";
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async generateCredential(credDto: any) {
@@ -31,7 +31,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               populate: {
                 agent_profile: {
                   populate: {
-                    credentials: true,
+                    credentials: true
                   }
                 }
               }
@@ -50,7 +50,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       });
 
       return creds;
-    } catch (error) { }
+    } catch (error) {}
   },
   async deleteCredById(agentProfileId, credId) {
     try {
@@ -72,7 +72,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
 
       if (agentProfile && agentProfile.length) {
-        const der = await strapi.entityService.delete("api::credential.credential", credId);
+        const der = await strapi.entityService.delete(
+          "api::credential.credential",
+          credId
+        );
         return der;
       } else {
         throw new Error(
@@ -80,7 +83,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         );
       }
     } catch (error) {
-      console.log('Delete Cred Error: ', error);
+      console.log("Delete Cred Error: ", error);
       throw new Error(`Unable to delete Cred: ${error.message}`);
     }
   },
@@ -89,7 +92,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const agentProfile = user.agent?.agent_profile;
       const agent = user.agent;
       if (!agent || !agentProfile) {
-        throw new Error('No Profile Exists for this user');
+        throw new Error("No Profile Exists for this user");
       }
       const updatedAgent = await strapi.entityService.update(
         "api::agent.agent",
@@ -101,7 +104,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         }
       );
-      console.log('Updated Agent: ', updatedAgent);
+      console.log("Updated Agent: ", updatedAgent);
       const updatedProfile = await strapi.entityService.update(
         "api::agent-profile.agent-profile",
         user.agent.agent_profile.id,
@@ -112,13 +115,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         }
       );
-      console.log('Updated Agent Profile: ', updatedProfile);
+      console.log("Updated Agent Profile: ", updatedProfile);
       return {
         fullname,
         address
-      }
+      };
     } catch (error) {
-      console.log('Failed to update user profile: ', error);
+      console.log("Failed to update user profile: ", error);
       throw new Error(`Failed to update user profile: ${error.message}`);
     }
   },
@@ -126,7 +129,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     const agentProfile = user.agent?.agent_profile;
     const agent = user.agent;
     if (!agent || !agentProfile) {
-      throw new Error('No Profile Exists for this user');
+      throw new Error("No Profile Exists for this user");
     }
     return {
       fullname: agent.first_name,
@@ -135,7 +138,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       phone_number: agentProfile.phone_number,
       email: user.email,
       utility_name: agentProfile.utility_name
-    }
+    };
   },
   async deleteDerById(agentProfileId: number, derId: number) {
     try {
@@ -284,14 +287,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     });
   },
   async createDer(createDerDto, filesDto, user) {
-
     try {
       let result = {};
       await strapi.db.transaction(async ({ trx }) => {
         try {
           // Step 0: Generate hash from buffer
-          if (createDerDto.type.toUpperCase() !== 'PROSUMER' && createDerDto.type.toUpperCase() !== 'CONSUMER') {
-            throw new Error('Invalid type provided for creating DER');
+          if (
+            createDerDto.type.toUpperCase() !== "PROSUMER" &&
+            createDerDto.type.toUpperCase() !== "CONSUMER"
+          ) {
+            throw new Error("Invalid type provided for creating DER");
           }
           if (!Array.isArray(filesDto)) {
             filesDto = [filesDto];
@@ -299,26 +304,23 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const hash = await this.createHashFromFile(filesDto[0].path);
 
           // Step 1: Generate credentials (as per your existing code)
-          const getCreds = await axios.post(
-            `${process.env.ISSUER_URL}/cred`,
-            {
-              schemaId:
-                "schema:cord:s356EvHMCEdivwpM2srB7s5etUAJB69erN8vHKzoog8E1VkBv",
-              properties: {
-                type: createDerDto.type,
-                category: createDerDto.category,
-                proof: hash,
-              },
+          const getCreds = await axios.post(`${process.env.ISSUER_URL}/cred`, {
+            schemaId:
+              "schema:cord:s356EvHMCEdivwpM2srB7s5etUAJB69erN8vHKzoog8E1VkBv",
+            properties: {
+              type: createDerDto.type,
+              category: createDerDto.category,
+              proof: hash
             }
-          );
+          });
           console.log("Credential generated:", getCreds.data);
           // Step 2: Store the credential
           const cred = await strapi.entityService.create(
             "api::credential.credential",
             {
               data: {
-                vc: getCreds.data.vc,
-              },
+                vc: getCreds.data.vc
+              }
             }
           );
 
@@ -328,17 +330,21 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 path: fileDto.path,
                 name: fileDto.name,
                 type: fileDto.type,
-                size: fileDto.size,
+                size: fileDto.size
               };
               return await strapi.plugins.upload.services.upload.upload({
                 data: { fileInfo: { name: fileDto.name, type: fileDto.type } },
-                files: fileToUpload,
+                files: fileToUpload
               });
             })
           );
           console.log("Uploaded Files:", uploadedFiles);
 
-          if (uploadedFiles.some((fileArray) => !fileArray || fileArray.length === 0)) {
+          if (
+            uploadedFiles.some(
+              (fileArray) => !fileArray || fileArray.length === 0
+            )
+          ) {
             throw new Error("File upload failed for one or more files");
           }
 
@@ -353,10 +359,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 createDerDto.type.toUpperCase() === "CONSUMER"
                   ? "CONSUMER"
                   : "PROSUMER",
-              category: createDerDto.category,
+              category: createDerDto.category
             }
           });
-          console.log('Created Der id: ', der.id);
+          console.log("Created Der id: ", der.id);
 
           const agentProfile = await strapi.entityService.update(
             "api::agent-profile.agent-profile",
@@ -364,24 +370,23 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             {
               data: {
                 ders: {
-                  connect: [der.id],
+                  connect: [der.id]
                 },
                 publishedAt: new Date()
-              },
+              }
             }
           );
-          console.log('Agent profile updated: ', agentProfile);
+          console.log("Agent profile updated: ", agentProfile);
 
           // Step 6: Commit the transaction
           await trx.commit();
-          return result = der;
+          return (result = der);
         } catch (error) {
           await trx.rollback();
           throw error;
         }
       });
       return result;
-
     } catch (error) {
       console.error("Error in createDer:", error);
       throw new Error(`Error while creating der: ${error.message}`);
@@ -389,9 +394,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async getDer({ agentProfileId }) {
     try {
-      console.log('Agent profile: ', agentProfileId);
+      console.log("Agent profile: ", agentProfileId);
 
-      const agentProfile = await strapi.entityService.findOne("api::agent-profile.agent-profile", agentProfileId,
+      const agentProfile = await strapi.entityService.findOne(
+        "api::agent-profile.agent-profile",
+        agentProfileId,
         {
           populate: {
             ders: {
@@ -403,7 +410,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               }
             }
           }
-        });
+        }
+      );
 
       if (!agentProfile.ders.length) {
         console.log(`No Ders found for this user`);
@@ -415,8 +423,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(`Error while retrieving der: ${error.message}`);
     }
   },
-  async createRentCatalogue(user: any, providerDetails: any,
-    walletId: string, startTime: string, endTime: string, price: string) {
+  async createRentCatalogue(
+    user: any,
+    providerDetails: any,
+    walletId: string,
+    startTime: string,
+    endTime: string,
+    price: string
+  ) {
     const agentId = user.agent.id;
     const { provider: providerData, items } = providerDetails.data[0].message;
     const item = items[0];
@@ -424,11 +438,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       let result = {};
       await strapi.db.transaction(async ({ trx }) => {
         try {
-
           let providerId = user?.deg_wallet?.provider?.id;
           let createdProvider = user?.deg_wallet?.provider;
 
-          if (!providerId) { //no provider found for this user
+          if (!providerId) {
+            //no provider found for this user
             providerData.agents = [agentId];
             //create category or get category id
             const category = await strapi.entityService.findMany(
@@ -460,51 +474,64 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               categoryId = createdCategory.id;
             }
 
-            const domain = await strapi.entityService.findMany("api::domain.domain", {
-              filters: {
-                DomainName: "deg:rental"
+            const domain = await strapi.entityService.findMany(
+              "api::domain.domain",
+              {
+                filters: {
+                  DomainName: "deg:rental"
+                }
               }
-            });
+            );
             let domainId;
             if (domain && domain.length) {
               domainId = domain[0].id;
             } else {
-              throw new Error('Create Catalogue: Domain Not Found');
+              throw new Error("Create Catalogue: Domain Not Found");
             }
             const createPaymentMethod = await strapi.entityService.create(
               "api::payment-method.payment-method",
               {
                 data: {
-                  type: 'Cash on Delivery',
-                  description: 'COD Payment Method',
+                  type: "Cash on Delivery",
+                  description: "COD Payment Method",
                   payment_gateway: "",
                   gateway_url: "",
                   bank_account_number: "",
                   bank_code: "",
                   bank_name: "",
-                  publishedAt: new Date().toISOString(),
+                  publishedAt: new Date().toISOString()
                 }
               }
             );
-            console.log('Created First Payment Method: ', JSON.stringify(createPaymentMethod));
+            console.log(
+              "Created First Payment Method: ",
+              JSON.stringify(createPaymentMethod)
+            );
             const createPaymentMethod2 = await strapi.entityService.create(
               "api::payment-method.payment-method",
               {
                 data: {
-                  type: 'UEI Wallet',
-                  description: 'UEI Wallet',
+                  type: "UEI Wallet",
+                  description: "UEI Wallet",
                   payment_gateway: "UEI Wallet Payment Gateway",
                   gateway_url: "https://uei-wallet.in",
                   bank_account_number: "UEI Wallet Payment Bank Account Number",
                   bank_code: "UEI Wallet Bank Code",
                   bank_name: "UEI Wallet Bank Name",
-                  publishedAt: new Date().toISOString(),
+                  publishedAt: new Date().toISOString()
                 }
               }
             );
-            console.log('Created Second Payment Method: ', JSON.stringify(createPaymentMethod2));
+            console.log(
+              "Created Second Payment Method: ",
+              JSON.stringify(createPaymentMethod2)
+            );
             let imageId;
-            if (providerData.images && providerData.images.length && providerData.images[0].url) {
+            if (
+              providerData.images &&
+              providerData.images.length &&
+              providerData.images[0].url
+            ) {
               const createImageUrlEntry = await strapi.entityService.create(
                 "api::media.media",
                 {
@@ -521,7 +548,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               .query("api::provider.provider")
               .create({
                 data: {
-                  provider_name: `${user?.agent?.first_name} Battery Rental Company` || providerData.name,
+                  provider_name:
+                    `${user?.agent?.first_name} Battery Rental Company` ||
+                    providerData.name,
                   domain_id: domainId,
                   ...(imageId && { logo: imageId }),
                   ...(providerData.short_desc && {
@@ -539,12 +568,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                   category_ids: [categoryId],
                   ...(providerData.agents &&
                     providerData.agents.length > 0 && {
-                    agents: providerData.agents
-                  }),
+                      agents: providerData.agents
+                    }),
                   ...(providerData.rating && {
                     provider_rating: providerData.rating
                   }),
-                  payment_methods: [createPaymentMethod.id, createPaymentMethod2.id],
+                  payment_methods: [
+                    createPaymentMethod.id,
+                    createPaymentMethod2.id
+                  ],
                   publishedAt: new Date()
                 }
               });
@@ -553,21 +585,45 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             createdProvider = createProvider;
 
             //Link Wallet to provider
-            const createdWallet = await strapi.entityService.create(
+            const existingWallet = await strapi.entityService.findMany(
               "api::deg-wallet.deg-wallet",
               {
-                data: {
-                  users_permissions_user: user.id,
-                  provider: providerId,
-                  energy_identities_consent: true,
-                  energy_assets_consent: true,
-                  energy_transactions_consent: true,
-                  deg_wallet_id: walletId,
-                  publishedAt: new Date()
+                filters: {
+                  users_permissions_user: user.id
+                },
+                populate: {
+                  users_permissions_user: {}
                 }
               }
             );
-            console.log("createdWallet::", createdWallet);
+
+            if (existingWallet && existingWallet.length) {
+              const wallet = await strapi.entityService.update(
+                "api::deg-wallet.deg-wallet",
+                existingWallet[0].id,
+                {
+                  data: {
+                    provider: providerId
+                  }
+                }
+              );
+              console.log("updatedWallet::", wallet);
+            }
+
+            // const createdWallet = await strapi.entityService.create(
+            //   "api::deg-wallet.deg-wallet",
+            //   {
+            //     data: {
+            //       users_permissions_user: user.id,
+            //       provider: providerId,
+            //       energy_identities_consent: true,
+            //       energy_assets_consent: true,
+            //       energy_transactions_consent: true,
+            //       deg_wallet_id: walletId,
+            //       publishedAt: new Date()
+            //     }
+            //   }
+            // );
           }
 
           const createScProduct = await strapi.entityService.create(
@@ -625,10 +681,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::fulfilment.fulfilment",
             {
               data: {
-                type: 'RENTAL_START',
+                type: "RENTAL_START",
                 rating: "4",
                 rateable: true,
-                state_code: 'timestamp',
+                state_code: "timestamp",
                 state_value: startTime,
                 timestamp: new Date().toISOString(),
                 publishedAt: new Date().toISOString()
@@ -641,10 +697,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::fulfilment.fulfilment",
             {
               data: {
-                type: 'RENTAL_END',
+                type: "RENTAL_END",
                 rating: "4",
                 rateable: true,
-                state_code: 'timestamp',
+                state_code: "timestamp",
                 state_value: endTime,
                 timestamp: new Date().toISOString(),
                 publishedAt: new Date().toISOString()
@@ -695,70 +751,95 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     try {
       const providerId = user?.deg_wallet?.provider?.id;
       if (!providerId) {
-        throw new Error('No Provider is linked to this user to get catalogues');
+        throw new Error("No Provider is linked to this user to get catalogues");
       }
-      const providerData = await strapi.entityService.findOne("api::provider.provider", providerId, {
-        populate: {
-          items: {
-            populate: {
-              sc_retail_product: true
+      const providerData = await strapi.entityService.findOne(
+        "api::provider.provider",
+        providerId,
+        {
+          populate: {
+            items: {
+              populate: {
+                sc_retail_product: true
+              }
             }
           }
         }
-      });
+      );
       return providerData;
     } catch (error) {
-      console.log('Failed to fetch rent catalogues: ', error);
+      console.log("Failed to fetch rent catalogues: ", error);
       throw error;
     }
   },
   async getWalletBalance(userId: number) {
     try {
-      const walletData = await strapi.entityService.findMany("api::wallet.wallet", {
-        filters: {
-          user: {
-            id: userId
-          }
-        },
-        sort: { updatedAt: 'desc' }
-      });
+      const walletData = await strapi.entityService.findMany(
+        "api::wallet.wallet",
+        {
+          filters: {
+            user: {
+              id: userId
+            }
+          },
+          sort: { updatedAt: "desc" }
+        }
+      );
       if (!walletData || !walletData.length) {
         return {
           data: {
             balance: 0
           }
-        }
+        };
       }
       const balance = walletData[0].closing_balance;
       return {
         data: {
           balance
         }
-      }
+      };
     } catch (error) {
       console.error("Error in get wallet balance:", error);
       throw new Error(`Error while wallet balance: ${error.message}`);
     }
   },
-  async getWalletTransactions(userId: number, pageNo: number | string, startDate: string, endDate: string) {
+  async getWalletTransactions(
+    userId: number,
+    pageNo: number | string,
+    startDate: string,
+    endDate: string
+  ) {
     try {
       const start = pageNo ? Number(pageNo) - 1 : 0;
-      const walletData = await strapi.entityService.findMany("api::wallet.wallet", {
-        filters: {
-          user: {
-            id: userId
+      const walletData = await strapi.entityService.findMany(
+        "api::wallet.wallet",
+        {
+          filters: {
+            user: {
+              id: userId
+            },
+            ...(startDate || endDate
+              ? {
+                  updatedAt: {
+                    ...(startDate && {
+                      $gte: new Date(
+                        new Date(startDate).setHours(0, 0, 0, 0)
+                      ).toISOString()
+                    }),
+                    ...(endDate && {
+                      $lte: new Date(
+                        new Date(endDate).setHours(23, 59, 59, 999)
+                      ).toISOString()
+                    })
+                  }
+                }
+              : {})
           },
-          ...(startDate || endDate ? {
-            updatedAt: {
-              ...(startDate && { $gte: new Date(new Date(startDate).setHours(0, 0, 0, 0)).toISOString() }),
-              ...(endDate && { $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)).toISOString() })
-            }
-          } : {})
-        },
-        start: start * 10,
-        limit: 10,
-        sort: { updatedAt: 'desc' }
-      });
+          start: start * 10,
+          limit: 10,
+          sort: { updatedAt: "desc" }
+        }
+      );
       if (!walletData || !walletData.length) {
         return [];
       }
@@ -771,24 +852,24 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async getUserPreference(user) {
     try {
       if (!user.agent || !user.agent.agent_profile) {
-        throw new Error('No user profile found!');
+        throw new Error("No user profile found!");
       }
       const { cred_required, trusted_source } = user.agent.agent_profile;
       {
         return {
           trustedSource: trusted_source,
           credRequired: cred_required
-        }
+        };
       }
     } catch (error) {
-      console.log('Get User Pref Error: ', error.message);
+      console.log("Get User Pref Error: ", error.message);
       throw new Error(error.message);
     }
   },
   async updateUserPreference({ trustedSource, credRequired }, user) {
     try {
       if (!user.agent || !user.agent.agent_profile) {
-        throw new Error('No user profile found!');
+        throw new Error("No user profile found!");
       }
       const updatedTradePreference = await strapi.entityService.update(
         "api::agent-profile.agent-profile",
@@ -800,85 +881,85 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             publishedAt: new Date()
           }
         }
-      )
+      );
       return {
         trustedSource: updatedTradePreference.trusted_source,
-        credRequired: updatedTradePreference.cred_required,
-      }
-    }
-    catch (error) {
-      console.log('Update User Pref Error: ', error.message);
+        credRequired: updatedTradePreference.cred_required
+      };
+    } catch (error) {
+      console.log("Update User Pref Error: ", error.message);
       throw new Error(error.message);
     }
   },
-  async updateWalletFund(userId: number, transactionType: string, transactionAmount: number) {
+  async updateWalletFund(
+    userId: number,
+    transactionType: string,
+    transactionAmount: number
+  ) {
     try {
       //Fetch latest wallet fund
       if (!Object.values(walletTxnType).includes(transactionType)) {
         throw new Error(`Invalid transaction type: ${transactionType}.`);
       }
-      const walletData = await strapi.entityService.findMany("api::wallet.wallet", {
-        filters: {
-          user: {
-            id: userId
-          }
-        },
-        limit: 1,
-        sort: { updatedAt: 'desc' }
-      });
+      const walletData = await strapi.entityService.findMany(
+        "api::wallet.wallet",
+        {
+          filters: {
+            user: {
+              id: userId
+            }
+          },
+          limit: 1,
+          sort: { updatedAt: "desc" }
+        }
+      );
       let existingBalance = 0;
       if (walletData && walletData.length) {
         existingBalance = walletData[0].closing_balance;
       }
       let updatedBalance;
-      if(transactionAmount < 0) {
-        throw new Error('Transaction Amount must be greater than 0');
+      if (transactionAmount < 0) {
+        throw new Error("Transaction Amount must be greater than 0");
       }
-      if(transactionType === walletTxnType.ADD) {
-        const resp = await strapi.entityService.create(
-          "api::wallet.wallet",
-          {
-            data: {
-              user: userId,
-              opening_balance: existingBalance,
-              closing_balance: existingBalance + transactionAmount,
-              transaction_amount: transactionAmount,
-              transaction_type: walletTxnType.ADD,
-              publishedAt: new Date()
-            }
+      if (transactionType === walletTxnType.ADD) {
+        const resp = await strapi.entityService.create("api::wallet.wallet", {
+          data: {
+            user: userId,
+            opening_balance: existingBalance,
+            closing_balance: existingBalance + transactionAmount,
+            transaction_amount: transactionAmount,
+            transaction_type: walletTxnType.ADD,
+            publishedAt: new Date()
           }
-        );
+        });
         updatedBalance = existingBalance + transactionAmount;
-      } else if(transactionType === walletTxnType.WITHDRAW) {
+      } else if (transactionType === walletTxnType.WITHDRAW) {
         if (existingBalance < transactionAmount) {
-          throw new Error('You do not have sufficient balance to withdraw this amount!');
+          throw new Error(
+            "You do not have sufficient balance to withdraw this amount!"
+          );
         }
-        const resp = await strapi.entityService.create(
-          "api::wallet.wallet",
-          {
-            data: {
-              user: userId,
-              opening_balance: existingBalance,
-              closing_balance: existingBalance - transactionAmount,
-              transaction_amount: transactionAmount,
-              transaction_type: walletTxnType.WITHDRAW,
-              publishedAt: new Date()
-            }
+        const resp = await strapi.entityService.create("api::wallet.wallet", {
+          data: {
+            user: userId,
+            opening_balance: existingBalance,
+            closing_balance: existingBalance - transactionAmount,
+            transaction_amount: transactionAmount,
+            transaction_type: walletTxnType.WITHDRAW,
+            publishedAt: new Date()
           }
-        );
+        });
         updatedBalance = existingBalance - transactionAmount;
       }
       return {
-        message: 'Wallet Updated Successfully',
+        message: "Wallet Updated Successfully",
         data: {
           updatedBalance
         }
-      }
-      
+      };
     } catch (error) {
-      console.log('Update Wallet: ', error.message);
+      console.log("Update Wallet: ", error.message);
       throw new Error(error.message);
     }
   }
-
 });
