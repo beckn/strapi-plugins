@@ -69,5 +69,19 @@ export const DEFAULT_INITIAL_STATE = [
       state_code: "RIDE_STATUS",
       state_value: "AWAITING_DRIVER_APPROVAL"
     }
+  },
+  {
+    domain: "deg:retail",
+    state: {
+      state_code: "ORDER_DELIVERED",
+      state_value: "ORDER DELIVERED"
+    }
+  },
+  {
+    domain: "deg:finance",
+    state: {
+      state_code: "LOAN_DISBURSED",
+      state_value: "LOAN DISBURSED"
+    }
   }
 ];
