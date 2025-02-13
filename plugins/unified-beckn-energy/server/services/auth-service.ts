@@ -182,13 +182,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           await trx.commit();
           return (result = { jwt, user: createdUser });
         } catch (error) {
+          console.log(error);
           await trx.rollback();
           throw error;
         }
       });
       return result;
     } catch (error) {
-      console.log("Error Occured while signup", error.message);
+      console.log("Error Occured while signup", error);
       if (error.message === "Email Not found") {
         throw error;
       }
