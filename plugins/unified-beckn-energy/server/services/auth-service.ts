@@ -48,6 +48,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async signup(signupDto: any) {
     try {
+      console.log("here---->");
       let result = {};
       await strapi.db.transaction(async ({ trx }) => {
         try {
