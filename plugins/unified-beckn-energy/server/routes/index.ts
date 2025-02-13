@@ -1,5 +1,4 @@
 export default [
-
   //auth-apis
   {
     method: "POST",
@@ -283,4 +282,24 @@ export default [
       auth: false
     }
   },
+  {
+    method: "POST",
+    path: "/wallet/link",
+    handler: "walletController.linkWallet",
+    config: {
+      policies: [],
+      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "POST",
+    path: "/wallet/unlink",
+    handler: "walletController.unlinkWallet",
+    config: {
+      policies: [],
+      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
+      auth: false
+    }
+  }
 ];

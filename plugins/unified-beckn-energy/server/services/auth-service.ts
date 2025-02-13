@@ -1,7 +1,7 @@
 import { Strapi } from "@strapi/strapi";
 const fs = require("fs").promises;
 import axios from "axios";
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async login(loginDto: any) {
@@ -16,13 +16,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate: {
             agent: true,
             provider: true,
-            role: true
+            role: true,
+            deg_wallet: {
+              provider: true
+            }
           }
         });
       if (!user) {
         throw new Error("Email Not found");
       }
-      if (user?.role?.name === 'Admin') {
+      if (user?.role?.name === "Admin") {
         throw new Error("Email Not found");
       }
       // Request API.
@@ -48,33 +51,32 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       let result = {};
       await strapi.db.transaction(async ({ trx }) => {
         try {
-          const { phone_no, utility_name } = signupDto;
-          let mdmUser: any = {};
-          try {
-            const mdm = await axios.post(`${process.env.MDM_URL}/getCustomer`, {
-              phone_no,
-              utility_name
-            });
-            mdmUser = mdm?.data?.data;
-            console.log("MDM User", mdmUser);
-            if (!mdmUser || !mdmUser?.customer_id) {
-              throw new Error("No MDM user found");
-            }
-          } catch (error) {
-            throw new Error(
-              error?.response?.data?.error?.message || "No MDM user found"
-            );
-          }
+          // const { phone_no, utility_name } = signupDto;
+          // let mdmUser: any = {};
+          // try {
+          //   confirm data from mdm
+          //   const mdm = await axios.post(`${process.env.MDM_URL}/getCustomer`, {
+          //     phone_no,
+          //     utility_name
+          //   });
+          //   mdmUser = mdm?.data?.data;
+          //   console.log("MDM User", mdmUser);
+          //   if (!mdmUser || !mdmUser?.customer_id) {
+          //     throw new Error("No MDM user found");
+          //   }
+          // } catch (error) {
+          //   throw new Error(
+          //     error?.response?.data?.error?.message || "No MDM user found"
+          //   );
+          // }
           const {
             email,
             password,
-            first_name,
-            last_name,
             fullname,
             address,
             phone_no: phone_number
           } = signupDto;
-          if (!fullname && !first_name) {
+          if (!fullname) {
             throw new Error("Name not provided for signup");
           }
           const users = await strapi.entityService.findMany(
@@ -83,7 +85,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               filters: {
                 $or: [
                   {
-                    email: { $eqi: email } , // Filter by email
+                    email: { $eqi: email } // Filter by email
                   },
                   {
                     agent: {
@@ -104,9 +106,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             {
               data: {
                 phone_number,
-                customer_id: mdmUser.customer_id,
+                // customer_id: mdmUser.customer_id,
                 address,
-                utility_name,
+                // utility_name,
                 cred_required: false,
                 trusted_source: false,
                 publishedAt: new Date()
@@ -195,9 +197,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async verifyOtp(userId: number, otp: number) {
     try {
-
-      if(!(Number.isInteger(otp) && otp >= 100000 && otp <= 999999)) {
-        throw new Error('Invalid otp provided');
+      if (!(Number.isInteger(otp) && otp >= 100000 && otp <= 999999)) {
+        throw new Error("Invalid otp provided");
       }
       //update user
       const updatedUser = await strapi.entityService.update(
@@ -212,10 +213,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
       return {
         message: "Otp Verified Successfully"
-      }
+      };
     } catch (error) {
-      console.log('Verify otp Error: ', error.message);
+      console.log("Verify otp Error: ", error.message);
       throw error;
     }
-  },
+  }
 });

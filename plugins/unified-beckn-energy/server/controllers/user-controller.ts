@@ -1,7 +1,6 @@
 import { Strapi } from "@strapi/strapi";
 import { getRegistryRecords } from "../utils/dhiway-utils";
 export default ({ strapi }: { strapi: Strapi }) => ({
-  
   async getCredential(ctx) {
     try {
       const userService = strapi
@@ -81,7 +80,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .service("userService");
       const customerId = ctx.state.user.agent?.agent_profile.customer_id;
       const { startDate, endDate } = ctx.query;
-      const result = await userService.getDashboard(customerId, startDate, endDate);
+      const result = await userService.getDashboard(
+        customerId,
+        startDate,
+        endDate
+      );
       ctx.body = result;
     } catch (error) {
       ctx.badRequest(error.message);
@@ -107,9 +110,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       if (!files || !files.credential) {
         return ctx.badRequest("No JSON file provided");
       }
-      
+
       if (ctx.request.files.credential.type != "application/json") {
-        throw new Error("Invalid file format uploaded, only json file allowed!");
+        throw new Error(
+          "Invalid file format uploaded, only json file allowed!"
+        );
       }
 
       const jsonFile = files.credential;
@@ -133,7 +138,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .service("userService");
       const user = ctx.state.user;
       const result = await userService.getUserProfile(user);
-      ctx.body = result;
+      ctx.body = user;
     } catch (error) {
       ctx.badRequest(error.message);
     }
@@ -143,9 +148,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const userService = strapi
         .plugin("unified-beckn-energy")
         .service("userService");
-      const { fullname, address } = ctx.request.body
+      const { fullname, address } = ctx.request.body;
       const user = ctx.state.user;
-      const result = await userService.updateUserProfile({fullname, address}, user);
+      const result = await userService.updateUserProfile(
+        { fullname, address },
+        user
+      );
       ctx.body = result;
     } catch (error) {
       ctx.badRequest(error.message);
@@ -197,7 +205,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .service("userService");
       const userId = ctx.state.user.id;
       const { pageNo, startDate, endDate } = ctx.query;
-      const result = await userService.getWalletTransactions(Number(userId), pageNo, startDate, endDate);
+      const result = await userService.getWalletTransactions(
+        Number(userId),
+        pageNo,
+        startDate,
+        endDate
+      );
       ctx.body = result;
     } catch (error) {
       ctx.badRequest(error.message);
@@ -210,7 +223,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .service("userService");
       const userId = ctx.state.user.id;
       const { transactionAmount } = ctx.request.body;
-      const result = await userService.updateWalletFund(Number(userId), "ADD_FUND", transactionAmount);
+      const result = await userService.updateWalletFund(
+        Number(userId),
+        "ADD_FUND",
+        transactionAmount
+      );
       ctx.body = result;
     } catch (error) {
       ctx.badRequest(error.message);
@@ -223,7 +240,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .service("userService");
       const userId = ctx.state.user.id;
       const { transactionAmount } = ctx.request.body;
-      const result = await userService.updateWalletFund(Number(userId), "WITHDRAW_FUND", transactionAmount);
+      const result = await userService.updateWalletFund(
+        Number(userId),
+        "WITHDRAW_FUND",
+        transactionAmount
+      );
       ctx.body = result;
     } catch (error) {
       ctx.badRequest(error.message);
@@ -250,10 +271,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .service("userService");
       const user = ctx.state.user;
       const updateUserPrefDto = ctx.request.body;
-      const result = await userService.updateUserPreference(updateUserPrefDto, user);
+      const result = await userService.updateUserPreference(
+        updateUserPrefDto,
+        user
+      );
       ctx.body = result;
     } catch (error) {
       ctx.badRequest(error.message);
     }
-  },
+  }
 });
