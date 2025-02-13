@@ -25,6 +25,11 @@ module.exports = (config, { strapi }) => {
                 provider_id: true
               }
             },
+            deg_wallet: {
+              populate: {
+                provider: true
+              }
+            }
           }
         });
       if (!user) {
