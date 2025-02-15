@@ -114,14 +114,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             domain,
             bap_id,
             bap_uri,
-            currency: payments[0]?.params?.amount || "INR",
+            currency: payments[0]?.params?.currency || "INR",
             total_amount: payments[0]?.params?.amount || 100,
             transaction_id: payments[0]?.id
           };
+          console.log("orderData==========>", orderData, "\n\n");
           // Create order
           createOrder = await strapi.entityService.create("api::order.order", {
             data: orderData
           });
+          console.log("createdOrder==========>", createOrder, "\n\n");
           orderId = createOrder.id;
 
           // Create order address
