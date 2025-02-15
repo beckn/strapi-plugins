@@ -1,5 +1,6 @@
 import { Strapi } from "@strapi/strapi";
-const fs = require("fs").promises;
+import axios from "axios";
+import { BECKN_ONE_URL, CRYPTO_UTIL_URL } from "../constant/wallet-attesters";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async createWallet(payload: any) {
@@ -105,6 +106,34 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
 
       throw new Error("No wallet found");
+    } catch (error) {
+      console.log("Error Occured:: ", error.message);
+
+      throw new Error(error.message);
+    }
+  },
+  async generateSignature(payload: { attester: any; document_id: string }) {
+    try {
+      const { attester, document_id } = payload;
+      const streamContent = (
+        await axios.get(`${BECKN_ONE_URL}${document_id}/stream`)
+      ).data;
+      console.log(
+        "streamed content\n",
+        streamContent,
+        "\n\n",
+        attester.key_pair.PRIVATE_KEY
+      );
+      const signature = (
+        await axios.post(`${CRYPTO_UTIL_URL}/api/signature/generateSignature`, {
+          hashAlgo: "BLAKE2B-512",
+          payload: streamContent,
+          signatureAlgo: "Ed25519",
+          privateKey: attester.key_pair.PRIVATE_KEY
+        })
+      ).data;
+      console.log("signature===>", signature);
+      return signature;
     } catch (error) {
       console.log("Error Occured:: ", error.message);
 

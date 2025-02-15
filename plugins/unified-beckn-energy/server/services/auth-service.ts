@@ -14,7 +14,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             email: { $eqi: email }
           },
           populate: {
-            agent: true,
+            agent: {
+              populate: {
+                agent_profile: true
+              }
+            },
             provider: true,
             role: true,
             deg_wallet: {

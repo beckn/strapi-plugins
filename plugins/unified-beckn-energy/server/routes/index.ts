@@ -301,5 +301,15 @@ export default [
       middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
       auth: false
     }
+  },
+  {
+    method: "POST",
+    path: "/wallet/attest",
+    handler: "walletController.attestDocument",
+    config: {
+      policies: [],
+      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
+      auth: false
+    }
   }
 ];
