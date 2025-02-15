@@ -626,6 +626,29 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             // );
           }
 
+          const createBasePricePerHr = await strapi.entityService.create(
+            "api::price-bareakup.price-bareakup",
+            {
+              data: {
+                title: "BASE PRICE / hr",
+                currency: "INR",
+                value: Number(price),
+                publishedAt: new Date()
+              }
+            }
+          );
+          const createTaxeBreakup = await strapi.entityService.create(
+            "api::price-bareakup.price-bareakup",
+            {
+              data: {
+                title: "Taxes / hr",
+                currency: "INR",
+                value: Number(price) * 0.18,
+                publishedAt: new Date()
+              }
+            }
+          );
+
           const createScProduct = await strapi.entityService.create(
             "api::sc-product.sc-product",
             {
@@ -634,6 +657,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 stock_quantity: 1000,
                 quantity_unit: "per hour",
                 currency: item?.price?.currency || "INR",
+                price_bareakup_ids: [
+                  createBasePricePerHr.id,
+                  createTaxeBreakup.id
+                ],
+
                 publishedAt: new Date()
               }
             }

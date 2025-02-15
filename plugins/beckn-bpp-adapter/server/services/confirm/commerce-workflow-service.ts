@@ -9,12 +9,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       if (isEnergy(context)) {
         await TradeUtil.addTradeLog({
           transactionId: context.transaction_id,
-          event_name: 'beckn_confirm',
-          description: 'Order confirmation received',
+          event_name: "beckn_confirm",
+          description: "Order confirmation received",
           data: {}
         });
       }
-      const { items, provider, billing, fulfillments } = message.order;
+      const { items, provider, billing, fulfillments, payments } =
+        message.order;
       const { domain, transaction_id, bap_id, bap_uri } = context;
       //only for p2p energy trade
       const itemQuantity = items[0]?.quantity?.selected?.count;
@@ -60,7 +61,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const shipping =
         (fulfillments[0]?.stops
           ? fulfillments[0]?.stops.find((elem: any) => elem.type === "start") ||
-          fulfillments[0]?.stops[0]
+            fulfillments[0]?.stops[0]
           : undefined) || billing;
       const shippingDetail = {
         gps: shipping?.location?.gps || "",
@@ -101,7 +102,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       // Extract item values
       const itemValue = items.map((obj: { id: string }) => `${obj.id}`);
-
+      let createOrder: any = {};
       // Start transaction
       await strapi.db.transaction(async ({ trx }) => {
         try {
@@ -112,13 +113,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             publishedAt: isoString,
             domain,
             bap_id,
-            bap_uri
+            bap_uri,
+            currency: payments[0]?.params?.amount || "INR",
+            total_amount: payments[0]?.params?.amount || 100,
+            transaction_id: payments[0]?.id
           };
           // Create order
-          const createOrder = await strapi.entityService.create(
-            "api::order.order",
-            { data: orderData }
-          );
+          createOrder = await strapi.entityService.create("api::order.order", {
+            data: orderData
+          });
           orderId = createOrder.id;
 
           // Create order address
@@ -132,7 +135,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 message.order.items.length > 0
               ) {
                 const items = message.order.items;
-          
+
                 console.log("message", message);
                 // Iterate over each item in the order
                 for (const item of items) {
@@ -145,58 +148,78 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                         // Iterate over each entry in the tag's list
                         for (const listEntry of tag.list) {
                           const code = listEntry.code;
-          
+
                           if (code) {
                             // Search for the tag in Strapi by code
-                            const matchingTags = await strapi.entityService.findMany("api::tag.tag", {
-                              filters: { tag_name: code },
-                              limit: 1,
-                            });
-                            console.log('matchingTags',matchingTags);
-          
+                            const matchingTags =
+                              await strapi.entityService.findMany(
+                                "api::tag.tag",
+                                {
+                                  filters: { tag_name: code },
+                                  limit: 1
+                                }
+                              );
+                            console.log("matchingTags", matchingTags);
+
                             if (matchingTags.length > 0) {
                               const tagId = matchingTags[0].id;
-          
+
                               // Add the tagId to the list entry
                               listEntry.id = tagId;
-          
-                              strapi.log.info(`Added tag ID ${tagId} to list entry with code: ${code}`);
+
+                              strapi.log.info(
+                                `Added tag ID ${tagId} to list entry with code: ${code}`
+                              );
                             } else {
-                              strapi.log.warn(`No matching tags found for code: ${code}`);
+                              strapi.log.warn(
+                                `No matching tags found for code: ${code}`
+                              );
                             }
                           } else {
-                            strapi.log.warn("List entry is missing the 'code' property.");
+                            strapi.log.warn(
+                              "List entry is missing the 'code' property."
+                            );
                           }
                         }
                       } else {
-                        strapi.log.warn(`Tag is missing the 'list' array or it is empty for tag descriptor code: ${tag.descriptor.code}`);
+                        strapi.log.warn(
+                          `Tag is missing the 'list' array or it is empty for tag descriptor code: ${tag.descriptor.code}`
+                        );
                       }
                     }
                   } else {
-                    strapi.log.warn(`Item with ID ${item.id} is missing 'tags' or 'tags' is not an array.`);
+                    strapi.log.warn(
+                      `Item with ID ${item.id} is missing 'tags' or 'tags' is not an array.`
+                    );
                   }
                 }
-          
+
                 // After processing all items, update the order in Strapi
                 // Assuming you have the order ID available; adjust accordingly
                 // const orderId = message.order.id; // Adjust this path based on actual order ID location
-          
+
                 if (!orderId) {
-                  strapi.log.warn("Order ID is missing in orderData.message.order.");
+                  strapi.log.warn(
+                    "Order ID is missing in orderData.message.order."
+                  );
                   return;
                 }
-          
+
                 // Update the order with the modified tags
-                console.log('Orderis', orderId);
+                console.log("Orderis", orderId);
                 await strapi.entityService.update("api::order.order", orderId, {
                   data: {
-                    tags: items, // Assuming 'items' is a writable field; adjust based on your Strapi schema
-                  },
+                    tags: items // Assuming 'items' is a writable field; adjust based on your Strapi schema
+                  }
                 });
-          
-                strapi.log.info(`Order ${orderId} has been successfully updated with tag IDs.`);
+
+                strapi.log.info(
+                  `Order ${orderId} has been successfully updated with tag IDs.`
+                );
               } else {
-                strapi.log.warn("OrderData structure is invalid or missing required fields.");
+                strapi.log.warn(
+                  "OrderData structure is invalid or missing required fields."
+                );
               }
             } catch (error) {
               strapi.log.error("Error in onConfirm service:", error);
@@ -221,10 +244,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const custId = existingCustomer
             ? existingCustomer.id
             : (
-              await strapi.entityService.create("api::customer.customer", {
-                data: custData
-              })
-            ).id;
+                await strapi.entityService.create("api::customer.customer", {
+                  data: custData
+                })
+              ).id;
 
           // Create shipping location
           const createShipping = await strapi.entityService.create(
@@ -424,14 +447,19 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             state_value: orderFulfillment.state_value
           }
         },
-        order_id: orderId
+        order_id: orderId,
+        order_details: createOrder
       }));
       if (isEnergy(context)) {
-        const { min_price: itemPrice, id: scRetailId, stock_quantity: oldItemQuantity } = itemDetails[0].items[0].sc_retail_product;
+        const {
+          min_price: itemPrice,
+          id: scRetailId,
+          stock_quantity: oldItemQuantity
+        } = itemDetails[0].items[0].sc_retail_product;
         TradeUtil.addTradeLog({
           transactionId: context.transaction_id,
-          event_name: 'beckn_on_confirm',
-          description: 'Order Confirmation sent',
+          event_name: "beckn_on_confirm",
+          description: "Order Confirmation sent",
           data: { price: itemPrice }
         });
         console.log("Quantity Available: ", oldItemQuantity);

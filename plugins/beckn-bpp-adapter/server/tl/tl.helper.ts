@@ -94,7 +94,7 @@ export const payments = async (
   transaction_id: string,
   status: string = "PAID"
 ) => {
-  const { payment_methods = {} } = provider;
+  const { payment_methods = {}, order_details } = provider;
   let price: any = incomingPrice || {
     value: 0,
     currency: "INR"
@@ -116,8 +116,12 @@ export const payments = async (
         bank_account_name: payment_method.bank_name,
         bank_account: payment_method.bank_account_number,
         bank_code: payment_method.bank_code,
-        price: price?.value + "",
-        currency: price?.currency
+        price: order_details?.total_amount
+          ? order_details?.total_amount + ""
+          : price?.value + "",
+        currency: order_details?.currency
+          ? order_details?.currency
+          : price?.currency
       },
       status,
       type: "PRE-ORDER",
