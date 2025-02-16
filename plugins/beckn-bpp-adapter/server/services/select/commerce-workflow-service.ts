@@ -2,11 +2,12 @@ import { Strapi } from "@strapi/strapi";
 import { FilterUtil, ObjectUtil } from "../../util";
 import { KeyValuePair } from ".././../types";
 import { PLUGIN } from "../../constants";
+import { isDegRental } from "../../util/domain.util";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message, context }) {
     try {
-      const { items, provider } = message.order;
+      const { items, provider, fulfillments } = message.order;
       const { domain } = context;
       const filters: KeyValuePair = provider
         ? FilterUtil.getProviderFilter(provider)
@@ -55,6 +56,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             item_fulfillment_ids: {
               populate: {
                 fulfilment_id: {
+                  type: {},
+                  state_code: {},
+                  state_value: {},
                   populate: {
                     service: {
                       populate: {
@@ -159,6 +163,24 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
         return provider;
       });
+
+      if (isDegRental(context)) {
+        const itemFulfillments = fulfillments?.filter((fulfillment) => items[0]?.fulfillment_ids?.find((id) => id == fulfillment?.id));
+
+        const requestRentalStart = parseInt(itemFulfillments?.find((item) => item.type === "RENTAL_START")?.state?.name, 10);
+        const requestRentalEnd = parseInt(itemFulfillments?.find((item) => item.type === "RENTAL_END")?.state?.name, 10);
+
+        if (itemDetails[0]?.items) {
+          itemDetails[0].items = itemDetails[0]?.items.filter((item) => {
+            // Extract rental start and end from the item
+            const rentalStartEpoch = item?.item_fulfillment_ids?.find((fulfillment) => fulfillment?.fulfilment_id?.type === "RENTAL_START")?.fulfilment_id?.state_value;
+            const rentalEndEpoch = item?.item_fulfillment_ids?.find((fulfillment) => fulfillment?.fulfilment_id?.type === "RENTAL_END")?.fulfilment_id?.state_value;
+            return (parseInt(rentalStartEpoch) <= requestRentalStart && parseInt(rentalEndEpoch) >= requestRentalEnd);
+          });
+        }
+        return itemDetails;
+      }
+
       return itemDetails;
     } catch (error) {
       console.error("An error occurred:", error);

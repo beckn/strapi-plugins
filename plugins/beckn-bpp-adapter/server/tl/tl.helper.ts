@@ -63,7 +63,7 @@ export const quote = async (items: KeyValuePair[]) => {
     0
   );
   const breakup: KeyValuePair[] = [];
-  items.map((item) => {
+  items?.map((item) => {
     item?.sc_retail_product?.price_bareakup_ids?.map(
       (price_bareakup_id: KeyValuePair) => {
         breakup.push({
@@ -82,7 +82,7 @@ export const quote = async (items: KeyValuePair[]) => {
   return {
     price: {
       value: priceValue + "",
-      currency: items[0].sc_retail_product?.currency
+      currency: items?.[0]?.sc_retail_product?.currency
     },
     breakup
   };
@@ -100,13 +100,13 @@ export const payments = async (
     currency: "INR"
   };
   if (!incomingPrice) {
-    const priceValue = provider?.items.reduce(
+    const priceValue = provider?.items?.reduce(
       (accumulator: number, currentValue: KeyValuePair) =>
         accumulator + Number(currentValue?.sc_retail_product?.min_price),
       0
     );
     price.value = priceValue;
-    price.currency = provider?.items[0]?.sc_retail_product?.currency;
+    price.currency = provider?.items?.[0]?.sc_retail_product?.currency;
   }
 
   return payment_methods.map((payment_method: any) => {
@@ -136,7 +136,7 @@ export const price = (sc_retail_product: KeyValuePair = {}) => {
 
 export const cancellationTerms = (items: KeyValuePair[]) => {
   const cancelTerms: KeyValuePair[] = [];
-  items.map((item: KeyValuePair) => {
+  items?.map((item: KeyValuePair) => {
     item.sc_retail_product?.product_cancel.map((pc: KeyValuePair) => {
       cancelTerms.push({
         state: pc.state,
@@ -158,7 +158,7 @@ export const fulfillments = (
 ) => {
   console.log("Temp===>", JSON.stringify({ fulfillments, items }));
   const allFulfillments = fulfillments || [];
-  items.forEach((item: KeyValuePair) => {
+  items?.forEach((item: KeyValuePair) => {
     item?.item_fulfillment_ids?.forEach((item_fulfillment_id) => {
       allFulfillments.push(item_fulfillment_id?.fulfilment_id);
     });
