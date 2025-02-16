@@ -311,5 +311,25 @@ export default [
       middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
       auth: false
     }
+  },
+  {
+    method: "POST",
+    path: "/order-history/create",
+    handler: "orderHistoryController.createOrderInOrderHistory",
+    config: {
+      policies: [],
+      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
+      auth: false
+    }
+  },
+  {
+    method: "GET",
+    path: "/order-history/get",
+    handler: "orderHistoryController.getOrderHistory",
+    config: {
+      policies: [],
+      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
+      auth: false
+    }
   }
 ];
