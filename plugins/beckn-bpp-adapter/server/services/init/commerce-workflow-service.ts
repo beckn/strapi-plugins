@@ -13,7 +13,7 @@ import { PLUGIN } from "../../constants";
 export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message, context }) {
     try {
-      const { items, provider, billing, fulfillments } = message.order;
+      const { items, provider, billing, fulfillments, tags } = message.order;
       const { domain } = context;
       const filters: KeyValuePair = provider
         ? FilterUtil.getProviderFilter(provider)
@@ -117,6 +117,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate
         }
       );
+
+      if (tags?.find(tag => tag?.descriptor?.code === "preFinanced" && tag?.descriptor?.name === "true")) {
+        itemDetails.forEach(provider => {
+          provider.items.forEach(item => {
+            if (item.sc_retail_product) {
+              // Update the code and price value
+              if (item?.code)
+                item.code = `${parseInt(item.code) + 10}`;
+              if (item?.sc_retail_product?.min_price)
+                item.sc_retail_product.min_price = `${parseInt(item.sc_retail_product.min_price) - 2}`;
+              if (item?.sc_retail_product?.max_price)
+                item.sc_retail_product.max_price = `${parseInt(item.sc_retail_product.max_price) - 2}`;
+            }
+          });
+        });
+      }
 
       // Request for Cred from BPP is not required as of now
       // itemDetails = await SearchUtil.filterTrustedSource(itemDetails, context);

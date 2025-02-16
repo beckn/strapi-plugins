@@ -1,5 +1,5 @@
 import { Strapi } from "@strapi/strapi";
-import { FilterUtil, isEnergy, ObjectUtil, TradeUtil } from "../../util";
+import { FilterUtil, isDegRental, isEnergy, ObjectUtil, TradeUtil } from "../../util";
 import { KeyValuePair } from "../../types";
 import { PLUGIN, DEFAULT_INITIAL_STATE } from "../../constants";
 
@@ -14,7 +14,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           data: {}
         });
       }
-      const { items, provider, billing, fulfillments, payments } =
+      const { items, provider, billing, fulfillments, payments, tags } =
         message.order;
       const { domain, transaction_id, bap_id, bap_uri } = context;
       //only for p2p energy trade
@@ -286,6 +286,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               state_value: "ORDER RECEIVED"
             }
           };
+
+          if (isDegRental(context)) {
+            const fulfillment = fulfillments[0];
+            defaultState.state.state_code = fulfillment.state.code;
+            defaultState.state.state_value = fulfillment.state.name;
+          }
+
           // Create order fulfillment
           const orderFulfillmentDetail = {
             fulfilment_id: fulfillments[0].id,
@@ -304,6 +311,25 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             { data: orderFulfillmentDetail }
           );
           orderFulFillmentId = orderFulfillmentRes.id;
+
+          if (isDegRental(context)) {
+            const fulfillment = fulfillments[1];
+            const anotherOrderFulfillmentDetail = {
+              fulfilment_id: fulfillment.id,
+              order_id: orderId,
+              customer_id: custId,
+              stops: stopsIds,
+              order_tracking_id: trackingId,
+              state_code: fulfillment.state.code,
+              state_value: fulfillment.state.name,
+              publishedAt: isoString,
+              quantity: message.order?.items[0]?.quantity?.selected?.count || 5
+            };
+            await strapi.entityService.create(
+              "api::order-fulfillment.order-fulfillment",
+              { data: anotherOrderFulfillmentDetail }
+            );
+          }
 
           await onConfirm(message);
           trx.commit();
@@ -399,6 +425,23 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate
         }
       );
+
+      if (tags?.find(tag => tag?.descriptor?.code === "preFinanced" && tag?.descriptor?.name === "true")) {
+        itemDetails.forEach(provider => {
+          provider.items.forEach(item => {
+            if (item.sc_retail_product) {
+              // Update the code and price value
+              if (item?.code)
+                item.code = `${parseInt(item.code) + 10}`;
+              if (item?.sc_retail_product?.min_price)
+                item.sc_retail_product.min_price = `${parseInt(item.sc_retail_product.min_price) - 2}`;
+              if (item?.sc_retail_product?.max_price)
+                item.sc_retail_product.max_price = `${parseInt(item.sc_retail_product.max_price) - 2}`;
+            }
+          });
+        });
+      }
+
       const commonService = strapi.plugin(PLUGIN).service("commonService");
       await Promise.all(
         itemDetails.map(async (itemDetail) => {
@@ -427,13 +470,20 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
         })
       );
-      const orderFulfillment = await commonService.getOrderFulfillmentById(
-        orderFulFillmentId,
-        {
-          order_id: {},
-          fulfilment_id: {}
-        }
-      );
+      const orderFulfillment = isDegRental(context) ?
+        await strapi.entityService.findMany("api::order-fulfillment.order-fulfillment", {
+          filters: {
+            order_id: orderId
+          },
+          populate: ["fulfilment_id"]
+        })
+        : [await commonService.getOrderFulfillmentById(
+          orderFulFillmentId,
+          {
+            order_id: {},
+            fulfilment_id: {}
+          }
+        )];
       const billingDetails = billing;
       const fulfillmentDetails = fulfillments;
 
@@ -441,14 +491,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         ...item,
         billing: billingDetails,
         fulfillment: fulfillmentDetails,
-        orderFulfillment: {
-          ...orderFulfillment,
+        // orderFulfillment: {
+        //   ...orderFulfillment,
+        //   fulfilment_id: {
+        //     ...(orderFulfillment?.fulfilment_id || {}),
+        //     state_code: orderFulfillment.state_code,
+        //     state_value: orderFulfillment.state_value
+        //   }
+        // },
+        orderFulfillment: orderFulfillment?.map(of => ({
+          ...of,
           fulfilment_id: {
-            ...(orderFulfillment?.fulfilment_id || {}),
-            state_code: orderFulfillment.state_code,
-            state_value: orderFulfillment.state_value
+            ...of?.fulfilment_id,
+            state_code: of?.fulfilment_id?.state?.code,
+            state_value: of?.state_value
           }
-        },
+        })),
         order_id: orderId,
         order_details: createOrder
       }));
