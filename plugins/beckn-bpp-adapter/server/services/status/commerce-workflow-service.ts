@@ -129,22 +129,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       };
       strapi.eventHub.emit("status.request", eventData);
       if (isEnergy(context)) {
-        let eventDescription = '';
-        if (orderDetails[0]?.state_code.toLowerCase() === 'order_placed') {
-          eventDescription = 'Energy transmission started'
+        let eventDescription = "";
+        if (orderDetails[0]?.state_code.toLowerCase() === "order_placed") {
+          eventDescription = "Energy transmission started";
         }
 
-        if (orderDetails[0]?.state_code.toLowerCase() === 'order_completed') {
-          eventDescription = 'Energy transmission completed'
+        if (orderDetails[0]?.state_code.toLowerCase() === "order_completed") {
+          eventDescription = "Energy transmission completed";
         }
         TradeUtil.addTradeLog({
           transactionId: context.transaction_id,
-          event_name: 'beckn_on_status',
+          event_name: "beckn_on_status",
           description: eventDescription,
           data: {}
         });
       }
-      return orderDetails;
+      return Array.isArray(orderDetails) ? orderDetails[0] : orderDetails;
     } catch (error) {
       console.error("An error occurred:", error);
       throw error;
