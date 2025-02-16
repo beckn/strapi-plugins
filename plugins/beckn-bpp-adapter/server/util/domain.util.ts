@@ -3,7 +3,8 @@ import {
   TOURISM_DOMAINS,
   MOBILITY_DOMAINS,
   ENERGY_DOMAINS,
-  RETAIL_DOMAINS
+  RETAIL_DOMAINS,
+  DEG_RENTAL_DOMAINS
 } from "../constants";
 
 export const isHospitality = (context) =>
@@ -13,3 +14,4 @@ export const isMobility = (context) =>
   MOBILITY_DOMAINS.includes(context?.domain);
 export const isEnergy = (context) => ENERGY_DOMAINS.includes(context?.domain);
 export const isRetail = (context) => RETAIL_DOMAINS.includes(context?.domain);
+export const isDegRental = (context) => DEG_RENTAL_DOMAINS.includes(context?.domain);

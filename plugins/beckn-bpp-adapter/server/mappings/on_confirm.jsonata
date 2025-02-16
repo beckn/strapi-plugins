@@ -96,13 +96,19 @@
             }[],
             "quote": $quote(message[0].items),
             "billing": message.billing,
-            "fulfillments": $map(message.fulfillment, function($elem) {
-                    $merge([$elem, {"state":{"descriptor": {
-                        "code": $string(message.orderFulfillment.state_code ? message.orderFulfillment.state_code : "IN_PROGRESS"),
-                        "short_desc": $string(message.orderFulfillment.state_value ? message.orderFulfillment.state_value : "in progress")
-                    },
-                    "updated_at": $string(message.orderFulfillment.updatedAt)}}])
-                })[],
+            "fulfillments": $map(message.orderFulfillment, function($elem) {
+                   {
+                       "id": $elem.fulfilment_id.id,
+                       "type": $elem.fulfilment_id.type,
+                       "state": {
+                        "descriptor": {
+                            "code": $elem.state_code ? $elem.state_code : "IN_PROGRESS",
+                            "short_desc": $elem.state_value ? $elem.state_value : "IN PROGRESS"
+                        },
+                        "updated_at": $string($elem.updatedAt)
+                    }
+                }
+            })[],
             "payments": $payments(message[0]),
             "cancellation_terms": $cancellationTerms(message[0].items)
         }
