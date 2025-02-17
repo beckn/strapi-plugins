@@ -1,5 +1,11 @@
 import { Strapi } from "@strapi/strapi";
-import { FilterUtil, isDegRental, isEnergy, ObjectUtil, TradeUtil } from "../../util";
+import {
+  FilterUtil,
+  isDegRental,
+  isEnergy,
+  ObjectUtil,
+  TradeUtil
+} from "../../util";
 import { KeyValuePair } from "../../types";
 import { PLUGIN, DEFAULT_INITIAL_STATE } from "../../constants";
 
@@ -295,7 +301,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
           // Create order fulfillment
           const orderFulfillmentDetail = {
-            fulfilment_id: fulfillments[0].id,
+            fulfilment_id: isDegRental(context)
+              ? fulfillments[1].id
+              : fulfillments[0].id,
             order_id: orderId,
             customer_id: custId,
             stops: stopsIds,
@@ -313,7 +321,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           orderFulFillmentId = orderFulfillmentRes.id;
 
           if (isDegRental(context)) {
-            const fulfillment = fulfillments[1];
+            const fulfillment = fulfillments[2];
             const anotherOrderFulfillmentDetail = {
               fulfilment_id: fulfillment.id,
               order_id: orderId,
@@ -426,17 +434,26 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
       );
 
-      if (tags?.find(tag => tag?.descriptor?.code === "preFinanced" && tag?.descriptor?.name === "true")) {
-        itemDetails.forEach(provider => {
-          provider.items.forEach(item => {
+      if (
+        tags?.find(
+          (tag) =>
+            tag?.descriptor?.code === "preFinanced" &&
+            tag?.descriptor?.name === "true"
+        )
+      ) {
+        itemDetails.forEach((provider) => {
+          provider.items.forEach((item) => {
             if (item.sc_retail_product) {
               // Update the code and price value
-              if (item?.code)
-                item.code = `${parseInt(item.code) + 10}`;
+              if (item?.code) item.code = `${parseInt(item.code) + 10}`;
               if (item?.sc_retail_product?.min_price)
-                item.sc_retail_product.min_price = `${parseInt(item.sc_retail_product.min_price) - 2}`;
+                item.sc_retail_product.min_price = `${
+                  parseInt(item.sc_retail_product.min_price) - 2
+                }`;
               if (item?.sc_retail_product?.max_price)
-                item.sc_retail_product.max_price = `${parseInt(item.sc_retail_product.max_price) - 2}`;
+                item.sc_retail_product.max_price = `${
+                  parseInt(item.sc_retail_product.max_price) - 2
+                }`;
             }
           });
         });
@@ -470,20 +487,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
         })
       );
-      const orderFulfillment = isDegRental(context) ?
-        await strapi.entityService.findMany("api::order-fulfillment.order-fulfillment", {
-          filters: {
-            order_id: orderId
-          },
-          populate: ["fulfilment_id"]
-        })
-        : [await commonService.getOrderFulfillmentById(
-          orderFulFillmentId,
-          {
-            order_id: {},
-            fulfilment_id: {}
-          }
-        )];
+      const orderFulfillment = isDegRental(context)
+        ? await strapi.entityService.findMany(
+            "api::order-fulfillment.order-fulfillment",
+            {
+              filters: {
+                order_id: orderId
+              },
+              populate: ["fulfilment_id"]
+            }
+          )
+        : [
+            await commonService.getOrderFulfillmentById(orderFulFillmentId, {
+              order_id: {},
+              fulfilment_id: {}
+            })
+          ];
       const billingDetails = billing;
       const fulfillmentDetails = fulfillments;
 
@@ -499,7 +518,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         //     state_value: orderFulfillment.state_value
         //   }
         // },
-        orderFulfillment: orderFulfillment?.map(of => ({
+        orderFulfillment: orderFulfillment?.map((of) => ({
           ...of,
           fulfilment_id: {
             ...of?.fulfilment_id,
