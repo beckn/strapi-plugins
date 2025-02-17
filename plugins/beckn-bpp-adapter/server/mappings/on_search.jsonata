@@ -16,12 +16,15 @@
                     "additional_desc": {
                         "url": provider_uri ? provider_uri : "www.becknprotocol.io"
                     },
-                    "images": [
+                    "images": logo.url ? [
                         {
-                            "url": "https://makerspace/assembly/makerspace_logo.png",
-                            "size_type": "sm"
+                            "url":logo.url,
+                            "size_type": logo.size_type ? logo.size_type :"sm"
                         }
-                    ]
+                    ] : items.image.{
+                        "url": url?url:"https://abc.com",
+                        "size_type": size_type?size_type:"sm"
+                    }[]
                 },
                 "categories": category_ids. {
                     "id": $string(id),

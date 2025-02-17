@@ -5,7 +5,8 @@ import { PLUGIN } from "../../constants";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message, context }) {
-    const { item, provider, category, fulfillment, tags } = message?.intent || {};
+    const { item, provider, category, fulfillment, tags } =
+      message?.intent || {};
     const { domain } = context;
     const filters: KeyValuePair = provider
       ? FilterUtil.getProviderFilter(provider)
@@ -57,6 +58,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       category_ids: {},
       location_id: {},
       fulfillments: {},
+      logo: {},
       tags: {
         populate: {
           tag_group_id: {}
@@ -99,7 +101,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
     ObjectUtil.removeEmptyObjectKeys(filters);
     ObjectUtil.removeEmptyKeys(populate);
-    console.log('Filters=====>', JSON.stringify(filters))
+    console.log("Filters=====>", JSON.stringify(filters));
     let providers = await strapi.entityService.findMany(
       "api::provider.provider",
       {
@@ -109,17 +111,26 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     );
     console.log("providers====>", JSON.stringify(providers));
 
-    if (tags?.find(tag => tag?.descriptor?.code === "preFinanced" && tag?.descriptor?.name === "true")) {
-      providers.forEach(provider => {
-        provider.items.forEach(item => {
+    if (
+      tags?.find(
+        (tag) =>
+          tag?.descriptor?.code === "preFinanced" &&
+          tag?.descriptor?.name === "true"
+      )
+    ) {
+      providers.forEach((provider) => {
+        provider.items.forEach((item) => {
           if (item.sc_retail_product) {
             // Update the code and price value
-            if (item?.code)
-              item.code = `${parseInt(item.code) + 10}`;
+            if (item?.code) item.code = `${parseInt(item.code) + 10}`;
             if (item?.sc_retail_product?.min_price)
-              item.sc_retail_product.min_price = `${parseInt(item.sc_retail_product.min_price) - 2}`;
+              item.sc_retail_product.min_price = `${
+                parseInt(item.sc_retail_product.min_price) - 2
+              }`;
             if (item?.sc_retail_product?.max_price)
-              item.sc_retail_product.max_price = `${parseInt(item.sc_retail_product.max_price) - 2}`;
+              item.sc_retail_product.max_price = `${
+                parseInt(item.sc_retail_product.max_price) - 2
+              }`;
           }
         });
       });
@@ -132,7 +143,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         context
       );
     }
-    console.log("providers after fulfillents filteration====>", JSON.stringify(providers))
+    console.log(
+      "providers after fulfillents filteration====>",
+      JSON.stringify(providers)
+    );
 
     // Request for Cred from BPP is not required as of now
     // providers = await SearchUtil.filterTrustedSource(providers, context);
