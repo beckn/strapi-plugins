@@ -3,9 +3,9 @@
     "message": {
         "catalog": {
             "descriptor": {
-                "name": "BPP",
-                "code": "bpp",
-                "short_desc": "Unified Strapi BPP"
+                "name": "UrjaKart",
+                "code": "UrjaKart",
+                "short_desc": "A seller platform for energy solutions, enabling seamless transactions of batteries, solar panels, and other renewable energy products."
             },
             "providers": $count(message) > 0 ? message.{
                 "id": $string(id),

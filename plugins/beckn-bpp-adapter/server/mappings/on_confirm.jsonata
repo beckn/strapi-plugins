@@ -98,7 +98,7 @@
             "billing": message.billing,
             "fulfillments": $map(message.orderFulfillment, function($elem) {
                    {
-                       "id": $elem.fulfilment_id.id,
+                       "id": $string($elem.fulfilment_id.id),
                        "type": $elem.fulfilment_id.type,
                        "state": {
                         "descriptor": {
