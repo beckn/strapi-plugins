@@ -641,7 +641,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::price-bareakup.price-bareakup",
             {
               data: {
-                title: "Taxes",
+                title: "TAXES (Rs. Per Hour)",
                 currency: "INR",
                 value: `${Number(price) * 0.18}`,
                 publishedAt: new Date()
