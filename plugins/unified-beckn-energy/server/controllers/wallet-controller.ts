@@ -54,19 +54,19 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async attestDocument(ctx: any) {
     try {
-      const user = ctx.state.user;
+      // const user = ctx.state.user;
       const walletService = strapi
         .plugin("unified-beckn-energy")
         .service("walletService");
 
-      const { wallet_doc_type, document_id } = ctx.request.body;
+      const { wallet_doc_type, document_id, deg_wallet_id } = ctx.request.body;
 
       const self_subjectDetails = (
-        await axios.get(`${BECKN_ONE_URL}${user.deg_wallet.deg_wallet_id}`)
+        await axios.get(`${BECKN_ONE_URL}${deg_wallet_id}`)
       ).data;
       const self_keyPair = (
         await axios.get(
-          `${CRYPTO_UTIL_URL}/crypto_keys/generatepublicprivatebymessage?input=Ed25519:256&message=${user.deg_wallet.deg_wallet_id.replaceAll(
+          `${CRYPTO_UTIL_URL}/crypto_keys/generatepublicprivatebymessage?input=Ed25519:256&message=${deg_wallet_id.replaceAll(
             "/subjects/",
             ""
           )}`
@@ -74,9 +74,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ).data;
 
       const self_verification_methods = (
-        await axios.get(
-          `${BECKN_ONE_URL}${user.deg_wallet.deg_wallet_id}/verification_methods`
-        )
+        await axios.get(`${BECKN_ONE_URL}${deg_wallet_id}/verification_methods`)
       ).data;
 
       const attesters_list: any[] = [

@@ -308,7 +308,7 @@ export default [
     handler: "walletController.attestDocument",
     config: {
       policies: [],
-      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
+      middlewares: [],
       auth: false
     }
   },
