@@ -168,7 +168,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       return (ctx.body = successAttestList);
     } catch (error) {
-      console.log(error.response.data);
+      console.log(error);
       ctx.badRequest(error.message);
     }
   }
