@@ -51,7 +51,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               }
             }),
 
-            async () => {
+            (async () => {
               return item?.tag_group_id
                 ? await strapi.entityService.findMany("api::tag.tag", {
                     filter: {
@@ -62,7 +62,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     }
                   })
                 : null;
-            }
+            })()
           ]);
         })
       );
