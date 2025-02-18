@@ -34,11 +34,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         let item = providerData.items[i];
 
         if (item.tag_group_id) {
-          const tag_group = await strapi.entityService.findOne(
+          const tag_group = await strapi.entityService.findMany(
             "api::tag.tag",
-            item.tag_group_id,
             {
-              tag_group_id: {}
+              filter: {
+                tag_group_id: item.tag_group_id
+              },
+              populate: {}
             }
           );
           item = { ...item, tag_group_id: tag_group };
@@ -73,7 +75,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               ];
             }
           }
-          item = { ...item, category_attr_tag_relations };
+          item = {
+            ...item,
+            cat_attr_tag_relations: category_attr_tag_relations
+          };
         }
         newItems.push(item);
       }
