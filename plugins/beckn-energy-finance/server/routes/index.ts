@@ -18,4 +18,13 @@ export default [
       auth: false
     }
   },
+  {
+    method: "GET",
+    path: "/orders",
+    handler: "userController.getOrders",
+    config: {
+      middlewares: ["plugin::beckn-energy-finance.authMiddleware"],
+      auth: false
+    }
+  },
 ];

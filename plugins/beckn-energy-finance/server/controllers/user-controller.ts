@@ -11,4 +11,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ctx.badRequest(error.message);
     }
   },
+  async getOrders(ctx) {
+    try {
+      const userService = strapi
+        .plugin("beckn-energy-finance")
+        .service("userService");
+      const result = await userService.getOrders(ctx.state.user);
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
 });

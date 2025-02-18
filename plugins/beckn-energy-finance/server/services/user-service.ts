@@ -1,7 +1,7 @@
 import { Strapi } from "@strapi/strapi";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  
+
   async getFinanceCatalogues(user: any) {
     try {
       const providerId = user?.agent?.provider_id?.id;
@@ -24,6 +24,36 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       return providerData;
     } catch (error) {
       console.log("Failed to fetch finance catalogues: ", error);
+      throw error;
+    }
+  },
+
+  async getOrders(user: any) {
+    try {
+      if (!user?.agent?.id) {
+        throw new Error("User agent not found");
+      }
+      const orders = await strapi.entityService.findMany(
+        "api::order-fulfillment.order-fulfillment",
+        {
+          filters: {
+            order_id: {
+              items: {
+                provider: {
+                  agents: {
+                    id: user.agent.id,
+
+                  },
+                },
+              }
+            }
+          },
+          populate: ["order_id.items"]
+        },
+      );
+      return { orders };
+    } catch (error) {
+      console.log("Failed to get the orders: ", error);
       throw error;
     }
   },
