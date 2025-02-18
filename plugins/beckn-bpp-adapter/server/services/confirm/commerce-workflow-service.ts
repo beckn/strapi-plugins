@@ -299,6 +299,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             defaultState.state.state_value = fulfillment.state.descriptor.name;
           }
 
+          console.log("\n\ndefaultState----->", defaultState, "\n\n");
+
           // Create order fulfillment
           const orderFulfillmentDetail = {
             fulfilment_id: fulfillments[0].id,
