@@ -35,7 +35,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               if (taxanomy.taxanomy === "CATEGORY") {
                 taxanomy.taxanomy_id = await strapi.entityService.findOne(
                   "api::category.category",
-                  taxanomy.taxanomy_id,
+                  parseInt(taxanomy.taxanomy_id),
                   {
                     parent_id: {}
                   }
@@ -43,25 +43,26 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               } else if (taxanomy.taxanomy === "TAG") {
                 taxanomy.taxanomy_id = await strapi.entityService.findOne(
                   "api::tag.tag",
-                  taxanomy.taxanomy_id,
+                  parseInt(taxanomy.taxanomy_id),
                   {
                     tag_group_id: {}
                   }
                 );
               }
             }),
-            ...[
-              async () => {
-                return await strapi.entityService.findMany("api::tag.tag", {
-                  filter: {
-                    tag_group_id: item.tag_group_id
-                  },
-                  populate: {
-                    tag_group_id: {}
-                  }
-                });
-              }
-            ]
+
+            async () => {
+              return item?.tag_group_id
+                ? await strapi.entityService.findMany("api::tag.tag", {
+                    filter: {
+                      tag_group_id: item.tag_group_id
+                    },
+                    populate: {
+                      tag_group_id: {}
+                    }
+                  })
+                : null;
+            }
           ]);
         })
       );
