@@ -33,16 +33,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       for (let i = 0; i < providerData.items.length; i++) {
         let item = providerData.items[i];
 
-        if (item.tag_group_id) {
+        if (item?.tag_group_id) {
           const tag_group = await strapi.entityService.findMany(
             "api::tag.tag",
             {
-              populate: {
-                tag_group_id: {
-                  filter: {
-                    id: item.tag_group_id
-                  }
-                }
+              filter: {
+                tag_group_id: item.tag_group_id
               }
             }
           );
