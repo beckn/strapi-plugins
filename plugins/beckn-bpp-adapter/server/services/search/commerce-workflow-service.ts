@@ -5,6 +5,7 @@ import { PLUGIN } from "../../constants";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message, context }) {
+    console.log("Request====>", JSON.stringify({ message, context }));
     const { item, provider, category, fulfillment, tags } =
       message?.intent || {};
     const { domain } = context;

@@ -156,7 +156,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               }
             }
           },
-          populate: ["order_id.items"]
+          populate: {
+            order_id: {
+              populate: {
+                items: {}
+              }
+            },
+            customer_id: {}
+          }
         }
       );
       return { orders };
