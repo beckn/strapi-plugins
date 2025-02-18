@@ -159,7 +159,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate: {
             order_id: {
               populate: {
-                items: {}
+                items: {
+                  populate: {
+                    sc_retail_product: {}
+                  }
+                }
               }
             },
             customer_id: {}
