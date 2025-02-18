@@ -1,7 +1,6 @@
 import { Strapi } from "@strapi/strapi";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-
   async getFinanceCatalogues(user: any) {
     try {
       const providerId = user?.agent?.provider_id?.id;
@@ -15,13 +14,58 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate: {
             items: {
               populate: {
-                sc_retail_product: true
+                sc_retail_product: true,
+                cat_attr_tag_relations: true
               }
             }
           }
         }
       );
-      return providerData;
+      // changes made from here
+      const providerDataWithTag = await Promise.all(
+        providerData.map(async (provider) => {
+          await Promise.all(
+            await provider.items.map(async (item) => {
+              await Promise.all([
+                ...item["cat_attr_tag_relations"]?.map(async (taxanomy) => {
+                  if (taxanomy.taxanomy === "CATEGORY") {
+                    taxanomy.taxanomy_id = await strapi.entityService.findOne(
+                      "api::category.category",
+                      taxanomy.taxanomy_id,
+                      {
+                        parent_id: {}
+                      }
+                    );
+                  } else if (taxanomy.taxanomy === "TAG") {
+                    taxanomy.taxanomy_id = await strapi.entityService.findOne(
+                      "api::tag.tag",
+                      taxanomy.taxanomy_id,
+                      {
+                        tag_group_id: {}
+                      }
+                    );
+                  }
+                }),
+                ...[
+                  async () => {
+                    return await strapi.entityService.findMany("api::tag.tag", {
+                      filter: {
+                        tag_group_id: item.tag_group_id
+                      },
+                      populate: {
+                        tag_group_id: {}
+                      }
+                    });
+                  }
+                ]
+              ]);
+            })
+          );
+        })
+      );
+      // to here
+      // return providerData
+      return providerDataWithTag;
     } catch (error) {
       console.log("Failed to fetch finance catalogues: ", error);
       throw error;
@@ -41,20 +85,19 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               items: {
                 provider: {
                   agents: {
-                    id: user.agent.id,
-
-                  },
-                },
+                    id: user.agent.id
+                  }
+                }
               }
             }
           },
           populate: ["order_id.items"]
-        },
+        }
       );
       return { orders };
     } catch (error) {
       console.log("Failed to get the orders: ", error);
       throw error;
     }
-  },
+  }
 });
