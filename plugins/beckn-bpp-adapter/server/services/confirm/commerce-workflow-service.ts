@@ -301,9 +301,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
           // Create order fulfillment
           const orderFulfillmentDetail = {
-            fulfilment_id: isDegRental(context)
-              ? fulfillments[1].id
-              : fulfillments[0].id,
+            fulfilment_id: fulfillments[0].id,
+
             order_id: orderId,
             customer_id: custId,
             stops: stopsIds,
@@ -321,7 +320,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           orderFulFillmentId = orderFulfillmentRes.id;
 
           if (isDegRental(context)) {
-            const fulfillment = fulfillments[2];
+            const fulfillment = fulfillments[1];
             const anotherOrderFulfillmentDetail = {
               fulfilment_id: fulfillment.id,
               order_id: orderId,
