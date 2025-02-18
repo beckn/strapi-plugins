@@ -11,8 +11,8 @@ export default [
   },
   {
     method: "GET",
-    path: "/rent-catalogue",
-    handler: "userController.getRentCatalogues",
+    path: "/catalogues",
+    handler: "userController.getFinanceCatalogues",
     config: {
       middlewares: ["plugin::beckn-energy-finance.authMiddleware"],
       auth: false
