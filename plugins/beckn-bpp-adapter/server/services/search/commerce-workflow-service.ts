@@ -192,17 +192,27 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     );
 
     if (isDegFinance(context)) {
-      providers.filter((provider: any) => {
-        return provider.items.filter((item: any) => {
-          return item.cat_attr_tag_relations.find(
-            (relation: any) =>
-              relation?.taxanomy_id?.value === category?.descriptor?.name &&
-              relation?.taxanomy_id?.category_code ===
-                category?.descriptor?.code
+      const updatedProviders = providers
+        .map((provider: any) => {
+          const filteredItems = provider.items.filter((item: any) =>
+            item.cat_attr_tag_relations.some(
+              (relation: any) =>
+                relation?.taxanomy_id?.value === category?.descriptor?.name &&
+                relation?.taxanomy_id?.category_code ===
+                  category?.descriptor?.code
+            )
           );
-        });
-      });
+
+          return {
+            ...provider,
+            items: filteredItems // Update provider with filtered items
+          };
+        })
+        .filter((provider) => provider.items.length > 0); // Remove providers with no matching items
+
+      console.log(updatedProviders);
     }
+
     if (item?.tags?.length && item?.tags[0]?.list?.length) {
       const newProviders = providers.map((provider: any) => {
         const filteredItems = provider?.items?.filter((itemFromStrapi) => {
