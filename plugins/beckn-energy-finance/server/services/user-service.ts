@@ -34,6 +34,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         let item = providerData.items[i];
 
         if (item?.tag_group_id) {
+          console.log(
+            "\n\n\nTag Group Id====>",
+            JSON.stringify(item),
+            "\n\n\n"
+          );
           const tag_group = await strapi.entityService.findMany(
             "api::tag.tag",
             {
