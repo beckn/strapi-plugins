@@ -28,47 +28,47 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         "\n\n"
       );
       // changes made from here
-      const providerDataWithTag = await Promise.all(
-        await providerData.items.map(async (item) => {
-          await Promise.all([
-            ...item["cat_attr_tag_relations"]?.map(async (taxanomy) => {
-              if (taxanomy.taxanomy === "CATEGORY") {
-                taxanomy.taxanomy_id = await strapi.entityService.findOne(
-                  "api::category.category",
-                  parseInt(taxanomy.taxanomy_id),
-                  {
-                    parent_id: {}
-                  }
-                );
-              } else if (taxanomy.taxanomy === "TAG") {
-                taxanomy.taxanomy_id = await strapi.entityService.findOne(
-                  "api::tag.tag",
-                  parseInt(taxanomy.taxanomy_id),
-                  {
+
+      await providerData.items.map(async (item) => {
+        await Promise.all([
+          ...item["cat_attr_tag_relations"]?.map(async (taxanomy) => {
+            if (taxanomy.taxanomy === "CATEGORY") {
+              taxanomy.taxanomy_id = await strapi.entityService.findOne(
+                "api::category.category",
+                parseInt(taxanomy.taxanomy_id),
+                {
+                  parent_id: {}
+                }
+              );
+            } else if (taxanomy.taxanomy === "TAG") {
+              taxanomy.taxanomy_id = await strapi.entityService.findOne(
+                "api::tag.tag",
+                parseInt(taxanomy.taxanomy_id),
+                {
+                  tag_group_id: {}
+                }
+              );
+            }
+          }),
+
+          (async () => {
+            return item?.tag_group_id
+              ? await strapi.entityService.findMany("api::tag.tag", {
+                  filter: {
+                    tag_group_id: item.tag_group_id
+                  },
+                  populate: {
                     tag_group_id: {}
                   }
-                );
-              }
-            }),
+                })
+              : null;
+          })()
+        ]);
+      });
 
-            (async () => {
-              return item?.tag_group_id
-                ? await strapi.entityService.findMany("api::tag.tag", {
-                    filter: {
-                      tag_group_id: item.tag_group_id
-                    },
-                    populate: {
-                      tag_group_id: {}
-                    }
-                  })
-                : null;
-            })()
-          ]);
-        })
-      );
       // to here
       // return providerData
-      return providerDataWithTag;
+      return providerData;
     } catch (error) {
       console.log("Failed to fetch finance catalogues: ", error);
       throw error;
