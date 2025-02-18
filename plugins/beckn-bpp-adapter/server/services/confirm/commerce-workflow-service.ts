@@ -295,8 +295,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
           if (isDegRental(context)) {
             const fulfillment = fulfillments[0];
-            defaultState.state.state_code = fulfillment.state.code;
-            defaultState.state.state_value = fulfillment.state.name;
+            defaultState.state.state_code = fulfillment.state.descriptor.code;
+            defaultState.state.state_value = fulfillment.state.descriptor.name;
           }
 
           // Create order fulfillment
@@ -327,8 +327,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               customer_id: custId,
               stops: stopsIds,
               order_tracking_id: trackingId,
-              state_code: fulfillment.state.code,
-              state_value: fulfillment.state.name,
+              state_code: fulfillment.state.descriptor.code,
+              state_value: fulfillment.state.descriptor.name,
               publishedAt: isoString,
               quantity: message.order?.items[0]?.quantity?.selected?.count || 5
             };
