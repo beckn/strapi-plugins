@@ -21,6 +21,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         }
       );
+      console.log(
+        "\n\n\n",
+        "ProviderData=====>",
+        JSON.stringify(providerData),
+        "\n\n"
+      );
       // changes made from here
       const providerDataWithTag = await Promise.all(
         await providerData.items.map(async (item) => {
