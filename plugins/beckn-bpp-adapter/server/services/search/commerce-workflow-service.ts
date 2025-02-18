@@ -193,7 +193,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
     if (isDegFinance(context)) {
       providers.filter((provider: any) => {
-        return provider.items.find((item: any) => {
+        return provider.items.filter((item: any) => {
           return item.cat_attr_tag_relations.find(
             (relation: any) =>
               relation?.taxanomy_id?.value === category?.descriptor?.name &&
