@@ -13,7 +13,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         bpp_id: context.bpp_id,
         bpp_uri: context.bpp_uri,
         currency: order?.quote?.price?.currency,
-        delivery_status: order.state,
+        delivery_status:
+          context.domain === "deg:rental"
+            ? "Order Accepted"
+            : order?.fulfillments?.[0]?.state?.descriptor?.code,
         descriptor: order?.provider?.descriptor,
         price: order?.quote?.price?.value,
         billing: order.billing,
