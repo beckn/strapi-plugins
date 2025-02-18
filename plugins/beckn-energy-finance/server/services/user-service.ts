@@ -29,46 +29,99 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
       // changes made from here
 
-      await providerData.items.map(async (item) => {
-        await Promise.all([
-          ...item["cat_attr_tag_relations"]?.map(async (taxanomy) => {
-            if (taxanomy.taxanomy === "CATEGORY") {
-              taxanomy.taxanomy_id = await strapi.entityService.findOne(
+      const newItems: any[] = [];
+      for (let i = 0; i < providerData.items.length; i++) {
+        let item = providerData.items[i];
+
+        if (item.tag_group_id) {
+          const tag_group = await strapi.entityService.findOne(
+            "api::tag.tag",
+            item.tag_group_id,
+            {
+              tag_group_id: {}
+            }
+          );
+          item = { ...item, tag_group_id: tag_group };
+        }
+        if (item.cat_attr_tag_relations.length) {
+          let category_attr_tag_relations: any[] = [];
+          for (let j = 0; j < item.cat_attr_tag_relations.length; j++) {
+            if (item.cat_attr_tag_relations[j].taxanomy === "CATEGORY") {
+              const relation = await strapi.entityService.findOne(
                 "api::category.category",
-                parseInt(taxanomy.taxanomy_id),
+                item.cat_attr_tag_relations[j].taxanomy_id,
                 {
                   parent_id: {}
                 }
               );
-            } else if (taxanomy.taxanomy === "TAG") {
-              taxanomy.taxanomy_id = await strapi.entityService.findOne(
+              category_attr_tag_relations = [
+                ...category_attr_tag_relations,
+                { ...item.cat_attr_tag_relations[j], taxanomy_id: relation }
+              ];
+            }
+            if (item.cat_attr_tag_relations[j].taxanomy === "TAG") {
+              const relation = await strapi.entityService.findOne(
                 "api::tag.tag",
-                parseInt(taxanomy.taxanomy_id),
+                item.cat_attr_tag_relations[j].taxanomy_id,
                 {
                   tag_group_id: {}
                 }
               );
+              category_attr_tag_relations = [
+                ...category_attr_tag_relations,
+                { ...item.cat_attr_tag_relations[j], taxanomy_id: relation }
+              ];
             }
-          }),
+          }
+          item = { ...item, category_attr_tag_relations };
+        }
+        newItems.push(item);
+      }
+      return {
+        ...providerData,
+        items: newItems
+      };
 
-          (async () => {
-            return item?.tag_group_id
-              ? await strapi.entityService.findMany("api::tag.tag", {
-                  filter: {
-                    tag_group_id: item.tag_group_id
-                  },
-                  populate: {
-                    tag_group_id: {}
-                  }
-                })
-              : null;
-          })()
-        ]);
-      });
+      // await providerData.items.map(async (item) => {
+      //   await Promise.all([
+      //     ...item["cat_attr_tag_relations"]?.map(async (taxanomy) => {
+      //       if (taxanomy.taxanomy === "CATEGORY") {
+      //         taxanomy.taxanomy_id = await strapi.entityService.findOne(
+      //           "api::category.category",
+      //           parseInt(taxanomy.taxanomy_id),
+      //           {
+      //             parent_id: {}
+      //           }
+      //         );
+      //       } else if (taxanomy.taxanomy === "TAG") {
+      //         taxanomy.taxanomy_id = await strapi.entityService.findOne(
+      //           "api::tag.tag",
+      //           parseInt(taxanomy.taxanomy_id),
+      //           {
+      //             tag_group_id: {}
+      //           }
+      //         );
+      //       }
+      //     }),
 
-      // to here
-      // return providerData
-      return providerData;
+      //     (async () => {
+      //       return item?.tag_group_id
+      //         ? await strapi.entityService.findMany("api::tag.tag", {
+      //             filter: {
+      //               tag_group_id: item.tag_group_id
+      //             },
+      //             populate: {
+      //               tag_group_id: {}
+      //             }
+      //           })
+      //         : null;
+      //     })()
+      //   ]);
+      // });
+
+      // // to here
+      // // return providerData
+      // return providerData;
     } catch (error) {
       console.log("Failed to fetch finance catalogues: ", error);
       throw error;
