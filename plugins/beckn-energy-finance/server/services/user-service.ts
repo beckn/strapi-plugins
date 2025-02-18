@@ -23,44 +23,40 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
       // changes made from here
       const providerDataWithTag = await Promise.all(
-        providerData.map(async (provider) => {
-          await Promise.all(
-            await provider.items.map(async (item) => {
-              await Promise.all([
-                ...item["cat_attr_tag_relations"]?.map(async (taxanomy) => {
-                  if (taxanomy.taxanomy === "CATEGORY") {
-                    taxanomy.taxanomy_id = await strapi.entityService.findOne(
-                      "api::category.category",
-                      taxanomy.taxanomy_id,
-                      {
-                        parent_id: {}
-                      }
-                    );
-                  } else if (taxanomy.taxanomy === "TAG") {
-                    taxanomy.taxanomy_id = await strapi.entityService.findOne(
-                      "api::tag.tag",
-                      taxanomy.taxanomy_id,
-                      {
-                        tag_group_id: {}
-                      }
-                    );
+        await providerData.items.map(async (item) => {
+          await Promise.all([
+            ...item["cat_attr_tag_relations"]?.map(async (taxanomy) => {
+              if (taxanomy.taxanomy === "CATEGORY") {
+                taxanomy.taxanomy_id = await strapi.entityService.findOne(
+                  "api::category.category",
+                  taxanomy.taxanomy_id,
+                  {
+                    parent_id: {}
                   }
-                }),
-                ...[
-                  async () => {
-                    return await strapi.entityService.findMany("api::tag.tag", {
-                      filter: {
-                        tag_group_id: item.tag_group_id
-                      },
-                      populate: {
-                        tag_group_id: {}
-                      }
-                    });
+                );
+              } else if (taxanomy.taxanomy === "TAG") {
+                taxanomy.taxanomy_id = await strapi.entityService.findOne(
+                  "api::tag.tag",
+                  taxanomy.taxanomy_id,
+                  {
+                    tag_group_id: {}
                   }
-                ]
-              ]);
-            })
-          );
+                );
+              }
+            }),
+            ...[
+              async () => {
+                return await strapi.entityService.findMany("api::tag.tag", {
+                  filter: {
+                    tag_group_id: item.tag_group_id
+                  },
+                  populate: {
+                    tag_group_id: {}
+                  }
+                });
+              }
+            ]
+          ]);
         })
       );
       // to here
