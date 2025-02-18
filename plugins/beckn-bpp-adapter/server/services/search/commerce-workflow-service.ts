@@ -192,7 +192,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     );
 
     if (isDegFinance(context)) {
-      const updatedProviders = providers
+      providers = providers
         .map((provider: any) => {
           const filteredItems = provider.items.filter((item: any) =>
             item.cat_attr_tag_relations.some(
@@ -210,7 +210,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         })
         .filter((provider) => provider.items.length > 0); // Remove providers with no matching items
 
-      console.log(updatedProviders);
+      console.log("Deg Finance Providers========>", providers);
     }
 
     if (item?.tags?.length && item?.tags[0]?.list?.length) {
