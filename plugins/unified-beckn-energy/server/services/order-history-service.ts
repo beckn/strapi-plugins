@@ -7,6 +7,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         context,
         message: { order }
       } = data;
+      console.log("\n\n\nOrder History Creation Data===>", data, "\n\n\n");
       return {
         ...data,
         order_id: order.id,
