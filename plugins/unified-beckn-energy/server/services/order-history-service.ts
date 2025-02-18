@@ -16,7 +16,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         delivery_status:
           context.domain === "deg:rental"
             ? "Order Accepted"
-            : order?.fulfillments?.[0]?.state?.descriptor?.code,
+            : order?.fulfillments?.[0]?.state?.descriptor?.code ||
+              order?.fulfillments?.[0]?.state?.descriptor?.name,
         descriptor: order?.provider?.descriptor,
         price: order?.quote?.price?.value,
         billing: order.billing,
