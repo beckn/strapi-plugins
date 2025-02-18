@@ -7,7 +7,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         context,
         message: { order }
       } = data;
-      console.log("\n\n\nOrder History Creation Data===>", data, "\n\n\n");
+      console.log(
+        "\n\n\nOrder History Creation Data===>",
+        JSON.stringify(data),
+        "\n\n\n"
+      );
       return {
         ...data,
         order_id: order.id,
@@ -18,7 +22,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           context.domain === "deg:rental"
             ? "Order Accepted"
             : order?.fulfillments?.[0]?.state?.descriptor?.code ||
-              order?.fulfillments?.[0]?.state?.descriptor?.name,
+              order?.fulfillments?.[0]?.state?.descriptor?.name ||
+              "Order Accepted",
         descriptor: order?.provider?.descriptor,
         price: order?.quote?.price?.value,
         billing: order.billing,
