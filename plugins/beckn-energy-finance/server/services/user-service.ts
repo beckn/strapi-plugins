@@ -152,7 +152,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                   agents: {
                     id: user.agent.id
                   },
-                  domain_id: "deg:finance"
+                  domain_id: {
+                    DomainName: "deg:finance"
+                  }
                 }
               }
             }
