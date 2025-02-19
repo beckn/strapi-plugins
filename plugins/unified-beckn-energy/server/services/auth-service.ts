@@ -196,7 +196,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           //     }
           //   }
           // );
-          delete createdUser.password;
+          delete user.password;
           //add catalogues
           const { providerData } = signupDto;
           // if (providerData && Object.keys(providerData).length > 0) {
@@ -204,7 +204,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           //   await this.createCatalogue(providerData, agent.id);
           // }
           await trx.commit();
-          return (result = { jwt, user: createdUser });
+          return (result = { jwt, user: user });
         } catch (error) {
           console.log(error);
           await trx.rollback();
