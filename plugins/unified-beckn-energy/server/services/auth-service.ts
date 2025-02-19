@@ -149,7 +149,26 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           ].services.jwt.issue({
             id: createdUser.id
           });
-          console.log("Created user: ", createdUser);
+          const user = await strapi
+            .query("plugin::users-permissions.user")
+            .findOne({
+              where: { email },
+              populate: {
+                role: true,
+                agent: {
+                  populate: {
+                    agent_profile: true,
+                    provider_id: true
+                  }
+                },
+                deg_wallet: {
+                  populate: {
+                    provider: true
+                  }
+                }
+              }
+            });
+          console.log("Created user: ", user);
           //Issue Credential using Dhiway SDK
           // const vc = await this.generateCredential({
           //   email,
