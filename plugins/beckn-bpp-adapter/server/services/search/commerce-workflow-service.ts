@@ -223,29 +223,29 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       // Create a Date object at midnight (00:00:00) in UTC for the current local date
       const utcMidnight = new Date(Date.UTC(year, month, day, 0, 0, 0));
 
-      const isoString = utcMidnight.toISOString();
+      const isoString = "2025-02-25T00:00:00.000Z" || utcMidnight.toISOString();
 
       providers = providers
-        // .filter((provider: any) => {
-        //   // Filtering on the basis of recent events with create date greater than today's date 00:00:00.000
+        .filter((provider: any) => {
+          // Filtering on the basis of recent events with create date greater than today's date 00:00:00.000
 
-        //   return (
-        //     provider.items.filter(
-        //       (item: any) =>
-        //         new Date(item.createdAt).getTime() >=
-        //         new Date(isoString).getTime()
-        //     ).length > 0
-        //   );
-        // })
+          return (
+            provider.items.filter(
+              (item: any) =>
+                new Date(item.createdAt).getTime() >=
+                new Date(isoString).getTime()
+            ).length > 0
+          );
+        })
         // assinging those items to provider.items
         .map((provider: any) => ({
           ...provider,
           items: provider.items
-            // .filter(
-            //   (item: any) =>
-            //     new Date(item.createdAt).getTime() >=
-            //     new Date(isoString).getTime()
-            // )
+            .filter(
+              (item: any) =>
+                new Date(item.createdAt).getTime() >=
+                new Date(isoString).getTime()
+            )
             // sorting items on basis of items.createdAt in descending order
             .sort(
               (itemA: any, itemB: any) =>
