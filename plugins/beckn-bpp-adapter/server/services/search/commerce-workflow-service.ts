@@ -261,7 +261,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         return dateB - dateA;
       });
 
-      console.log("Deg Rental Providers========>", providers);
+      console.log("Deg Rental Providers========>", JSON.stringify(providers));
     }
 
     if (item?.tags?.length && item?.tags[0]?.list?.length) {
