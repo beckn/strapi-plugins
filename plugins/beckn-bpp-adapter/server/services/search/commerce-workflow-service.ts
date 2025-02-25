@@ -116,6 +116,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         populate
       }
     );
+
     console.log("providers====>", JSON.stringify(providers));
 
     if (
@@ -209,8 +210,58 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           };
         })
         .filter((provider) => provider.items.length > 0); // Remove providers with no matching items
-
       console.log("Deg Finance Providers========>", providers);
+    }
+
+    // sort on the basis of item created in descending order for DEG Rental
+    if (isDegRental(context)) {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth(); // 0-indexed (0 = January)
+      const day = now.getDate();
+
+      // Create a Date object at midnight (00:00:00) in UTC for the current local date
+      const utcMidnight = new Date(Date.UTC(year, month, day, 0, 0, 0));
+
+      const isoString = utcMidnight.toISOString();
+
+      providers = providers.sort((providerA: any, providerB: any) => {
+        //filteration on the basis of recent events with create date greater than today's date 00:00:00.000
+        let nonExpiredItemsA = providerA.items.filter(
+          (item: any) => new Date(item.createdAt) >= new Date(isoString)
+        );
+        let nonExpiredItemsB = providerB.items.filter(
+          (item: any) => new Date(item.createdAt) >= new Date(isoString)
+        );
+
+        // sorting each provider's items array on the basis of createdAt in descending order
+        if (nonExpiredItemsA.length) {
+          nonExpiredItemsA.sort(
+            (itemA: any, itemB: any) =>
+              new Date(itemB.createdAt).getTime() -
+              new Date(itemA.createdAt).getTime()
+          );
+        }
+
+        if (nonExpiredItemsB.length) {
+          nonExpiredItemsB.sort(
+            (itemA: any, itemB: any) =>
+              new Date(itemB.createdAt).getTime() -
+              new Date(itemA.createdAt).getTime()
+          );
+        }
+        // sorting providers based on first element of the items array on the basis of items[0].createdAt in descending order
+        const dateA = nonExpiredItemsA.length
+          ? new Date(nonExpiredItemsA[0].createdAt).getTime()
+          : 0;
+        const dateB = nonExpiredItemsB.length
+          ? new Date(nonExpiredItemsB[0].createdAt).getTime()
+          : 0;
+
+        return dateB - dateA;
+      });
+
+      console.log("Deg Rental Providers========>", providers);
     }
 
     if (item?.tags?.length && item?.tags[0]?.list?.length) {
