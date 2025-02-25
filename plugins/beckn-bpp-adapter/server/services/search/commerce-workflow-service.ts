@@ -225,41 +225,40 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       const isoString = utcMidnight.toISOString();
 
-      providers = providers.sort((providerA: any, providerB: any) => {
-        //filteration on the basis of recent events with create date greater than today's date 00:00:00.000
-        let nonExpiredItemsA = providerA.items.filter(
-          (item: any) => new Date(item.createdAt) >= new Date(isoString)
+      providers = providers
+        // .filter((provider: any) => {
+        //   // Filtering on the basis of recent events with create date greater than today's date 00:00:00.000
+
+        //   return (
+        //     provider.items.filter(
+        //       (item: any) =>
+        //         new Date(item.createdAt).getTime() >=
+        //         new Date(isoString).getTime()
+        //     ).length > 0
+        //   );
+        // })
+        // assinging those items to provider.items
+        .map((provider: any) => ({
+          ...provider,
+          items: provider.items
+            // .filter(
+            //   (item: any) =>
+            //     new Date(item.createdAt).getTime() >=
+            //     new Date(isoString).getTime()
+            // )
+            // sorting items on basis of items.createdAt in descending order
+            .sort(
+              (itemA: any, itemB: any) =>
+                new Date(itemB.createdAt).getTime() -
+                new Date(itemA.createdAt).getTime()
+            )
+        }))
+        // sorting the provider.items[0].createdAdd in descending order
+        .sort(
+          (providerA: any, providerB: any) =>
+            new Date(providerB.items[0].createdAt).getTime() -
+            new Date(providerA.items[0].createdAt).getTime()
         );
-        let nonExpiredItemsB = providerB.items.filter(
-          (item: any) => new Date(item.createdAt) >= new Date(isoString)
-        );
-
-        // sorting each provider's items array on the basis of createdAt in descending order
-        if (nonExpiredItemsA.length) {
-          nonExpiredItemsA.sort(
-            (itemA: any, itemB: any) =>
-              new Date(itemB.createdAt).getTime() -
-              new Date(itemA.createdAt).getTime()
-          );
-        }
-
-        if (nonExpiredItemsB.length) {
-          nonExpiredItemsB.sort(
-            (itemA: any, itemB: any) =>
-              new Date(itemB.createdAt).getTime() -
-              new Date(itemA.createdAt).getTime()
-          );
-        }
-        // sorting providers based on first element of the items array on the basis of items[0].createdAt in descending order
-        const dateA = nonExpiredItemsA.length
-          ? new Date(nonExpiredItemsA[0].createdAt).getTime()
-          : 0;
-        const dateB = nonExpiredItemsB.length
-          ? new Date(nonExpiredItemsB[0].createdAt).getTime()
-          : 0;
-
-        return dateB - dateA;
-      });
 
       console.log(
         "\n\nDeg Rental Providers========>\n\n",
