@@ -36,7 +36,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const createOrderHistoryResponse = await strapi.entityService.findMany(
         "api::order-bap.order-bap",
         {
-          filters: filters
+          filters: filters,
+          sort: { updatedAt: 'desc' }
         }
       );
 
