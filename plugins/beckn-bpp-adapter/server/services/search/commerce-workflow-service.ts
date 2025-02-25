@@ -224,6 +224,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const utcMidnight = new Date(Date.UTC(year, month, day, 0, 0, 0));
 
       const isoString = utcMidnight.toISOString();
+      console.log(`\n\nISO String for time Stamp==> ${isoString}\n\n`);
 
       providers = providers
         .filter((provider: any) => {
