@@ -699,7 +699,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 name: item?.name || "Battery Rent",
                 short_desc:
                   item?.short_desc ||
-                  "Excess power from my battery system to sell",
+                  "Battery Rental Available for storing electring energy on rent",
+                long_desc: `Experience unmatched power storage with our premium Battery Rental service, designed for efficient electric energy management.
+                  Our flexible Battery for Rent options ensure you always have access to reliable power storage when you need it.
+                  Choose to Rent a Battery today and harness a cost-effective solution tailored to your energy needs.`,
                 code: item?.code || "energy",
                 image: [itemImageId],
                 sc_retail_product: createScProduct.id,
