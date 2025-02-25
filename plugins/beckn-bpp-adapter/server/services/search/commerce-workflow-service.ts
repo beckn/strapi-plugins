@@ -223,7 +223,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       // Create a Date object at midnight (00:00:00) in UTC for the current local date
       const utcMidnight = new Date(Date.UTC(year, month, day, 0, 0, 0));
 
-      const isoString = "2025-02-25T00:00:00.000Z" || utcMidnight.toISOString();
+      const isoString = utcMidnight.toISOString();
 
       providers = providers
         .filter((provider: any) => {
