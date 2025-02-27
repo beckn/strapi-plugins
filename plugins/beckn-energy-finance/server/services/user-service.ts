@@ -170,7 +170,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               }
             },
             customer_id: {}
-          }
+          },
+          sort: [{ createdAt: "desc" }]
         }
       );
       return { orders };
