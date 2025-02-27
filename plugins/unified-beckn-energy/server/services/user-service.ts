@@ -554,10 +554,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               .query("api::provider.provider")
               .create({
                 data: {
+                  // provider_name:
+                  //   `${user?.agent?.first_name}${
+                  //     providerNameSuggestions[Math.floor(Math.random() * 3)]
+                  //   }` || providerData.name,
                   provider_name:
-                    `${user?.agent?.first_name}${
-                      providerNameSuggestions[Math.floor(Math.random() * 3)]
-                    }` || providerData.name,
+                    `${user?.agent?.first_name}${providerNameSuggestions[0]}` ||
+                    providerData.name,
                   domain_id: domainId,
                   ...(imageId && { logo: imageId }),
                   ...(providerData.short_desc && {
