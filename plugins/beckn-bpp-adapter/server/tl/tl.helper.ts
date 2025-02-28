@@ -73,7 +73,7 @@ export const quote = async (items: KeyValuePair[]) => {
             value: price_bareakup_id.value ? price_bareakup_id.value + "" : ""
           },
           item: {
-            id: item.id
+            id: `${item.id || ""}`
           }
         });
       }
