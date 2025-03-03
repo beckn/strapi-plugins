@@ -174,6 +174,27 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           sort: [{ createdAt: "desc" }]
         }
       );
+
+      orders?.map((order) => {
+        const preFinanced = order?.order_id?.tags?.find(
+          (tag) =>
+            tag?.descriptor?.code === "preFinanced" &&
+            tag?.descriptor?.name === "true"
+        );
+        if (preFinanced) {
+          if (order?.order_id?.items?.[0]?.sc_retail_product?.min_price) {
+            const minPrice = parseInt(
+              order?.order_id?.items?.[0]?.sc_retail_product?.min_price
+            );
+            order.order_id.items[0].sc_retail_product.min_price =
+              `${minPrice - 2}` || `${minPrice}`;
+          }
+          if (order?.order_id?.items?.[0]?.code) {
+            const code = parseInt(order?.order_id?.items?.[0]?.code);
+            order.order_id.items[0].code = `${code + 10}` || `${code}`;
+          }
+        }
+      });
       return { orders };
     } catch (error) {
       console.log("Failed to get the orders: ", error);

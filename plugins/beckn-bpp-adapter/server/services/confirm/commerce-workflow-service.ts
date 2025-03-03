@@ -1,6 +1,7 @@
 import { Strapi } from "@strapi/strapi";
 import {
   FilterUtil,
+  isDegFinance,
   isDegRental,
   isEnergy,
   ObjectUtil,
@@ -217,7 +218,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 console.log("Orderis", orderId);
                 await strapi.entityService.update("api::order.order", orderId, {
                   data: {
-                    tags: items // Assuming 'items' is a writable field; adjust based on your Strapi schema
+                    tags: isDegFinance(context) ? message?.order?.tags : items // Assuming 'items' is a writable field; adjust based on your Strapi schema
                   }
                 });
 
