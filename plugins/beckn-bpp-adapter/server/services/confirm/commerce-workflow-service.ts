@@ -216,6 +216,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
                 // Update the order with the modified tags
                 console.log("Orderis", orderId);
+                console.log("Message order tags====>", message?.order?.tags);
                 await strapi.entityService.update("api::order.order", orderId, {
                   data: {
                     tags: isDegFinance(context) ? message?.order?.tags : items // Assuming 'items' is a writable field; adjust based on your Strapi schema
