@@ -189,6 +189,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             order.order_id.items[0].sc_retail_product.min_price =
               `${minPrice - 2}` || `${minPrice}`;
           }
+          if (order?.order_id?.items?.[0]?.sc_retail_product?.max_price) {
+            const maxPrice = parseInt(
+              order?.order_id?.items?.[0]?.sc_retail_product?.max_price
+            );
+            order.order_id.items[0].sc_retail_product.max_price =
+              `${maxPrice - 2}` || `${maxPrice}`;
+          }
           if (order?.order_id?.items?.[0]?.code) {
             const code = parseInt(order?.order_id?.items?.[0]?.code);
             order.order_id.items[0].code = `${code + 10}` || `${code}`;
