@@ -356,3 +356,13 @@ export const providerTags = (tagRelations) => {
 
   return Array.from(groupedRelationsMap.values());
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const itemQuantity = (tags: any, itemId: any) => {
+  if (!Array.isArray(tags) || tags.length === 0) {
+    return 1;
+  }
+  // Find the tag where id matches itemId
+  const matchingTag = tags.find(tag => String(tag.id) === String(itemId));
+  return matchingTag?.quantity?.selected?.count || 1;
+};
