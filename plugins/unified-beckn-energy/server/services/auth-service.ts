@@ -243,5 +243,56 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       console.log("Verify otp Error: ", error.message);
       throw error;
     }
+  },
+  async mobileLogin(loginDto: any) {
+    try {
+      const { phone } = loginDto;
+      const user = await strapi
+        .query("plugin::users-permissions.user")
+        .findMany({
+          filter: {
+            user: {
+              agent: {
+                agent_profile: {
+                  phone_number: { $eqi: phone }
+                }
+              }
+            }
+          },
+          populate: {
+            agent: {
+              populate: {
+                agent_profile: true
+              }
+            },
+            provider: true,
+            role: true,
+            deg_wallet: {
+              provider: true
+            }
+          }
+        });
+      // console.log(JSON.stringify(user));
+      if (!user || !user.length) {
+        throw new Error("User Not found with Given Mobile Number");
+      }
+      if (user[0]?.role?.name === "Admin") {
+        throw new Error("Email Not found");
+      }
+      // Request API.
+
+      const token = strapi.plugins["users-permissions"].services.jwt.issue({
+        userId: user[0].id
+      });
+      delete user[0].password;
+
+      return { jwt: token, user: user[0] };
+    } catch (error) {
+      console.log("Error Occured:: ", error.message);
+      if (error.message === "Email Not found") {
+        throw error;
+      }
+      throw new Error("Wrong Password");
+    }
   }
 });

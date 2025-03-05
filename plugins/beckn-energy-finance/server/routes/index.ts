@@ -10,6 +10,15 @@ export default [
     }
   },
   {
+    method: "POST",
+    path: "/mobile-login",
+    handler: "authController.mobileLogin",
+    config: {
+      policies: [],
+      auth: false
+    }
+  },
+  {
     method: "GET",
     path: "/catalogues",
     handler: "userController.getFinanceCatalogues",
@@ -26,5 +35,5 @@ export default [
       middlewares: ["plugin::beckn-energy-finance.authMiddleware"],
       auth: false
     }
-  },
+  }
 ];
