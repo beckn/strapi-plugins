@@ -254,7 +254,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             user: {
               agent: {
                 agent_profile: {
-                  phone_number: { $eqi: phone }
+                  phone_number: phone
                 }
               }
             }
