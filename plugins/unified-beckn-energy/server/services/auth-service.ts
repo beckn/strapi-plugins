@@ -247,15 +247,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async mobileLogin(loginDto: any) {
     try {
       const { phone } = loginDto;
-      const user = await strapi
-        .query("plugin::users-permissions.user")
-        .findMany({
-          filter: {
-            user: {
-              agent: {
-                agent_profile: {
-                  phone_number: phone
-                }
+      const user = await strapi.entityService.findMany(
+        "plugin::users-permissions.user",
+        {
+          filters: {
+            agent: {
+              agent_profile: {
+                phone_number: phone
               }
             }
           },
@@ -271,9 +269,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               provider: true
             }
           }
-        });
-      console.log("User->>>>", JSON.stringify(user));
-      // console.log(JSON.stringify(user));
+        }
+      );
+
       if (!user || !user.length) {
         throw new Error("User Not found with Given Mobile Number");
       }
