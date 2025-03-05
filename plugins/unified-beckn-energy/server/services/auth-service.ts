@@ -272,6 +272,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             }
           }
         });
+      console.log("User->>>>", JSON.stringify(user));
       // console.log(JSON.stringify(user));
       if (!user || !user.length) {
         throw new Error("User Not found with Given Mobile Number");
