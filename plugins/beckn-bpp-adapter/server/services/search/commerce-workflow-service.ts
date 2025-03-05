@@ -226,26 +226,36 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const isoString = utcMidnight.toISOString();
       console.log(`\n\nISO String for time Stamp==> ${isoString}\n\n`);
 
+      // Get the current timestamp in seconds
+      const currentTimestamp = Math.floor(Date.now() / 1000);
+
       providers = providers
         .filter((provider: any) => {
           // Filtering on the basis of recent events with create date greater than today's date 00:00:00.000
 
           return (
-            provider.items.filter(
-              (item: any) =>
-                new Date(item.createdAt).getTime() >=
-                new Date(isoString).getTime()
+            provider.items.filter((item: any) =>
+              // Check if any RENTAL_END fulfilment has state_value greater than current timestamp
+              item.item_fulfillment_ids?.some(
+                (fulfillment: any) =>
+                  fulfillment.fulfilment_id?.type === "RENTAL_END" &&
+                  parseInt(fulfillment.fulfilment_id.state_value, 10) >= currentTimestamp
+              )
             ).length > 0
           );
         })
         // assinging those items to provider.items
-        .map((provider: any) => ({
+        ?.map((provider: any) => ({
           ...provider,
           items: provider.items
             .filter(
               (item: any) =>
-                new Date(item.createdAt).getTime() >=
-                new Date(isoString).getTime()
+                // Check if any RENTAL_END fulfilment has state_value greater than current timestamp
+                item.item_fulfillment_ids?.some(
+                  (fulfillment: any) =>
+                    fulfillment.fulfilment_id?.type === "RENTAL_END" &&
+                    parseInt(fulfillment.fulfilment_id.state_value, 10) >= currentTimestamp
+                )
             )
             // sorting items on basis of items.createdAt in descending order
             .sort(
