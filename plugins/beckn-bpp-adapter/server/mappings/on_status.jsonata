@@ -1,190 +1,195 @@
-{
-    "context": $context(context, $action),
-    "message": {
-        "order":{ 
-            "id": $string(message.order_id.id),
-            "created_at": message.order_id.createdAt, 
-            "provider": message.order_id.items[0].provider.{
-                "id": $string(id),
-                "descriptor": {
-                    "name": provider_name,
-                    "short_desc": short_desc ? short_desc : "",
-                    "long_desc": long_desc ? long_desc : "",
-                    "additional_desc": {
-                        "url": provider_uri
-                    },
-                    "images": logo.{
-                        "url": url?url:"https://abc.com",
-                        "size_type": size_type?size_type:"sm"
-                    }[]
-                },
-                "categories": category_ids. {
+
+(
+    $tags := message.order_id.tags;
+    {
+        "context": $context(context, $action),
+        "message": {
+            "order":{ 
+                "id": $string(message.order_id.id),
+                "created_at": message.order_id.createdAt, 
+                "provider": message.order_id.items[0].provider.{
                     "id": $string(id),
                     "descriptor": {
-                        "name": value
-                    }
-                }[],
-                "rating": provider_rating,
-                "short_desc": short_desc,
-                "locations": $locations($append(location_id, [%.item_fulfillment_ids.location_id])),
-                "fulfillments": $fulfillments(fulfillments, items),
-                "rateable": true
-            },
-            "items": message.order_id.items.{
-                "id": $string(id),
-                "descriptor": {
-                    "name": name ? name : "",
-                    "code": code ? code : "",
-                    "short_desc": short_desc ? short_desc : "",
-                    "long_desc": long_desc ? long_desc : "",
-                    "images": image.{
-                       "url": url?url:"https://abc.com",
-                        "size_type": size_type?size_type:"sm"
-                    }[]
-                },
-               "rating":$string(sc_retail_product.average_rating),
-                "rateable": true,
-                "location_ids": $count(item_fulfillment_ids) > 0 ?
-                    $map(item_fulfillment_ids, function($v){
-                        $string($v.location_id.id)
-                    })[] :
-                [],
-                "price": $price(sc_retail_product),
-                "quantity": sc_retail_product.{
-                    "available": {
-                        "count": stock_quantity ? stock_quantity : 0,
-                        "measure": {
-                            "value": $string(stock_quantity ? stock_quantity : 0),
-                            "unit": quantity_unit
-                        }
+                        "name": provider_name,
+                        "short_desc": short_desc ? short_desc : "",
+                        "long_desc": long_desc ? long_desc : "",
+                        "additional_desc": {
+                            "url": provider_uri
+                        },
+                        "images": logo.{
+                            "url": url?url:"https://abc.com",
+                            "size_type": size_type?size_type:"sm"
+                        }[]
                     },
-                    "selected":{
-                        "count":1
-                    }
-                },
-                "category_ids": $map(
-                    $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'CATEGORY'}),
-                    function($v) {
-                        $string($v.taxanomy_id.id)
-                    }
-                )[],
-                "fulfillment_ids": $count(item_fulfillment_ids) > 0 ?
-                    $map(item_fulfillment_ids, function($v){
-                        $string($v.fulfilment_id.id)
-                    })[] :
-                [],
-                "tags": $map(
-                    $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'TAG'}),
-                    function($v) {
-                        {
-                            "display": true,
-                            "descriptor": {
-                                "description": $v.taxanomy_id.tag_group_id.tag_group_name
-                            },
-                            "list": [
-                                {
-                                    "descriptor": {
-                                       "description": $v.taxanomy_id.tag_name,
-                                        "code": $v.taxanomy_id.code
-                                    },
-                                    "value": $v.taxanomy_id.value,
-                                    "display": true
-                                }
-                            ]
+                    "categories": category_ids. {
+                        "id": $string(id),
+                        "descriptor": {
+                            "name": value
                         }
-                    }
-                )[],
-                "time": {
-                    "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
-                }
-            }[],
-            "price": $price(message.order_id.items[0].sc_retail_product),
-            "fulfillments": message.{
-                "id": $string(fulfilment_id.id),
-                "state": {
+                    }[],
+                    "rating": provider_rating,
+                    "short_desc": short_desc,
+                    "locations": $locations($append(location_id, [%.item_fulfillment_ids.location_id])),
+                    "fulfillments": $fulfillments(fulfillments, items),
+                    "rateable": true
+                },
+                "items": message.order_id.items.{
+                    "id": $string(id),
                     "descriptor": {
-                        "code": $string(state_code ? state_code : "IN_PROGRESS"),
-                        "short_desc": $string(state_value ? state_value : "in progress")
+                        "name": name ? name : "",
+                        "code": code ? code : "",
+                        "short_desc": short_desc ? short_desc : "",
+                        "long_desc": long_desc ? long_desc : "",
+                        "images": image.{
+                        "url": url?url:"https://abc.com",
+                            "size_type": size_type?size_type:"sm"
+                        }[]
                     },
-                    "updated_at": $string(updatedAt)
-                },
-                "customer": {
-                    "contact": {
-                        "email": customer_id.email,
-                        "phone": customer_id.contact
-                    },
-                    "person": {
-                        "name": customer_id.first_name
-                    }
-                },
-                "stops": stops.{
-                    "type":type,
-                    "location": {
-                        "gps":gps ,
-                        "address": address,
-                        "city": {
-                            "name": city_name,
-                            "code": city_code
+                "rating":$string(sc_retail_product.average_rating),
+                    "rateable": true,
+                    "location_ids": $count(item_fulfillment_ids) > 0 ?
+                        $map(item_fulfillment_ids, function($v){
+                            $string($v.location_id.id)
+                        })[] :
+                    [],
+                    "price": $price(sc_retail_product),
+                    "quantity": sc_retail_product.{
+                        "available": {
+                            "count": stock_quantity ? stock_quantity : 0,
+                            "measure": {
+                                "value": $string(stock_quantity ? stock_quantity : 0),
+                                "unit": quantity_unit
+                            }
                         },
-                        "country": {
-                            "code": country_code,
-                            "name": country_name
-                        },
-                        "area_code": area_code,
-                        "state": {
-                            "name": state_code,
-                            "code": state_name
+                        "selected": {
+                            "count": $itemQuantity($tags, %.id)
                         }
+
                     },
-                    "contact": {
-                        "phone": %.order_id.order_address.phone
+                    "category_ids": $map(
+                        $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'CATEGORY'}),
+                        function($v) {
+                            $string($v.taxanomy_id.id)
+                        }
+                    )[],
+                    "fulfillment_ids": $count(item_fulfillment_ids) > 0 ?
+                        $map(item_fulfillment_ids, function($v){
+                            $string($v.fulfilment_id.id)
+                        })[] :
+                    [],
+                    "tags": $map(
+                        $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'TAG'}),
+                        function($v) {
+                            {
+                                "display": true,
+                                "descriptor": {
+                                    "description": $v.taxanomy_id.tag_group_id.tag_group_name
+                                },
+                                "list": [
+                                    {
+                                        "descriptor": {
+                                        "description": $v.taxanomy_id.tag_name,
+                                            "code": $v.taxanomy_id.code
+                                        },
+                                        "value": $v.taxanomy_id.value,
+                                        "display": true
+                                    }
+                                ]
+                            }
+                        }
+                    )[],
+                    "time": {
+                        "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
                     }
                 }[],
-                "agent": {
-                    "person": {
-                        "id": $string(agent_id.id),
-                        "name": agent_id.first_name & " " & agent_id.last_name
+                "price": $price(message.order_id.items[0].sc_retail_product),
+                "fulfillments": message.{
+                    "id": $string(fulfilment_id.id),
+                    "state": {
+                        "descriptor": {
+                            "code": $string(state_code ? state_code : "IN_PROGRESS"),
+                            "short_desc": $string(state_value ? state_value : "in progress")
+                        },
+                        "updated_at": $string(updatedAt)
                     },
-                    "contact": {
-                        "phone": $string(agent_id.agent_profile.phone_number),
-                        "email": agent_id.agent_profile.email
-                    }
+                    "customer": {
+                        "contact": {
+                            "email": customer_id.email,
+                            "phone": customer_id.contact
+                        },
+                        "person": {
+                            "name": customer_id.first_name
+                        }
+                    },
+                    "stops": stops.{
+                        "type":type,
+                        "location": {
+                            "gps":gps ,
+                            "address": address,
+                            "city": {
+                                "name": city_name,
+                                "code": city_code
+                            },
+                            "country": {
+                                "code": country_code,
+                                "name": country_name
+                            },
+                            "area_code": area_code,
+                            "state": {
+                                "name": state_code,
+                                "code": state_name
+                            }
+                        },
+                        "contact": {
+                            "phone": %.order_id.order_address.phone
+                        }
+                    }[],
+                    "agent": {
+                        "person": {
+                            "id": $string(agent_id.id),
+                            "name": agent_id.first_name & " " & agent_id.last_name
+                        },
+                        "contact": {
+                            "phone": $string(agent_id.agent_profile.phone_number),
+                            "email": agent_id.agent_profile.email
+                        }
+                    },
+                    "vehicle": {
+                        "make": agent_id.agent_profile.vehicle_make,
+                        "model": agent_id.agent_profile.vehicle_model,
+                        "registration": agent_id.agent_profile.registration_no
+                    },
+                    "rating": $string(fulfilment_id.rating),
+                    "rateable": fulfilment_id.rateable
+                }[],
+                "billing": message.order_id.{
+                    "name": order_address.first_name,
+                    "address": order_address.address_line_1,
+                    "state": {
+                        "name": order_address.state
+                    },
+                    "city": {
+                        "name":order_address.city
+                    },
+                    "email": order_address.email,
+                    "phone": order_address.phone
                 },
-                "vehicle": {
-                    "make": agent_id.agent_profile.vehicle_make,
-                    "model": agent_id.agent_profile.vehicle_model,
-                    "registration": agent_id.agent_profile.registration_no
-                },
-                "rating": $string(fulfilment_id.rating),
-                "rateable": fulfilment_id.rateable
-            }[],
-            "billing": message.order_id.{
-                "name": order_address.first_name,
-                "address": order_address.address_line_1,
-                "state": {
-                    "name": order_address.state
-                },
-                "city": {
-                    "name":order_address.city
-                },
-                "email": order_address.email,
-                "phone": order_address.phone
-            },
-            "payments": items.provider.payment_methods.{
-                "collected_by": "BPP",
-                "params": {
-                    "bank_account_number": bank_account_number ? bank_account_number : "1224555666",
-                    "bank_code": bank_code ? bank_code : "SBIN000001",
-                    "bank_account_name": bank_name ? bank_name :"SBI" ,
-                    "virtual_payment_address":gateway_url? gateway_url :"https://example.com/payment"
-                },
-                "status": "PAID",
-                "type": "PRE-ORDER",
-                "transaction_id": transaction_id ? transaction_id : "45a9cdba-c3a4-45df-8c54-73aaf9afe5ac"
-            }[],
-            "quote": $quote(message.order_id.items),
-            "cancellation_terms": $cancellationTerms(message.order_id.items),
-            "status": message.order_id.status
+                "payments": items.provider.payment_methods.{
+                    "collected_by": "BPP",
+                    "params": {
+                        "bank_account_number": bank_account_number ? bank_account_number : "1224555666",
+                        "bank_code": bank_code ? bank_code : "SBIN000001",
+                        "bank_account_name": bank_name ? bank_name :"SBI" ,
+                        "virtual_payment_address":gateway_url? gateway_url :"https://example.com/payment"
+                    },
+                    "status": "PAID",
+                    "type": "PRE-ORDER",
+                    "transaction_id": transaction_id ? transaction_id : "45a9cdba-c3a4-45df-8c54-73aaf9afe5ac"
+                }[],
+                "quote": $quote(message.order_id.items),
+                "cancellation_terms": $cancellationTerms(message.order_id.items),
+                "status": message.order_id.status
+            }
         }
     }
-}
+)
