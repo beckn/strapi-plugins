@@ -12,7 +12,7 @@ module.exports = (config, { strapi }) => {
       const res = await jwtService.verify(jwtToken);
 
       //extract userid
-      const id = res.id;
+      const id = res?.id || res?.userId;
       const user = await strapi
         .query("plugin::users-permissions.user")
         .findOne({
@@ -24,7 +24,7 @@ module.exports = (config, { strapi }) => {
                 agent_profile: true,
                 provider_id: true
               }
-            },
+            }
           }
         });
       if (!user) {

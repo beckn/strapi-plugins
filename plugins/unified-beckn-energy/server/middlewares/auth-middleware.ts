@@ -10,9 +10,8 @@ module.exports = (config, { strapi }) => {
       //validate token
       const jwtService = strapi.plugins["users-permissions"].services.jwt;
       const res = await jwtService.verify(jwtToken);
-
       //extract userid
-      const id = res.id;
+      const id = res?.id || res?.userId;
       const user = await strapi
         .query("plugin::users-permissions.user")
         .findOne({

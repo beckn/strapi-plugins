@@ -11,6 +11,15 @@ export default [
   },
   {
     method: "POST",
+    path: "/mobile-login",
+    handler: "authController.mobileLogin",
+    config: {
+      policies: [],
+      auth: false
+    }
+  },
+  {
+    method: "POST",
     path: "/signup",
     handler: "authController.signup",
     config: {
