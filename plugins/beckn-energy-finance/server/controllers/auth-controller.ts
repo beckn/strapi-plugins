@@ -4,7 +4,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async login(ctx) {
     try {
       const authService = strapi
-        .plugin("unified-beckn-energy")
+        .plugin("beckn-energy-finance")
         .service("authService");
       const result = await authService.login(ctx.request.body);
       ctx.body = result;
@@ -15,7 +15,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async mobileLogin(ctx) {
     try {
       const authService = strapi
-        .plugin("unified-beckn-energy")
+        .plugin("beckn-energy-finance")
         .service("authService");
       const result = await authService.mobileLogin(ctx.request.body);
       ctx.body = result;
