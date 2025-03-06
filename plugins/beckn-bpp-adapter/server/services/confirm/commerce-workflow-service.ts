@@ -530,7 +530,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         })),
         order_id: orderId,
-        order_details: createOrder
+        order_details: createOrder,
+        order_request: message
       }));
       if (isEnergy(context)) {
         const {

@@ -51,6 +51,13 @@
                             "value": $string(stock_quantity ? stock_quantity : 0),
                             "unit": quantity_unit
                         }
+                    },
+                    "selected": {
+                        "count": message.order_request.order.items[0].quantity.selected.count || stock_quantity ? stock_quantity : 0,
+                        "measure":{
+                            "value": message.order_request.order.items[0].quantity.selected.count ? $string(message.order_request.order.items[0].quantity.selected.count) : stock_quantity ? stock_quantity : 0,
+                            "unit": quantity_unit
+                        }
                     }
                 },
                 "category_ids": $map(
