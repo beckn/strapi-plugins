@@ -186,7 +186,7 @@
                     "type": "PRE-ORDER",
                     "transaction_id": transaction_id ? transaction_id : "45a9cdba-c3a4-45df-8c54-73aaf9afe5ac"
                 }[],
-                "quote": $quote(message.order_id.items),
+                "quote": $quote(message.order_id.items, message.order_id),
                 "cancellation_terms": $cancellationTerms(message.order_id.items),
                 "status": message.order_id.status
             }
