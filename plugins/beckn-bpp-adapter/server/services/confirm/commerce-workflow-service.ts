@@ -563,6 +563,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         );
       }
+      console.log(
+        "Returning on Confirm Details===>",
+        JSON.stringify(confirmDetails)
+      );
       return confirmDetails;
     } catch (error) {
       console.error("An error occurred:", error);
