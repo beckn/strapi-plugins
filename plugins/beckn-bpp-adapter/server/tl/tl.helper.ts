@@ -56,12 +56,17 @@ export const xInput = async (context: KeyValuePair) => {
     : null;
 };
 
-export const quote = async (items: KeyValuePair[]) => {
-  const priceValue = items?.reduce(
-    (accumulator, currentValue) =>
-      accumulator + Number(currentValue?.sc_retail_product?.min_price),
-    0
-  );
+export const quote = async (
+  items: KeyValuePair[],
+  order_details: KeyValuePair
+) => {
+  const priceValue =
+    order_details?.total_amount ||
+    items?.reduce(
+      (accumulator, currentValue) =>
+        accumulator + Number(currentValue?.sc_retail_product?.min_price),
+      0
+    );
   const breakup: KeyValuePair[] = [];
   items?.map((item) => {
     item?.sc_retail_product?.price_bareakup_ids?.map(
@@ -82,7 +87,10 @@ export const quote = async (items: KeyValuePair[]) => {
   return {
     price: {
       value: priceValue + "",
-      currency: items?.[0]?.sc_retail_product?.currency
+      currency:
+        order_details?.currency && order_details?.currency.length
+          ? order_details?.currency
+          : items?.[0]?.sc_retail_product?.currency
     },
     breakup
   };
@@ -363,6 +371,6 @@ export const itemQuantity = (tags: any, itemId: any) => {
     return 1;
   }
   // Find the tag where id matches itemId
-  const matchingTag = tags.find(tag => String(tag.id) === String(itemId));
+  const matchingTag = tags.find((tag) => String(tag.id) === String(itemId));
   return matchingTag?.quantity?.selected?.count || 1;
 };
