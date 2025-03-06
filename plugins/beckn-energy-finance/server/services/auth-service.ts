@@ -15,7 +15,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             agent: {
               populate: {
                 agent_profile: true,
-                provider_id: true
+                provider_id: {
+                  populate: {
+                    logo: true
+                  }
+                }
               }
             },
             provider: true,
@@ -63,7 +67,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             agent: {
               populate: {
                 agent_profile: true,
-                provider_id: true
+                provider_id: {
+                  populate: {
+                    logo: true
+                  }
+                }
               }
             },
             provider: true,
