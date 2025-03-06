@@ -14,7 +14,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate: {
             agent: {
               populate: {
-                agent_profile: true
+                agent_profile: true,
+                provider_id: true
               }
             },
             provider: true,
@@ -61,7 +62,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate: {
             agent: {
               populate: {
-                agent_profile: true
+                agent_profile: true,
+                provider_id: true
               }
             },
             provider: true,
