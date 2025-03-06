@@ -7000,5 +7000,5 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-06 13:12:44
+-- Dump completed on 2025-03-06 13:32:24
 ubuntu@ip-172-31-43-90:~/mysql-db-backup$ 
