@@ -84,10 +84,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
       // console.log(JSON.stringify(user));
       if (!user || !user.length) {
-        throw new Error("User Not found with Given Mobile Number");
+        throw new Error("User Not found with Provided Mobile Number");
       }
       if (user[0]?.role?.name !== "Financer") {
-        throw new Error("Email Not found");
+        throw new Error("User Not found with Provided Mobile Number");
       }
       // Request API.
 
