@@ -29,7 +29,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       if (!user) {
         throw new Error("Email Not found");
       }
-      if (user?.role?.name === "Admin") {
+      if (user?.role?.name !== "Financer") {
         throw new Error("Email Not found");
       }
       // Request API.
@@ -86,7 +86,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       if (!user || !user.length) {
         throw new Error("User Not found with Given Mobile Number");
       }
-      if (user[0]?.role?.name === "Admin") {
+      if (user[0]?.role?.name !== "Financer") {
         throw new Error("Email Not found");
       }
       // Request API.
