@@ -99,8 +99,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       return { jwt: token, user: user[0] };
     } catch (error) {
       console.log("Error Occured:: ", error.message);
-      if (error.message === "Email Not found" ||
-        error.message === "User Not found with Given Mobile Number"
+      if (
+        error.message === "User Not found with Provided Mobile Number"
       ) {
         throw error;
       }
