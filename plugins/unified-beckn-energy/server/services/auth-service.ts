@@ -273,10 +273,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
 
       if (!user || !user.length) {
-        throw new Error("User Not found with Given Mobile Number");
+        throw new Error("User Not found with Provided Mobile Number");
       }
       if (user[0]?.role?.name === "Admin") {
-        throw new Error("Email Not found");
+        throw new Error("User Not found with Provided Mobile Number");
       }
       // Request API.
 
@@ -288,10 +288,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       return { jwt: token, user: user[0] };
     } catch (error) {
       console.log("Error Occured:: ", error.message);
-      if (error.message === "Email Not found") {
+      if (error.message === "User Not found with Provided Mobile Number") {
         throw error;
       }
-      throw new Error("Wrong Password");
+      throw new Error("Invalid Phone No!");
     }
   }
 });
