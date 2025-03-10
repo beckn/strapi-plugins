@@ -5,7 +5,8 @@ import {
   isDegRental,
   isEnergy,
   ObjectUtil,
-  TradeUtil
+  TradeUtil,
+  CalculationsUtil
 } from "../../util";
 import { KeyValuePair } from "../../types";
 import { PLUGIN, DEFAULT_INITIAL_STATE } from "../../constants";
@@ -437,6 +438,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
       );
 
+      //Update total order amount to order
+      const totalOrderValue = CalculationsUtil.calculateOrderAmount(itemDetails[0].items, items);
+      console.log("Confirm, total order amount: ", totalOrderValue);
+      await strapi.entityService.update("api::order.order", orderId, {
+        data: {
+          total_amount: totalOrderValue, // Assuming 'items' is a writable field; adjust based on your Strapi schema
+        },
+      });
+
       if (
         tags?.find(
           (tag) =>
@@ -513,14 +523,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         ...item,
         billing: billingDetails,
         fulfillment: fulfillmentDetails,
-        // orderFulfillment: {
-        //   ...orderFulfillment,
-        //   fulfilment_id: {
-        //     ...(orderFulfillment?.fulfilment_id || {}),
-        //     state_code: orderFulfillment.state_code,
-        //     state_value: orderFulfillment.state_value
-        //   }
-        // },
+        
         orderFulfillment: orderFulfillment?.map((of) => ({
           ...of,
           fulfilment_id: {
@@ -531,7 +534,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         })),
         order_id: orderId,
         order_details: createOrder,
-        order_request: message
+        // Attach itemsBody to get quantity of each items selected for order which will be used for dynamic price calculation
+        itemsBody: items.filter((i) => item.items.some((it) => String(it.id) === String(i.id)))
+
       }));
       if (isEnergy(context)) {
         const {

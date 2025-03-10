@@ -5,3 +5,4 @@ export * from './location.util';
 export * from './search.util';
 export * from './init.util';
 export * from './trade.util';
+export * from './calculations.util';
