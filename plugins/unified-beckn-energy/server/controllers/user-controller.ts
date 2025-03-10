@@ -279,5 +279,20 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       ctx.badRequest(error.message);
     }
-  }
+  },
+  async addProfile(ctx) {
+    try {
+      const userService = strapi
+        .plugin("unified-beckn-energy")
+        .service("userService");
+      const agentId = ctx.state.user?.agent?.id;
+      const result = await userService.createCatalogue(
+        ctx.request.body,
+        agentId
+      );
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
 });

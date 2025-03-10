@@ -1002,5 +1002,206 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       console.log("Update Wallet: ", error.message);
       throw new Error(error.message);
     }
-  }
+  },
+
+  //createCatalogue is used to create provider catalogue for openspark app users
+  async createCatalogue(providerData: any, agentId: number) {
+    try {
+      let result = {};
+      await strapi.db.transaction(async ({ trx }) => {
+        try {
+          const { item = {} } = providerData;
+          providerData.agents = [agentId];
+          //create category or get category id
+          const category = await strapi.entityService.findMany(
+            "api::category.category",
+            {
+              filters: {
+                value: "SOLAR ENERGY",
+                category_code: "SOLAR_ENERGY"
+              }
+            }
+          );
+          let categoryId;
+          if (category && category.length) {
+            categoryId = category[0].id;
+          } else {
+            //create category
+            const createdCategory = await strapi.entityService.create(
+              "api::category.category",
+              {
+                data: {
+                  title: "SOLAR ENERGY",
+                  value: "SOLAR ENERGY",
+                  category_code: "SOLAR_ENERGY",
+                  publishedAt: new Date()
+                }
+              }
+            );
+            console.log("createdCategory:: ", createdCategory);
+            categoryId = createdCategory.id;
+          }
+          if(!providerData.domain_name) {
+            throw new Error('Domain Name not provided');
+          }
+          const domain = await strapi.entityService.findMany("api::domain.domain", {
+            filters: {
+                DomainName: providerData.domain_name
+            }
+          });
+          let domainId;
+          if (domain && domain.length) {
+            domainId = domain[0].id;
+          } else {
+            throw new Error('Create Catalogue: Domain Not Found');
+          }
+          const createProvider = await strapi.db
+            .query("api::provider.provider")
+            .create({
+              data: {
+                ...(providerData.provider_name && {
+                  provider_name: providerData.provider_name
+                }),
+                domain_id: domainId,
+                ...(providerData.location_id && {
+                  location_id: providerData.location_id
+                }),
+                ...(providerData.short_desc && {
+                  short_desc: providerData.short_desc
+                }),
+                ...(providerData.long_desc && {
+                  long_desc: providerData.long_desc
+                }),
+                ...(providerData.logo && { logo: providerData.logo }),
+                ...(providerData.provider_id && {
+                  provider_id: providerData.provider_id
+                }),
+                ...(providerData.provider_url && {
+                  provider_url: providerData.provider_url
+                }),
+                category_ids: [categoryId],
+                ...(providerData.agents &&
+                  providerData.agents.length > 0 && {
+                    agents: providerData.agents
+                  }),
+                ...(providerData.input &&
+                  providerData.input.length > 0 && {
+                    input: providerData.input
+                  }),
+                ...(providerData.fullfillments &&
+                  providerData.fullfillments.length > 0 && {
+                    fullfillments: providerData.fullfillments
+                  }),
+                ...(providerData.provider_rating && {
+                  provider_rating: providerData.provider_rating
+                }),
+                ...(providerData.payment_methods && {
+                  payment_methods: providerData.payment_methods
+                }),
+                publishedAt: new Date()
+              }
+            });
+          console.log("Created provider: ", createProvider);
+
+          const createScProduct = await strapi.entityService.create(
+            "api::sc-product.sc-product",
+            {
+              data: {
+                min_price: item.price,
+                stock_quantity: 0,
+                quantity_unit: "KWh",
+                currency: item.currency,
+                publishedAt: new Date()
+              }
+            }
+          );
+          console.log("createScProduct::", createScProduct);
+
+          const createEnergyItem = await strapi.entityService.create(
+            "api::item.item",
+            {
+              data: {
+                name: item?.name || "Energy",
+                short_desc:
+                  item?.short_desc ||
+                  "Excess power from my rooftop system to sell",
+                code: item?.code || "energy",
+                sc_retail_product: createScProduct.id,
+                provider: createProvider.id,
+                max_quantity: 1,
+                min_quantity: 20,
+                publishedAt: new Date()
+              }
+            }
+          );
+          console.log("Created item: ", createEnergyItem);
+
+          const createFullfillmentIds = await strapi.entityService.create(
+            "api::item-fulfillment.item-fulfillment",
+            {
+              data: {
+                item_id: createEnergyItem?.id,
+                fulfilment_id: 1,
+                location_id: createProvider?.location_id?.id,
+                timestamp: new Date(),
+                publishedAt: new Date()
+              }
+            }
+          );
+
+          console.log("createFullfillmentIds::", createFullfillmentIds);
+          const nextYear = new Date();
+          nextYear.setFullYear(nextYear.getFullYear() + 1);
+
+          const createFullfillmentIdsNextYear =
+            await strapi.entityService.create(
+              "api::item-fulfillment.item-fulfillment",
+              {
+                data: {
+                  item_id: createEnergyItem.id,
+                  fulfilment_id: 2,
+                  location_id: createProvider?.location_id?.id,
+                  timestamp: nextYear.toISOString(),
+                  publishedAt: new Date()
+                }
+              }
+            );
+          console.log(
+            "createFullfillmentIdsNextYear::",
+            createFullfillmentIdsNextYear
+          );
+          /*
+                    1. Check category if value = 'SOLAR ENERGY' and category_code = 'SOLAR_ENERGY'
+                        If exists take it id, otherwise create it with same value and code
+                    2. cat_attr_tag_relation table:
+                        create { taxonomy: "CATEGORY", taxonomy_id: created category's id, item : created item's (connect it) }
+                    3. link created category to provider
+                    */
+          //add in cat_attr_tag_relation table
+          const createdCAttrTagRelation = await strapi.entityService.create(
+            "api::cat-attr-tag-relation.cat-attr-tag-relation",
+            {
+              data: {
+                taxanomy: "CATEGORY",
+                taxanomy_id: categoryId.toString(),
+                item: createEnergyItem.id,
+                publishedAt: new Date()
+              }
+            }
+          );
+          console.log("createdCAttrTagRelation:: ", createdCAttrTagRelation);
+          await trx.commit();
+          return (result = createProvider);
+        } catch (error) {
+          await trx.rollback();
+          console.log("Failed to add catalogue: ", error);
+          throw error;
+        }
+      });
+      return result;
+    } catch (error) {
+      console.error("Error in creating catalogue:", error);
+      throw new Error(error.message);
+    }
+  },
 });

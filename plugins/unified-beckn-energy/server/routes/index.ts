@@ -56,6 +56,16 @@ export default [
       auth: false
     }
   },
+  // { POST /profile } : used to create provider catalogue for openspark application
+  {
+    method: "POST",
+    path: "/profile",
+    handler: "userController.addProfile",
+    config: {
+      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
+      auth: false
+    }
+  },
   {
     method: "GET",
     path: "/user-profile",
