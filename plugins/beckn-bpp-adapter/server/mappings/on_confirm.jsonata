@@ -1,3 +1,5 @@
+(
+     $itemBody := message[0].itemsBody;
 {
     "context": $context(context, $action),
     "message": {
@@ -51,6 +53,9 @@
                             "value": $string(stock_quantity ? stock_quantity : 0),
                             "unit": quantity_unit
                         }
+                        },
+                        "selected": {
+                            "count": $itemQuantity($itemBody, %.id)
                     }
                 },
                 "category_ids": $map(
@@ -94,7 +99,7 @@
                     "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
                 }
             }[],
-            "quote": $quote(message[0].items),
+            "quote": $quotePrice(message[0].items, message[0].itemsBody),
             "billing": message.billing,
             "fulfillments": $map(message.fulfillment, function($elem) {
                     $merge([$elem, {"state":{"descriptor": {
@@ -108,3 +113,4 @@
         }
     }
 }
+)

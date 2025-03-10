@@ -88,6 +88,61 @@ export const quote = async (items: KeyValuePair[]) => {
   };
 };
 
+export const quotePrice = async (items: KeyValuePair[], itemSelected: KeyValuePair[]) => {
+  const breakup: KeyValuePair[] = [];
+  items?.map((item) => {
+    const scProduct = item?.sc_retail_product;
+
+    // Find the selected quantity for the item from itemSelected
+    const matchingItem = itemSelected.find(tag => String(tag.id) === String(item.id));
+    const selectedQuantity = matchingItem?.quantity?.selected?.count ?? 1; // Default to 1 if not found
+
+    // Add "BASE PRICE" entry
+    if (scProduct?.base_fee) {
+      breakup.push({
+        title: "BASE PRICE",
+        price: {
+          currency: scProduct.currency,
+          value: (Number(scProduct.base_fee) * selectedQuantity).toString()
+        },
+        item: { id: `${item.id || ""}` }
+      });
+    }
+
+    // Process price breakup items
+    scProduct?.price_bareakup_ids?.map((price_bareakup_id: KeyValuePair) => {
+      // Calculate price based on is_item_qty_dependent flag
+      const baseValue = Number(price_bareakup_id.value ?? 0);
+      const adjustedValue = price_bareakup_id.is_item_qty_dependent
+        ? baseValue * selectedQuantity
+        : baseValue;
+
+      breakup.push({
+        title: price_bareakup_id.title,
+        price: {
+          currency: price_bareakup_id.currency,
+          value: adjustedValue.toString()
+        },
+        item: { id: `${item.id || ""}` }
+      });
+    });
+  });
+
+  // Calculate total priceValue as sum of all breakup.price.value
+  const priceValue = breakup.reduce(
+    (accumulator, currentValue) => accumulator + Number(currentValue?.price?.value),
+    0
+  );
+
+  return {
+    price: {
+      value: priceValue.toString(),
+      currency: items?.[0]?.sc_retail_product?.currency
+    },
+    breakup
+  };
+};
+
 export const payments = async (
   provider: KeyValuePair,
   incomingPrice: KeyValuePair,
