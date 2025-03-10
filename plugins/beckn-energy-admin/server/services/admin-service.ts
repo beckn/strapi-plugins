@@ -35,7 +35,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         populate: {
           agent: {
             populate: {
-              agent_profile: true
+              agent_profile: true,
+              users_permissions_user: true
             }
           }
         }

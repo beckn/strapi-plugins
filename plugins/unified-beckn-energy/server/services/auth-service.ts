@@ -52,14 +52,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async signup(signupDto: any) {
     try {
-      console.log("here---->");
       let result = {};
       await strapi.db.transaction(async ({ trx }) => {
         try {
           // const { phone_no, utility_name } = signupDto;
           // let mdmUser: any = {};
           // try {
-          //   confirm data from mdm
           //   const mdm = await axios.post(`${process.env.MDM_URL}/getCustomer`, {
           //     phone_no,
           //     utility_name
@@ -114,6 +112,174 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 // customer_id: mdmUser.customer_id,
                 address,
                 // utility_name,
+                cred_required: false,
+                trusted_source: false,
+                publishedAt: new Date()
+              }
+            }
+          );
+          console.log("Created agent profile: ", agentProfile);
+          const agent = await strapi.entityService.create("api::agent.agent", {
+            data: {
+              first_name: fullname,
+              agent_profile: agentProfile.id,
+              publishedAt: new Date()
+            }
+          });
+          console.log("Created agent : ", agent);
+
+          const createdUser = await strapi.entityService.create(
+            "plugin::users-permissions.user",
+            {
+              data: {
+                email,
+                password,
+                username: email,
+                confirmed: true,
+                agent: agent.id,
+                provider: "local",
+                publishedAt: new Date()
+              }
+            }
+          );
+          const jwt = await strapi.plugins[
+            "users-permissions"
+          ].services.jwt.issue({
+            id: createdUser.id
+          });
+          const user = await strapi
+            .query("plugin::users-permissions.user")
+            .findOne({
+              where: { email },
+              populate: {
+                role: true,
+                agent: {
+                  populate: {
+                    agent_profile: true,
+                    provider_id: true
+                  }
+                },
+                deg_wallet: {
+                  populate: {
+                    provider: true
+                  }
+                }
+              }
+            });
+          console.log("Created user: ", user);
+          //Issue Credential using Dhiway SDK
+          // const vc = await this.generateCredential({
+          //   email,
+          //   first_name,
+          //   last_name
+          // });
+          // //store the credential and update it in agent profile
+          // const cred = await strapi.entityService.create(
+          //   "api::credential.credential",
+          //   {
+          //     data: {
+          //       vc,
+          //       publishedAt: new Date()
+          //     }
+          //   }
+          // );
+          //update the agent profile table
+          // const agentProfileUpdated = await strapi.entityService.update(
+          //   "api::agent-profile.agent-profile",
+          //   agentProfile.id,
+          //   {
+          //     data: {
+          //       credentials: [cred.id],
+          //       publishedAt: new Date()
+          //     }
+          //   }
+          // );
+          delete user.password;
+          //add catalogues
+          const { providerData } = signupDto;
+          // if (providerData && Object.keys(providerData).length > 0) {
+          //   providerData.agents = [agent.id];
+          //   await this.createCatalogue(providerData, agent.id);
+          // }
+          await trx.commit();
+          return (result = { jwt, user: user });
+        } catch (error) {
+          console.log(error);
+          await trx.rollback();
+          throw error;
+        }
+      });
+      return result;
+    } catch (error) {
+      console.log("Error Occured while signup", error);
+      if (error.message === "Email Not found") {
+        throw error;
+      }
+      throw new Error(error.message);
+    }
+  },
+  async p2pSignup(signupDto: any) {
+    try {
+      let result = {};
+      await strapi.db.transaction(async ({ trx }) => {
+        try {
+          const { phone_no, utility_name } = signupDto;
+          let mdmUser: any = {};
+          try {
+            const mdm = await axios.post(`${process.env.MDM_URL}/getCustomer`, {
+              phone_no,
+              utility_name
+            });
+            mdmUser = mdm?.data?.data;
+            console.log("MDM User", mdmUser);
+            if (!mdmUser || !mdmUser?.customer_id) {
+              throw new Error("No MDM user found");
+            }
+          } catch (error) {
+            throw new Error(
+              error?.response?.data?.error?.message || "No MDM user found"
+            );
+          }
+          const {
+            email,
+            password,
+            fullname,
+            address,
+            phone_no: phone_number
+          } = signupDto;
+          if (!fullname) {
+            throw new Error("Name not provided for signup");
+          }
+          const users = await strapi.entityService.findMany(
+            "plugin::users-permissions.user",
+            {
+              filters: {
+                $or: [
+                  {
+                    email: { $eqi: email } // Filter by email
+                  },
+                  {
+                    agent: {
+                      agent_profile: { phone_number: { $eq: phone_number } }
+                    }
+                  }
+                ]
+              }
+            }
+          );
+          console.log("Users", users);
+
+          if (users && users.length) {
+            throw new Error("Email or Phone already taken");
+          }
+          const agentProfile = await strapi.entityService.create(
+            "api::agent-profile.agent-profile",
+            {
+              data: {
+                phone_number,
+                customer_id: mdmUser.customer_id,
+                address,
+                utility_name,
                 cred_required: false,
                 trusted_source: false,
                 publishedAt: new Date()

@@ -23,6 +23,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ctx.badRequest(error.message);
     }
   },
+  async p2pSignup(ctx) {
+    try {
+      const authService = strapi
+        .plugin("unified-beckn-energy")
+        .service("authService");
+      const result = await authService.p2pSignup(ctx.request.body);
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
   async verifyOtp(ctx) {
     try {
       const authService = strapi

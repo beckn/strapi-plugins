@@ -80,6 +80,7 @@ export const domain = {
 };
 
 export interface ITrade {
+  agent: any;
   id: number;
   unit: string;
   item_name: string;
@@ -93,5 +94,4 @@ export interface ITrade {
   status: string;
   type: string;
   quantity: number;
-  profile: any;
 }

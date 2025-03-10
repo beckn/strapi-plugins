@@ -20,6 +20,15 @@ export default [
   },
   {
     method: "POST",
+    path: "/p2p-signup",
+    handler: "authController.p2pSignup",
+    config: {
+      policies: [],
+      auth: false
+    }
+  },
+  {
+    method: "POST",
     path: "/signup",
     handler: "authController.signup",
     config: {

@@ -121,9 +121,9 @@ const init = async (
                 fulfillments: provider.items[0].fulfillments,
 
                 billing: {
-                  phone: trade.profile.phone,
-                  name: trade.profile.name,
-                  email: trade.profile.user.email
+                  phone: trade?.agent?.agent_profile.phone_number,
+                  name: trade?.agent?.first_name,
+                  email: trade?.agent?.users_permissions_user?.email
                 }
               }
             ]
@@ -180,9 +180,9 @@ const confirm = async (
                 ],
                 fulfillments: provider.items[0].fulfillments,
                 billing: {
-                  phone: trade.profile.phone,
-                  name: trade.profile.name,
-                  email: trade.profile.user.email
+                  phone: trade?.agent?.agent_profile.phone_number,
+                  name: trade?.agent?.first_name,
+                  email: trade?.agent?.users_permissions_user?.email
                 },
                 payments: [
                   {

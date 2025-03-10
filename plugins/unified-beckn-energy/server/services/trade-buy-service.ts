@@ -81,7 +81,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async getTrade(tradeId: number | null, user: any) {
     try {    
-      if (!user.agent || !user.agent.agent_profile.length) {
+      if (!user.agent || !user.agent.agent_profile) {
         throw new Error("No Profile Found");
       }
       let filterAndPopulate: any = {
