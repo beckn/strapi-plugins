@@ -1,3 +1,3 @@
 # registry
 
-registry description
+registry plugin
