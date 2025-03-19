@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "build": "strapi-plugin build",
-    "watch": "strapi-plugin watch",
+    "dev": "strapi-plugin watch",
     "watch:link": "strapi-plugin watch:link",
     "verify": "strapi-plugin verify",
     "test:ts:front": "run -T tsc -p admin/tsconfig.json",

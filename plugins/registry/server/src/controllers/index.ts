@@ -1,5 +1,5 @@
-import controller from './controller';
+import subscribers from './subscribers';
 
 export default {
-  controller,
+  subscribers,
 };

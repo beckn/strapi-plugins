@@ -1,9 +1,8 @@
-import contentAPIRoutes from './content-api';
-
+import subscriberAPIRoutes from './subscribers';
 const routes = {
-  'content-api': {
+  subscribers: {
     type: 'content-api',
-    routes: contentAPIRoutes,
+    routes: subscriberAPIRoutes,
   },
 };
 
