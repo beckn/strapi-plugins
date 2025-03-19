@@ -1135,19 +1135,93 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             });
           console.log("Created provider: ", createProvider);
 
+          // const createScProduct = await strapi.entityService.create(
+          //   "api::sc-product.sc-product",
+          //   {
+          //     data: {
+          //       min_price: item.price,
+          //       stock_quantity: 0,
+          //       quantity_unit: "KWh",
+          //       currency: item.currency,
+          //       publishedAt: new Date()
+          //     }
+          //   }
+          // );
+          // console.log("createScProduct::", createScProduct);
+
+          //Add price breakup category
+          //Check if CGST @9% exist or SGST @9%, if not then create it
+          // Step 1: Fetch or Create Price Breakup Categories (CGST & SGST)
+          const categoryNames = ["CGST @9%", "SGST @9%"];
+
+          const existingCategories = await strapi.entityService.findMany(
+            "api::price-breakup-category.price-breakup-category",
+            {
+              filters: { name: { $in: categoryNames } }
+            }
+          );
+
+          const existingCategoryMap = Object.fromEntries(
+            existingCategories.map((cat) => [cat.name, cat.id])
+          );
+
+          for (const name of categoryNames) {
+            if (!existingCategoryMap[name]) {
+              const newCategory = await strapi.entityService.create(
+                "api::price-breakup-category.price-breakup-category",
+                {
+                  data: {
+                    name,
+                    currency: "INR",
+                    value: "9",
+                    publishedAt: new Date()
+                  }
+                }
+              );
+              existingCategoryMap[name] = newCategory.id;
+            }
+          }
+
+          console.log("Final Category IDs:", existingCategoryMap);
+
+          // Step 2: Create Price Breakups for CGST & SGST
+          const priceBreakups = await Promise.all(
+            categoryNames.map(async (name) => {
+              return await strapi.entityService.create(
+                "api::price-bareakup.price-bareakup",
+                {
+                  data: {
+                    title: name,
+                    currency: "INR",
+                    price_breakup_category: existingCategoryMap[name],
+                    publishedAt: new Date()
+                  }
+                }
+              );
+            })
+          );
+
+          // Extract price breakup IDs
+          const priceBreakupIds = priceBreakups.map((breakup) => breakup.id);
+
+          console.log("Created Price Breakup IDs:", priceBreakupIds);
+
+          // Step 3: Create sc-product with Price Breakup IDs
           const createScProduct = await strapi.entityService.create(
             "api::sc-product.sc-product",
             {
               data: {
-                min_price: item.price,
-                stock_quantity: 0,
-                quantity_unit: "KWh",
-                currency: item.currency,
+                base_fee: item.price,
+                stock_quantity: 1000,
+                quantity_unit: "per hour",
+                currency: item?.price?.currency || "INR",
+                price_bareakup_ids: priceBreakupIds, 
                 publishedAt: new Date()
               }
             }
           );
-          console.log("createScProduct::", createScProduct);
+
+          console.log("Created SC Product:", createScProduct);
 
           const createEnergyItem = await strapi.entityService.create(
             "api::item.item",
