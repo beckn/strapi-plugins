@@ -88,8 +88,25 @@ export const quote = async (items: KeyValuePair[]) => {
   };
 };
 
-export const quotePrice = async (items: KeyValuePair[], itemSelected: KeyValuePair[]) => {
+// Domain-specific base price name mappings
+const domainBasePriceNames = {
+  "Retail": "Item Price",
+  "dhp:pharmacy:0.1.0": "Item Price",
+  "supply-chain-services:assembly": "Base Price",
+  "mobility:1.1.0": "Base Fare",
+  "tourism": "Sub Total",
+  "dsep:courses": "Item Price",
+  "hospitality": "Room Tariff",
+  "retail:1.1.0": "Item Price",
+  "uei:p2p_trading": "P2P Energy Cost",
+  "uei:charging": "Cost of Charge"
+};
+
+export const quotePrice = async (items: KeyValuePair[], itemSelected: KeyValuePair[], context: KeyValuePair) => {
   const breakup: KeyValuePair[] = [];
+  console.log("Context===>", context);
+  console.log("Items===>", items);
+  console.log("ItemSelected===>", itemSelected);
   items?.map((item) => {
     const scProduct = item?.sc_retail_product;
 
@@ -97,10 +114,14 @@ export const quotePrice = async (items: KeyValuePair[], itemSelected: KeyValuePa
     const matchingItem = itemSelected.find(tag => String(tag.id) === String(item.id));
     const selectedQuantity = matchingItem?.quantity?.selected?.count ?? 1; // Default to 1 if not found
 
-    // Add "BASE PRICE" entry
+    // Get domain-specific base price name or use default
+    const domain = context?.domain;
+    const basePriceName = domainBasePriceNames[domain] || "BASE PRICE";
+
+    // Add base price entry with domain-specific name
     if (scProduct?.base_fee) {
       breakup.push({
-        title: "BASE PRICE",
+        title: basePriceName,
         price: {
           currency: scProduct.currency,
           value: (Number(scProduct.base_fee) * selectedQuantity).toString()
@@ -414,4 +435,13 @@ export const providerTags = (tagRelations) => {
   });
 
   return Array.from(groupedRelationsMap.values());
+};
+
+export const itemQuantity = (tags: any, itemId: any) => {
+  if (!Array.isArray(tags) || tags.length === 0) {
+    return 1;
+  }
+  // Find the tag where id matches itemId
+  const matchingTag = tags.find((tag) => String(tag.id) === String(itemId));
+  return matchingTag?.quantity?.selected?.count || 1;
 };

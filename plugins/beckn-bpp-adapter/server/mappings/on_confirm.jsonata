@@ -99,7 +99,7 @@
                     "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
                 }
             }[],
-            "quote": $quotePrice(message[0].items, message[0].itemsBody),
+            "quote": $quotePrice(message[0].items, message[0].itemsBody, context),
             "billing": message.billing,
             "fulfillments": $map(message.fulfillment, function($elem) {
                     $merge([$elem, {"state":{"descriptor": {
