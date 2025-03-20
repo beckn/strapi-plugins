@@ -2,7 +2,11 @@ import type { Core } from '@strapi/strapi';
 import _sodium from 'libsodium-wrappers';
 
 import { SubscribeRequest, SUBSCRIBER_STATUS } from '../types/requests/SubscribeRequest';
+import { LookupRequest } from 'src/types/requests/LookupRequest';
+
 export const REGISTRY_NAME = 'network-subscribers';
+const DEDI_NAMESPACE = process.env.DEDI_NAMESPACE || "fide.org.temp";
+
 const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
   async subscribe(ctx) {
     try {
@@ -146,6 +150,43 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       ctx.throw(400, error.message);
     }
   },
+
+  async lookup(ctx) {
+    try {
+      const body: LookupRequest = ctx.request.body;
+      const response = await strapi.api("dedi").service("dedi").queryDirectory(DEDI_NAMESPACE, REGISTRY_NAME)
+      const records = response.records.filter(record => {
+        if (body.type == "BG") {
+          return record.details.type === body.type && record.details.status == "SUBSCRIBED"
+        }
+        return (
+          record.details.type === body.type &&
+          record.details.status == body.status &&
+          record.details.domain == body.domain
+        )
+      });
+      const recs = records.map(records => {
+        return {
+          signing_public_key: records.details.signing_public_key,
+          subscriber_id: records.details.subscriber_id,
+          unique_key_id: records.details.key_id,
+          valid_until: records.details.valid_until,
+          subscriber_url: records.details.url,
+          created: records.details.created,
+          valid_from: records.details.valid_from,
+          type: records.details.type,
+          encr_public_key: records.details.encr_public_key,
+          updated: records.details.updated,
+          status: records.details.status,
+        };
+      })
+      ctx.send(recs, 200);
+    }
+    catch (error) {
+      console.log(error);
+      ctx.throw(400, error.message);
+    }
+  }
 });
 
 export default subscribers;

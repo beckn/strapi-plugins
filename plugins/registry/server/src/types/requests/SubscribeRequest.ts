@@ -1,4 +1,5 @@
 import { Location } from '../Location';
+
 export enum SUBSCRIBER_STATUS {
   INITIATED = 'INITIATED',
   UNDER_SUBSCRIPTION = 'UNDER_SUBSCRIPTION',

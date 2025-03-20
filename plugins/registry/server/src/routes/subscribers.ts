@@ -8,4 +8,13 @@ export default [
       auth: false,
     },
   },
+  {
+    method: 'POST',
+    path: '/lookup',
+    handler: 'subscribers.lookup',
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
 ];
