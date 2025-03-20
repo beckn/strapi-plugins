@@ -1,5 +1,6 @@
-import subscriberService from './service';
-
+import dediService from './dedi-service';
+import psService from './ps-service';
 export default {
-  subscriberService,
+  dediService,
+  psService,
 };
