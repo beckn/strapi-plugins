@@ -1,6 +1,6 @@
 import type { Core } from '@strapi/strapi';
 import axios from 'axios';
-import { REGISTRY_NAME } from 'src/controllers/subscribers';
+import { REGISTRY_NAME } from '../controllers/subscribers';
 import {
   DeDiSubsciberSchema,
   SubscribeRequest,
