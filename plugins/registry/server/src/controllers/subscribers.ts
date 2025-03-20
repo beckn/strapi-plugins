@@ -1,9 +1,8 @@
 import type { Core } from '@strapi/strapi';
-import { JSDOM } from 'jsdom';
 import _sodium from 'libsodium-wrappers';
 
 import { SubscribeRequest, SUBSCRIBER_STATUS } from '../types/requests/SubscribeRequest';
-
+export const REGISTRY_NAME = 'network-subscribers';
 const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
   async subscribe(ctx) {
     try {

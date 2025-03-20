@@ -1,5 +1,6 @@
 import type { Core } from '@strapi/strapi';
 import axios from 'axios';
+import { REGISTRY_NAME } from 'src/controllers/subscribers';
 import {
   DeDiSubsciberSchema,
   SubscribeRequest,
@@ -11,17 +12,17 @@ const subscriberService = ({ strapi }: { strapi: Core.Strapi }) => ({
     try {
       // console.log(
       //   'Looking up for url=>',
-      //   `${process.env.DEDI_URL}/dedi/lookup/${process.env.NAMESPACE}/${process.env.REGISTRY_NAME}/${subscriber_id}`
+      //   `${process.env.process.env.DEDI_BASE_URL}/dedi/lookup/${process.env.DEDI_NAMESPACE}/${REGISTRY_NAME}/${subscriber_id}`
       // );
       console.log(
         'Looking up for url=>',
-        `${process.env.DEDI_URL}/dedi/query/${process.env.NAMESPACE}/${process.env.REGISTRY_NAME}?name=${subscriber_id}`
+        `${process.env.DEDI_BASE_URL}/dedi/query/${process.env.DEDI_NAMESPACE}/${REGISTRY_NAME}?name=${subscriber_id}`
       );
       // const dediLookupResp = await axios.get(
-      //   `${process.env.DEDI_URL}/dedi/lookup/${process.env.NAMESPACE}/${process.env.REGISTRY_NAME}/${subscriber_id}`
+      //   `${process.env.DEDI_BASE_URL}/dedi/lookup/${process.env.DEDI_NAMESPACE}/${REGISTRY_NAME}/${subscriber_id}`
       // );
       const dediLookupResp = await axios.get(
-        `${process.env.DEDI_URL}/dedi/query/${process.env.NAMESPACE}/${process.env.REGISTRY_NAME}?name=${subscriber_id}`
+        `${process.env.DEDI_BASE_URL}/dedi/query/${process.env.DEDI_NAMESPACE}/${REGISTRY_NAME}?name=${subscriber_id}`
       );
       const matchFound = dediLookupResp?.data?.records?.find(
         (record: any) => record?.record_name === subscriber_id
@@ -39,7 +40,7 @@ const subscriberService = ({ strapi }: { strapi: Core.Strapi }) => ({
   async updateRecordDedi(subscriber_id: string, updatedRecord: any) {
     try {
       const dediUpdateResp = await axios.post(
-        `${process.env.DEDI_URL}/dedi/${process.env.NAMESPACE}/${process.env.REGISTRY_NAME}/${subscriber_id}/update-record`,
+        `${process.env.DEDI_BASE_URL}/dedi/${process.env.DEDI_NAMESPACE}/${REGISTRY_NAME}/${subscriber_id}/update-record`,
         { record_name: subscriber_id, description: subscriber_id, details: updatedRecord }
       );
       return {
@@ -70,7 +71,7 @@ const subscriberService = ({ strapi }: { strapi: Core.Strapi }) => ({
         status: SUBSCRIBER_STATUS.INITIATED,
       };
       const dediUpdateResp = await axios.post(
-        `${process.env.DEDI_URL}/dedi/${process.env.NAMESPACE}/${process.env.REGISTRY_NAME}/add-record`,
+        `${process.env.DEDI_BASE_URL}/dedi/${process.env.DEDI_NAMESPACE}/${REGISTRY_NAME}/add-record`,
         {
           record_name: `${newSubscriberDediPayload.subscriber_id}-${newSubscriberDediPayload.domain}`,
           description: `${newSubscriberDediPayload.subscriber_id}-${newSubscriberDediPayload.domain}`,
