@@ -1,6 +1,8 @@
 import type { Core } from '@strapi/strapi';
-import axios from 'axios';
-import { decryptMessage } from 'src/utils';
+import axios, { AxiosResponse } from 'axios';
+import { decryptMessage, getSiteVerificationContent } from '../utils';
+import https from 'https';
+import { SubscribeRequest } from 'src/types/requests/SubscribeRequest';
 
 const psService = ({ strapi }: { strapi: Core.Strapi }) => ({
   async callOnSubscribe(
@@ -35,7 +37,67 @@ const psService = ({ strapi }: { strapi: Core.Strapi }) => ({
 
       return { validOnSubscribe: matchChallenge };
     } catch (error) {
+      console.log(error);
       return { validOnSubscribe: false };
+    }
+  },
+
+  async validateSSL(subscriber_url: string) {
+    try {
+      console.log(`Validating SSL for https://${subscriber_url.split('//')[1]}`);
+      const agent = new https.Agent({
+        rejectUnauthorized: false,
+      });
+      let response: AxiosResponse<any, any>;
+      try {
+        response = await axios.get(`https://${subscriber_url.split('//')[1]}`, {
+          httpsAgent: agent,
+        });
+      } catch (error) {
+        if (error.response.status === 404 || error.response.status === 200) {
+          return { success: true };
+        }
+      }
+      const cert = response.request.socket.getPeerCertificate();
+
+      if (!cert || Object.keys(cert).length === 0) {
+        return { success: false };
+      }
+      console.log('Certificate Found', JSON.stringify(cert));
+      const expiryDate = new Date(cert.valid_to);
+      const currentDate = new Date();
+      if (expiryDate > currentDate) {
+        return { success: true };
+      } else {
+        return { success: false };
+      }
+    } catch (error) {
+      console.log('Error in validating SSL', error);
+      return { success: false };
+    }
+  },
+  async validateVerifyHTML(requestPayload: SubscribeRequest) {
+    try {
+      console.log(
+        `Validating Verify for https://${requestPayload.url.split('//')[1]}/public/verification.html`
+      );
+      const siteContent = await getSiteVerificationContent(
+        ` https://${requestPayload.url.split('//')[1]}/public/verification.html`
+      );
+      const decryptedContent = await decryptMessage(siteContent, requestPayload.signing_public_key);
+      const payload = JSON.parse(decryptedContent);
+      if (
+        payload?.subscriber_id !== requestPayload.subscriber_id ||
+        payload?.url !== requestPayload.url ||
+        payload?.domain !== requestPayload.domain ||
+        payload?.signing_public_key !== requestPayload.signing_public_key
+      ) {
+        return { success: false, message: 'Verification HTML failed' };
+      }
+      return { success: true };
+    } catch (error) {
+      console.log('Error in validating verfication HTML=>', error);
+      return { success: false };
     }
   },
 });
