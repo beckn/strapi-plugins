@@ -33,6 +33,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       let orderFulFillmentId;
 
       // Extract billing details
+      console.log("Here---->36 confirm service");
       const billingInfo = {
         first_name: billing?.name || "",
         address_line_1: billing?.address || "",
@@ -44,6 +45,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         postcode: billing?.area_code || "",
         tax_id: billing?.tax_id || ""
       };
+      console.log("Here---->48 confirm service");
 
       // Extract customer details
       const customer = fulfillments[0]?.customer || {
@@ -64,6 +66,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         contact: customer?.contact?.phone,
         publishedAt: isoString
       };
+      console.log("Here---->69 confirm service");
 
       // Extract shipping details
       const shipping =
@@ -84,6 +87,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         publishedAt: isoString,
         type: shipping?.type || "start"
       };
+      console.log("Here---->90 confirm service");
 
       const endLocation = fulfillments[0]?.stops
         ? fulfillments[0]?.stops.find((elem: any) => elem.type === "end")
@@ -107,6 +111,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           type: endLocation?.type || "end"
         };
       }
+
+      console.log("Here---->115 confirm service");
 
       // Extract item values
       const itemValue = items.map((obj: { id: string }) => `${obj.id}`);
