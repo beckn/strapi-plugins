@@ -9,8 +9,9 @@ export class InitUtil {
     provider: KeyValuePair
   ) => {
     if (isEnergy(context)) {
-      for (const item of (provider?.items || [])) {
-        const selectedItem = order.items.filter((i) => i.id == item.id)[0] || {};
+      for (const item of provider?.items || []) {
+        const selectedItem =
+          order.items.filter((i) => i.id == item.id)[0] || {};
         const scRetailProduct = item.sc_retail_product || {};
         const tradeData = {
           quantity: selectedItem?.quantity?.selected?.count || 0,
@@ -23,14 +24,14 @@ export class InitUtil {
           transaction_id: context.transaction_id,
           publishedAt: new Date().toISOString()
         };
-        await strapi.entityService.create(
-          "api::trade.trade",
-          { data: tradeData }
-        );
+        const data = await strapi.entityService.create("api::trade.trade", {
+          data: tradeData
+        });
+        console.log("Created Trade Entry====>", JSON.stringify(data));
         await TradeUtil.addTradeLog({
           transactionId: context.transaction_id,
-          event_name: 'beckn_init',
-          description: 'Received purchase order',
+          event_name: "beckn_init",
+          description: "Received purchase order",
           data: tradeData
         });
       }
