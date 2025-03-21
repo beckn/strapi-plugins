@@ -48,6 +48,7 @@ export class TradeUtil {
       });
       return tradeEvent;
     } catch (error) {
+      console.log(error);
       console.log("Error while adding trade event", error?.message);
     }
   };

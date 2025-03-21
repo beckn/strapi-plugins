@@ -21,6 +21,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           data: {}
         });
       }
+      console.log("Here---->24 confirm service");
       const { items, provider, billing, fulfillments, payments, tags } =
         message.order;
       const { domain, transaction_id, bap_id, bap_uri } = context;
