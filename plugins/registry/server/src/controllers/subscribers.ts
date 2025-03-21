@@ -3,9 +3,10 @@ import _sodium from 'libsodium-wrappers';
 
 import { SubscribeRequest, SUBSCRIBER_STATUS } from '../types/requests/SubscribeRequest';
 import { LookupRequest } from 'src/types/requests/LookupRequest';
+import dedi from '../services/dedi';
 
 export const REGISTRY_NAME = 'network-subscribers';
-const DEDI_NAMESPACE = process.env.DEDI_NAMESPACE || "fide.org.temp";
+const DEDI_NAMESPACE = process.env.DEDI_NAMESPACE || 'fide.org.temp';
 
 const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
   async subscribe(ctx) {
@@ -154,18 +155,22 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
   async lookup(ctx) {
     try {
       const body: LookupRequest = ctx.request.body;
-      const response = await strapi.api("dedi").service("dedi").queryDirectory(DEDI_NAMESPACE, REGISTRY_NAME)
-      const records = response.records.filter(record => {
-        if (body.type == "BG") {
-          return record.details.type === body.type && record.details.status == "SUBSCRIBED"
+      // const response = await strapi
+      //   .api('dedi')
+      //   .service('dedi')
+      //   .queryDirectory(DEDI_NAMESPACE, REGISTRY_NAME);
+      const response = await dedi.queryDirectory(DEDI_NAMESPACE, REGISTRY_NAME, {});
+      const records = response.records.filter((record) => {
+        if (body.type == 'BG') {
+          return record.details.type === body.type && record.details.status == 'SUBSCRIBED';
         }
         return (
           record.details.type === body.type &&
           record.details.status == body.status &&
           record.details.domain == body.domain
-        )
+        );
       });
-      const recs = records.map(records => {
+      const recs = records.map((records) => {
         return {
           signing_public_key: records.details.signing_public_key,
           subscriber_id: records.details.subscriber_id,
@@ -179,14 +184,13 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
           updated: records.details.updated,
           status: records.details.status,
         };
-      })
+      });
       ctx.send(recs, 200);
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
       ctx.throw(400, error.message);
     }
-  }
+  },
 });
 
 export default subscribers;
