@@ -116,6 +116,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       // Extract item values
       const itemValue = items.map((obj: { id: string }) => `${obj.id}`);
+      console.log("Here---->119 confirm service");
+
       let createOrder: any = {};
       // Start transaction
       await strapi.db.transaction(async ({ trx }) => {
