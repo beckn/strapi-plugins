@@ -10,6 +10,16 @@ import {
 import { KeyValuePair } from "../../types";
 import { PLUGIN, DEFAULT_INITIAL_STATE } from "../../constants";
 
+function generateRandomString(length = 10) {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
 export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message, context }) {
     try {
@@ -130,9 +140,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             domain,
             bap_id,
             bap_uri,
-            currency: payments[0]?.params?.currency || "INR",
-            total_amount: payments[0]?.params?.amount || 100,
-            transaction_id: payments[0]?.id
+            currency: payments?.[0]?.params?.currency || "INR",
+            total_amount: payments?.[0]?.params?.amount || 100,
+            transaction_id:
+              payments?.[0]?.id ||
+              context?.transaction_id ||
+              generateRandomString(12)
           };
           console.log("orderData==========>", orderData, "\n\n");
           // Create order
