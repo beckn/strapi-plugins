@@ -354,9 +354,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           await onConfirm(message);
           trx.commit();
         } catch (err) {
+          console.log(err);
           trx.rollback();
         }
       });
+
       const filters: KeyValuePair = provider
         ? FilterUtil.getProviderFilter(provider)
         : {};
