@@ -165,9 +165,9 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
           return record.details.type === body.type && record.details.status == 'SUBSCRIBED';
         }
         return (
-          record.details.type === body.type &&
-          record.details.status == body.status &&
-          record.details.domain == body.domain
+          (!body.type || record.details.type === body.type) &&
+          (!body.status || record.details.status === body.status) &&
+          (!body.domain || record.details.domain === body.domain)
         );
       });
       const recs = records.map((records) => {
@@ -183,6 +183,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
           encr_public_key: records.details.encr_public_key,
           updated: records.details.updated,
           status: records.details.status,
+          domain: records.details.domain,
         };
       });
       ctx.send(recs, 200);
