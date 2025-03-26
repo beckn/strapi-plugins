@@ -213,63 +213,47 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       console.log("Deg Finance Providers========>", providers);
     }
 
-    // sort on the basis of item created in descending order for DEG Rental
-    if (isDegRental(context)) {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = now.getMonth(); // 0-indexed (0 = January)
-      const day = now.getDate();
+    function filterProvidersByRentalEnd(providers) {
+      const currentEpochInMs = Math.floor(Date.now());
 
-      // Create a Date object at midnight (00:00:00) in UTC for the current local date
-      const utcMidnight = new Date(Date.UTC(year, month, day, 0, 0, 0));
-
-      const isoString = utcMidnight.toISOString();
-      console.log(`\n\nISO String for time Stamp==> ${isoString}\n\n`);
-
-      // Get the current timestamp in seconds
-      const currentTimestamp = Math.floor(Date.now() / 1000);
-
-      providers = providers
-        .filter((provider: any) => {
-          // Filtering on the basis of recent events with create date greater than today's date 00:00:00.000
-
-          return (
-            provider.items.filter((item: any) =>
-              // Check if any RENTAL_END fulfilment has state_value greater than current timestamp
-              item.item_fulfillment_ids?.some(
-                (fulfillment: any) =>
-                  fulfillment.fulfilment_id?.type === "RENTAL_END" &&
-                  parseInt(fulfillment.fulfilment_id.state_value, 10) >= currentTimestamp
-              )
-            ).length > 0
+      return providers.map((provider) => {
+        const filteredItems = provider.items.filter((item) => {
+          const rentalEndFulfillment = item.item_fulfillment_ids.find(
+            (fulfillment) => fulfillment.fulfilment_id.type === "RENTAL_END",
           );
-        })
-        // assinging those items to provider.items
-        ?.map((provider: any) => ({
+
+          if (!rentalEndFulfillment) return false;
+
+          const rentalEndTime = parseInt(
+            rentalEndFulfillment.fulfilment_id.state_value,
+          );
+
+          const rentalEndTimeInMs =
+            rentalEndTime.toString().length === 10
+              ? rentalEndTime * 1000
+              : rentalEndTime;
+
+
+          return rentalEndTimeInMs > currentEpochInMs;
+        });
+
+        // Return provider with filtered items
+        return {
           ...provider,
-          items: provider.items
-            .filter(
-              (item: any) =>
-                // Check if any RENTAL_END fulfilment has state_value greater than current timestamp
-                item.item_fulfillment_ids?.some(
-                  (fulfillment: any) =>
-                    fulfillment.fulfilment_id?.type === "RENTAL_END" &&
-                    parseInt(fulfillment.fulfilment_id.state_value, 10) >= currentTimestamp
-                )
-            )
-            // sorting items on basis of items.createdAt in descending order
-            .sort(
-              (itemA: any, itemB: any) =>
-                new Date(itemB.createdAt).getTime() -
-                new Date(itemA.createdAt).getTime()
-            )
-        }))
-        // sorting the provider.items[0].createdAdd in descending order
-        .sort(
-          (providerA: any, providerB: any) =>
-            new Date(providerB.items[0].createdAt).getTime() -
-            new Date(providerA.items[0].createdAt).getTime()
-        );
+          items: filteredItems,
+        };
+      }).filter((provider) => provider.items.length > 0); // Only keep providers that have matching items
+    }
+
+    if (isDegRental(context)) {
+      providers = filterProvidersByRentalEnd(providers);
+
+      // sorting the provider.items[0].createdAdd in descending order
+      providers = providers.sort(
+        (providerA: any, providerB: any) =>
+          new Date(providerB.items[0].createdAt).getTime() -
+          new Date(providerA.items[0].createdAt).getTime(),
+      );
 
       console.log(
         "\n\nDeg Rental Providers========>\n\n",
