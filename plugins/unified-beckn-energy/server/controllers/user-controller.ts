@@ -59,7 +59,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
       ctx.body = result;
     } catch (error) {
-      ctx.badRequest(error.message);
+      ctx.badRequest(error);
     }
   },
   async getRentCatalogues(ctx) {
