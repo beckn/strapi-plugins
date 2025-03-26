@@ -22,18 +22,21 @@ const subscriberService = ({ strapi }: { strapi: Core.Strapi }) => ({
       //   `${process.env.DEDI_BASE_URL}/dedi/lookup/${process.env.DEDI_NAMESPACE}/${REGISTRY_NAME}/${subscriber_id}`
       // );
       const dediLookupResp = await axios.get(
-        `${process.env.DEDI_BASE_URL}/dedi/query/${process.env.DEDI_NAMESPACE}/${REGISTRY_NAME}?name=${subscriber_id}`
+        `${process.env.DEDI_BASE_URL}/dedi/query/${process.env.DEDI_NAMESPACE}/${REGISTRY_NAME}`
       );
+      console.log('dediLookupResp---->', JSON.stringify(dediLookupResp.data));
       const matchFound = dediLookupResp?.data?.records?.find(
         (record: any) => record?.record_name === subscriber_id
       );
+
       // return { record: dediLookupResp.data.details, found: true };
       if (matchFound) {
-        console.log({ record: matchFound?.details || {}, found: true });
+        console.log('Lookup Match Found===>', { record: matchFound?.details || {}, found: true });
         return { record: matchFound?.details || {}, found: true };
       }
       return { record: {}, found: false };
     } catch (error) {
+      console.log(error);
       return { record: {}, found: false };
     }
   },
@@ -51,7 +54,7 @@ const subscriberService = ({ strapi }: { strapi: Core.Strapi }) => ({
       return { record: {}, updated: false };
     }
   },
-  async createRecordDedi(payload: SubscribeRequest) {
+  async createRecordDedi(payload: SubscribeRequest, status: SUBSCRIBER_STATUS) {
     try {
       const newSubscriberDediPayload: DeDiSubsciberSchema = {
         key_id: payload.key_id,
@@ -68,7 +71,7 @@ const subscriberService = ({ strapi }: { strapi: Core.Strapi }) => ({
         domain: payload.domain,
         encr_public_key: payload.encr_public_key,
         updated: payload.updated,
-        status: SUBSCRIBER_STATUS.INITIATED,
+        status: status,
       };
       const dediUpdateResp = await axios.post(
         `${process.env.DEDI_BASE_URL}/dedi/${process.env.DEDI_NAMESPACE}/${REGISTRY_NAME}/add-record`,

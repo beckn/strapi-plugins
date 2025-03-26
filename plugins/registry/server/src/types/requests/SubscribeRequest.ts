@@ -12,7 +12,7 @@ export enum SUBSCRIBER_STATUS {
 export type SubscribeRequest = {
   subscriber_id: string;
   url: string;
-  type: 'BAP' | 'BPP' | 'BG';
+  type: 'BAP' | 'BPP' | 'BG' | 'LREG';
   domain: string;
   location: Location;
   key_id: string;

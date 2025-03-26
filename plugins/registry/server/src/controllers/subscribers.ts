@@ -22,6 +22,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       console.log(recordLookup);
       if (recordLookup.found) {
         if (recordLookup?.record?.status === SUBSCRIBER_STATUS.SUBSCRIBED) {
+          console.log('here');
           return ctx.send({
             status: 'SUBSCRIBED',
           });
@@ -77,6 +78,23 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
           }
         }
       } else {
+        if (body.type === 'BG' || body.type === 'LREG') {
+          console.log('Registering BG for payload', JSON.stringify(body));
+          const createDediRecordResp = await dediService.createRecordDedi(
+            body,
+            SUBSCRIBER_STATUS.SUBSCRIBED
+          );
+          if (!createDediRecordResp.created) {
+            return ctx.send({
+              status: SUBSCRIBER_STATUS.SUBSCRIBED,
+              message: 'Dedi record creation failed',
+            });
+          }
+          return ctx.send({
+            status: SUBSCRIBER_STATUS.INVALID_SSL,
+            message: 'Dedi record creation failed',
+          });
+        }
         console.log('Validating SSL for', body.url);
         const validSSLResp = await psService.validateSSL(body.url);
 
@@ -100,7 +118,10 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
           'Create Entry in Dedi for subscirber_id and domain as record name for',
           `${body.subscriber_id}-${body.domain}`
         );
-        const createDediRecordResp = await dediService.createRecordDedi(body);
+        const createDediRecordResp = await dediService.createRecordDedi(
+          body,
+          SUBSCRIBER_STATUS.INITIATED
+        );
         if (!createDediRecordResp.created) {
           return ctx.send({
             status: SUBSCRIBER_STATUS.INVALID_SSL,
@@ -160,18 +181,40 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       //   .service('dedi')
       //   .queryDirectory(DEDI_NAMESPACE, REGISTRY_NAME);
       const response = await dedi.queryDirectory(DEDI_NAMESPACE, REGISTRY_NAME, {});
+      // const records = response.records.filter((record) => {
+      //   if (body.type === 'BG') {
+      //     return (
+      //       record.details.type === body.type &&
+      //       (!body.status || record.details.status === body.status)
+      //     );
+      //   }
+
+      //   return (
+      //     (!body.type || record.details.type === body.type) &&
+      //     (!body.status || record.details.status === body.status) &&
+      //     (!body.domain || record.details.domain === body.domain)
+      //   );
+      // });
+      const filters = body;
+      console.log('Filters for lookup===>', filters);
+      // if (body.type === 'BG') {
+      //   delete filters.domain;
+      // }
+      // console.log(filters);
       const records = response.records.filter((record) => {
-        if (body.type == 'BG') {
-          return record.details.type === body.type && record.details.status == 'SUBSCRIBED';
-        }
-        return (
-          (!body.type || record.details.type === body.type) &&
-          (!body.status || record.details.status === body.status) &&
-          (!body.domain || record.details.domain === body.domain)
-        );
+        return Object.entries(filters).every(([key, value]) => {
+          if (key === 'domain') {
+            return record.details[key] === '' || record.details[key] === value;
+          }
+          return value === '' || record.details[key] === value;
+        });
       });
+
       const recs = records.map((records) => {
         return {
+          status: records.details.status,
+          type: records.details.type,
+          domain: records.details.domain,
           signing_public_key: records.details.signing_public_key,
           subscriber_id: records.details.subscriber_id,
           unique_key_id: records.details.key_id,
@@ -179,11 +222,8 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
           subscriber_url: records.details.url,
           created: records.details.created,
           valid_from: records.details.valid_from,
-          type: records.details.type,
           encr_public_key: records.details.encr_public_key,
           updated: records.details.updated,
-          status: records.details.status,
-          domain: records.details.domain,
         };
       });
       ctx.send(recs, 200);
