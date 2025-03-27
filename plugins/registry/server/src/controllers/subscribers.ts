@@ -202,7 +202,6 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       //   delete filters.domain;
       // }
       // console.log(filters);
-      console.log(JSON.stringify(response.records));
       const records = response.records.filter((record) => {
         if (!record?.revoked) {
           return Object.entries(filters).every(([key, value]) => {
