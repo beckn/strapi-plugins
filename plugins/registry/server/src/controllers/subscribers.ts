@@ -202,14 +202,14 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       // }
       // console.log(filters);
       const records = response.records.filter((record) => {
-        return Object.entries(filters).every(([key, value]) => {
-          if (key === 'domain') {
-            return (
-              (record.details[key] === '' || record.details[key] === value) && !record?.revoked
-            );
-          }
-          return (value === '' || record.details[key] === value) && !record?.revoked;
-        });
+        if (!record?.revoked) {
+          return Object.entries(filters).every(([key, value]) => {
+            if (key === 'domain') {
+              return record.details[key] === '' || record.details[key] === value;
+            }
+            return value === '' || record.details[key] === value;
+          });
+        }
       });
 
       const recs = records.map((records) => {
