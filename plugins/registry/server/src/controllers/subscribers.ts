@@ -204,9 +204,11 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       const records = response.records.filter((record) => {
         return Object.entries(filters).every(([key, value]) => {
           if (key === 'domain') {
-            return record.details[key] === '' || record.details[key] === value;
+            return (
+              (record.details[key] === '' || record.details[key] === value) && !record?.revoked
+            );
           }
-          return value === '' || record.details[key] === value;
+          return (value === '' || record.details[key] === value) && !record?.revoked;
         });
       });
 
@@ -230,6 +232,63 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
     } catch (error) {
       console.log(error);
       ctx.throw(400, error.message);
+    }
+  },
+  async loadDomains(ctx) {
+    try {
+      const { registry_url = '' } = ctx.request.body;
+      if (!registry_url) {
+        ctx.response.status = 400;
+        ctx.response.body = {
+          message: 'registry_url is required',
+        };
+        return;
+      }
+      const psService = strapi.plugin('registry').service('psService');
+      const domains = await psService.fetchDomains(registry_url);
+
+      for (let i = 0; i < domains.length; i++) {
+        try {
+          await psService.storeDomain({
+            name: domains[i].name,
+            description: domains[i].name,
+            schema_url: domains[i].schema_url,
+          });
+        } catch (error) {
+          console.log(error);
+          throw new Error(error.message);
+        }
+      }
+
+      const domains_stored = await psService.getDomains();
+      ctx.response.status = 200;
+      ctx.response.body = {
+        message: 'Domains Fetched',
+        data: domains,
+        domains_stored,
+      };
+      return;
+    } catch (error) {
+      ctx.response.status = 500;
+      ctx.response.body = {
+        message: error.message,
+      };
+      return;
+    }
+  },
+  async getDomainController(ctx) {
+    try {
+      const psService = strapi.plugin('registry').service('psService');
+      const domains_stored = await psService.getDomains();
+      ctx.response.status = 200;
+      ctx.response.body = domains_stored;
+      return;
+    } catch (error) {
+      ctx.response.status = 500;
+      ctx.response.body = {
+        message: error.message,
+      };
+      return;
     }
   },
 });

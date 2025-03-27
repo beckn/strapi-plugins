@@ -100,6 +100,58 @@ const psService = ({ strapi }: { strapi: Core.Strapi }) => ({
       return { success: false };
     }
   },
+
+  async fetchDomains(registry_url: string) {
+    try {
+      console.log(`Fetching Domains from ${registry_url}/network_domains`);
+      const domains = await axios.get(`${registry_url}/network_domains`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return domains.data;
+    } catch (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  },
+
+  async storeDomain({
+    name,
+    description,
+    schema_url = '',
+  }: {
+    name: string;
+    description: string;
+    schema_url: string;
+  }) {
+    try {
+      const domains = await (strapi.documents('api::domain.domain') as any).create({
+        data: {
+          name,
+          description,
+          schema_url,
+          publishedAt: new Date(),
+        },
+        status: 'published',
+      });
+
+      return domains;
+    } catch (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  },
+
+  async getDomains() {
+    try {
+      const domains = await strapi.documents('api::domain.domain').findMany();
+      return domains;
+    } catch (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  },
 });
 
 export default psService;
