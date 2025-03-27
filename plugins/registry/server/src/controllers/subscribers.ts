@@ -291,6 +291,19 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       return;
     }
   },
+  async register(ctx) {
+    try {
+      console.log('Register Payload===>', ctx.request.body);
+      ctx.response.status = 200;
+      return;
+    } catch (error) {
+      ctx.response.status = 500;
+      ctx.response.body = {
+        message: error.message,
+      };
+      return;
+    }
+  },
 });
 
 export default subscribers;

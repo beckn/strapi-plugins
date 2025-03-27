@@ -19,6 +19,15 @@ export default [
   },
   {
     method: 'POST',
+    path: '/subscribers/register',
+    handler: 'subscribers.register',
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+  {
+    method: 'POST',
     path: '/load-domains',
     handler: 'subscribers.loadDomains',
     config: {
