@@ -202,6 +202,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       //   delete filters.domain;
       // }
       // console.log(filters);
+      console.log(JSON.stringify(response.records));
       const records = response.records.filter((record) => {
         if (!record?.revoked) {
           return Object.entries(filters).every(([key, value]) => {
@@ -210,6 +211,12 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
             }
             if (key === 'unique_key_id') {
               return record.details['key_id'] === value;
+            }
+            if (key === 'country') {
+              return record.details['country_code'] === value;
+            }
+            if (key === 'city') {
+              return record.details['city_code'] === value;
             }
             return value === '' || record.details[key] === value;
           });
