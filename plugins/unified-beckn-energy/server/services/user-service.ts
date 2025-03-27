@@ -485,7 +485,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       });
 
       if (activeRentals.length > 0) {
-        throw new Error("Listing already exists");
+        throw new Error("The Physical asset is already listed for renting.");
       }
 
       let result = {};
