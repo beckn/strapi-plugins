@@ -95,24 +95,24 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
             message: 'Dedi record creation failed',
           });
         }
-        console.log('Validating SSL for', body.url);
-        const validSSLResp = await psService.validateSSL(body.url);
+        // console.log('Validating SSL for', body.url);
+        // const validSSLResp = await psService.validateSSL(body.url);
 
-        if (!validSSLResp.success) {
-          return ctx.send({
-            status: SUBSCRIBER_STATUS.INVALID_SSL,
-            message: 'SSL Validation Failed',
-          });
-        }
-        console.log('Validating Verification.html for', body.url);
-        const validateVerifyHTMLResp = await psService.validateVerifyHTML(body);
+        // if (!validSSLResp.success) {
+        //   return ctx.send({
+        //     status: SUBSCRIBER_STATUS.INVALID_SSL,
+        //     message: 'SSL Validation Failed',
+        //   });
+        // }
+        // console.log('Validating Verification.html for', body.url);
+        // const validateVerifyHTMLResp = await psService.validateVerifyHTML(body);
 
-        if (!validateVerifyHTMLResp.success) {
-          return ctx.send({
-            status: SUBSCRIBER_STATUS.INVALID_SSL,
-            message: 'Verify HTML Validation Failed',
-          });
-        }
+        // if (!validateVerifyHTMLResp.success) {
+        //   return ctx.send({
+        //     status: SUBSCRIBER_STATUS.INVALID_SSL,
+        //     message: 'Verify HTML Validation Failed',
+        //   });
+        // }
         // Create Entry in DeDi with status Initiated
         console.log(
           'Create Entry in Dedi for subscirber_id and domain as record name for',
