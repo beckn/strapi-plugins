@@ -197,6 +197,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       // });
       const filters = body;
       console.log('Filters for lookup===>', filters);
+
       // if (body.type === 'BG') {
       //   delete filters.domain;
       // }
@@ -206,6 +207,9 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
           return Object.entries(filters).every(([key, value]) => {
             if (key === 'domain') {
               return record.details[key] === '' || record.details[key] === value;
+            }
+            if (key === 'unique_key_id') {
+              return record.details['key_id'] === value;
             }
             return value === '' || record.details[key] === value;
           });
