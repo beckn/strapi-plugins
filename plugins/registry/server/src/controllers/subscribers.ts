@@ -214,14 +214,18 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
             if (key === 'country') {
               return record.details['country_code'] === value;
             }
-            if (key === 'city') {
-              return record.details['city_code'] === value;
+            if (key === 'city' || (key === 'location' && filters[key]?.city?.code)) {
+              return (
+                record.details['city_code']?.toLowerCase() ===
+                filters[key]?.city?.code?.toLowerCase()
+              );
             }
             return value === '' || record.details[key] === value;
           });
         }
       });
 
+      console.log('DeDi Lookup Records:\n', JSON.stringify(records, null, 2));
       const recs = records.map((records) => {
         return {
           status: records.details.status,
@@ -238,6 +242,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
           updated: records.details.updated,
         };
       });
+      console.log('Transformed DeDi Lookup Records:\n', JSON.stringify(recs, null, 2));
       ctx.send(recs, 200);
     } catch (error) {
       console.log(error);
