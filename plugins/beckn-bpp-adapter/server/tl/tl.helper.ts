@@ -102,65 +102,83 @@ const domainBasePriceNames = {
   "uei:charging": "Cost of Charge"
 };
 
-export const quotePrice = async (items: KeyValuePair[], itemSelected: KeyValuePair[], context: KeyValuePair) => {
+export const quotePrice = async (
+  items: KeyValuePair[],
+  itemSelected: KeyValuePair[],
+  context: KeyValuePair
+) => {
   const breakup: KeyValuePair[] = [];
   console.log("Context===>", context);
   console.log("Items===>", items);
   console.log("ItemSelected===>", itemSelected);
+
+  let totalPriceValue = 0;
+
   items?.map((item) => {
     const scProduct = item?.sc_retail_product;
 
     // Find the selected quantity for the item from itemSelected
-    const matchingItem = itemSelected.find(tag => String(tag.id) === String(item.id));
+    const matchingItem = itemSelected.find(
+      (tag) => String(tag.id) === String(item.id)
+    );
     const selectedQuantity = matchingItem?.quantity?.selected?.count ?? 1; // Default to 1 if not found
 
     // Get domain-specific base price name or use default
     const domain = context?.domain;
-    const basePriceName = domainBasePriceNames[domain] || "BASE PRICE";
+    const basePriceName = domainBasePriceNames[domain];
 
-    // Add base price entry with domain-specific name
-    if (scProduct?.base_fee) {
-      breakup.push({
-        title: basePriceName,
-        price: {
-          currency: scProduct.currency,
-          value: (Number(scProduct.base_fee) * selectedQuantity).toString()
-        },
-        item: { id: `${item.id || ""}` }
+    // Process price breakup items if they exist
+    if (scProduct?.price_bareakup_ids?.length > 0) {
+      // Add all price breakups
+      scProduct.price_bareakup_ids.map((price_bareakup_id: KeyValuePair) => {
+        // Calculate price based on is_item_qty_dependent flag
+        const baseValue = Number(price_bareakup_id.value ?? 0);
+        const adjustedValue = price_bareakup_id.is_item_qty_dependent
+          ? baseValue * selectedQuantity
+          : baseValue;
+
+        breakup.push({
+          title: price_bareakup_id.title,
+          price: {
+            currency: price_bareakup_id.currency,
+            value: adjustedValue.toString(),
+          },
+          item: { id: `${item.id || ""}` },
+        });
       });
+
+      // If base price exists for this domain, add it to breakups
+      if (basePriceName && scProduct?.base_fee) {
+        breakup.push({
+          title: basePriceName,
+          price: {
+            currency: scProduct.currency,
+            value: (Number(scProduct.base_fee) * selectedQuantity).toString(),
+          },
+          item: { id: `${item.id || ""}` },
+        });
+      }
+    } else {
+      // If no breakups exist, just add base_fee * quantity to total price
+      if (scProduct?.base_fee) {
+        totalPriceValue += Number(scProduct.base_fee) * selectedQuantity;
+      }
     }
-
-    // Process price breakup items
-    scProduct?.price_bareakup_ids?.map((price_bareakup_id: KeyValuePair) => {
-      // Calculate price based on is_item_qty_dependent flag
-      const baseValue = Number(price_bareakup_id.value ?? 0);
-      const adjustedValue = price_bareakup_id.is_item_qty_dependent
-        ? baseValue * selectedQuantity
-        : baseValue;
-
-      breakup.push({
-        title: price_bareakup_id.title,
-        price: {
-          currency: price_bareakup_id.currency,
-          value: adjustedValue.toString()
-        },
-        item: { id: `${item.id || ""}` }
-      });
-    });
   });
 
-  // Calculate total priceValue as sum of all breakup.price.value
-  const priceValue = breakup.reduce(
-    (accumulator, currentValue) => accumulator + Number(currentValue?.price?.value),
+  // Calculate total priceValue as sum of all breakup.price.value plus any base_fee values
+  const breakupPriceValue = breakup.reduce(
+    (accumulator, currentValue) =>
+      accumulator + Number(currentValue?.price?.value),
     0
   );
 
   return {
     price: {
-      value: priceValue.toString(),
-      currency: items?.[0]?.sc_retail_product?.currency
+      value: (breakupPriceValue + totalPriceValue).toString(),
+      currency: items?.[0]?.sc_retail_product?.currency,
     },
-    breakup
+    breakup,
   };
 };
 
