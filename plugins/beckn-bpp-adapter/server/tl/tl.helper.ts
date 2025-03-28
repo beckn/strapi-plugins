@@ -95,7 +95,7 @@ const domainBasePriceNames = {
   "supply-chain-services:assembly": "Base Price",
   "mobility:1.1.0": "Base Fare",
   "tourism": "Sub Total",
-  "dsep:courses": "Item Price",
+  "dsep:courses": "Course Fee",
   "hospitality": "Room Tariff",
   "retail:1.1.0": "Item Price",
   "uei:p2p_trading": "P2P Energy Cost",
