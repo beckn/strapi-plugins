@@ -19,12 +19,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
                 id: user.id,
             });
 
-            const response = { jwt, user: sanitizedUser };
-            if (process.env.NODE_ENV === 'development') {
-                response.verificationToken = user.verificationToken;
-            }
-
-            ctx.created(response);
+            ctx.created({ verificationToken: user.verificationToken, jwt, user: sanitizedUser });
         } catch (error) {
             ctx.badRequest(error);
         }

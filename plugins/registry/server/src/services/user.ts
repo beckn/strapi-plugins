@@ -4,7 +4,7 @@ import crypto from 'crypto';
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
     async createUser(userData) {
         try {
-            const existingUser = await strapi.entityService.findMany('plugin::users-permissions.user', { filters: { email: userData.email } });
+            const existingUser = await strapi.documents('plugin::users-permissions.user').findMany({ filters: { email: userData.email } });
             if (existingUser?.length) {
                 throw new Error('User already exists');
             }
@@ -13,7 +13,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
             const verificationToken = crypto.randomBytes(32).toString('hex');
 
             // Create user with verification token
-            const user = await strapi.entityService.create('plugin::users-permissions.user', {
+            const user = await strapi.documents('plugin::users-permissions.user').create({
                 data: {
                     ...userData,
                     emailVerified: false,

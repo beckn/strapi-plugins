@@ -12,7 +12,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
             }
 
             // Find the user by email or username
-            const user = await strapi.entityService.findMany('plugin::users-permissions.user', {
+            const user = await strapi.documents('plugin::users-permissions.user').findMany({
                 filters: {
                     $or: [
                         { email: identifier },
@@ -61,7 +61,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     async emailConfirmation(ctx) {
         try {
             const { confirmation } = ctx.request.query;
-            const user = await strapi.entityService.findMany('plugin::users-permissions.user', {
+            const user = await strapi.documents('plugin::users-permissions.user').findMany({
+
                 filters: { verificationToken: confirmation }
             });
 
@@ -69,11 +70,12 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
                 throw new Error('Invalid verification token');
             }
 
-            await strapi.entityService.update('plugin::users-permissions.user', user[0].id, {
+            await strapi.documents('plugin::users-permissions.user').update({
+                documentId: user[0].documentId,
                 data: {
                     emailVerified: true,
                     verificationToken: null
-                }
+                } as any
             });
 
             return { message: 'Your account has been confirmed' };
