@@ -33,6 +33,18 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
                 return ctx.badRequest('Invalid identifier or password');
             }
 
+            if (!user[0].email_verified) {
+                return ctx.badRequest('Please verify your email before logging in');
+            }
+
+            if (user[0].blocked) {
+                return ctx.badRequest('Your account has been blocked. Please contact support.');
+            }
+
+            if (user[0].account_status !== 'ACTIVE') {
+                return ctx.badRequest('Your account is not active. Please contact support.');
+            }
+
             // Generate JWT token
             const jwt = strapi.plugin('users-permissions').service('jwt').issue({
                 id: user[0].id,
