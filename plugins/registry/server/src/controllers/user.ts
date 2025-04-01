@@ -11,12 +11,12 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
             if (!role) {
                 throw new Error('No user role found');
             }
-            const user = await userService.createUser({ username: email, email, password, role: role.id });
+            const user = await userService.createUser({ username: email, email, password, role: role.documentId });
 
             // Use Strapi's sanitizeEntity to remove sensitive fields
             const sanitizedUser = await strapi.contentAPI.sanitize.output(user, strapi.getModel('plugin::users-permissions.user'));
             const jwt = strapi.plugin('users-permissions').service('jwt').issue({
-                id: user.id,
+                documentId: user.documentId,
             });
 
             ctx.created({ verificationToken: user.verificationToken, jwt, user: sanitizedUser });
