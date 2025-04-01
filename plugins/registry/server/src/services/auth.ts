@@ -33,7 +33,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
                 return ctx.badRequest('Invalid identifier or password');
             }
 
-            if (!user[0].email_verified) {
+            if (!user[0].emailVerified) {
                 return ctx.badRequest('Please verify your email before logging in');
             }
 
@@ -41,7 +41,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
                 return ctx.badRequest('Your account has been blocked. Please contact support.');
             }
 
-            if (user[0].account_status !== 'ACTIVE') {
+            if (user[0].accountStatus !== 'ACTIVE') {
                 return ctx.badRequest('Your account is not active. Please contact support.');
             }
 
@@ -56,6 +56,29 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
             ctx.send({ jwt, user: sanitizedUser });
         } catch (error) {
             ctx.badRequest(error);
+        }
+    },
+    async emailConfirmation(ctx) {
+        try {
+            const { confirmation } = ctx.request.query;
+            const user = await strapi.entityService.findMany('plugin::users-permissions.user', {
+                filters: { verificationToken: confirmation }
+            });
+
+            if (!user?.length) {
+                throw new Error('Invalid verification token');
+            }
+
+            await strapi.entityService.update('plugin::users-permissions.user', user[0].id, {
+                data: {
+                    emailVerified: true,
+                    verificationToken: null
+                }
+            });
+
+            return { message: 'Your account has been confirmed' };
+        } catch (error) {
+            throw error;
         }
     }
 })

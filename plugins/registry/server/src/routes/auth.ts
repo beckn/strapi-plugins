@@ -8,4 +8,13 @@ export default [
             auth: false,
         },
     },
+    {
+        method: 'GET',
+        path: '/auth/email-confirmation',
+        handler: 'auth.emailConfirmation',
+        config: {
+            policies: [],
+            auth: false,
+        },
+    }
 ];
