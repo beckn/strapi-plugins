@@ -8,6 +8,9 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
             const roleService = strapi.plugin("registry").service("role");
 
             const role = await roleService.findUserRole();
+            if (!role) {
+                throw new Error('No user role found');
+            }
             const user = await userService.createUser({ username: email, email, password, role: role.id });
 
             // Use Strapi's sanitizeEntity to remove sensitive fields
