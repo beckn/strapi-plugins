@@ -185,7 +185,7 @@
                 "type": "PRE-ORDER",
                 "transaction_id": transaction_id
             }[],
-            "quote": $quotePrice(message[0].items, message[0].itemsBody, context),
+            "quote": $quotePrice(message[0].order_id.items, message[0].order_id.tags, context),
             "cancellation_terms": $cancellationTerms(message.order_id.items),
             "status": message.order_id.status
         }
