@@ -133,24 +133,27 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                   }
                 );
                 const bpp = searchResp.data[i];
-                const vc = await credentialVcService.getBecknJson(
-                  bpp.context.bpp_uri
-                );
-                console.log(
-                  `\n\nGot Beckn Json from `,
-                  bpp.context.bpp_uri,
-                  JSON.stringify(vc),
-                  `Trade ID: ${trade.id}`
-                );
-                if (vc.success) {
-                  const verifyVCResp =
-                    await credentialVcService.verifyCertificate(vc.vc);
-                  console.log("\nVerify VC Resp====>", verifyVCResp);
-                  if (verifyVCResp.isVerified) {
-                    required_bpps.push(bpp);
-                    continue;
-                  } else continue;
-                } else continue;
+
+                //Todo: Uncomment this on dhiway apis for verifying cred is working fine
+                
+                // const vc = await credentialVcService.getBecknJson(
+                //   bpp.context.bpp_uri
+                // );
+                // console.log(
+                //   `\n\nGot Beckn Json from `,
+                //   bpp.context.bpp_uri,
+                //   JSON.stringify(vc),
+                //   `Trade ID: ${trade.id}`
+                // );
+                // if (vc.success) {
+                //   const verifyVCResp =
+                //     await credentialVcService.verifyCertificate(vc.vc);
+                //   console.log("\nVerify VC Resp====>", verifyVCResp);
+                //   if (verifyVCResp.isVerified) {
+                //     required_bpps.push(bpp);
+                //     continue;
+                //   } else continue;
+                // } else continue;
               }
             } else {
               required_bpps = JSON.parse(JSON.stringify(searchResp.data));
@@ -193,55 +196,57 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                       `\nSending cred request for Trade Id: ${trade.id} to ${bpp.context.bpp_uri}\n`
                     );
 
-                    const on_credResp = await gclService.cred(
-                      bpp.context.bpp_id,
-                      bpp.context.bpp_uri,
-                      trasaction_id,
-                      trade,
-                      provider.id
-                    );
+                    //Todo: Uncomment this on dhiway apis for verifying cred is working fine
 
-                    console.log(
-                      `\nTradeId:${trade.id} On Cred Resp===>`,
-                      JSON.stringify(on_credResp),
-                      "\n"
-                    );
+                    // const on_credResp = await gclService.cred(
+                    //   bpp.context.bpp_id,
+                    //   bpp.context.bpp_uri,
+                    //   trasaction_id,
+                    //   trade,
+                    //   provider.id
+                    // );
 
-                    const becknOnCredBapEvent =
-                      await strapi.entityService.create(
-                        "api::trade-event-bap.trade-event-bap",
-                        {
-                          data: {
-                            trade: trade.id,
-                            event_name:
-                              TRADE_EVENTS.beckn_on_cred_bap.event_name,
-                            description:
-                              TRADE_EVENTS.beckn_on_cred_bap.description,
-                            data: { provider, on_credResp },
-                            publishedAt: new Date()
-                          },
-                          trx
-                        }
-                      );
+                    // console.log(
+                    //   `\nTradeId:${trade.id} On Cred Resp===>`,
+                    //   JSON.stringify(on_credResp),
+                    //   "\n"
+                    // );
 
-                    console.log(
-                      `\nVerifying cred for Trade Id: ${trade.id}\n`
-                    );
-                    const verifyVCResp =
-                      await credentialVcService.verifyCertificate(
-                        on_credResp.data[0].message.proofs.attachments[0]
-                          .verifiableCredential
-                      );
-                    if (verifyVCResp.isVerified) {
-                      required_providers.push({
-                        context: bpp.context,
-                        message: {
-                          name: bpp?.message?.name || "BPP 1",
-                          providers: [provider]
-                        }
-                      });
-                      continue;
-                    } else continue;
+                    // const becknOnCredBapEvent =
+                    //   await strapi.entityService.create(
+                    //     "api::trade-event-bap.trade-event-bap",
+                    //     {
+                    //       data: {
+                    //         trade: trade.id,
+                    //         event_name:
+                    //           TRADE_EVENTS.beckn_on_cred_bap.event_name,
+                    //         description:
+                    //           TRADE_EVENTS.beckn_on_cred_bap.description,
+                    //         data: { provider, on_credResp },
+                    //         publishedAt: new Date()
+                    //       },
+                    //       trx
+                    //     }
+                    //   );
+
+                    // console.log(
+                    //   `\nVerifying cred for Trade Id: ${trade.id}\n`
+                    // );
+                    // const verifyVCResp =
+                    //   await credentialVcService.verifyCertificate(
+                    //     on_credResp.data[0].message.proofs.attachments[0]
+                    //       .verifiableCredential
+                    //   );
+                    // if (verifyVCResp.isVerified) {
+                    //   required_providers.push({
+                    //     context: bpp.context,
+                    //     message: {
+                    //       name: bpp?.message?.name || "BPP 1",
+                    //       providers: [provider]
+                    //     }
+                    //   });
+                    //   continue;
+                    // } else continue;
                   } catch (error) {
                     continue;
                   }
