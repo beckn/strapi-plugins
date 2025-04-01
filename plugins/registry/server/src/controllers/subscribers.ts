@@ -197,21 +197,35 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       // });
       const filters = body;
       console.log('Filters for lookup===>', filters);
+
       // if (body.type === 'BG') {
       //   delete filters.domain;
       // }
       // console.log(filters);
       const records = response.records.filter((record) => {
-        return Object.entries(filters).every(([key, value]) => {
-          if (key === 'domain') {
-            return (
-              (record.details[key] === '' || record.details[key] === value) && !record?.revoked
-            );
-          }
-          return (value === '' || record.details[key] === value) && !record?.revoked;
-        });
+        if (!record?.revoked) {
+          return Object.entries(filters).every(([key, value]) => {
+            if (key === 'domain') {
+              return record.details[key] === '' || record.details[key] === value;
+            }
+            if (key === 'unique_key_id') {
+              return record.details['key_id'] === value;
+            }
+            if (key === 'country') {
+              return record.details['country_code'] === value;
+            }
+            if (key === 'city' || (key === 'location' && filters[key]?.city?.code)) {
+              return (
+                record.details['city_code']?.toLowerCase() ===
+                filters[key]?.city?.code?.toLowerCase()
+              );
+            }
+            return value === '' || record.details[key] === value;
+          });
+        }
       });
 
+      console.log('DeDi Lookup Records:\n', JSON.stringify(records, null, 2));
       const recs = records.map((records) => {
         return {
           status: records.details.status,
@@ -228,6 +242,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
           updated: records.details.updated,
         };
       });
+      console.log('Transformed DeDi Lookup Records:\n', JSON.stringify(recs, null, 2));
       ctx.send(recs, 200);
     } catch (error) {
       console.log(error);
@@ -282,6 +297,19 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       const domains_stored = await psService.getDomains();
       ctx.response.status = 200;
       ctx.response.body = domains_stored;
+      return;
+    } catch (error) {
+      ctx.response.status = 500;
+      ctx.response.body = {
+        message: error.message,
+      };
+      return;
+    }
+  },
+  async register(ctx) {
+    try {
+      console.log('Register Payload===>', ctx.request.body);
+      ctx.response.status = 200;
       return;
     } catch (error) {
       ctx.response.status = 500;
