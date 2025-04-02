@@ -50,5 +50,15 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         } catch (error) {
             throw new Error(error);
         }
+    },
+
+    async me(user) {
+        const fetchedUser = await strapi.documents('plugin::users-permissions.user').findOne({ documentId: user.documentId, populate: 'role' });
+        return fetchedUser;
+    },
+
+    async getUsers() {
+        const users = await strapi.documents('plugin::users-permissions.user').findMany({ emailVerified: true } as any);
+        return users;
     }
 });

@@ -23,5 +23,25 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         } catch (error) {
             ctx.badRequest(error);
         }
+    },
+
+    async me(ctx) {
+        try {
+            const userService = strapi.plugin("registry").service("user");
+            const user = await userService.me(ctx.state.user);
+            ctx.send(user);
+        } catch (error) {
+            ctx.badRequest(error);
+        }
+    },
+
+    async getUsers(ctx) {
+        try {
+            const userService = strapi.plugin("registry").service("user");
+            const users = await userService.getUsers();
+            ctx.send(users);
+        } catch (error) {
+            ctx.badRequest(error);
+        }
     }
 });

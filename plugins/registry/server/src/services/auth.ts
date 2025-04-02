@@ -46,7 +46,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
             }
 
             // Generate JWT token
-            const jwt = strapi.plugin('users-permissions').service('jwt').issue({ id: user[0].id, });
+            const jwt = strapi.plugin('users-permissions').service('jwt').issue({ documentId: user[0].documentId, });
 
             // Sanitize user data
             const sanitizedUser = await strapi.contentAPI.sanitize.output(user[0], strapi.getModel('plugin::users-permissions.user'));
