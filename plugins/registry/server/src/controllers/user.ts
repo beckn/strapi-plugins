@@ -19,7 +19,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
                 documentId: user.documentId,
             });
 
-            ctx.created({ verificationToken: user.verificationToken, jwt, user: sanitizedUser });
+            ctx.created({ jwt, user: sanitizedUser });
         } catch (error) {
             ctx.badRequest(error);
         }

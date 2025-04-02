@@ -2,7 +2,7 @@
 import type { Core } from '@strapi/strapi';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
-    async local(ctx) {
+    async local(ctx: any) {
         try {
             const { identifier, password } = ctx.request.body;
 
@@ -46,9 +46,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
             }
 
             // Generate JWT token
-            const jwt = strapi.plugin('users-permissions').service('jwt').issue({
-                id: user[0].id,
-            });
+            const jwt = strapi.plugin('users-permissions').service('jwt').issue({ id: user[0].id, });
 
             // Sanitize user data
             const sanitizedUser = await strapi.contentAPI.sanitize.output(user[0], strapi.getModel('plugin::users-permissions.user'));
@@ -58,11 +56,43 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
             ctx.badRequest(error);
         }
     },
-    async emailConfirmation(ctx) {
+
+
+    async sendEmailConfirmation(email: string) {
+        try {
+            const users = await strapi.documents('plugin::users-permissions.user').findMany({
+                filters: { email }
+            });
+            if (!users?.length) {
+                throw new Error('Email not found');
+            }
+            const user = users[0];
+            const emailService = strapi.plugin('email').service('email');
+            const FRONTEND_URL = strapi.config.get('server.frontendUrl', 'http://localhost:3000'); // Set frontend URL
+
+            const confirmationLink = `${FRONTEND_URL}/email-confirmation?token=${user.verificationToken}`;
+
+            const emailTemplate = `
+      <p>Hello ${user.username},</p>
+      <p>Thank you for signing up. Please confirm your email by clicking the link below:</p>
+      <p><a href="${confirmationLink}">Confirm Email</a></p>
+      <p>If you did not sign up, please ignore this email.</p>
+    `;
+
+            return await emailService.send({
+                to: user.email,
+                subject: 'Confirm Your Email Address',
+                html: emailTemplate,
+            });
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    async emailConfirmation(ctx: any) {
         try {
             const { confirmation } = ctx.request.query;
             const user = await strapi.documents('plugin::users-permissions.user').findMany({
-
                 filters: { verificationToken: confirmation }
             });
 

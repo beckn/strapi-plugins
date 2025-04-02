@@ -6,6 +6,26 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         try {
             const existingUser = await strapi.documents('plugin::users-permissions.user').findMany({ filters: { email: userData.email } });
             if (existingUser?.length) {
+                const user = existingUser[0];
+                if (!user.emailVerified) {
+                    // Generate new verification token
+                    const verificationToken = crypto.randomBytes(32).toString('hex');
+
+                    // Update user with new verification token and password
+                    await strapi.documents('plugin::users-permissions.user').update({
+                        documentId: user.documentId,
+                        data: {
+                            verificationToken,
+                            password: userData.password
+                        } as any
+                    });
+
+                    // Resend verification email
+                    const authService = strapi.plugin("registry").service("auth");
+                    await authService.sendEmailConfirmation(userData.email);
+
+                    throw new Error('Email already exists. Please check your email for verification link');
+                }
                 throw new Error('User already exists');
             }
 
@@ -22,19 +42,9 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
                 populate: ['role']
             });
 
+            const authService = strapi.plugin("registry").service("auth");
             // Send verification email in background
-            strapi.plugin('email').service('email').send({
-                to: userData.email,
-                subject: 'Verify your email',
-                text: `Please verify your email by clicking this link: ${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`,
-                html: `
-                    <h1>Verify your email</h1>
-                    <p>Please click the link below to verify your email:</p>
-                    <a href="${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}">Verify Email</a>
-                `
-            }).catch(error => {
-                strapi.log.error('Failed to send verification email:', error);
-            });
+            authService.sendEmailConfirmation(userData.email);
 
             return user;
         } catch (error) {

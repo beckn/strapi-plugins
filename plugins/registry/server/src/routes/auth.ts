@@ -16,5 +16,14 @@ export default [
             policies: [],
             auth: false,
         },
+    },
+    {
+        method: 'POST',
+        path: '/auth/send-email-confirmation',
+        handler: 'auth.sendEmailConfirmation',
+        config: {
+            policies: [],
+            auth: false,
+        },
     }
 ];
