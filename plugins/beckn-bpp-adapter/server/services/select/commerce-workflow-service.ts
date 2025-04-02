@@ -138,6 +138,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       itemDetails[0] = { ...itemDetails[0], ...quantitySelected };
 
       itemDetails = itemDetails.map((provider) => {
+        const providerItemIds = provider?.items.map((item) => String(item.id));
+        // Filter items that exist in provider.items
+        const itemsBody = items.filter((item) =>
+          providerItemIds.includes(String(item.id))
+        );
         provider.items = provider.items.map((responseItem) => {
           // Find the matching item in request body by id
           const bodyItem = items.find(
@@ -156,7 +161,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
           return responseItem;
         });
-
+        provider.itemsBody = itemsBody;
         return provider;
       });
       return itemDetails;
