@@ -105,6 +105,124 @@
 							"body": "{\n    \"jwt\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzgsImlhdCI6MTc0MzQ5NDc3MywiZXhwIjoxNzQzNTgxMTczfQ.an21aIoTD5dieohKMNWBDGEVz_cKGOtzW_HRcZHOdUU\",\n    \"user\": {\n        \"id\": 38,\n        \"documentId\": \"ws2t1iermfvub9nmreofkyaf\",\n        \"username\": \"Mireille.Sauer@gmail.com\",\n        \"email\": \"Mireille.Sauer@gmail.com\",\n        \"blocked\": false,\n        \"createdAt\": \"2025-04-01T08:06:13.133Z\",\n        \"updatedAt\": \"2025-04-01T08:06:13.133Z\",\n        \"publishedAt\": \"2025-04-01T08:06:13.041Z\",\n        \"phone_number\": null,\n        \"alternate_phone_number\": null,\n        \"full_name\": null,\n        \"email_verified\": false,\n        \"account_status\": null\n    }\n}"
 						}
 					]
+				},
+				{
+					"name": "Me",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwtToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Me",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/me",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"me"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 66,\n    \"documentId\": \"zfybn7s6ck4u398copmo30co\",\n    \"username\": \"dayeca4078@oronny.com\",\n    \"email\": \"dayeca4078@oronny.com\",\n    \"password\": \"$2a$10$guJR6eLtKgvux3urMCgJbe/g8sWHnfnLQOmVUHqGVZWwMtboFFOi2\",\n    \"blocked\": false,\n    \"createdAt\": \"2025-04-02T10:25:31.314Z\",\n    \"updatedAt\": \"2025-04-02T11:56:14.496Z\",\n    \"publishedAt\": \"2025-04-02T11:56:14.484Z\",\n    \"locale\": null,\n    \"phoneNumber\": null,\n    \"alternatePhoneNumber\": null,\n    \"fullName\": null,\n    \"accountStatus\": \"ACTIVE\",\n    \"verificationToken\": null,\n    \"emailVerified\": true,\n    \"role\": {\n        \"id\": 4,\n        \"documentId\": \"y41xl0czghuvadl9tl9o7uf0\",\n        \"name\": \"User\",\n        \"description\": \"User role can update their own data\",\n        \"type\": \"user\",\n        \"createdAt\": \"2025-04-01T08:04:26.217Z\",\n        \"updatedAt\": \"2025-04-01T08:04:26.217Z\",\n        \"publishedAt\": \"2025-04-01T08:04:26.217Z\",\n        \"locale\": null\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "All Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwtToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "All Users",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 62,\n        \"documentId\": \"fjgy8lhkvaw4eo8a41d3f2yt\",\n        \"username\": \"Eldon.Wisoky43@yahoo.com\",\n        \"email\": \"Eldon.Wisoky43@yahoo.com\",\n        \"password\": \"$2a$10$q4qFX.yDu5LJVsehk3Dv.uFysz8nW8vMo7.epQ.WG2H9hKw4IcTUG\",\n        \"blocked\": false,\n        \"createdAt\": \"2025-04-01T20:58:47.990Z\",\n        \"updatedAt\": \"2025-04-01T20:58:47.990Z\",\n        \"publishedAt\": \"2025-04-01T20:58:47.890Z\",\n        \"locale\": null,\n        \"phoneNumber\": null,\n        \"alternatePhoneNumber\": null,\n        \"fullName\": null,\n        \"accountStatus\": \"ACTIVE\",\n        \"verificationToken\": \"edf8658d70549fbf71299cb78ad081b48d8295f936be6c110676bb0f7d31a25b\",\n        \"emailVerified\": false\n    },\n    {\n        \"id\": 63,\n        \"documentId\": \"n5zwhis6nmwgtiswz0njawub\",\n        \"username\": \"ardent.ajay@gmail.com\",\n        \"email\": \"ardent.ajay@gmail.com\",\n        \"password\": \"$2a$10$i22wR.fj2H.aRykyF5NdAOEgE4MXlTtdeGpoG2K5xZZppV5mQxCyi\",\n        \"blocked\": false,\n        \"createdAt\": \"2025-04-02T09:08:40.366Z\",\n        \"updatedAt\": \"2025-04-02T09:23:04.250Z\",\n        \"publishedAt\": \"2025-04-02T09:08:40.264Z\",\n        \"locale\": null,\n        \"phoneNumber\": null,\n        \"alternatePhoneNumber\": null,\n        \"fullName\": null,\n        \"accountStatus\": \"ACTIVE\",\n        \"verificationToken\": \"bf944062f839c4b1e870d4fa1b6571f516907962d4828b66381ea12cc04ae045\",\n        \"emailVerified\": false\n    },\n    {\n        \"id\": 64,\n        \"documentId\": \"ii4pjk01hqrpfmxmurrris56\",\n        \"username\": \"ajay.nishad@eminds.ai\",\n        \"email\": \"ajay.nishad@eminds.ai\",\n        \"password\": \"$2a$10$sjPzKanjZQ7FSuYZ7.rxKOCBZUomycYveljzSqdZaQJedtDzxry7e\",\n        \"blocked\": false,\n        \"createdAt\": \"2025-04-02T09:27:50.352Z\",\n        \"updatedAt\": \"2025-04-02T09:27:50.352Z\",\n        \"publishedAt\": \"2025-04-02T09:27:50.222Z\",\n        \"locale\": null,\n        \"phoneNumber\": null,\n        \"alternatePhoneNumber\": null,\n        \"fullName\": null,\n        \"accountStatus\": \"ACTIVE\",\n        \"verificationToken\": \"1b6c3060d9f980f5a283c8b97ea29c75e9cf4a0bdf879010313cd0c6b70a0e08\",\n        \"emailVerified\": false\n    },\n    {\n        \"id\": 65,\n        \"documentId\": \"ypxpj8whwhw1xyvpwbhydtxl\",\n        \"username\": \"hidabi3239@oronny.com\",\n        \"email\": \"hidabi3239@oronny.com\",\n        \"password\": \"$2a$10$K6LdrVn6t6ASv/HpMhhJs.w.pjSS2.qXwIB3q9CN2FTBPbrNRhlVy\",\n        \"blocked\": false,\n        \"createdAt\": \"2025-04-02T09:55:36.055Z\",\n        \"updatedAt\": \"2025-04-02T09:55:36.156Z\",\n        \"publishedAt\": \"2025-04-02T09:55:35.946Z\",\n        \"locale\": null,\n        \"phoneNumber\": null,\n        \"alternatePhoneNumber\": null,\n        \"fullName\": null,\n        \"accountStatus\": \"ACTIVE\",\n        \"verificationToken\": \"edbd251e9d706dbfe59187cf10b539fa984deee196a138997e7f533908469988\",\n        \"emailVerified\": false\n    },\n    {\n        \"id\": 66,\n        \"documentId\": \"zfybn7s6ck4u398copmo30co\",\n        \"username\": \"dayeca4078@oronny.com\",\n        \"email\": \"dayeca4078@oronny.com\",\n        \"password\": \"$2a$10$guJR6eLtKgvux3urMCgJbe/g8sWHnfnLQOmVUHqGVZWwMtboFFOi2\",\n        \"blocked\": false,\n        \"createdAt\": \"2025-04-02T10:25:31.314Z\",\n        \"updatedAt\": \"2025-04-02T11:56:14.496Z\",\n        \"publishedAt\": \"2025-04-02T11:56:14.484Z\",\n        \"locale\": null,\n        \"phoneNumber\": null,\n        \"alternatePhoneNumber\": null,\n        \"fullName\": null,\n        \"accountStatus\": \"ACTIVE\",\n        \"verificationToken\": null,\n        \"emailVerified\": true\n    }\n]"
+						}
+					]
 				}
 			]
 		},
@@ -113,6 +231,29 @@
 			"item": [
 				{
 					"name": "Local",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Store JWT and Email in collection variables\", function () {",
+									"    let responseJson = pm.response.json();",
+									"    ",
+									"    if (responseJson.jwt) {",
+									"        pm.collectionVariables.set(\"jwtToken\", responseJson.jwt);",
+									"        console.log(\"JWT stored successfully: \" + responseJson.jwt);",
+									"    } else {",
+									"        pm.test(\"JWT token is missing in response\", function() {",
+									"            pm.expect(responseJson.jwt).to.exist;",
+									"        });",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -452,6 +593,11 @@
 		{
 			"key": "userEmail",
 			"value": "Antonetta30@gmail.com",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "",
 			"type": "string"
 		}
 	]
