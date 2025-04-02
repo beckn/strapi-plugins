@@ -48,7 +48,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"password\": \"{{password}}\"\n}",
+							"raw": "{\n    \"email\": \"dayeca4078@oronny.com\",\n    \"password\": \"{{password}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -184,7 +184,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/auth/email-confirmation?confirmation=ac64109ac803755b2df635e7b73cb611246ea791ff8b4d845daca5717a2a48ac",
+							"raw": "{{baseUrl}}/auth/email-confirmation?confirmation=6b83f4852344ffa8172e52bb99b525c4638f440c4f3ab77649703fdd2e39a47a",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -195,7 +195,7 @@
 							"query": [
 								{
 									"key": "confirmation",
-									"value": "ac64109ac803755b2df635e7b73cb611246ea791ff8b4d845daca5717a2a48ac"
+									"value": "6b83f4852344ffa8172e52bb99b525c4638f440c4f3ab77649703fdd2e39a47a"
 								}
 							]
 						}
@@ -237,6 +237,74 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"message\": \"Your account has been confirmed\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Send email confirmation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{userEmail}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/send-email-confirmation",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"send-email-confirmation"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Send email confirmation",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"hidabi3239@oronny.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/send-email-confirmation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"send-email-confirmation"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Email confirmation link has been sent to your email address\"\n}"
 						}
 					]
 				}
