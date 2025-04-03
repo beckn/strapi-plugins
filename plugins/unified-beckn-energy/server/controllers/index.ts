@@ -4,11 +4,13 @@ import tradeBuyController from "./trade-buy-controller";
 import tradeSellController from "./trade-sell-controller";
 import walletController from "./wallet-controller";
 import orderHistoryController from "./order-history";
+import utilityController from "./utility-controller";
 export default {
   authController,
   userController,
   tradeBuyController,
   tradeSellController,
   walletController,
-  orderHistoryController
+  orderHistoryController,
+  utilityController
 };

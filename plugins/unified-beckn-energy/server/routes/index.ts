@@ -359,5 +359,25 @@ export default [
       middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
       auth: false
     }
+  },
+  {
+    method: "GET",
+    path: "/utility/countries",
+    handler: "utilityController.getCountries",
+    config: {
+      policies: [],
+      middlewares: [],
+      auth: false
+    }
+  },
+  {
+    method: "GET",
+    path: "/utility/companies",
+    handler: "utilityController.getUtilityCompanies",
+    config: {
+      policies: [],
+      middlewares: [],
+      auth: false
+    }
   }
 ];
