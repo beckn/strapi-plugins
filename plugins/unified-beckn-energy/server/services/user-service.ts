@@ -435,63 +435,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     const { provider: providerData, items } = providerDetails.data[0].message;
     const item = items[0];
     try {
-      let providerId = user?.deg_wallet?.provider?.id;
-      console.log("providerId", providerId);
-      const items = await strapi.entityService.findMany(
-        "api::item.item",
-        {
-          filters: {
-            provider: providerId,
-            name: item?.name
-          },
-          populate: {
-            item_fulfillment_ids: {
-              populate: {
-                fulfilment_id: {
-                  populate: {
-                    state_value: true,
-                    type: true
-                  }
-                }
-              }
-            }
-          }
-        }
-      );
-
-      // Check if any item has RENTAL_END greater than current time
-      const currentEpoch = Math.floor(Date.now() / 1000); // Convert to seconds
-      const activeRentals = items.filter(item => {
-        const itemFulfillments = item.item_fulfillment_ids || [];
-
-        return itemFulfillments.some(fulfillment => {
-          const rentalEndFulfillment = fulfillment.fulfilment_id?.type === 'RENTAL_END';
-
-          if (!rentalEndFulfillment) return false;
-
-          // If state_value is not present, consider it as expired
-          if (!fulfillment.fulfilment_id?.state_value) {
-            return false;
-          }
-
-          // Handle state_value that could be in seconds or milliseconds
-          const stateValue = parseInt(fulfillment.fulfilment_id.state_value);
-          const stateValueInMs = stateValue.toString().length === 10 ? stateValue * 1000 : stateValue;
-          const endTimestamp = Math.floor(stateValueInMs / 1000); // Convert to seconds for comparison
-
-          const isActive = endTimestamp > currentEpoch;
-          return isActive;
-        });
-      });
-
-      if (activeRentals.length > 0) {
-        throw new Error("The Physical asset is already listed for renting.");
-      }
-
       let result = {};
       await strapi.db.transaction(async ({ trx }) => {
         try {
-          providerId = user?.deg_wallet?.provider?.id;
+          let providerId = user?.deg_wallet?.provider?.id;
           let createdProvider = user?.deg_wallet?.provider;
 
           if (!providerId) {
@@ -687,6 +634,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             //     }
             //   }
             // );
+          }
+
+          const hasUserActiveRentals = await this.userHasActiveRentals(providerId, item);
+          console.log("hasUserActiveRentals", hasUserActiveRentals)
+          if (hasUserActiveRentals) {
+            throw new Error("The Physical asset is already listed for renting.");
           }
 
           const createBasePricePerHr = await strapi.entityService.create(
@@ -1257,4 +1210,55 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
+
+  async userHasActiveRentals(providerId: number, item: any) {
+    const items = await strapi.entityService.findMany(
+      "api::item.item",
+      {
+        filters: {
+          provider: providerId,
+          name: item?.name
+        },
+        populate: {
+          item_fulfillment_ids: {
+            populate: {
+              fulfilment_id: {
+                populate: {
+                  state_value: true,
+                  type: true
+                }
+              }
+            }
+          }
+        }
+      }
+    );
+
+    // Check if any item has RENTAL_END greater than current time
+    const currentEpoch = Math.floor(Date.now() / 1000); // Convert to seconds
+
+    const activeRentals = items.filter(item => {
+      const itemFulfillments = item.item_fulfillment_ids || [];
+
+      return itemFulfillments.some(fulfillment => {
+        const rentalEndFulfillment = fulfillment.fulfilment_id?.type === 'RENTAL_END';
+
+        if (!rentalEndFulfillment) return false;
+
+        // If state_value is not present, consider it as expired
+        if (!fulfillment.fulfilment_id?.state_value) {
+          return false;
+        }
+
+        // Handle state_value that could be in seconds or milliseconds
+        const stateValue = parseInt(fulfillment.fulfilment_id.state_value);
+        const stateValueInMs = stateValue.toString().length === 10 ? stateValue * 1000 : stateValue;
+        const endTimestamp = Math.floor(stateValueInMs / 1000); // Convert to seconds for comparison
+
+        const isActive = endTimestamp > currentEpoch;
+        return isActive;
+      });
+    });
+    return activeRentals.length > 0;
+  }
 });
