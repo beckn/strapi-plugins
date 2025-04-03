@@ -43,7 +43,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::tag.tag",
             {
               filter: {
-                tag_group_id: item.tag_group_id
+                tag_group_id: {
+                  id: item.tag_group_id
+                }
               }
             }
           );
