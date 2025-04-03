@@ -55,5 +55,14 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         } catch (error) {
             ctx.badRequest(error);
         }
+    },
+
+    async delete(ctx: any) {
+        try {
+            await getUserService(strapi).delete(ctx);
+            ctx.send({ message: 'User deleted successfully' });
+        } catch (error) {
+            ctx.badRequest(error);
+        }
     }
 });

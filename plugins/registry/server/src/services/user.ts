@@ -2,6 +2,7 @@ import type { Core } from '@strapi/strapi';
 import crypto from 'crypto';
 import { getAuthService, getRoleService } from '../utils/service';
 import { sanitizeUser, sanitizeUsers } from '../utils/user';
+
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
     async createUser(userData) {
         try {
@@ -92,4 +93,9 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         console.log("updatedUser", updatedUser);
         return await sanitizeUser(updatedUser);
     },
+
+    async delete(ctx: any) {
+        const { documentId } = ctx.params;
+        await strapi.documents('plugin::users-permissions.user').delete({ documentId });
+    }
 });

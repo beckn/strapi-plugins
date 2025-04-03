@@ -43,5 +43,14 @@ export default [
             auth: false,
             middlewares: ["plugin::registry.auth", "plugin::registry.isAdmin"],
         }
+    },
+    {
+        method: "DELETE",
+        path: "/users/:documentId",
+        handler: "user.delete",
+        config: {
+            auth: false,
+            middlewares: ["plugin::registry.auth", "plugin::registry.isAdmin"],
+        }
     }
 ];
