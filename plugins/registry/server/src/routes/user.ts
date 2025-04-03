@@ -25,5 +25,14 @@ export default [
             auth: false,
             middlewares: ["plugin::registry.authMiddleware"],
         }
+    },
+    {
+        method: "PUT",
+        path: "/users/me",
+        handler: "user.updateMe",
+        config: {
+            auth: false,
+            middlewares: ["plugin::registry.authMiddleware"],
+        }
     }
 ];

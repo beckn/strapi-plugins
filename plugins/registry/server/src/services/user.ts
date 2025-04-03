@@ -57,5 +57,16 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     async getUsers() {
         const users = await strapi.documents('plugin::users-permissions.user').findMany({ populate: ['role'] });
         return await sanitizeUsers(users);
+    },
+    async updateMe(ctx: any) {
+        const { documentId } = ctx.state.user;
+        const { fullName, phoneNumber, alternatePhoneNumber } = ctx.request.body;
+        const updatedUser = await strapi.documents('plugin::users-permissions.user').update({
+            documentId,
+            data: { fullName, phoneNumber, alternatePhoneNumber } as any,
+            populate: ['role']
+        })
+        return await sanitizeUser(updatedUser);
     }
+
 });
