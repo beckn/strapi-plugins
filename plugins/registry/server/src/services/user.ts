@@ -1,6 +1,6 @@
 import type { Core } from '@strapi/strapi';
 import crypto from 'crypto';
-import { getAuthService } from '../utils/service';
+import { getAuthService, getRoleService } from '../utils/service';
 import { sanitizeUser, sanitizeUsers } from '../utils/user';
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
     async createUser(userData) {
@@ -58,6 +58,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         const users = await strapi.documents('plugin::users-permissions.user').findMany({ populate: ['role'] });
         return await sanitizeUsers(users);
     },
+
     async updateMe(ctx: any) {
         const { documentId } = ctx.state.user;
         const { fullName, phoneNumber, alternatePhoneNumber } = ctx.request.body;
@@ -67,6 +68,28 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
             populate: ['role']
         })
         return await sanitizeUser(updatedUser);
-    }
+    },
 
+    async update(ctx: any) {
+        const { documentId } = ctx.params;
+        const { fullName, phoneNumber, alternatePhoneNumber, isAdmin, email, blocked, accountStatus } = ctx.request.body;
+
+        const newPayload: any = { fullName, phoneNumber, alternatePhoneNumber, email, username: email, blocked, accountStatus }
+        if (isAdmin) {
+            const adminRole = await getRoleService(strapi).findAdminRole();
+            newPayload.role = adminRole.documentId;
+        } else {
+            const userRole = await getRoleService(strapi).findUserRole();
+            newPayload.role = userRole.documentId;
+        }
+        console.log("newPayload", newPayload, documentId);
+        const updatedUser = await strapi.documents('plugin::users-permissions.user').update({
+            documentId: documentId,
+            data: newPayload,
+            populate: ['role']
+        });
+
+        console.log("updatedUser", updatedUser);
+        return await sanitizeUser(updatedUser);
+    },
 });

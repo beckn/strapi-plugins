@@ -2,7 +2,7 @@ export default [
     {
         method: 'POST',
         path: '/auth/local',
-        handler: 'auth.local',
+        handler: 'auth.login',
         config: {
             policies: [],
             auth: false,

@@ -14,7 +14,7 @@ export default [
         handler: "user.me",
         config: {
             auth: false,
-            middlewares: ["plugin::registry.authMiddleware"],
+            middlewares: ["plugin::registry.auth"],
         }
     },
     {
@@ -23,7 +23,7 @@ export default [
         handler: "user.getUsers",
         config: {
             auth: false,
-            middlewares: ["plugin::registry.authMiddleware"],
+            middlewares: ["plugin::registry.auth"],
         }
     },
     {
@@ -32,7 +32,16 @@ export default [
         handler: "user.updateMe",
         config: {
             auth: false,
-            middlewares: ["plugin::registry.authMiddleware"],
+            middlewares: ["plugin::registry.auth"],
+        }
+    },
+    {
+        method: "PUT",
+        path: "/users/:documentId",
+        handler: "user.update",
+        config: {
+            auth: false,
+            middlewares: ["plugin::registry.auth", "plugin::registry.isAdmin"],
         }
     }
 ];

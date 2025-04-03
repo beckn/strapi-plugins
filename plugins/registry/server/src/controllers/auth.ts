@@ -1,10 +1,10 @@
 import { Core } from '@strapi/strapi';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
-    async local(ctx: any) {
+    async login(ctx: any) {
         try {
             const authService = strapi.plugin("registry").service("auth");
-            return await authService.local(ctx);
+            return await authService.login(ctx);
         } catch (error) {
             ctx.badRequest(error);
         }

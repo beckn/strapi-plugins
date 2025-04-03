@@ -2,7 +2,7 @@
 import type { Core } from '@strapi/strapi';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
-    async local(ctx: any) {
+    async login(ctx: any) {
         try {
             const { identifier, password } = ctx.request.body;
 
@@ -56,7 +56,6 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
             ctx.badRequest(error);
         }
     },
-
 
     async sendEmailConfirmation(email: string) {
         try {
