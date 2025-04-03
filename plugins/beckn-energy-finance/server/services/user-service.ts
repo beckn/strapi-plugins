@@ -42,7 +42,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const tag_group = await strapi.entityService.findMany(
             "api::tag.tag",
             {
-              filter: {
+              filters: {
                 tag_group_id: {
                   id: item.tag_group_id
                 }
