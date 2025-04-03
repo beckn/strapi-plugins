@@ -14,10 +14,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     console.log("Request====>", JSON.stringify({ message, context }));
     const { item, provider, category, fulfillment, tags } =
       message?.intent || {};
-    const { domain } = context;
+    const { domain, location } = context;
     const filters: KeyValuePair = provider
       ? FilterUtil.getProviderFilter(provider)
       : {};
+    if (location?.country?.code) {
+      filters.country = {
+        code: location?.country?.code
+      };
+    }
     const populate: KeyValuePair = {
       items: {
         populate: {
@@ -108,7 +113,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
     ObjectUtil.removeEmptyObjectKeys(filters);
     ObjectUtil.removeEmptyKeys(populate);
-    console.log("Filters=====>", JSON.stringify(filters));
+    console.log(
+      "Filters=====>",
+      JSON.stringify(
+        {
+          filters,
+          populate
+        },
+        null,
+        2
+      )
+    );
     let providers = await strapi.entityService.findMany(
       "api::provider.provider",
       {
@@ -216,33 +231,34 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     function filterProvidersByRentalEnd(providers) {
       const currentEpochInMs = Math.floor(Date.now());
 
-      return providers.map((provider) => {
-        const filteredItems = provider.items.filter((item) => {
-          const rentalEndFulfillment = item.item_fulfillment_ids.find(
-            (fulfillment) => fulfillment.fulfilment_id.type === "RENTAL_END",
-          );
+      return providers
+        .map((provider) => {
+          const filteredItems = provider.items.filter((item) => {
+            const rentalEndFulfillment = item.item_fulfillment_ids.find(
+              (fulfillment) => fulfillment.fulfilment_id.type === "RENTAL_END"
+            );
 
-          if (!rentalEndFulfillment) return false;
+            if (!rentalEndFulfillment) return false;
 
-          const rentalEndTime = parseInt(
-            rentalEndFulfillment.fulfilment_id.state_value,
-          );
+            const rentalEndTime = parseInt(
+              rentalEndFulfillment.fulfilment_id.state_value
+            );
 
-          const rentalEndTimeInMs =
-            rentalEndTime.toString().length === 10
-              ? rentalEndTime * 1000
-              : rentalEndTime;
+            const rentalEndTimeInMs =
+              rentalEndTime.toString().length === 10
+                ? rentalEndTime * 1000
+                : rentalEndTime;
 
+            return rentalEndTimeInMs > currentEpochInMs;
+          });
 
-          return rentalEndTimeInMs > currentEpochInMs;
-        });
-
-        // Return provider with filtered items
-        return {
-          ...provider,
-          items: filteredItems,
-        };
-      }).filter((provider) => provider.items.length > 0); // Only keep providers that have matching items
+          // Return provider with filtered items
+          return {
+            ...provider,
+            items: filteredItems
+          };
+        })
+        .filter((provider) => provider.items.length > 0); // Only keep providers that have matching items
     }
 
     if (isDegRental(context)) {
@@ -252,7 +268,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       providers = providers.sort(
         (providerA: any, providerB: any) =>
           new Date(providerB.items[0].createdAt).getTime() -
-          new Date(providerA.items[0].createdAt).getTime(),
+          new Date(providerA.items[0].createdAt).getTime()
       );
 
       console.log(

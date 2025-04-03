@@ -67,6 +67,7 @@ export class FilterUtil {
     filter.provider_name = {
       $contains: provider.descriptor?.name
     };
+
     return filter;
   };
 

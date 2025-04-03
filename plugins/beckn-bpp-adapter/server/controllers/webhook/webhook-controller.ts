@@ -20,22 +20,25 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             !Object.keys(result).length)
         ) {
           console.log("No Data Found");
-          try {
-            const result = await strapi
-              .plugin("beckn-bpp-adapter")
-              .service("webhookService")
-              .index(body, domain);
-            ctx.body = {
-              status: "SUCCESS",
-              data: result,
-            };
-          } catch (error) {
-            console.error("Error in creating catalogue:", error);
-            ctx.status = error.status || 500;
-            ctx.body = {
-              status: "FAILED",
-              message: error.message,
-            };
+          if (process.env?.BECKN_ENV && process.env?.BECKN_ENV === "BOC") {
+            console.log("ENV is ", process.env.BECKN_ENV);
+            try {
+              const result = await strapi
+                .plugin("beckn-bpp-adapter")
+                .service("webhookService")
+                .index(body, domain);
+              ctx.body = {
+                status: "SUCCESS",
+                data: result
+              };
+            } catch (error) {
+              console.error("Error in creating catalogue:", error);
+              ctx.status = error.status || 500;
+              ctx.body = {
+                status: "FAILED",
+                message: error.message
+              };
+            }
           }
         } else {
           const transformedResult = await TLService.transform(
@@ -48,8 +51,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         await strapi.eventHub.emit("webhook.request", body);
         ctx.body = {
           ack: {
-            status: "ACK",
-          },
+            status: "ACK"
+          }
         };
       }
     } catch (error) {
@@ -66,11 +69,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
       ctx.body = {
         ack: {
-          status: "ACK",
-        },
+          status: "ACK"
+        }
       };
     } catch (error) {
       // throw error;
     }
-  },
+  }
 });
