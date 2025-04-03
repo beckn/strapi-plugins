@@ -1,47 +1,44 @@
 import { Core } from '@strapi/strapi';
+import { getUserService, getRoleService } from '../utils/service';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
-    async signup(ctx) {
+    async signup(ctx: any) {
         try {
             const { email, password } = ctx.request.body;
-            const userService = strapi.plugin("registry").service("user");
-            const roleService = strapi.plugin("registry").service("role");
-
-            const role = await roleService.findUserRole();
+            const role = await getRoleService(strapi).findUserRole();
             if (!role) {
                 throw new Error('No user role found');
             }
-            const user = await userService.createUser({ username: email, email, password, role: role.documentId });
+            const user = await getUserService(strapi).createUser({ username: email, email, password, role: role.documentId });
 
-            // Use Strapi's sanitizeEntity to remove sensitive fields
-            const sanitizedUser = await strapi.contentAPI.sanitize.output(user, strapi.getModel('plugin::users-permissions.user'));
             const jwt = strapi.plugin('users-permissions').service('jwt').issue({
                 documentId: user.documentId,
             });
 
-            ctx.created({ jwt, user: sanitizedUser });
+            ctx.created({ jwt, user });
         } catch (error) {
             ctx.badRequest(error);
         }
     },
 
-    async me(ctx) {
+    async me(ctx: any) {
         try {
-            const userService = strapi.plugin("registry").service("user");
-            const user = await userService.me(ctx.state.user);
+            const user = await getUserService(strapi).me(ctx.state.user);
             ctx.send(user);
         } catch (error) {
             ctx.badRequest(error);
         }
     },
 
-    async getUsers(ctx) {
+    async getUsers(ctx: any) {
         try {
-            const userService = strapi.plugin("registry").service("user");
-            const users = await userService.getUsers();
+            const users = await getUserService(strapi).getUsers();
             ctx.send(users);
         } catch (error) {
             ctx.badRequest(error);
         }
+    },
+
+    async updateMe(ctx: any) {
     }
 });

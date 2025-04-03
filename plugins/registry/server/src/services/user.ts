@@ -1,6 +1,7 @@
 import type { Core } from '@strapi/strapi';
 import crypto from 'crypto';
-
+import { getAuthService } from '../utils/service';
+import { sanitizeUser, sanitizeUsers } from '../utils/user';
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
     async createUser(userData) {
         try {
@@ -11,18 +12,14 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
                     // Generate new verification token
                     const verificationToken = crypto.randomBytes(32).toString('hex');
 
-                    // Update user with new verification token and password
+                    // Update user with new verification token
                     await strapi.documents('plugin::users-permissions.user').update({
                         documentId: user.documentId,
-                        data: {
-                            verificationToken,
-                            password: userData.password
-                        } as any
+                        data: { verificationToken } as any
                     });
 
                     // Resend verification email
-                    const authService = strapi.plugin("registry").service("auth");
-                    await authService.sendEmailConfirmation(userData.email);
+                    await getAuthService(strapi).sendEmailConfirmation(userData.email);
 
                     throw new Error('Email already exists. Please check your email for verification link');
                 }
@@ -42,11 +39,11 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
                 populate: ['role']
             });
 
-            const authService = strapi.plugin("registry").service("auth");
             // Send verification email in background
-            authService.sendEmailConfirmation(userData.email);
+            getAuthService(strapi).sendEmailConfirmation(userData.email);
 
-            return user;
+            return sanitizeUser(user);
+
         } catch (error) {
             throw new Error(error);
         }
@@ -54,11 +51,11 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
     async me(user) {
         const fetchedUser = await strapi.documents('plugin::users-permissions.user').findOne({ documentId: user.documentId, populate: 'role' });
-        return fetchedUser;
+        return await sanitizeUser(fetchedUser);
     },
 
     async getUsers() {
-        const users = await strapi.documents('plugin::users-permissions.user').findMany({ emailVerified: true } as any);
-        return users;
+        const users = await strapi.documents('plugin::users-permissions.user').findMany({ populate: ['role'] });
+        return await sanitizeUsers(users);
     }
 });
