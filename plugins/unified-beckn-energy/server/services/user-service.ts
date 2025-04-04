@@ -433,6 +433,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   ) {
     const agentId = user.agent.id;
     const { provider: providerData, items } = providerDetails.data[0].message;
+    const context_location = providerDetails.data[0].context.location;
     const item = items[0];
     try {
       let result = {};
@@ -445,6 +446,29 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             //no provider found for this user
             providerData.agents = [agentId];
             //create category or get category id
+            let countryId: number;
+            const country = await strapi.entityService.findMany(
+              "api::country.country",
+              {
+                filters: {
+                  code: context_location?.country?.code
+                }
+              }
+            );
+            if (!country.length) {
+              const createdCountry = await strapi.entityService.create(
+                "api::country.country",
+                {
+                  data: {
+                    name: context_location?.country?.name || "",
+                    code: context_location?.country?.code || ""
+                  }
+                }
+              );
+              countryId = createdCountry.id;
+            } else {
+              countryId = country[0].id;
+            }
             const category = await strapi.entityService.findMany(
               "api::category.category",
               {
@@ -583,6 +607,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                   ...(providerData.rating && {
                     provider_rating: providerData.rating
                   }),
+                  country: countryId,
                   payment_methods: [
                     createPaymentMethod.id,
                     createPaymentMethod2.id
@@ -636,10 +661,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             // );
           }
 
-          const hasUserActiveRentals = await this.userHasActiveRentals(providerId, item);
-          console.log("hasUserActiveRentals", hasUserActiveRentals)
+          const hasUserActiveRentals = await this.userHasActiveRentals(
+            providerId,
+            item
+          );
+          console.log("hasUserActiveRentals", hasUserActiveRentals);
           if (hasUserActiveRentals) {
-            throw new Error("The Physical asset is already listed for renting.");
+            throw new Error(
+              "The Physical asset is already listed for renting."
+            );
           }
 
           const createBasePricePerHr = await strapi.entityService.create(
@@ -647,7 +677,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             {
               data: {
                 title: "BASE PRICE",
-                currency: "INR",
+                currency:
+                  context_location?.country?.code === "USA" ? "USD" : "INR",
                 value: `${Number(price)}`,
                 publishedAt: new Date()
               }
@@ -658,8 +689,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             {
               data: {
                 title: "TAXES",
-                currency: "INR",
-                value: `${Number(price) * 0.18}`,
+                currency:
+                  context_location?.country?.code === "USA" ? "USD" : "INR",
+                value:
+                  context_location?.country?.code === "USA"
+                    ? `${Number(price) * 0.06}`
+                    : `${Number(price) * 0.18}`,
                 publishedAt: new Date()
               }
             }
@@ -1047,19 +1082,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             console.log("createdCategory:: ", createdCategory);
             categoryId = createdCategory.id;
           }
-          if(!providerData.domain_name) {
-            throw new Error('Domain Name not provided');
+          if (!providerData.domain_name) {
+            throw new Error("Domain Name not provided");
           }
-          const domain = await strapi.entityService.findMany("api::domain.domain", {
-            filters: {
+          const domain = await strapi.entityService.findMany(
+            "api::domain.domain",
+            {
+              filters: {
                 DomainName: providerData.domain_name
+              }
             }
-          });
+          );
           let domainId;
           if (domain && domain.length) {
             domainId = domain[0].id;
           } else {
-            throw new Error('Create Catalogue: Domain Not Found');
+            throw new Error("Create Catalogue: Domain Not Found");
           }
           const createProvider = await strapi.db
             .query("api::provider.provider")
@@ -1212,36 +1250,34 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
 
   async userHasActiveRentals(providerId: number, item: any) {
-    const items = await strapi.entityService.findMany(
-      "api::item.item",
-      {
-        filters: {
-          provider: providerId,
-          name: item?.name
-        },
-        populate: {
-          item_fulfillment_ids: {
-            populate: {
-              fulfilment_id: {
-                populate: {
-                  state_value: true,
-                  type: true
-                }
+    const items = await strapi.entityService.findMany("api::item.item", {
+      filters: {
+        provider: providerId,
+        name: item?.name
+      },
+      populate: {
+        item_fulfillment_ids: {
+          populate: {
+            fulfilment_id: {
+              populate: {
+                state_value: true,
+                type: true
               }
             }
           }
         }
       }
-    );
+    });
 
     // Check if any item has RENTAL_END greater than current time
     const currentEpoch = Math.floor(Date.now() / 1000); // Convert to seconds
 
-    const activeRentals = items.filter(item => {
+    const activeRentals = items.filter((item) => {
       const itemFulfillments = item.item_fulfillment_ids || [];
 
-      return itemFulfillments.some(fulfillment => {
-        const rentalEndFulfillment = fulfillment.fulfilment_id?.type === 'RENTAL_END';
+      return itemFulfillments.some((fulfillment) => {
+        const rentalEndFulfillment =
+          fulfillment.fulfilment_id?.type === "RENTAL_END";
 
         if (!rentalEndFulfillment) return false;
 
@@ -1252,7 +1288,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
         // Handle state_value that could be in seconds or milliseconds
         const stateValue = parseInt(fulfillment.fulfilment_id.state_value);
-        const stateValueInMs = stateValue.toString().length === 10 ? stateValue * 1000 : stateValue;
+        const stateValueInMs =
+          stateValue.toString().length === 10 ? stateValue * 1000 : stateValue;
         const endTimestamp = Math.floor(stateValueInMs / 1000); // Convert to seconds for comparison
 
         const isActive = endTimestamp > currentEpoch;
