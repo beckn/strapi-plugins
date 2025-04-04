@@ -766,6 +766,182 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Network domain",
+			"item": [
+				{
+					"name": "Network domain",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwtToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"name\": \"{{$randomDomainName}}\",\n     \"schema_url\": \"{{$randomUrl}}\",\n     \"description\": \"{{$randomLoremText}}\"\n   }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/network-domains",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"network-domains"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Network domain",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwtToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/network-domains/:documentId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"network-domains",
+								":documentId"
+							],
+							"variable": [
+								{
+									"key": "documentId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Network domain",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"osvaldo.com\",\n    \"description\": \"Dolore ea voluptatibus.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/network-domains/l06z78cs5ozrsme9fuv5r2wr",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"network-domains",
+								"l06z78cs5ozrsme9fuv5r2wr"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Network domains",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/network-domains",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"network-domains"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Network domain",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/network-domains/:documentId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"network-domains",
+								":documentId"
+							],
+							"variable": [
+								{
+									"key": "documentId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
