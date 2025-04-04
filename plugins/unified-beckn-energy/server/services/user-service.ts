@@ -569,22 +569,23 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               console.log("createImageUrlEntry===>", createImageUrlEntry);
             }
             const providerNameSuggestions = [
-              "'s flour mill",
-              "'s home",
-              "'s car"
+              "Denby High School",
+              "Central High School",
+              "Mason Academy",
+              "Detroit Public School"
             ];
 
             const createProvider = await strapi.db
               .query("api::provider.provider")
               .create({
                 data: {
-                  // provider_name:
-                  //   `${user?.agent?.first_name}${
-                  //     providerNameSuggestions[Math.floor(Math.random() * 3)]
-                  //   }` || providerData.name,
                   provider_name:
-                    `${user?.agent?.first_name}${providerNameSuggestions[0]}` ||
-                    providerData.name,
+                    `${user?.agent?.first_name}${
+                      providerNameSuggestions[Math.floor(Math.random() * 4)]
+                    }` || providerData.name,
+                  // provider_name:
+                  //   `${user?.agent?.first_name}${providerNameSuggestions[0]}` ||
+                  //   providerData.name,
                   domain_id: domainId,
                   ...(imageId && { logo: imageId }),
                   ...(providerData.short_desc && {
