@@ -5,7 +5,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     try {
       const providerId = user?.agent?.provider_id?.id;
       if (!providerId) {
-        throw new Error("No Provider is linked to this user to get catalogues");
+        return {
+          message: "No Provider is linked to this user to get catalogues"
+        };
+        // throw new Error("No Provider is linked to this user to get catalogues");
       }
       const providerData = await strapi.entityService.findOne(
         "api::provider.provider",
