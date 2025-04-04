@@ -569,10 +569,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               console.log("createImageUrlEntry===>", createImageUrlEntry);
             }
             const providerNameSuggestions = [
-              "Denby High School",
-              "Central High School",
-              "Mason Academy",
-              "Detroit Public School"
+              "Denby High School's Battery",
+              "Central High School's Battery",
+              "Mason Academy's Battery",
+              "Detroit Public School's Battery"
             ];
 
             const createProvider = await strapi.db
