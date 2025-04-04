@@ -13,3 +13,11 @@ export const getAuthService = (strapi: Core.Strapi) => {
 export const getRoleService = (strapi: Core.Strapi) => {
     return strapi.plugin(pluginName).service("role");
 }
+
+export const getNetworkDomainService = (strapi: Core.Strapi) => {
+    return strapi.plugin(pluginName).service("network-domain");
+}
+
+export const getDomainService = (strapi: Core.Strapi) => {
+    return strapi.service("api::domain.domain");
+}

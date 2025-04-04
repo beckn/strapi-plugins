@@ -1,6 +1,7 @@
 import subscriberAPIRoutes from './subscribers';
 import user from './user';
 import auth from './auth';
+import networkDomain from './network-domain';
 
 const routes = {
   subscribers: {
@@ -14,6 +15,10 @@ const routes = {
   auth: {
     type: 'content-api',
     routes: auth,
+  },
+  networkDomain: {
+    type: 'content-api',
+    routes: networkDomain,
   },
 };
 
