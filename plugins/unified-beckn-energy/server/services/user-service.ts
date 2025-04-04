@@ -580,9 +580,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               .create({
                 data: {
                   provider_name:
-                    `${user?.agent?.first_name}${
-                      providerNameSuggestions[Math.floor(Math.random() * 4)]
-                    }` || providerData.name,
+                    `${providerNameSuggestions[Math.floor(Math.random() * 4)]}` || providerData.name,
                   // provider_name:
                   //   `${user?.agent?.first_name}${providerNameSuggestions[0]}` ||
                   //   providerData.name,
