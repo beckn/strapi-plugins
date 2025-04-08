@@ -845,6 +845,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             items: {
               populate: {
                 sc_retail_product: true
+              },
+              sort: {
+                createdAt: "desc"
               }
             }
           }
