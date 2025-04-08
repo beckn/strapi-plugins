@@ -116,6 +116,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             let required_bpps: any[] = [];
 
             // Check trusted source for BPPs
+            //Temp Fix - issue related to Dhiway API for verifying creds
+            //remove it once Dhiway apis are working
+            trade.trusted_source = false;
             if (trade.trusted_source) {
               for (let i = 0; i < searchResp.data.length; i++) {
                 const requestBecknJson = await strapi.entityService.create(
@@ -133,27 +136,25 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                   }
                 );
                 const bpp = searchResp.data[i];
-
-                //Todo: Uncomment this on dhiway apis for verifying cred is working fine
                 
-                // const vc = await credentialVcService.getBecknJson(
-                //   bpp.context.bpp_uri
-                // );
-                // console.log(
-                //   `\n\nGot Beckn Json from `,
-                //   bpp.context.bpp_uri,
-                //   JSON.stringify(vc),
-                //   `Trade ID: ${trade.id}`
-                // );
-                // if (vc.success) {
-                //   const verifyVCResp =
-                //     await credentialVcService.verifyCertificate(vc.vc);
-                //   console.log("\nVerify VC Resp====>", verifyVCResp);
-                //   if (verifyVCResp.isVerified) {
-                //     required_bpps.push(bpp);
-                //     continue;
-                //   } else continue;
-                // } else continue;
+                const vc = await credentialVcService.getBecknJson(
+                  bpp.context.bpp_uri
+                );
+                console.log(
+                  `\n\nGot Beckn Json from `,
+                  bpp.context.bpp_uri,
+                  JSON.stringify(vc),
+                  `Trade ID: ${trade.id}`
+                );
+                if (vc.success) {
+                  const verifyVCResp =
+                    await credentialVcService.verifyCertificate(vc.vc);
+                  console.log("\nVerify VC Resp====>", verifyVCResp);
+                  if (verifyVCResp.isVerified) {
+                    required_bpps.push(bpp);
+                    continue;
+                  } else continue;
+                } else continue;
               }
             } else {
               required_bpps = JSON.parse(JSON.stringify(searchResp.data));
@@ -161,6 +162,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             let required_providers: any[] = [];
 
             // Check Cred Required
+            //Temp Fix - For issue related to Dhiway API for verifying creds
+            //remove it once Dhiway apis are working
+            trade.cred_required = false;
             if (trade.cred_required) {
               console.log(
                 `\nNeed to Check and Verify Creds for Trade Id: ${trade.id}\n`
@@ -196,57 +200,55 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                       `\nSending cred request for Trade Id: ${trade.id} to ${bpp.context.bpp_uri}\n`
                     );
 
-                    //Todo: Uncomment this on dhiway apis for verifying cred is working fine
+                    const on_credResp = await gclService.cred(
+                      bpp.context.bpp_id,
+                      bpp.context.bpp_uri,
+                      trasaction_id,
+                      trade,
+                      provider.id
+                    );
 
-                    // const on_credResp = await gclService.cred(
-                    //   bpp.context.bpp_id,
-                    //   bpp.context.bpp_uri,
-                    //   trasaction_id,
-                    //   trade,
-                    //   provider.id
-                    // );
+                    console.log(
+                      `\nTradeId:${trade.id} On Cred Resp===>`,
+                      JSON.stringify(on_credResp),
+                      "\n"
+                    );
 
-                    // console.log(
-                    //   `\nTradeId:${trade.id} On Cred Resp===>`,
-                    //   JSON.stringify(on_credResp),
-                    //   "\n"
-                    // );
+                    const becknOnCredBapEvent =
+                      await strapi.entityService.create(
+                        "api::trade-event-bap.trade-event-bap",
+                        {
+                          data: {
+                            trade: trade.id,
+                            event_name:
+                              TRADE_EVENTS.beckn_on_cred_bap.event_name,
+                            description:
+                              TRADE_EVENTS.beckn_on_cred_bap.description,
+                            data: { provider, on_credResp },
+                            publishedAt: new Date()
+                          },
+                          trx
+                        }
+                      );
 
-                    // const becknOnCredBapEvent =
-                    //   await strapi.entityService.create(
-                    //     "api::trade-event-bap.trade-event-bap",
-                    //     {
-                    //       data: {
-                    //         trade: trade.id,
-                    //         event_name:
-                    //           TRADE_EVENTS.beckn_on_cred_bap.event_name,
-                    //         description:
-                    //           TRADE_EVENTS.beckn_on_cred_bap.description,
-                    //         data: { provider, on_credResp },
-                    //         publishedAt: new Date()
-                    //       },
-                    //       trx
-                    //     }
-                    //   );
-
-                    // console.log(
-                    //   `\nVerifying cred for Trade Id: ${trade.id}\n`
-                    // );
-                    // const verifyVCResp =
-                    //   await credentialVcService.verifyCertificate(
-                    //     on_credResp.data[0].message.proofs.attachments[0]
-                    //       .verifiableCredential
-                    //   );
-                    // if (verifyVCResp.isVerified) {
-                    //   required_providers.push({
-                    //     context: bpp.context,
-                    //     message: {
-                    //       name: bpp?.message?.name || "BPP 1",
-                    //       providers: [provider]
-                    //     }
-                    //   });
-                    //   continue;
-                    // } else continue;
+                    console.log(
+                      `\nVerifying cred for Trade Id: ${trade.id}\n`
+                    );
+                    const verifyVCResp =
+                      await credentialVcService.verifyCertificate(
+                        on_credResp.data[0].message.proofs.attachments[0]
+                          .verifiableCredential
+                      );
+                    if (verifyVCResp.isVerified) {
+                      required_providers.push({
+                        context: bpp.context,
+                        message: {
+                          name: bpp?.message?.name || "BPP 1",
+                          providers: [provider]
+                        }
+                      });
+                      continue;
+                    } else continue;
                   } catch (error) {
                     continue;
                   }
