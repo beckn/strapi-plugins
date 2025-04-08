@@ -295,4 +295,20 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ctx.badRequest(error.message);
     }
   },
+  async resetAccount(ctx) {
+    try {
+      const userService = strapi
+        .plugin("unified-beckn-energy")
+        .service("userService");
+      const userId = ctx.state.user?.id;
+      const { categoryId } = ctx.request.body;
+      const result = await userService.resetAccount(
+        userId,
+        Number(categoryId)
+      );
+      ctx.body = result;
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
 });
