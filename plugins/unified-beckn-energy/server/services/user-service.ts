@@ -583,11 +583,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                   //   `${user?.agent?.first_name}${
                   //     providerNameSuggestions[Math.floor(Math.random() * 4)]
                   //   }` || providerData.name,
-                  // provider_name:
-                  //   `${user?.agent?.first_name}${providerNameSuggestions[0]}` ||
-                  //   providerData.name,
                   provider_name:
-                    `Detroit Public School's Battery` || providerData.name,
+                    `${user?.agent?.first_name}'s Battery` || providerData.name,
+
                   domain_id: domainId,
                   ...(imageId && { logo: imageId }),
                   ...(providerData.short_desc && {
