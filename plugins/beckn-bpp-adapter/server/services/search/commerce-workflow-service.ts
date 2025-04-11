@@ -145,7 +145,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         provider.items.forEach((item) => {
           if (item.sc_retail_product) {
             // Update the code and price value
-            if (item?.code) item.code = `${parseInt(item.code) + 10}`;
+
             if (item?.sc_retail_product?.min_price)
               item.sc_retail_product.min_price = `${
                 parseInt(item.sc_retail_product.min_price) - 2
