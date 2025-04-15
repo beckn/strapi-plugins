@@ -21,3 +21,14 @@ export const getNetworkDomainService = (strapi: Core.Strapi) => {
 export const getDomainService = (strapi: Core.Strapi) => {
     return strapi.service("api::domain.domain");
 }
+export const getDeDiService = (strapi: Core.Strapi) => {
+    return strapi.plugin(pluginName).service("dedi");
+}
+
+export const getSubscribersService = (strapi: Core.Strapi) => {
+    return strapi.plugin(pluginName).service("subscribers");
+}
+
+export const getPSService = (strapi: Core.Strapi) => {
+    return strapi.plugin(pluginName).service('psService');
+}

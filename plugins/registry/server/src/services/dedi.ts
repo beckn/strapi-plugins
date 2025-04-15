@@ -81,6 +81,7 @@ export default {
                 method,
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${process.env.DEDI_ACCESS_TOKEN}`
                 },
                 body: body ? JSON.stringify(body) : undefined,
             });

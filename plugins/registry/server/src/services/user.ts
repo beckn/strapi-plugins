@@ -55,8 +55,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         return await sanitizeUser(fetchedUser);
     },
 
-    async getUsers() {
-        const users = await strapi.documents('plugin::users-permissions.user').findMany({ populate: ['role'] });
+    async getUsers(ctx: any) {
+        const users = await strapi.plugin('users-permissions').service('user').fetchAll(ctx.query);
         return await sanitizeUsers(users);
     },
 

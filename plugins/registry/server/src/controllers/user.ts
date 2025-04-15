@@ -32,7 +32,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
     async getUsers(ctx: any) {
         try {
-            const users = await getUserService(strapi).getUsers();
+            const users = await getUserService(strapi).getUsers(ctx);
             ctx.send(users);
         } catch (error) {
             ctx.badRequest(error);

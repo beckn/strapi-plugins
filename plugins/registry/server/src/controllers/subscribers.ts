@@ -4,9 +4,10 @@ import _sodium from 'libsodium-wrappers';
 import { SubscribeRequest, SUBSCRIBER_STATUS } from '../types/requests/SubscribeRequest';
 import { LookupRequest } from 'src/types/requests/LookupRequest';
 import dedi from '../services/dedi';
-
+import { getSubscribersService } from '../utils/service';
 export const REGISTRY_NAME = 'network-subscribers';
 const DEDI_NAMESPACE = process.env.DEDI_NAMESPACE || 'fide.org.temp';
+const DEDI_NAMESPACE_ID = process.env.DEDI_NAMESPACE_ID || 'namespace:cord:tirXC4b4uecnyDhjh8Bd4Bugazmv4MezuFoe2tHRLtRhipTAX';
 
 const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
   async subscribe(ctx) {
@@ -249,6 +250,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       ctx.throw(400, error.message);
     }
   },
+
   async loadDomains(ctx) {
     try {
       const { registry_url = '' } = ctx.request.body;
@@ -291,6 +293,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       return;
     }
   },
+
   async getDomainController(ctx) {
     try {
       const psService = strapi.plugin('registry').service('psService');
@@ -306,6 +309,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       return;
     }
   },
+
   async register(ctx) {
     try {
       console.log('Register Payload===>', ctx.request.body);
@@ -319,6 +323,28 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       return;
     }
   },
+
+  async getSubscribers(ctx) {
+    try {
+      const records = await getSubscribersService(strapi).getSubscribers(DEDI_NAMESPACE_ID, REGISTRY_NAME);
+      ctx.send(records, 200);
+    } catch (error) {
+      console.log(error);
+      ctx.throw(400, error.message);
+    }
+  },
+
+  async update(ctx) {
+    try {
+      const { id } = ctx.params;
+      const { data } = ctx.request.body;
+      const updatedRecord = await getSubscribersService(strapi).updateSubscriber(DEDI_NAMESPACE_ID, REGISTRY_NAME, id, data);
+      ctx.send(updatedRecord, 200);
+    } catch (error) {
+      console.log(error);
+      ctx.throw(400, error.message);
+    }
+  }
 });
 
 export default subscribers;

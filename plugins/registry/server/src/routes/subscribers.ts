@@ -44,4 +44,22 @@ export default [
       auth: false,
     },
   },
+  {
+    method: 'GET',
+    path: '/subscribers',
+    handler: 'subscribers.getSubscribers',
+    config: {
+      middlewares: ['plugin::registry.auth'],
+      auth: false,
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/subscribers/:id',
+    handler: 'subscribers.update',
+    config: {
+      middlewares: ['plugin::registry.auth'],
+      auth: false,
+    },
+  }
 ];
