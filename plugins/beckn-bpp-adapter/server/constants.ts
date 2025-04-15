@@ -85,5 +85,12 @@ export const DEFAULT_INITIAL_STATE = [
       state_code: "LOAN_DISBURSED",
       state_value: "LOAN DISBURSED"
     }
+  },
+  {
+    domain: "deg:ev",
+    state: {
+      state_code: "CHARGING_STATUS",
+      state_value: "0"
+    }
   }
 ];

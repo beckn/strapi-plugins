@@ -184,6 +184,19 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                   )
                 );
               });
+
+            const tagListFlatMap = bodyItem.tags.flatMap((tag) =>
+              tag.list.map((inner) => inner)
+            );
+            const requiredTags = responseItem.cat_attr_tag_relations.filter(
+              (relation) =>
+                tagListFlatMap.find(
+                  (elem) =>
+                    elem?.descriptor?.code === relation?.taxanomy_id?.code &&
+                    elem?.descriptor?.name === relation?.taxanomy_id?.tag_name
+                )
+            );
+            responseItem.cat_attr_tag_relations = requiredTags;
           }
           return responseItem;
         });

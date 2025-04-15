@@ -9,6 +9,7 @@ import {
 } from "../../util";
 import { KeyValuePair } from "../../types";
 import { PLUGIN, DEFAULT_INITIAL_STATE } from "../../constants";
+import { initiateCharging } from "../../util/ev.utils";
 
 function generateRandomString(length = 10) {
   const chars =
@@ -344,7 +345,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             { data: orderFulfillmentDetail }
           );
           orderFulFillmentId = orderFulfillmentRes.id;
-
+          if (domain === "deg:ev") {
+            initiateCharging(orderFulfillmentRes, strapi);
+          }
           if (isDegRental(context)) {
             const fulfillment = fulfillments[1];
             const anotherOrderFulfillmentDetail = {
