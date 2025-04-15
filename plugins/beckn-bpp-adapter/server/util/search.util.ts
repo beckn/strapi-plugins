@@ -283,7 +283,7 @@ export class SearchUtil {
                 (fulfillment: KeyValuePair) => {
                   const checkInGps = gps.split(",") || [];
                   const itemGps =
-                    fulfillment?.location_id?.gps.split(",") || [];
+                    fulfillment?.location_id?.gps?.split(",") || [];
                   const checkInLat = checkInGps[0];
                   const checkInLong = checkInGps[1];
                   const itemLat = itemGps[0];

@@ -181,6 +181,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           taxanomy: "TAG",
           taxanomy_id: tag
         }));
+        // Filter items where sc_retail_product is not null 
+        //since price filter keeps those item whose sc_retail_product 
+        //is null (after applying price filter on sc_retail_product 
+        //strapi make those sc_retail_product as null)
+
+        provider.items = provider.items?.filter(
+          (item) => item.sc_retail_product !== null
+        );
+
         await Promise.all(
           await provider.items.map(async (item) => {
             await Promise.all(
@@ -248,7 +257,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               rentalEndTime.toString().length === 10
                 ? rentalEndTime * 1000
                 : rentalEndTime;
-
+            console.log('Rental time: ', rentalEndTimeInMs,'  ', currentEpochInMs);
             return rentalEndTimeInMs > currentEpochInMs;
           });
 
@@ -288,21 +297,25 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 tag?.taxanomy_id?.value === listItem?.value
             )
           );
+          console.log('Is match:: ', isMatch, 'items: ', JSON.stringify(itemFromStrapi));
           if (isMatch) {
             return itemFromStrapi;
           }
         });
 
-        if (filteredItems?.length) {
-          return { ...provider, items: filteredItems };
-        }
-        return null;
-      });
-      if ((newProviders as any[]).every((elem: any) => elem === null)) {
-        return providers;
-      } else {
-        return newProviders;
+        // Only keep provider if any items matched
+      if (filteredItems?.length) {
+        return { ...provider, items: filteredItems };
       }
+      return null;
+    })
+    .filter((provider) => provider !== null); // Remove null providers
+      // if ((newProviders as any[]).every((elem: any) => elem === null)) {
+      //   return providers;
+      // } else {
+      //   return newProviders;
+      // }
+      return newProviders;
     }
     return providers;
   }

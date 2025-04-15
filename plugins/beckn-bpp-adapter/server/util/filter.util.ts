@@ -18,7 +18,7 @@ export class FilterUtil {
     if (item?.descriptor?.name) {
       filter.$or.push({
         name: {
-          $contains: item.descriptor?.name
+          $containsi: item.descriptor?.name
         }
       });
     }
@@ -51,10 +51,20 @@ export class FilterUtil {
     }
     if (item?.price?.maximum_value) {
       const maximum_value = item.price?.maximum_value;
-      filter.min_price = {
+      filter.max_price = {
         $gte: parseInt(maximum_value)
       };
     }
+    if (item?.price?.minimum_value) {
+      const minimum_value = item.price?.minimum_value;
+      filter.min_price = {
+        $lte: parseInt(minimum_value)
+      };
+    }
+    filter.id = {
+      "$notNull": true
+    }
+    console.log('Sc retail filter:: ', JSON.stringify(filter));
     return filter;
   };
 
@@ -65,7 +75,7 @@ export class FilterUtil {
     };
     filter.id = provider.id;
     filter.provider_name = {
-      $contains: provider.descriptor?.name
+      $containsi: provider.descriptor?.name
     };
 
     return filter;
