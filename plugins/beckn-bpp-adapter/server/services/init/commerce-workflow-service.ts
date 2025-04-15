@@ -199,7 +199,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               responseItem?.cat_attr_tag_relations?.filter((relation) => {
                 return bodyItem?.tags?.some((tagGroup) =>
                   tagGroup?.list?.some(
-                    (tag) => tag?.code === relation?.taxanomy_id?.tag_name
+                    (tag) =>
+                      tag?.descriptor?.code === relation?.taxanomy_id?.code
                   )
                 );
               });

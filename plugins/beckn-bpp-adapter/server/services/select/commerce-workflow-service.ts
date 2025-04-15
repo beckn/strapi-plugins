@@ -161,6 +161,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
         })
       );
+
       const quantitySelected = {
         quantity: items[0]?.quantity?.selected?.measure?.value || 0
       };
@@ -178,7 +179,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               responseItem?.cat_attr_tag_relations?.filter((relation) => {
                 return bodyItem?.tags?.some((tagGroup) =>
                   tagGroup?.list?.some(
-                    (tag) => tag?.code === relation?.taxanomy_id?.tag_name // Check code if provided in request
+                    (tag) =>
+                      tag?.descriptor?.code === relation?.taxanomy_id?.code // Check code if provided in request
                   )
                 );
               });
