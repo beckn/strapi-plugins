@@ -314,20 +314,32 @@ export const tags = (tagRelations) => {
   const groupedRelationsMap = new Map();
 
   tagRelations?.forEach((taxanomy) => {
-    const tagGroupId = taxanomy.taxanomy_id?.tag_group_id?.id;
-    if (taxanomy.taxanomy === "TAG" && tagGroupId) {
-      if (!groupedRelationsMap.has(tagGroupId)) {
-        groupedRelationsMap.set(tagGroupId, {
-          descriptor: {
-            description: taxanomy.taxanomy_id.tag_group_id.tag_group_name,
-            code: taxanomy.taxanomy_id.tag_group_id.code
-          },
-          list: []
-        });
+    const tagGroupId =
+      taxanomy.taxanomy_id?.tag_group_id?.id || "no-tag-group-id";
+    if (taxanomy.taxanomy === "TAG") {
+      if (tagGroupId) {
+        if (!groupedRelationsMap.has(tagGroupId)) {
+          groupedRelationsMap.set(tagGroupId, {
+            ...(tagGroupId !== "no-tag-group-id"
+              ? {
+                  descriptor: {
+                    description:
+                      taxanomy.taxanomy_id.tag_group_id.tag_group_name,
+                    code: taxanomy.taxanomy_id.tag_group_id.code
+                  }
+                }
+              : {}),
+            list: []
+          });
+        }
       }
+
       groupedRelationsMap.get(tagGroupId).list.push({
-        value: taxanomy?.taxanomy_id?.tag_name || "",
-        code: taxanomy?.taxanomy_id?.code || "",
+        value: taxanomy?.taxanomy_id?.value || "",
+        descriptor: {
+          code: taxanomy?.taxanomy_id?.code || "",
+          name: taxanomy?.taxanomy_id?.tag_name || ""
+        },
         display: taxanomy?.taxanomy_id?.display
       });
     }
