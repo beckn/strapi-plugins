@@ -55,7 +55,7 @@
                         },
                         "selected": {
                             "count": $itemQuantity($itemBody, %.id),
-                            "measure:{
+                            "measure":{
                                 "value": $string($itemQuantity($itemBody, %.id))
                             }
                         }
