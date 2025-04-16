@@ -536,8 +536,32 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           ];
       const billingDetails = billing;
       const fulfillmentDetails = fulfillments;
-
-      const confirmDetails = itemDetails.map((item) => ({
+      //filter out the selected items only
+      const filteredProviders = itemDetails.map((provider) => {
+        const providerItemIds = provider?.items.map((item) => String(item.id));
+        // Filter items that exist in provider.items
+        const itemsBody = items.filter((item) => providerItemIds.includes(String(item.id)));
+        provider.items = provider.items.map((responseItem) => {
+          const bodyItem = items.find(
+            (item) => Number(item.id) === responseItem.id
+          );
+          if (bodyItem && bodyItem?.tags?.length) {
+            responseItem.cat_attr_tag_relations =
+              responseItem?.cat_attr_tag_relations?.filter((relation) => {
+                return bodyItem?.tags?.some((tagGroup) =>
+                  tagGroup?.list?.some(
+                    (tag) =>
+                      tag?.descriptor?.code === relation?.taxanomy_id?.code
+                  )
+                );
+              });
+          }
+          return responseItem;
+        });
+        provider.itemsBody = itemsBody;
+        return provider;
+      });
+      const confirmDetails = filteredProviders.map((item) => ({
         ...item,
         billing: billingDetails,
         fulfillment: fulfillmentDetails,
@@ -566,7 +590,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           min_price: itemPrice,
           id: scRetailId,
           stock_quantity: oldItemQuantity
-        } = itemDetails[0].items[0].sc_retail_product;
+        } = filteredProviders[0].items[0].sc_retail_product;
         TradeUtil.addTradeLog({
           transactionId: context.transaction_id,
           event_name: "beckn_on_confirm",
