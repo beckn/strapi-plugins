@@ -62,11 +62,11 @@
                             }
                         },
                         "selected": {
-                            "count": $itemQuantity($tags, %.id),
+                            "count": $countItemQuantity($tags, %.id),
                             "measure":{
-                                "value": $string($itemQuantity($tags, %.id))
+                                "value": $valueItemQuantity($tags, %.id)
                             }
-                        },
+                        }
 
                     },
                     "category_ids": $map(

@@ -378,11 +378,20 @@ export const providerTags = (tagRelations) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const itemQuantity = (tags: any, itemId: any) => {
+export const countItemQuantity = (tags: any, itemId: any) => {
   if (!Array.isArray(tags) || tags.length === 0) {
     return 1;
   }
   // Find the tag where id matches itemId
   const matchingTag = tags.find((tag) => String(tag.id) === String(itemId));
-  return Number(matchingTag?.quantity?.selected?.count || matchingTag?.quantity?.selected?.measure?.value || 1);
+  return Number(matchingTag?.quantity?.selected?.count || 1);
+};
+
+export const valueItemQuantity = (tags: any, itemId: any) => {
+  if (!Array.isArray(tags) || tags.length === 0) {
+    return 1;
+  }
+  // Find the tag where id matches itemId
+  const matchingTag = tags.find((tag) => String(tag.id) === String(itemId));
+  return matchingTag?.quantity?.selected?.measure?.value ?  String(matchingTag?.quantity?.selected?.measure?.value) : '';
 };

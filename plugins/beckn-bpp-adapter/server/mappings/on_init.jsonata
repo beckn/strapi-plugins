@@ -54,9 +54,9 @@
                             }
                         },
                         "selected": {
-                            "count": $itemQuantity($itemBody, %.id),
-                            "measure":{
-                                "value": $string($itemQuantity($itemBody, %.id))
+                            "count": $countItemQuantity($itemBody, %.id),
+                            "measure": {
+                                "value": $valueItemQuantity($itemBody, %.id)
                             }
                         }
                     },
