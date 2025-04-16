@@ -1,8 +1,34 @@
 import type { Core } from '@strapi/strapi';
 import { getDeDiService, getPSService } from '../utils/service';
 import { SUBSCRIBER_STATUS } from '../types/requests/SubscribeRequest';
+import { nanoid } from 'nanoid';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
+
+    async subscribe(ctx, namespace: string, registryName: string) {
+        const { subscriber_id: subscriberId, url: subscriberUrl, signing_public_key: signingPublicKey } = ctx.request.body;
+
+        let existingSubscriber = await this.getBySubscriberId(namespace, registryName, subscriberId);
+        if (!existingSubscriber) {
+            const newSubscriberData = await this.buildSubscriberPayload(ctx.request.body);
+            await getDeDiService(strapi).addRecord(namespace, registryName, newSubscriberData);
+            existingSubscriber = newSubscriberData;
+        }
+
+        if (existingSubscriber && existingSubscriber.details.status == SUBSCRIBER_STATUS.INITIATED) {
+            const isSubscriberValid = await this.isSubscriberValid(subscriberUrl, subscriberId, signingPublicKey);
+            if (isSubscriberValid) {
+                existingSubscriber.details.status = SUBSCRIBER_STATUS.SUBSCRIBED;
+                await getDeDiService(strapi).updateRecord(namespace, registryName, existingSubscriber.record_name, existingSubscriber);
+                return ctx.send({ message: "Subscriber subscribed successfully" });
+            } else {
+                throw new Error("Subscriber validation failed");
+            }
+        } else if (existingSubscriber && existingSubscriber.details.status == SUBSCRIBER_STATUS.SUBSCRIBED) {
+            return ctx.send({ message: "Subscriber subscribed successfully" });
+        }
+    },
+
     async getSubscribers(namespace: string, registryName: string) {
         const response = await getDeDiService(strapi).queryDirectory(namespace, registryName, {});
         return response?.data?.records?.map((records) => ({
@@ -64,5 +90,38 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         const onSubscribeValidation = await getPSService(strapi)
             .callOnSubscribe(subscriberUrl, subscriberId, challenge, signingPublicKey);
         return onSubscribeValidation.validOnSubscribe;
+    },
+
+    async getBySubscriberId(namespace: string, registryName: string, subscriberId: string) {
+        const result = await getDeDiService(strapi).queryDirectory(namespace, registryName, { name: subscriberId });
+        const existingRecord = result.data.records?.find((record) => record.details.subscriber_id == subscriberId);
+        return existingRecord;
+    },
+
+    async subscriberExists(namespace: string, registryName: string, subscriberId: string) {
+        return (await this.getBySubscriberId(namespace, registryName, subscriberId)) ? true : false;
+    },
+
+    async buildSubscriberPayload(data: any) {
+        return {
+            record_name: nanoid(),
+            description: `${data.subscriber_id} - ${data.domain} - ${data.url}`,
+            details: {
+                domain: data.domain,
+                url: data.url,
+                type: data.type,
+                signing_public_key: data.signing_public_key,
+                encr_public_key: data.encr_public_key,
+                subscriber_id: data.subscriber_id,
+                key_id: data.key_id,
+                valid_from: data.valid_from,
+                valid_until: data.valid_until,
+                status: data.type == "LREG" || data.type == "BG" ? SUBSCRIBER_STATUS.SUBSCRIBED : SUBSCRIBER_STATUS.INITIATED,
+                country_code: data.country_code,
+                city_code: data.city_code,
+                created: new Date(),
+                updated: new Date(),
+            }
+        }
     }
 })

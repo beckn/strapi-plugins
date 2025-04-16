@@ -4,7 +4,7 @@ export default [
     path: '/subscribers/subscribe',
     handler: 'subscribers.subscribe',
     config: {
-      policies: [],
+      middlewares: ['plugin::registry.auth'],
       auth: false,
     },
   },
