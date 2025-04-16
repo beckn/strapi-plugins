@@ -62,12 +62,11 @@
                             }
                         },
                         "selected": {
-                            "count": $itemQuantity($tags, %.id),
+                            "count": $countItemQuantity($tags, %.id),
                             "measure":{
-                                "value": $string($itemQuantity($tags, %.id))
+                                "value": $valueItemQuantity($tags, %.id)
                             }
-                        },
-
+                        }
                     },
                     "category_ids": $map(
                         $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'CATEGORY'}),
