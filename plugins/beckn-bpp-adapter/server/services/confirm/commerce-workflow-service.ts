@@ -546,15 +546,19 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             (item) => Number(item.id) === responseItem.id
           );
           if (bodyItem && bodyItem?.tags?.length) {
-            responseItem.cat_attr_tag_relations =
-              responseItem?.cat_attr_tag_relations?.filter((relation) => {
-                return bodyItem?.tags?.some((tagGroup) =>
-                  tagGroup?.list?.some(
-                    (tag) =>
-                      tag?.descriptor?.code === relation?.taxanomy_id?.code
+              const tagListFlatMap = bodyItem.tags.flatMap((tag) =>
+                tag.list.map((inner) => inner)
+              );
+              const requiredTags = responseItem.cat_attr_tag_relations.filter(
+                (relation) =>
+                  tagListFlatMap.find(
+                    (elem) =>
+                      elem?.descriptor?.code === relation?.taxanomy_id?.code &&
+                      elem?.descriptor?.name === relation?.taxanomy_id?.tag_name
                   )
-                );
-              });
+              );
+              responseItem.cat_attr_tag_relations = requiredTags;
+
           }
           return responseItem;
         });
