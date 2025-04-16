@@ -190,6 +190,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         });
       }
       initDetails = initDetails.map((provider) => {
+        const providerItemIds = provider?.items.map((item) => String(item.id));
+        // Filter items that exist in provider.items
+        const itemsBody = items.filter((item) => providerItemIds.includes(String(item.id)));
         provider.items = provider.items.map((responseItem) => {
           const bodyItem = items.find(
             (item) => Number(item.id) === responseItem.id
@@ -219,7 +222,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
           return responseItem;
         });
-
+        provider.itemsBody = itemsBody;
         return provider;
       });
       return initDetails;
