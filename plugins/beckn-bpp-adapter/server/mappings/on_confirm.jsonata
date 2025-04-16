@@ -55,7 +55,7 @@
                     "selected": {
                         "count": $$.message[0].order_request.order.items[0].quantity.selected.count ? $$.message[0].order_request.order.items[0].quantity.selected.count : stock_quantity ? stock_quantity : 0,
                         "measure":{
-                            "value": $$.message[0].order_request.order.items[0].quantity.selected.count ? $string($$.message[0].order_request.order.items[0].quantity.selected.count) : $string(stock_quantity ? stock_quantity : 0),
+                            "value": $$.message[0].order_request.order.items[0].quantity.selected.measure.value ? $string($$.message[0].order_request.order.items[0].quantity.selected.measure.value) : $string(stock_quantity ? stock_quantity : 0),
                             "unit": $$.message[0].order_request.order.items[0].quantity.selected.measure.unit ? $$.message[0].order_request.order.items[0].quantity.selected.measure.unit :  quantity_unit
                         }
                     }

@@ -37,7 +37,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         message.order;
       const { domain, transaction_id, bap_id, bap_uri } = context;
       //only for p2p energy trade
-      const itemQuantity = items[0]?.quantity?.selected?.count;
+      const itemQuantity = items[0]?.quantity?.selected?.count || items[0]?.quantity?.selected?.measure?.value;
       const currentDate = new Date();
       const isoString = currentDate.toISOString();
       let orderId;
@@ -337,7 +337,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             state_code: defaultState.state.state_code,
             state_value: defaultState.state.state_value,
             publishedAt: isoString,
-            quantity: message.order?.items[0]?.quantity?.selected?.count || 5
+            quantity: parseFloat(message.order?.items[0]?.quantity?.selected?.count ||
+              items[0]?.quantity?.selected?.measure?.value || 5)
           };
 
           const orderFulfillmentRes = await strapi.entityService.create(
@@ -359,7 +360,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               state_code: fulfillment.state.descriptor.code,
               state_value: fulfillment.state.descriptor.name,
               publishedAt: isoString,
-              quantity: message.order?.items[0]?.quantity?.selected?.count || 5
+              quantity: parseFloat(message.order?.items[0]?.quantity?.selected?.count ||
+                items[0]?.quantity?.selected?.measure?.value || 5)
             };
             await strapi.entityService.create(
               "api::order-fulfillment.order-fulfillment",

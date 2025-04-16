@@ -163,7 +163,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
 
       const quantitySelected = {
-        quantity: items[0]?.quantity?.selected?.measure?.value || 0
+        quantity: items[0]?.quantity?.selected?.count || items[0]?.quantity?.selected?.measure?.value || 0
       };
       itemDetails[0] = { ...itemDetails[0], ...quantitySelected };
 

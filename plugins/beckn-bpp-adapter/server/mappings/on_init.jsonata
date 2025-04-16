@@ -54,7 +54,10 @@
                             }
                         },
                         "selected": {
-                            "count": $itemQuantity($itemBody, %.id)
+                            "count": $itemQuantity($itemBody, %.id),
+                            "measure:{
+                                "value": $string($itemQuantity($itemBody, %.id))
+                            }
                         }
                     },
                     "category_ids": $map(
