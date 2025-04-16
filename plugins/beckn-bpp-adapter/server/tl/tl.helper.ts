@@ -384,5 +384,5 @@ export const itemQuantity = (tags: any, itemId: any) => {
   }
   // Find the tag where id matches itemId
   const matchingTag = tags.find((tag) => String(tag.id) === String(itemId));
-  return matchingTag?.quantity?.selected?.count || matchingTag?.quantity?.selected?.measure?.value || 1;
+  return Number(matchingTag?.quantity?.selected?.count || matchingTag?.quantity?.selected?.measure?.value || 1);
 };
