@@ -429,7 +429,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     walletId: string,
     startTime: string,
     endTime: string,
-    price: string
+    price: string,
+    rentingCapacity: string | number
   ) {
     const agentId = user.agent.id;
     const { provider: providerData, items } = providerDetails.data[0].message;
@@ -759,6 +760,38 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             }
           );
           console.log("Created item: ", createEnergyItem);
+          //Add cat-attr-tag-relation
+          if(rentingCapacity) {
+            //Add cat-attr-tag-relation
+            //create tag
+            const createdTag = await strapi.entityService.create(
+              "api::tag.tag",
+              {
+                data: {
+                  tag_name: "Renting Capacity",
+                  code: "Renting Capacity",
+                  value: String(rentingCapacity),
+                  publishedAt: new Date()
+                }
+              }
+            )
+            console.log('Created tag:: ', createdTag);
+
+            //add relation in cat-attr-tag-relation
+            const tagRelations = await strapi.entityService.create(
+              "api::cat-attr-tag-relation.cat-attr-tag-relation",
+              {
+                data: {
+                  taxanomy: "TAG",
+                  taxanomy_id: String(createdTag.id),
+                  item: createEnergyItem.id,
+                  provider: providerId,
+                  publishedAt: new Date()
+                }
+              }
+            )
+            console.log('Created cat-attr-tag-relation:: ', tagRelations);
+          }
           //Create Fulfillment
           const startFullfillment = await strapi.entityService.create(
             "api::fulfilment.fulfilment",

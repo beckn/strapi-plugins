@@ -48,14 +48,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const userService = strapi
         .plugin("unified-beckn-energy")
         .service("userService");
-      const { providerDetails, walletId, startTime, endTime, price } = ctx.request.body;
+      const { providerDetails, walletId, startTime, endTime, price, rentingCapacity } = ctx.request.body;
       const result = await userService.createRentCatalogue(
         ctx.state.user,
         providerDetails,
         walletId,
         startTime,
         endTime,
-        price
+        price,
+        rentingCapacity
       );
       ctx.body = result;
     } catch (error) {
