@@ -100,6 +100,10 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         }
     },
 
+    async revokeSubscriber(namespace: string, registryName: string, recordName: string) {
+        await getDeDiService(strapi).revokeRecord(namespace, registryName, recordName);
+    },
+
     async isSubscriberValid(subscriberUrl: string, subscriberId: string, signingPublicKey: string) {
         const challenge = Math.random().toString(36).substring(2, 2 + 6);
         const onSubscribeValidation = await getPSService(strapi)

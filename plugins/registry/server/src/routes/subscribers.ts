@@ -61,5 +61,15 @@ export default [
       middlewares: ['plugin::registry.auth'],
       auth: false,
     },
+  },
+
+  {
+    method: 'DELETE',
+    path: '/subscribers/:id',
+    handler: 'subscribers.revoke',
+    config: {
+      middlewares: ['plugin::registry.auth', 'plugin::registry.isAdmin'],
+      auth: false,
+    },
   }
 ];

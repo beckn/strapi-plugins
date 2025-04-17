@@ -92,8 +92,8 @@ export default {
             const response = await fetch(`${BASE_URL}${endpoint}`, {
                 method,
                 headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${process.env.DEDI_ACCESS_TOKEN}`
+                    ...(body ? { "Content-Type": "application/json" } : {}),
+                    ...(process.env.DEDI_ACCESS_TOKEN ? { "Authorization": `Bearer ${process.env.DEDI_ACCESS_TOKEN}` } : {})
                 },
                 body: body ? JSON.stringify(body) : undefined,
             });

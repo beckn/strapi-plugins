@@ -3,7 +3,7 @@ import _sodium from 'libsodium-wrappers';
 
 import { LookupRequest } from 'src/types/requests/LookupRequest';
 import dedi from '../services/dedi';
-import { getSubscribersService } from '../utils/service';
+import { getSubscribersService, getUserNetworkSubscriberService } from '../utils/service';
 export const REGISTRY_NAME = 'network-subscribers';
 
 const DEDI_NAMESPACE_ID = process.env.DEDI_NAMESPACE_ID || 'namespace:cord:tirXC4b4uecnyDhjh8Bd4Bugazmv4MezuFoe2tHRLtRhipTAX';
@@ -161,6 +161,24 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       const { data } = ctx.request.body;
       const updatedRecord = await getSubscribersService(strapi).updateSubscriber(DEDI_NAMESPACE_ID, REGISTRY_NAME, id, data);
       ctx.send(updatedRecord, 200);
+    } catch (error) {
+      console.log(error);
+      ctx.throw(400, error.message);
+    }
+  },
+
+  async revoke(ctx) {
+    try {
+      const { id } = ctx.params;
+      // Revoke subscriber from DeDi
+      await getSubscribersService(strapi).revokeSubscriber(DEDI_NAMESPACE_ID, REGISTRY_NAME, id);
+
+      // Revoke subscriber from User Network Subscriber
+      const { results: userNetworkSubscribers } = await getUserNetworkSubscriberService(strapi).find({ filters: { record_name: id } });
+      for (const userNetworkSubscriber of userNetworkSubscribers) {
+        await getUserNetworkSubscriberService(strapi).delete(userNetworkSubscriber.documentId);
+      }
+      ctx.send({ message: 'Subscriber revoked successfully' }, 200);
     } catch (error) {
       console.log(error);
       ctx.throw(400, error.message);
