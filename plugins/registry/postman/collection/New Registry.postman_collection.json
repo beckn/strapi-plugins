@@ -107,6 +107,93 @@
 					]
 				},
 				{
+					"name": "Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwtToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"password\": \"{{password}}\",\n    \"fullName\": \"{{$randomFullName}}\",\n    \"phoneNumber\": \"{{$randomPhoneNumber}}\",\n    \"alternatePhoneNumber\": \"{{$randomPhoneNumber}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Signup",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"{{$randomFirstName}}.{{$randomLastName}}@gmail.com\",\n    \"password\": \"User@123\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/signup",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"signup"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"jwt\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzgsImlhdCI6MTc0MzQ5NDc3MywiZXhwIjoxNzQzNTgxMTczfQ.an21aIoTD5dieohKMNWBDGEVz_cKGOtzW_HRcZHOdUU\",\n    \"user\": {\n        \"id\": 38,\n        \"documentId\": \"ws2t1iermfvub9nmreofkyaf\",\n        \"username\": \"Mireille.Sauer@gmail.com\",\n        \"email\": \"Mireille.Sauer@gmail.com\",\n        \"blocked\": false,\n        \"createdAt\": \"2025-04-01T08:06:13.133Z\",\n        \"updatedAt\": \"2025-04-01T08:06:13.133Z\",\n        \"publishedAt\": \"2025-04-01T08:06:13.041Z\",\n        \"phone_number\": null,\n        \"alternate_phone_number\": null,\n        \"full_name\": null,\n        \"email_verified\": false,\n        \"account_status\": null\n    }\n}"
+						}
+					]
+				},
+				{
 					"name": "Me",
 					"request": {
 						"auth": {
@@ -156,7 +243,6 @@
 								{
 									"key": "Content-Type",
 									"value": "application/json",
-									"name": "Content-Type",
 									"description": "",
 									"type": "text"
 								}
@@ -233,7 +319,6 @@
 								{
 									"key": "Content-Type",
 									"value": "application/json",
-									"name": "Content-Type",
 									"description": "",
 									"type": "text"
 								}
@@ -311,7 +396,6 @@
 								{
 									"key": "Content-Type",
 									"value": "application/json",
-									"name": "Content-Type",
 									"description": "",
 									"type": "text"
 								}
@@ -389,7 +473,6 @@
 								{
 									"key": "Content-Type",
 									"value": "application/json",
-									"name": "Content-Type",
 									"description": "",
 									"type": "text"
 								}
@@ -449,7 +532,6 @@
 								{
 									"key": "Content-Type",
 									"value": "application/json",
-									"name": "Content-Type",
 									"description": "",
 									"type": "text"
 								}
@@ -606,7 +688,6 @@
 								{
 									"key": "Content-Type",
 									"value": "application/json",
-									"name": "Content-Type",
 									"description": "",
 									"type": "text"
 								}
@@ -674,7 +755,6 @@
 								{
 									"key": "Content-Type",
 									"value": "application/json",
-									"name": "Content-Type",
 									"description": "",
 									"type": "text"
 								}
@@ -773,7 +853,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"subscriber_id\": \"bcp1231111.com\",\n    \"url\": \"https://111177e8-2409-40e3-3008-9085-352b-456e-19e7-b8d6.ngrok-free.app\",\n    \"type\": \"BG\",\n    \"domain\": \"mobility\",\n    \"location\": {\n        \"city\": {\n            \"name\": \"Bangalore\",\n            \"code\": \"BLR\"\n        },\n        \"country\": {\n            \"name\": \"India\",\n            \"code\": \"IN\"\n        }\n    },\n    \"key_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n    \"signing_public_key\": \"gifBoEwBMQ5GB2yOqE7YnBqCSsqJxmWb3B17hxHRAD8=\",\n    \"encr_public_key\": \"gifBoEwBMQ5GB2yOqE7YnBqCSsqJxmWb3B17hxHRAD8=\",\n    \"valid_from\": \"2025-03-18T16:36:08.651Z\",\n    \"valid_until\": \"2026-03-18T16:36:08.651Z\",\n    \"created\": \"2025-03-18T16:36:08.651Z\",\n    \"updated\": \"2025-03-18T16:36:08.651Z\",\n    \"nonce\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\"\n}",
+							"raw": "{\n    \"subscriber_id\": \"bcp123111111.com\",\n    \"url\": \"https://11111177e8-2409-40e3-3008-9085-352b-456e-19e7-b8d6.ngrok-free.app\",\n    \"type\": \"BG\",\n    \"domain\": \"mobility\",\n    \"location\": {\n        \"city\": {\n            \"name\": \"Bangalore\",\n            \"code\": \"BLR\"\n        },\n        \"country\": {\n            \"name\": \"India\",\n            \"code\": \"IN\"\n        }\n    },\n    \"key_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n    \"signing_public_key\": \"gifBoEwBMQ5GB2yOqE7YnBqCSsqJxmWb3B17hxHRAD8=\",\n    \"encr_public_key\": \"gifBoEwBMQ5GB2yOqE7YnBqCSsqJxmWb3B17hxHRAD8=\",\n    \"valid_from\": \"2025-03-18T16:36:08.651Z\",\n    \"valid_until\": \"2026-03-18T16:36:08.651Z\",\n    \"created\": \"2025-03-18T16:36:08.651Z\",\n    \"updated\": \"2025-03-18T16:36:08.651Z\",\n    \"nonce\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1000,6 +1080,126 @@
 							],
 							"path": [
 								"subscribers"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Subscribers",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/subscribers",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"subscribers"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Security-Policy",
+									"value": "connect-src 'self' https:;img-src 'self' data: blob: https://market-assets.strapi.io;media-src 'self' data: blob:;default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline'"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": ""
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Strapi <strapi.io>"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2698"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 10 Apr 2025 07:52:32 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"entry:cord:u2yFNXZ7SVKe1cqu8vtxoQ7xWoPF8F9C2Uo8omhR7bxRtY993\",\n        \"name\": \"registry.becknprotocol.io.k1\",\n        \"status\": \"SUBSCRIBED\",\n        \"type\": \"LREG\",\n        \"domain\": \"registry.becknprotocol.io\",\n        \"signing_public_key\": \"8ESqL7gcwBayfoZUQQ3tBNFALbI7mzfJ2UN7lM8OCDU=\",\n        \"subscriber_id\": \"registry.becknprotocol.io..LREG\",\n        \"subscriber_url\": \"https://registry.becknprotocol.io/subscribers\",\n        \"unique_key_id\": \"registry.becknprotocol.io.k1\",\n        \"valid_from\": \"2024-11-21T10:39:22.098Z\",\n        \"valid_until\": \"2034-11-21T22:39:22.098Z\",\n        \"created\": \"2024-11-21T10:39:22.000Z\",\n        \"encr_public_key\": \"I6NspwbUAuZD6INwP/vUus2+srjGauBL26HfGc3V0Rk=\",\n        \"city_code\": \"STD:080\",\n        \"country_code\": \"IND\",\n        \"updated\": \"2024-11-21T10:39:22.000Z\"\n    },\n    {\n        \"id\": \"entry:cord:u2yFNXZ7SVKe1cqu8vtxoQ7xWoPF8F9C2Uo8omhR7bxRtY993\",\n        \"name\": \"registry.becknprotocol.io.k1\",\n        \"status\": \"SUBSCRIBED\",\n        \"type\": \"LREG\",\n        \"domain\": \"registry.becknprotocol.io\",\n        \"signing_public_key\": \"8ESqL7gcwBayfoZUQQ3tBNFALbI7mzfJ2UN7lM8OCDU=\",\n        \"subscriber_id\": \"registry.becknprotocol.io..LREG\",\n        \"subscriber_url\": \"https://registry.becknprotocol.io/subscribers\",\n        \"unique_key_id\": \"registry.becknprotocol.io.k1\",\n        \"valid_from\": \"2024-11-21T10:39:22.098Z\",\n        \"valid_until\": \"2034-11-21T22:39:22.098Z\",\n        \"created\": \"2024-11-21T10:39:22.000Z\",\n        \"encr_public_key\": \"I6NspwbUAuZD6INwP/vUus2+srjGauBL26HfGc3V0Rk=\",\n        \"city_code\": \"STD:080\",\n        \"country_code\": \"IND\",\n        \"updated\": \"2024-11-21T10:39:22.000Z\"\n    },\n    {\n        \"id\": \"entry:cord:u2yFNXZ7SVKe1cqu8vtxoQ7xWoPF8F9C2Uo8omhR7bxRtY993\",\n        \"name\": \"registry.becknprotocol.io.k1\",\n        \"status\": \"SUBSCRIBED\",\n        \"type\": \"LREG\",\n        \"domain\": \"registry.becknprotocol.io\",\n        \"signing_public_key\": \"8ESqL7gcwBayfoZUQQ3tBNFALbI7mzfJ2UN7lM8OCDU=\",\n        \"subscriber_id\": \"registry.becknprotocol.io..LREG\",\n        \"subscriber_url\": \"https://registry.becknprotocol.io/subscribers\",\n        \"unique_key_id\": \"registry.becknprotocol.io.k01\",\n        \"valid_from\": \"2024-11-21T10:39:22.098Z\",\n        \"valid_until\": \"2034-11-21T22:39:22.098Z\",\n        \"created\": \"2024-11-21T10:39:22.000Z\",\n        \"encr_public_key\": \"I6NspwbUAuZD6INwP/vUus2+srjGauBL26HfGc3V0Rk=\",\n        \"city_code\": \"STD:080\",\n        \"country_code\": \"IND\",\n        \"updated\": \"2024-11-21T10:39:22.000Z\"\n    },\n    {\n        \"id\": \"entry:cord:u2yFNXZ7SVKe1cqu8vtxoQ7xWoPF8F9C2Uo8omhR7bxRtY993\",\n        \"name\": \"registry.becknprotocol.io.k1\",\n        \"status\": \"SUBSCRIBED\",\n        \"type\": \"LREG\",\n        \"domain\": \"registry.becknprotocol.io\",\n        \"signing_public_key\": \"8ESqL7gcwBayfoZUQQ3tBNFALbI7mzfJ2UN7lM8OCDU=\",\n        \"subscriber_id\": \"registry.becknprotocol.io..LREG\",\n        \"subscriber_url\": \"https://registry.becknprotocol.io/subscribers\",\n        \"unique_key_id\": \"registry.becknprotocol.io.k1\",\n        \"valid_from\": \"2024-11-21T10:39:22.098Z\",\n        \"valid_until\": \"2034-11-21T22:39:22.098Z\",\n        \"created\": \"2024-11-21T10:39:22.000Z\",\n        \"encr_public_key\": \"I6NspwbUAuZD6INwP/vUus2+srjGauBL26HfGc3V0Rk=\",\n        \"city_code\": \"STD:080\",\n        \"country_code\": \"IND\",\n        \"updated\": \"2024-11-21T10:39:22.000Z\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Subscribers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwtToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/subscribers/bcp.com",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"subscribers",
+								"bcp.com"
 							]
 						}
 					},
