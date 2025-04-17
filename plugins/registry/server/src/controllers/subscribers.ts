@@ -23,8 +23,8 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       const response = await dedi.queryDirectory(DEDI_NAMESPACE_ID, REGISTRY_NAME, {});
       const filters = body;
       console.log('Filters for lookup===>', filters);
-
-      const records = response.records.filter((record) => {
+      
+      const records = response.data.records.filter((record) => {
         if (!record?.revoked) {
           return Object.entries(filters).every(([key, value]) => {
             if (key === 'domain') {
