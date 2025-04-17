@@ -9,6 +9,15 @@ export default [
         }
     },
     {
+        method: "POST",
+        path: "/users",
+        handler: "user.add",
+        config: {
+            middlewares: ["plugin::registry.auth", "plugin::registry.isAdmin"],
+            auth: false
+        }
+    },
+    {
         method: "GET",
         path: "/users/me",
         handler: "user.me",

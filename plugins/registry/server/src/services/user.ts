@@ -50,6 +50,35 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         }
     },
 
+    async add(ctx: any) {
+        const userData = ctx.request.body;
+
+        // Check if user already exists
+        const existingUser = await strapi.documents('plugin::users-permissions.user').findMany({ filters: { email: userData.email } });
+        if (existingUser?.length) {
+            throw new Error('User already exists');
+        }
+
+        // Set username to email
+        userData.username = userData.email;
+
+        // Set email verified to true
+        userData.emailVerified = true;
+
+        // Set role to user
+        const role = await getRoleService(strapi).findUserRole();
+        userData.role = role.documentId;
+
+        // Create user
+        const user = await strapi.documents('plugin::users-permissions.user').create({
+            data: userData,
+            populate: ['role']
+        });
+
+        // sanitize user and return
+        return sanitizeUser(user);
+    },
+
     async me(user) {
         const fetchedUser = await strapi.documents('plugin::users-permissions.user').findOne({ documentId: user.documentId, populate: 'role' });
         return await sanitizeUser(fetchedUser);
