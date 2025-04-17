@@ -270,8 +270,80 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .filter((provider) => provider.items.length > 0); // Only keep providers that have matching items
     }
 
+    function filterProvidersByStartAndEndTime(providers, startTime, endTime) {
+
+      return providers
+        .map((provider) => {
+          const filteredItems = provider.items.filter((item) => {
+            const rentalEndFulfillment = item.item_fulfillment_ids.find(
+              (fulfillment) => fulfillment.fulfilment_id.type === "RENTAL_END"
+            );
+            const rentalStartFulfillment = item.item_fulfillment_ids.find(
+              (fulfillment) => fulfillment.fulfilment_id.type === "RENTAL_START"
+            );
+
+            if (!rentalEndFulfillment || !rentalStartFulfillment) return false;
+
+            const rentalEndTime = parseInt(
+              rentalEndFulfillment.fulfilment_id.state_value
+            );
+
+            const rentalEndTimeInMs =
+              rentalEndTime.toString().length === 10
+                ? rentalEndTime * 1000
+                : rentalEndTime;
+
+            const rentalStartTime = parseInt(
+              rentalStartFulfillment.fulfilment_id.state_value
+            );
+
+            const rentalStartTimeInMs =
+              rentalStartTime.toString().length === 10
+                ? rentalStartTime * 1000
+                : rentalStartTime;
+
+            startTime = startTime.toString().length === 10 ? startTime * 1000 : startTime;
+            endTime = endTime.toString().length === 10 ? endTime * 1000 : endTime;
+            console.log('Rental Start time in catalog and searched startTime: ', rentalStartTimeInMs, '  ', startTime);
+            console.log('Rental End time in catalog and searched endTime: ', rentalEndTimeInMs, '  ', endTime);
+
+            return rentalEndTimeInMs > endTime && rentalStartTimeInMs < startTime;
+          });
+
+          // Return provider with filtered items
+          return {
+            ...provider,
+            items: filteredItems
+          };
+        })
+        .filter((provider) => provider.items.length > 0); // Only keep providers that have matching items
+    }
+
     if (isDegRental(context)) {
-      providers = filterProvidersByRentalEnd(providers);
+      //fetch rental start time and end time
+      const stops = fulfillment?.stops || [];
+
+      let startTime = null;
+      let endTime = null;
+
+      for (const stop of stops) {
+        if (stop.type === 'START_TIME') {
+          startTime = stop.time?.duration || null;
+        }
+        if (stop.type === 'END_TIME') {
+          endTime = stop.time?.duration || null;
+        }
+      }
+
+      console.log("startTime:", startTime);
+      console.log("endTime:", endTime);
+      if(startTime && endTime) {
+        //filter by startTime and endTime
+        providers = filterProvidersByStartAndEndTime(providers, startTime, endTime);
+      } else {
+        providers = filterProvidersByRentalEnd(providers);
+      }
+      
 
       // sorting the provider.items[0].createdAdd in descending order
       providers = providers.sort(
