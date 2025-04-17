@@ -32,3 +32,7 @@ export const getSubscribersService = (strapi: Core.Strapi) => {
 export const getPSService = (strapi: Core.Strapi) => {
     return strapi.plugin(pluginName).service('psService');
 }
+
+export const getUserNetworkSubscriberService = (strapi: Core.Strapi) => {
+    return strapi.service('api::user-network-subscriber.user-network-subscriber');
+}

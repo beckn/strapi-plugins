@@ -1,7 +1,7 @@
 import type { Core } from '@strapi/strapi';
-import { getDeDiService, getPSService } from '../utils/service';
+import { getDeDiService, getPSService, getUserNetworkSubscriberService } from '../utils/service';
 import { SUBSCRIBER_STATUS } from '../types/requests/SubscribeRequest';
-import { nanoid } from 'nanoid';
+import { nanoid } from '../utils';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
@@ -10,22 +10,37 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
         let existingSubscriber = await this.getBySubscriberId(namespace, registryName, subscriberId);
         if (!existingSubscriber) {
+            // Build the subscriber payload
             const newSubscriberData = await this.buildSubscriberPayload(ctx.request.body);
+
+            // Add the subscriber to the directory
             await getDeDiService(strapi).addRecord(namespace, registryName, newSubscriberData);
-            existingSubscriber = newSubscriberData;
+
+            // Get the subscriber details
+            existingSubscriber = await this.getBySubscriberId(namespace, registryName, subscriberId);
+
+            // Assign the subscriber to the user
+            await getUserNetworkSubscriberService(strapi).create({
+                data: {
+                    user: ctx.state.user.id,
+                    record_id: existingSubscriber.record_id,
+                    record_name: existingSubscriber.record_name
+                }
+            });
         }
 
+        // Validate the subscriber
         if (existingSubscriber && existingSubscriber.details.status == SUBSCRIBER_STATUS.INITIATED) {
             const isSubscriberValid = await this.isSubscriberValid(subscriberUrl, subscriberId, signingPublicKey);
             if (isSubscriberValid) {
                 existingSubscriber.details.status = SUBSCRIBER_STATUS.SUBSCRIBED;
                 await getDeDiService(strapi).updateRecord(namespace, registryName, existingSubscriber.record_name, existingSubscriber);
-                return ctx.send({ message: "Subscriber subscribed successfully" });
+                return ctx.send({ message: "Subscribed successfully" });
             } else {
                 throw new Error("Subscriber validation failed");
             }
         } else if (existingSubscriber && existingSubscriber.details.status == SUBSCRIBER_STATUS.SUBSCRIBED) {
-            return ctx.send({ message: "Subscriber subscribed successfully" });
+            return ctx.send({ message: "Subscribed successfully" });
         }
     },
 
@@ -116,7 +131,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
                 key_id: data.key_id,
                 valid_from: data.valid_from,
                 valid_until: data.valid_until,
-                status: data.type == "LREG" || data.type == "BG" ? SUBSCRIBER_STATUS.SUBSCRIBED : SUBSCRIBER_STATUS.INITIATED,
+                status: (data.type == "LREG" || data.type == "BG") ? SUBSCRIBER_STATUS.SUBSCRIBED : SUBSCRIBER_STATUS.INITIATED,
                 country_code: data.country_code,
                 city_code: data.city_code,
                 created: new Date(),

@@ -5,7 +5,7 @@ import { LookupRequest } from 'src/types/requests/LookupRequest';
 import dedi from '../services/dedi';
 import { getSubscribersService } from '../utils/service';
 export const REGISTRY_NAME = 'network-subscribers';
-const DEDI_NAMESPACE = process.env.DEDI_NAMESPACE || 'fide.org.temp';
+
 const DEDI_NAMESPACE_ID = process.env.DEDI_NAMESPACE_ID || 'namespace:cord:tirXC4b4uecnyDhjh8Bd4Bugazmv4MezuFoe2tHRLtRhipTAX';
 
 const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
@@ -23,7 +23,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       const response = await dedi.queryDirectory(DEDI_NAMESPACE_ID, REGISTRY_NAME, {});
       const filters = body;
       console.log('Filters for lookup===>', filters);
-      
+
       const records = response.data.records.filter((record) => {
         if (!record?.revoked) {
           return Object.entries(filters).every(([key, value]) => {
