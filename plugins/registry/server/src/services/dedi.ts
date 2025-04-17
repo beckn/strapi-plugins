@@ -36,13 +36,21 @@ export default {
     // Get directory details inside a namespace
     async getDirectoryDetails(namespace: string, directory: string, version?: string): Promise<any> {
         const query = version ? `?version=${version}` : "";
-        return await this._makeRequest(`/dedi/lookup/${namespace}/${directory}${query}`, "GET");
+        const response = await this._makeRequest(`/dedi/lookup/${namespace}/${directory}${query}`, "GET");
+        if (response?.data?.isRevoked) {
+            response.data = null;
+        }
+        return response;
     },
 
     // Get details of a record inside a directory
     async getRecordDetails(namespace: string, directory: string, record: string, version?: string): Promise<any> {
         const query = version ? `?version=${version}` : "";
-        return await this._makeRequest(`/dedi/lookup/${namespace}/${directory}/${record}${query}`, "GET");
+        const recordDetails = await this._makeRequest(`/dedi/lookup/${namespace}/${directory}/${record}${query}`, "GET");
+        if (recordDetails?.data?.is_revoked) {
+            recordDetails.data = null;
+        }
+        return recordDetails;
     },
 
     // Query directories inside a namespace
@@ -54,7 +62,11 @@ export default {
     // Query records inside a directory
     async queryDirectory(namespace: string, directory: string, params: Record<string, string | number>): Promise<any> {
         const queryParams = new URLSearchParams(params as Record<string, string>).toString();
-        return await this._makeRequest(`/dedi/query/${namespace}/${directory}?${queryParams}`, "GET");
+        const response = await this._makeRequest(`/dedi/query/${namespace}/${directory}?${queryParams}`, "GET");
+        if (!params?.is_revoked) {
+            response.data.records = response.data.records.filter((record: any) => !record.is_revoked);
+        }
+        return response;
     },
 
     // Get available versions of a directory
