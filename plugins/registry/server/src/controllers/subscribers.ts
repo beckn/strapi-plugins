@@ -19,7 +19,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async lookup(ctx) {
     try {
-      const body: LookupRequest = ctx.request.body;
+      const body: LookupRequest = ctx.request.body || {};
       const response = await dedi.queryDirectory(DEDI_NAMESPACE_ID, REGISTRY_NAME, {});
       const filters = body;
       console.log('Filters for lookup===>', filters);

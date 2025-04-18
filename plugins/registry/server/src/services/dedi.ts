@@ -113,7 +113,7 @@ export default {
             return result;
         } catch (error: any) {
             strapi.log.error(`DeDi API Error (${endpoint}):`, error.message);
-            throw new Error(error.message); // Re-throwing exact error for better debugging
+            throw new Error(`(DeDi API Error) ${error.message}`); // Re-throwing exact error for better debugging
         }
     },
 };
