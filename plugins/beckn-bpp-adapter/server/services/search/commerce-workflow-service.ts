@@ -307,7 +307,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             console.log('Rental Start time in catalog and searched startTime: ', rentalStartTimeInMs, '  ', startTime);
             console.log('Rental End time in catalog and searched endTime: ', rentalEndTimeInMs, '  ', endTime);
 
-            return rentalEndTimeInMs > endTime && rentalStartTimeInMs < startTime;
+            return rentalEndTimeInMs >= endTime && rentalStartTimeInMs <= startTime;
           });
 
           // Return provider with filtered items
