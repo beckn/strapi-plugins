@@ -771,6 +771,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                   tag_name: "Renting Capacity",
                   code: "Renting Capacity",
                   value: String(rentingCapacity),
+                  display: true,
                   publishedAt: new Date()
                 }
               }

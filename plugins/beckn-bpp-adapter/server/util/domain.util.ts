@@ -5,7 +5,8 @@ import {
   ENERGY_DOMAINS,
   RETAIL_DOMAINS,
   DEG_RENTAL_DOMAINS,
-  DEG_FINANCE_DOMAINS
+  DEG_FINANCE_DOMAINS,
+  DEG_RETAIL_DOMAINS
 } from "../constants";
 
 export const isHospitality = (context) =>
@@ -19,3 +20,5 @@ export const isDegRental = (context) =>
   DEG_RENTAL_DOMAINS.includes(context?.domain);
 export const isDegFinance = (context) =>
   DEG_FINANCE_DOMAINS.includes(context?.domain);
+export const isDegRetail = (context) =>
+  DEG_RETAIL_DOMAINS.includes(context?.domain);

@@ -8,7 +8,8 @@ import {
   isMobility,
   isTourism,
   isEnergy,
-  isRetail
+  isRetail,
+  isDegRental
 } from "./domain.util";
 import { isInRange, findStoresAlongRouteWithinDistance } from "./location.util";
 
@@ -268,6 +269,9 @@ export class SearchUtil {
       }
     } else if (isRetail(context)) {
       console.log("Is a retail domain====>");
+      return providers;
+    } else if (isDegRental(context)) {
+      console.log("Is a Deg retail domain====>");
       return providers;
     } else {
       const stop =

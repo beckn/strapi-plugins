@@ -20,6 +20,7 @@ export const ENERGY_DOMAINS: string[] = ["uei:p2p-trading", "uei:p2p_trading"];
 export const RETAIL_DOMAINS: string[] = ["retail:1.1.0"];
 export const DEG_RENTAL_DOMAINS: string[] = ["deg:rental"];
 export const DEG_FINANCE_DOMAINS: string[] = ["deg:finance"];
+export const DEG_RETAIL_DOMAINS: string[] = ["deg:retail"];
 
 export const CHECK_IN: string = "check-in";
 export const CHECK_OUT: string = "check-out";

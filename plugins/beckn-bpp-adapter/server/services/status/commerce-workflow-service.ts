@@ -108,16 +108,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                         parent_id: {}
                       }
                     );
-                  } else if (taxanomy.taxanomy === "TAG") {
-                    taxanomy.taxanomy_id = await commonService.getTagById(
-                      taxanomy.taxanomy_id,
-                      {
-                        tag_group_id: {}
-                      }
-                    );
                   }
                 })
               );
+              item["item-tags"] = orderDetail.order_id?.tags?.filter(orderTag => orderTag.id == item.id)[0].tags || [];
             })
           );
         })
@@ -144,6 +138,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           data: {}
         });
       }
+      console.log("Order data for status: ", JSON.stringify(orderDetails, null, 2));
       return Array.isArray(orderDetails) ? orderDetails[0] : orderDetails;
     } catch (error) {
       console.error("An error occurred:", error);

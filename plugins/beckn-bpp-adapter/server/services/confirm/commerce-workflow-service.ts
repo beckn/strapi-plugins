@@ -3,6 +3,7 @@ import {
   FilterUtil,
   isDegFinance,
   isDegRental,
+  isDegRetail,
   isEnergy,
   ObjectUtil,
   TradeUtil
@@ -367,6 +368,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               "api::order-fulfillment.order-fulfillment",
               { data: anotherOrderFulfillmentDetail }
             );
+          }
+          if(isDegFinance(context) || isDegRetail(context)) {
+            //update order status to complete
+            await strapi.entityService.update(
+              "api::order.order",
+              orderId,
+              { data: { status: "COMPLETE" } }
+            );
+            console.log("Updated order status for domain: ", domain);
           }
 
           await onConfirm(message);

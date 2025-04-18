@@ -7,10 +7,22 @@ export const initiateCharging = async (
     const timer = setInterval(async () => {
       const orderFulfilmentRes = await strapi.entityService.findOne(
         "api::order-fulfillment.order-fulfillment",
-        orderFulfillment.id
+        orderFulfillment.id,
+        {
+          populate: {
+            order_id: true
+          },
+        }
       );
 
       if (orderFulfilmentRes.state_value === "100") {
+        //complete order status
+        if (orderFulfilmentRes?.order_id?.id) {
+          await strapi.entityService.update("api::order.order",
+            orderFulfilmentRes?.order_id?.id,
+            { data: { status: "COMPLETE" } }
+          );
+        }
         clearInterval(timer);
       } else {
         console.log("Updating=====>", {
