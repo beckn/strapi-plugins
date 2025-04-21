@@ -25,7 +25,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       console.log('Filters for lookup===>', filters);
 
       const records = response.data.records.filter((record) => {
-        if (!record?.revoked) {
+        if (!record?.is_revoked) {
           return Object.entries(filters).every(([key, value]) => {
             if (key === 'domain') {
               return record.details[key] === '*' || record.details[key] === value;
