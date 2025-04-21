@@ -6,7 +6,7 @@ import dedi from '../services/dedi';
 import { getSubscribersService, getUserNetworkSubscriberService } from '../utils/service';
 export const REGISTRY_NAME = 'network-subscribers';
 
-const DEDI_NAMESPACE_ID = process.env.DEDI_NAMESPACE_ID || 'namespace:cord:tirXC4b4uecnyDhjh8Bd4Bugazmv4MezuFoe2tHRLtRhipTAX';
+const DEDI_NAMESPACE_ID = process.env.DEDI_NAMESPACE_ID || 'namespace:cord:tisu9rJf8zBsyrpvFCcafU393rsRrqriT3srBcG2ogksQFUvY';
 
 const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
   async subscribe(ctx) {
@@ -28,7 +28,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
         if (!record?.revoked) {
           return Object.entries(filters).every(([key, value]) => {
             if (key === 'domain') {
-              return record.details[key] === '' || record.details[key] === value;
+              return record.details[key] === '*' || record.details[key] === value;
             }
             if (key === 'unique_key_id') {
               return record.details['key_id'] === value;
