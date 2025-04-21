@@ -119,6 +119,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
     try {
       const psService = strapi.plugin('registry').service('psService');
       const domains_stored = await psService.getDomains();
+      console.log('Domains Stored===>', domains_stored);
       ctx.response.status = 200;
       ctx.response.body = domains_stored;
       return;
