@@ -179,31 +179,29 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             (item) => Number(item.id) === responseItem.id
           );
           if (bodyItem && bodyItem?.tags?.length) {
-            // Filter `cat_attr_tag_relations` based on the tags in the body item
-            responseItem.cat_attr_tag_relations =
-              responseItem?.cat_attr_tag_relations?.filter((relation) => {
-                return bodyItem?.tags?.some((tagGroup) =>
-                  tagGroup?.list?.some(
-                    (tag) =>
-                      tag?.descriptor?.code === relation?.taxanomy_id?.code // Check code if provided in request
-                  )
-                );
-              });
-
+            
             const tagListFlatMap = bodyItem.tags.flatMap((tag) =>
               tag.list.map((inner) => inner)
             );
+
             const requiredTags = responseItem.cat_attr_tag_relations.filter(
               (relation) =>
-                tagListFlatMap.find(
-                  (elem) =>
-                    elem?.descriptor?.code === relation?.taxanomy_id?.code &&
-                    elem?.descriptor?.name === relation?.taxanomy_id?.tag_name
+                tagListFlatMap.find((elem) =>
+                  (domain === "deg:rental" && elem?.descriptor?.code === "Renting Capacity")
+                    ? (
+                        elem?.descriptor?.code === relation?.taxanomy_id?.code &&
+                        Number(elem?.value) <= Number(relation?.taxanomy_id?.value)
+                      )
+                    : (
+                        elem?.descriptor?.code === relation?.taxanomy_id?.code &&
+                        elem?.value === relation?.taxanomy_id?.value
+                      )
                 )
             );
+            
             responseItem.cat_attr_tag_relations = requiredTags;
+            return responseItem;
           }
-          return responseItem;
         });
         provider.itemsBody = itemsBody;
         return provider;
