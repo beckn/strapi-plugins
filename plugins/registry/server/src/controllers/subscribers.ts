@@ -34,13 +34,14 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
               return record.details['key_id'] === value;
             }
             if (key === 'country') {
-              return record.details['country_code'] === value;
+              return record.details[key] === '*' || record.details['country_code'] === value;
             }
             if (key === 'city' || (key === 'location' && filters[key]?.city?.code)) {
-              return (
-                record.details['city_code']?.toLowerCase() ===
-                filters[key]?.city?.code?.toLowerCase()
-              );
+              return record.details[key] === '*' ||
+                (
+                  record.details['city_code']?.toLowerCase() ===
+                  filters[key]?.city?.code?.toLowerCase()
+                );
             }
             return value === '' || record.details[key] === value;
           });
