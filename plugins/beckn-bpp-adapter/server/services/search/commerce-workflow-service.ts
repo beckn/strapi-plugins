@@ -362,18 +362,29 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     if (item?.tags?.length && item?.tags[0]?.list?.length) {
       const newProviders = providers.map((provider: any) => {
         const filteredItems = provider?.items?.filter((itemFromStrapi) => {
-          const isMatch = item?.tags[0]?.list?.some((listItem: any) =>
-            itemFromStrapi?.cat_attr_tag_relations?.some(
-              (tag: any) =>
-                tag?.taxanomy_id?.code === listItem?.descriptor?.code &&
-                tag?.taxanomy_id?.value === listItem?.value
-            )
-          );
-          console.log('Is match:: ', isMatch, 'items: ', JSON.stringify(itemFromStrapi));
-          if (isMatch) {
-            return itemFromStrapi;
-          }
+          const isMatch = item?.tags?.[0]?.list?.some((listItem: any) => {
+            return itemFromStrapi?.cat_attr_tag_relations?.some((tag: any) => {
+              const result = domain === "deg:rental" && listItem?.descriptor?.code === "Renting Capacity"
+                ? (tag?.taxanomy_id?.code === listItem?.descriptor?.code &&
+                    Number(listItem?.descriptor?.value) <= Number(tag?.taxanomy_id?.value)) // Battery Capacity logic
+                : (tag?.taxanomy_id?.code === listItem?.descriptor?.code &&
+                    tag?.taxanomy_id?.value === listItem?.value);
+        
+              console.log(
+                `[Tag Match Check] Code: ${tag?.taxanomy_id?.code}, Value: ${tag?.taxanomy_id?.value} | ` +
+                `ListItem Code: ${listItem?.descriptor?.code}, Value: ${listItem?.descriptor?.value} | ` +
+                `Match Result: ${result}`
+              );
+        
+              return result;
+            });
+          });
+        
+          console.log('Is match:: ', isMatch, 'Item: ', JSON.stringify(itemFromStrapi));
+        
+          return isMatch;
         });
+        
 
         // Only keep provider if any items matched
       if (filteredItems?.length) {

@@ -186,16 +186,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
             const requiredTags = responseItem.cat_attr_tag_relations.filter(
               (relation) =>
-                tagListFlatMap.find((elem) =>
-                  (domain === "deg:rental" && elem?.descriptor?.code === "Renting Capacity")
-                    ? (
-                        elem?.descriptor?.code === relation?.taxanomy_id?.code &&
-                        Number(elem?.value) <= Number(relation?.taxanomy_id?.value)
-                      )
-                    : (
-                        elem?.descriptor?.code === relation?.taxanomy_id?.code &&
-                        elem?.value === relation?.taxanomy_id?.value
-                      )
+                tagListFlatMap.find(
+                  (elem) =>
+                    elem?.descriptor?.code === relation?.taxanomy_id?.code &&
+                    elem?.value === relation?.taxanomy_id?.value
                 )
             );
             
