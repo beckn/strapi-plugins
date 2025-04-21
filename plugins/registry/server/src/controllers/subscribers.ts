@@ -34,7 +34,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
               return record.details['key_id'] === value;
             }
             if (key === 'country') {
-              return record.details[key] === '*' || record.details['country_code'] === value;
+              return record.details["country_code"] == '*' || record.details['country_code'] == value;
             }
             if (key === 'city' || (key === 'location' && filters[key]?.city?.code)) {
               return record.details[key] === '*' ||
