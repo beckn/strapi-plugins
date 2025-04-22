@@ -6,7 +6,9 @@ import dedi from '../services/dedi';
 import { getSubscribersService, getUserNetworkSubscriberService } from '../utils/service';
 export const REGISTRY_NAME = 'network-subscribers';
 
-const DEDI_NAMESPACE_ID = process.env.DEDI_NAMESPACE_ID || 'namespace:cord:tisu9rJf8zBsyrpvFCcafU393rsRrqriT3srBcG2ogksQFUvY';
+const DEDI_NAMESPACE_ID =
+  process.env.DEDI_NAMESPACE_ID ||
+  'namespace:cord:tisu9rJf8zBsyrpvFCcafU393rsRrqriT3srBcG2ogksQFUvY';
 
 const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
   async subscribe(ctx) {
@@ -34,14 +36,16 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
               return record.details['key_id'] === value;
             }
             if (key === 'country') {
-              return record.details["country_code"] == '*' || record.details['country_code'] == value;
+              return (
+                record.details['country_code'] == '*' || record.details['country_code'] == value
+              );
             }
             if (key === 'city' || (key === 'location' && filters[key]?.city?.code)) {
-              return record.details[key] === '*' ||
-                (
-                  record.details['city_code']?.toLowerCase() ===
+              return (
+                record.details['city_code'] === '*' ||
+                record.details['city_code']?.toLowerCase() ===
                   filters[key]?.city?.code?.toLowerCase()
-                );
+              );
             }
             return value === '' || record.details[key] === value;
           });
@@ -149,7 +153,10 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async getSubscribers(ctx) {
     try {
-      const records = await getSubscribersService(strapi).getSubscribers(DEDI_NAMESPACE_ID, REGISTRY_NAME);
+      const records = await getSubscribersService(strapi).getSubscribers(
+        DEDI_NAMESPACE_ID,
+        REGISTRY_NAME
+      );
       ctx.send(records, 200);
     } catch (error) {
       console.log(error);
@@ -172,7 +179,12 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
     try {
       const { id } = ctx.params;
       const { data } = ctx.request.body;
-      const updatedRecord = await getSubscribersService(strapi).updateSubscriber(DEDI_NAMESPACE_ID, REGISTRY_NAME, id, data);
+      const updatedRecord = await getSubscribersService(strapi).updateSubscriber(
+        DEDI_NAMESPACE_ID,
+        REGISTRY_NAME,
+        id,
+        data
+      );
       ctx.send(updatedRecord, 200);
     } catch (error) {
       console.log(error);
@@ -187,7 +199,9 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       await getSubscribersService(strapi).revokeSubscriber(DEDI_NAMESPACE_ID, REGISTRY_NAME, id);
 
       // Revoke subscriber from User Network Subscriber
-      const { results: userNetworkSubscribers } = await getUserNetworkSubscriberService(strapi).find({ filters: { record_name: id } });
+      const { results: userNetworkSubscribers } = await getUserNetworkSubscriberService(
+        strapi
+      ).find({ filters: { record_name: id } });
       for (const userNetworkSubscriber of userNetworkSubscribers) {
         await getUserNetworkSubscriberService(strapi).delete(userNetworkSubscriber.documentId);
       }
@@ -196,7 +210,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
       console.log(error);
       ctx.throw(400, error.message);
     }
-  }
+  },
 });
 
 export default subscribers;
