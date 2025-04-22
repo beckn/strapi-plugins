@@ -89,6 +89,15 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         return await sanitizeUsers(users);
     },
 
+    async getUser(ctx: any) {
+        const { documentId } = ctx.params;
+        const user = await strapi.documents('plugin::users-permissions.user').findOne({ documentId, populate: 'role' });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        return await sanitizeUser(user);
+    },
+
     async updateMe(ctx: any) {
         const { documentId } = ctx.state.user;
         const { fullName, phoneNumber, alternatePhoneNumber } = ctx.request.body;

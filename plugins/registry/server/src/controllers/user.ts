@@ -47,6 +47,15 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         }
     },
 
+    async getUser(ctx: any) {
+        try {
+            const user = await getUserService(strapi).getUser(ctx);
+            ctx.send(user);
+        } catch (error) {
+            ctx.badRequest(error);
+        }
+    },
+
     async updateMe(ctx: any) {
         try {
             const updatedUser = await getUserService(strapi).updateMe(ctx);

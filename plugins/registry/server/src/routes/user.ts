@@ -36,6 +36,15 @@ export default [
         }
     },
     {
+        method: "GET",
+        path: "/users/:documentId",
+        handler: "user.getUser",
+        config: {
+            auth: false,
+            middlewares: ["plugin::registry.auth", "plugin::registry.isAdmin"],
+        }
+    },
+    {
         method: "PUT",
         path: "/users/me",
         handler: "user.updateMe",
