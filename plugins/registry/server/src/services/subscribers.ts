@@ -72,7 +72,6 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
     async getSubscriber(namespace: string, registryName: string, recordName: string) {
         const response = await getDeDiService(strapi).getRecordDetails(namespace, registryName, recordName);
-        console.log("response", response);
         if (!response?.data) {
             throw new Error("Record not found");
         }
