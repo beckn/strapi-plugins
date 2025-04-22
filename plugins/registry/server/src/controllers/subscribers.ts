@@ -42,7 +42,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
             }
             if (key === 'city' || (key === 'location' && filters[key]?.city?.code)) {
               return (
-                record.details['city'] === '*' ||
+                record.details['city_code'] === '*' ||
                 record.details['city_code']?.toLowerCase() ===
                   filters[key]?.city?.code?.toLowerCase()
               );
