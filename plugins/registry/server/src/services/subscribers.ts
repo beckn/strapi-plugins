@@ -65,9 +65,18 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         };
     },
 
-    async getSubscribers(namespace: string, registryName: string) {
-        const response = await getDeDiService(strapi).queryDirectory(namespace, registryName, {});
-        return response?.data?.records?.map((record) => this.transformSubscriberRecord(record));
+    async getSubscribers(ctx, namespace: string, registryName: string) {
+        const { page = 1, pageSize = 10 } = ctx.query.paginations || {};
+        const response = await getDeDiService(strapi).queryDirectory(namespace, registryName, { page, page_size: pageSize });
+        const records = response?.data?.records?.map((record) => this.transformSubscriberRecord(record));
+        return {
+            results: records,
+            pagination: {
+                page: response?.data?.page_number,
+                pageSize: response?.data?.page_size,
+                pageCount: response?.data?.total_pages
+            }
+        };
     },
 
     async getSubscriber(namespace: string, registryName: string, recordName: string) {

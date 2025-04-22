@@ -9,7 +9,6 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     },
 
     async getNetworkDomains(ctx: any) {
-        console.log("ctx.query", ctx.query);
         const networkDomains = await getDomainService(strapi).find(ctx.query);
         return networkDomains;
     },
@@ -48,7 +47,6 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         if (existingDomains?.results?.length > 0) {
             throw new Error('Network domain with this name already exists');
         }
-        console.log("ctx.request.body", ctx.request.body);
         const networkDomain = await getDomainService(strapi).update(documentId, { data: ctx.request.body });
         return networkDomain;
     },

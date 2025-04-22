@@ -154,6 +154,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
   async getSubscribers(ctx) {
     try {
       const records = await getSubscribersService(strapi).getSubscribers(
+        ctx,
         DEDI_NAMESPACE_ID,
         REGISTRY_NAME
       );
