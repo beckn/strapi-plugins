@@ -329,6 +329,70 @@
 					]
 				},
 				{
+					"name": "User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwtToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/fjgy8lhkvaw4eo8a41d3f2yt?populate[0]=role",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"fjgy8lhkvaw4eo8a41d3f2yt"
+							],
+							"query": [
+								{
+									"key": "populate[0]",
+									"value": "role"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "All Users",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 62,\n        \"documentId\": \"fjgy8lhkvaw4eo8a41d3f2yt\",\n        \"username\": \"Eldon.Wisoky43@yahoo.com\",\n        \"email\": \"Eldon.Wisoky43@yahoo.com\",\n        \"password\": \"$2a$10$q4qFX.yDu5LJVsehk3Dv.uFysz8nW8vMo7.epQ.WG2H9hKw4IcTUG\",\n        \"blocked\": false,\n        \"createdAt\": \"2025-04-01T20:58:47.990Z\",\n        \"updatedAt\": \"2025-04-01T20:58:47.990Z\",\n        \"publishedAt\": \"2025-04-01T20:58:47.890Z\",\n        \"locale\": null,\n        \"phoneNumber\": null,\n        \"alternatePhoneNumber\": null,\n        \"fullName\": null,\n        \"accountStatus\": \"ACTIVE\",\n        \"verificationToken\": \"edf8658d70549fbf71299cb78ad081b48d8295f936be6c110676bb0f7d31a25b\",\n        \"emailVerified\": false\n    },\n    {\n        \"id\": 63,\n        \"documentId\": \"n5zwhis6nmwgtiswz0njawub\",\n        \"username\": \"ardent.ajay@gmail.com\",\n        \"email\": \"ardent.ajay@gmail.com\",\n        \"password\": \"$2a$10$i22wR.fj2H.aRykyF5NdAOEgE4MXlTtdeGpoG2K5xZZppV5mQxCyi\",\n        \"blocked\": false,\n        \"createdAt\": \"2025-04-02T09:08:40.366Z\",\n        \"updatedAt\": \"2025-04-02T09:23:04.250Z\",\n        \"publishedAt\": \"2025-04-02T09:08:40.264Z\",\n        \"locale\": null,\n        \"phoneNumber\": null,\n        \"alternatePhoneNumber\": null,\n        \"fullName\": null,\n        \"accountStatus\": \"ACTIVE\",\n        \"verificationToken\": \"bf944062f839c4b1e870d4fa1b6571f516907962d4828b66381ea12cc04ae045\",\n        \"emailVerified\": false\n    },\n    {\n        \"id\": 64,\n        \"documentId\": \"ii4pjk01hqrpfmxmurrris56\",\n        \"username\": \"ajay.nishad@eminds.ai\",\n        \"email\": \"ajay.nishad@eminds.ai\",\n        \"password\": \"$2a$10$sjPzKanjZQ7FSuYZ7.rxKOCBZUomycYveljzSqdZaQJedtDzxry7e\",\n        \"blocked\": false,\n        \"createdAt\": \"2025-04-02T09:27:50.352Z\",\n        \"updatedAt\": \"2025-04-02T09:27:50.352Z\",\n        \"publishedAt\": \"2025-04-02T09:27:50.222Z\",\n        \"locale\": null,\n        \"phoneNumber\": null,\n        \"alternatePhoneNumber\": null,\n        \"fullName\": null,\n        \"accountStatus\": \"ACTIVE\",\n        \"verificationToken\": \"1b6c3060d9f980f5a283c8b97ea29c75e9cf4a0bdf879010313cd0c6b70a0e08\",\n        \"emailVerified\": false\n    },\n    {\n        \"id\": 65,\n        \"documentId\": \"ypxpj8whwhw1xyvpwbhydtxl\",\n        \"username\": \"hidabi3239@oronny.com\",\n        \"email\": \"hidabi3239@oronny.com\",\n        \"password\": \"$2a$10$K6LdrVn6t6ASv/HpMhhJs.w.pjSS2.qXwIB3q9CN2FTBPbrNRhlVy\",\n        \"blocked\": false,\n        \"createdAt\": \"2025-04-02T09:55:36.055Z\",\n        \"updatedAt\": \"2025-04-02T09:55:36.156Z\",\n        \"publishedAt\": \"2025-04-02T09:55:35.946Z\",\n        \"locale\": null,\n        \"phoneNumber\": null,\n        \"alternatePhoneNumber\": null,\n        \"fullName\": null,\n        \"accountStatus\": \"ACTIVE\",\n        \"verificationToken\": \"edbd251e9d706dbfe59187cf10b539fa984deee196a138997e7f533908469988\",\n        \"emailVerified\": false\n    },\n    {\n        \"id\": 66,\n        \"documentId\": \"zfybn7s6ck4u398copmo30co\",\n        \"username\": \"dayeca4078@oronny.com\",\n        \"email\": \"dayeca4078@oronny.com\",\n        \"password\": \"$2a$10$guJR6eLtKgvux3urMCgJbe/g8sWHnfnLQOmVUHqGVZWwMtboFFOi2\",\n        \"blocked\": false,\n        \"createdAt\": \"2025-04-02T10:25:31.314Z\",\n        \"updatedAt\": \"2025-04-02T11:56:14.496Z\",\n        \"publishedAt\": \"2025-04-02T11:56:14.484Z\",\n        \"locale\": null,\n        \"phoneNumber\": null,\n        \"alternatePhoneNumber\": null,\n        \"fullName\": null,\n        \"accountStatus\": \"ACTIVE\",\n        \"verificationToken\": null,\n        \"emailVerified\": true\n    }\n]"
+						}
+					]
+				},
+				{
 					"name": "Me",
 					"request": {
 						"auth": {
@@ -776,7 +840,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"type\": \"BAP\",\n    \"status\": \"SUBSCRIBED\"\n}",
+							"raw": "{\n  \"country\": \"IND\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -853,7 +917,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"subscriber_id\": \"bcp123111111.com\",\n    \"url\": \"https://11111177e8-2409-40e3-3008-9085-352b-456e-19e7-b8d6.ngrok-free.app\",\n    \"type\": \"BG\",\n    \"domain\": \"mobility\",\n    \"location\": {\n        \"city\": {\n            \"name\": \"Bangalore\",\n            \"code\": \"BLR\"\n        },\n        \"country\": {\n            \"name\": \"India\",\n            \"code\": \"IN\"\n        }\n    },\n    \"key_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n    \"signing_public_key\": \"gifBoEwBMQ5GB2yOqE7YnBqCSsqJxmWb3B17hxHRAD8=\",\n    \"encr_public_key\": \"gifBoEwBMQ5GB2yOqE7YnBqCSsqJxmWb3B17hxHRAD8=\",\n    \"valid_from\": \"2025-03-18T16:36:08.651Z\",\n    \"valid_until\": \"2026-03-18T16:36:08.651Z\",\n    \"created\": \"2025-03-18T16:36:08.651Z\",\n    \"updated\": \"2025-03-18T16:36:08.651Z\",\n    \"nonce\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\"\n}",
+							"raw": "{\n    \"subscriber_id\": \"bcp12311111112211.com\",\n    \"url\": \"https://11111177e8-2409-40e3-3008-9085-352b-456e-19e7-b8d6.ngrok-free.app\",\n    \"type\": \"BG\",\n    \"domain\": \"mobility\",\n    \"location\": {\n        \"city\": {\n            \"name\": \"Bangalore\",\n            \"code\": \"BLR\"\n        },\n        \"country\": {\n            \"name\": \"India\",\n            \"code\": \"IN\"\n        }\n    },\n    \"key_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n    \"signing_public_key\": \"gifBoEwBMQ5GB2yOqE7YnBqCSsqJxmWb3B17hxHRAD8=\",\n    \"encr_public_key\": \"gifBoEwBMQ5GB2yOqE7YnBqCSsqJxmWb3B17hxHRAD8=\",\n    \"valid_from\": \"2025-03-18T16:36:08.651Z\",\n    \"valid_until\": \"2026-03-18T16:36:08.651Z\",\n    \"created\": \"2025-03-18T16:36:08.651Z\",\n    \"updated\": \"2025-03-18T16:36:08.651Z\",\n    \"nonce\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1060,6 +1124,9 @@
 			"item": [
 				{
 					"name": "Subscribers",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -1073,6 +1140,15 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/subscribers",
 							"host": [
@@ -1080,6 +1156,138 @@
 							],
 							"path": [
 								"subscribers"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Subscribers",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/subscribers",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"subscribers"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Security-Policy",
+									"value": "connect-src 'self' https:;img-src 'self' data: blob: https://market-assets.strapi.io;media-src 'self' data: blob:;default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline'"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": ""
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Strapi <strapi.io>"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2698"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 10 Apr 2025 07:52:32 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"entry:cord:u2yFNXZ7SVKe1cqu8vtxoQ7xWoPF8F9C2Uo8omhR7bxRtY993\",\n        \"name\": \"registry.becknprotocol.io.k1\",\n        \"status\": \"SUBSCRIBED\",\n        \"type\": \"LREG\",\n        \"domain\": \"registry.becknprotocol.io\",\n        \"signing_public_key\": \"8ESqL7gcwBayfoZUQQ3tBNFALbI7mzfJ2UN7lM8OCDU=\",\n        \"subscriber_id\": \"registry.becknprotocol.io..LREG\",\n        \"subscriber_url\": \"https://registry.becknprotocol.io/subscribers\",\n        \"unique_key_id\": \"registry.becknprotocol.io.k1\",\n        \"valid_from\": \"2024-11-21T10:39:22.098Z\",\n        \"valid_until\": \"2034-11-21T22:39:22.098Z\",\n        \"created\": \"2024-11-21T10:39:22.000Z\",\n        \"encr_public_key\": \"I6NspwbUAuZD6INwP/vUus2+srjGauBL26HfGc3V0Rk=\",\n        \"city_code\": \"STD:080\",\n        \"country_code\": \"IND\",\n        \"updated\": \"2024-11-21T10:39:22.000Z\"\n    },\n    {\n        \"id\": \"entry:cord:u2yFNXZ7SVKe1cqu8vtxoQ7xWoPF8F9C2Uo8omhR7bxRtY993\",\n        \"name\": \"registry.becknprotocol.io.k1\",\n        \"status\": \"SUBSCRIBED\",\n        \"type\": \"LREG\",\n        \"domain\": \"registry.becknprotocol.io\",\n        \"signing_public_key\": \"8ESqL7gcwBayfoZUQQ3tBNFALbI7mzfJ2UN7lM8OCDU=\",\n        \"subscriber_id\": \"registry.becknprotocol.io..LREG\",\n        \"subscriber_url\": \"https://registry.becknprotocol.io/subscribers\",\n        \"unique_key_id\": \"registry.becknprotocol.io.k1\",\n        \"valid_from\": \"2024-11-21T10:39:22.098Z\",\n        \"valid_until\": \"2034-11-21T22:39:22.098Z\",\n        \"created\": \"2024-11-21T10:39:22.000Z\",\n        \"encr_public_key\": \"I6NspwbUAuZD6INwP/vUus2+srjGauBL26HfGc3V0Rk=\",\n        \"city_code\": \"STD:080\",\n        \"country_code\": \"IND\",\n        \"updated\": \"2024-11-21T10:39:22.000Z\"\n    },\n    {\n        \"id\": \"entry:cord:u2yFNXZ7SVKe1cqu8vtxoQ7xWoPF8F9C2Uo8omhR7bxRtY993\",\n        \"name\": \"registry.becknprotocol.io.k1\",\n        \"status\": \"SUBSCRIBED\",\n        \"type\": \"LREG\",\n        \"domain\": \"registry.becknprotocol.io\",\n        \"signing_public_key\": \"8ESqL7gcwBayfoZUQQ3tBNFALbI7mzfJ2UN7lM8OCDU=\",\n        \"subscriber_id\": \"registry.becknprotocol.io..LREG\",\n        \"subscriber_url\": \"https://registry.becknprotocol.io/subscribers\",\n        \"unique_key_id\": \"registry.becknprotocol.io.k01\",\n        \"valid_from\": \"2024-11-21T10:39:22.098Z\",\n        \"valid_until\": \"2034-11-21T22:39:22.098Z\",\n        \"created\": \"2024-11-21T10:39:22.000Z\",\n        \"encr_public_key\": \"I6NspwbUAuZD6INwP/vUus2+srjGauBL26HfGc3V0Rk=\",\n        \"city_code\": \"STD:080\",\n        \"country_code\": \"IND\",\n        \"updated\": \"2024-11-21T10:39:22.000Z\"\n    },\n    {\n        \"id\": \"entry:cord:u2yFNXZ7SVKe1cqu8vtxoQ7xWoPF8F9C2Uo8omhR7bxRtY993\",\n        \"name\": \"registry.becknprotocol.io.k1\",\n        \"status\": \"SUBSCRIBED\",\n        \"type\": \"LREG\",\n        \"domain\": \"registry.becknprotocol.io\",\n        \"signing_public_key\": \"8ESqL7gcwBayfoZUQQ3tBNFALbI7mzfJ2UN7lM8OCDU=\",\n        \"subscriber_id\": \"registry.becknprotocol.io..LREG\",\n        \"subscriber_url\": \"https://registry.becknprotocol.io/subscribers\",\n        \"unique_key_id\": \"registry.becknprotocol.io.k1\",\n        \"valid_from\": \"2024-11-21T10:39:22.098Z\",\n        \"valid_until\": \"2034-11-21T22:39:22.098Z\",\n        \"created\": \"2024-11-21T10:39:22.000Z\",\n        \"encr_public_key\": \"I6NspwbUAuZD6INwP/vUus2+srjGauBL26HfGc3V0Rk=\",\n        \"city_code\": \"STD:080\",\n        \"country_code\": \"IND\",\n        \"updated\": \"2024-11-21T10:39:22.000Z\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Subscriber",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwtToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/subscribers/lOs---5i7f0WGVAqyHZtC",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"subscribers",
+								"lOs---5i7f0WGVAqyHZtC"
 							]
 						}
 					},
@@ -1191,15 +1399,21 @@
 							]
 						},
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "{{baseUrl}}/subscribers/bcp.com",
+							"raw": "{{baseUrl}}/subscribers/Uc3D3sCmqETH-tTZX-MM8",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"subscribers",
-								"bcp.com"
+								"Uc3D3sCmqETH-tTZX-MM8"
 							]
 						}
 					},
