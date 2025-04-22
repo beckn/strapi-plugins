@@ -44,26 +44,39 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         }
     },
 
+    transformSubscriberRecord(record: any) {
+        return {
+            id: record.record_id,
+            name: record.record_name,
+            status: record.details.status,
+            type: record.details.type,
+            domain: record.details.domain,
+            signing_public_key: record.details.signing_public_key,
+            subscriber_id: record.details.subscriber_id,
+            subscriber_url: record.details.url,
+            unique_key_id: record.details.key_id,
+            valid_from: record.details.valid_from,
+            valid_until: record.details.valid_until,
+            created: record.details.created,
+            encr_public_key: record.details.encr_public_key,
+            city_code: record.details.city_code,
+            country_code: record.details.country_code,
+            updated: record.details.updated,
+        };
+    },
+
     async getSubscribers(namespace: string, registryName: string) {
         const response = await getDeDiService(strapi).queryDirectory(namespace, registryName, {});
-        return response?.data?.records?.map((records) => ({
-            id: records.record_id,
-            name: records.record_name,
-            status: records.details.status,
-            type: records.details.type,
-            domain: records.details.domain,
-            signing_public_key: records.details.signing_public_key,
-            subscriber_id: records.details.subscriber_id,
-            subscriber_url: records.details.url,
-            unique_key_id: records.details.key_id,
-            valid_from: records.details.valid_from,
-            valid_until: records.details.valid_until,
-            created: records.details.created,
-            encr_public_key: records.details.encr_public_key,
-            city_code: records.details.city_code,
-            country_code: records.details.country_code,
-            updated: records.details.updated,
-        }));
+        return response?.data?.records?.map((record) => this.transformSubscriberRecord(record));
+    },
+
+    async getSubscriber(namespace: string, registryName: string, recordName: string) {
+        const response = await getDeDiService(strapi).getRecordDetails(namespace, registryName, recordName);
+        console.log("response", response);
+        if (!response?.data) {
+            throw new Error("Record not found");
+        }
+        return this.transformSubscriberRecord(response?.data);
     },
 
     async updateSubscriber(namespace: string, registryName: string, recordName: string, record: any) {

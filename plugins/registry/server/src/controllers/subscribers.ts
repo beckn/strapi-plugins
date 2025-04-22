@@ -157,6 +157,17 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
     }
   },
 
+  async getSubscriber(ctx) {
+    try {
+      const { id } = ctx.params;
+      const subscriber = await getSubscribersService(strapi).getSubscriber(DEDI_NAMESPACE_ID, REGISTRY_NAME, id);
+      ctx.send(subscriber, 200);
+    } catch (error) {
+      console.log(error);
+      ctx.throw(400, error.message);
+    }
+  },
+
   async update(ctx) {
     try {
       const { id } = ctx.params;

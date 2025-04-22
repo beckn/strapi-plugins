@@ -53,6 +53,17 @@ export default [
       auth: false,
     },
   },
+
+  {
+    method: 'GET',
+    path: '/subscribers/:id',
+    handler: 'subscribers.getSubscriber',
+    config: {
+      middlewares: ['plugin::registry.auth', 'plugin::registry.isAdmin'],
+      auth: false,
+    },
+  },
+
   {
     method: 'PUT',
     path: '/subscribers/:id',

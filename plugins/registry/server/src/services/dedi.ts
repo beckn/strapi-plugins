@@ -47,7 +47,7 @@ export default {
     async getRecordDetails(namespace: string, directory: string, record: string, version?: string): Promise<any> {
         const query = version ? `?version=${version}` : "";
         const recordDetails = await this._makeRequest(`/dedi/lookup/${namespace}/${directory}/${record}${query}`, "GET");
-        if (recordDetails?.data?.is_revoked) {
+        if (recordDetails?.data?.is_revoked == "true" || recordDetails?.data?.is_revoked == true) {
             recordDetails.data = null;
         }
         return recordDetails;
@@ -113,7 +113,7 @@ export default {
             return result;
         } catch (error: any) {
             strapi.log.error(`DeDi API Error (${endpoint}):`, error.message);
-            throw new Error(`(DeDi API Error) ${error.message}`); // Re-throwing exact error for better debugging
+            throw new Error(`${error.message}`); // Re-throwing exact error for better debugging
         }
     },
 };
