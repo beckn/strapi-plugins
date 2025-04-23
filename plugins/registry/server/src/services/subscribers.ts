@@ -67,7 +67,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
     async getSubscribers(ctx, namespace: string, registryName: string) {
         const { page = 1, pageSize = 10 } = ctx.query.paginations || {};
-        const response = await getDeDiService(strapi).queryDirectory(namespace, registryName, { page, page_size: pageSize });
+        const response = await getDeDiService(strapi).queryDirectory(namespace, registryName, { page, page_size: pageSize, name: ctx.query.name });
         const records = response?.data?.records?.map((record) => this.transformSubscriberRecord(record));
         return {
             results: records,
