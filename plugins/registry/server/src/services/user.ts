@@ -85,8 +85,25 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     },
 
     async getUsers(ctx: any) {
-        const users = await strapi.plugin('users-permissions').service('user').fetchAll(ctx.query);
-        return await sanitizeUsers(users);
+        const page = ctx.query.pagination.page || 1;
+        const pageSize = ctx.query.pagination.pageSize || 10;
+
+        const total = await strapi.db.query('plugin::users-permissions.user').count({
+            filters: ctx.query.filters
+        });
+
+        const pageCount = Math.ceil(total / pageSize);
+
+        const limit = pageSize;
+        const start = page ? (page - 1) * limit : 0;
+
+        const userList = await strapi.plugin('users-permissions').service('user').fetchAll({
+            ...(ctx.query || {}),
+            start: start,
+            limit: limit
+        });
+        const users = await sanitizeUsers(userList);
+        return { results: users, pagination: { page, pageSize, pageCount, total } };
     },
 
     async getUser(ctx: any) {
