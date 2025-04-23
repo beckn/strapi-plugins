@@ -5,7 +5,7 @@ export default [
         handler: "network-domain.getNetworkDomain",
         config: {
             auth: false,
-            middlewares: ["plugin::registry.auth", "plugin::registry.isAdmin"],
+            middlewares: ["plugin::registry.auth"],
         }
     },
     {
@@ -14,7 +14,7 @@ export default [
         handler: "network-domain.getNetworkDomains",
         config: {
             auth: false,
-            middlewares: ["plugin::registry.auth", "plugin::registry.isAdmin"],
+            middlewares: ["plugin::registry.auth"],
         }
     },
     {

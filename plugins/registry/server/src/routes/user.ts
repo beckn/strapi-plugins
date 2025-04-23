@@ -41,7 +41,7 @@ export default [
         handler: "user.getUser",
         config: {
             auth: false,
-            middlewares: ["plugin::registry.auth", "plugin::registry.isAdmin"],
+            middlewares: ["plugin::registry.auth"],
         }
     },
     {
