@@ -168,6 +168,10 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
   async getSubscriber(ctx) {
     try {
       const { id } = ctx.params;
+      if (!await getSubscribersService(strapi).isUserSubscriberOwnerOrAdmin(id, ctx.state.user)) {
+        ctx.unauthorized("You are not authorized to access this subscriber");
+        return;
+      }
       const subscriber = await getSubscribersService(strapi).getSubscriber(DEDI_NAMESPACE_ID, REGISTRY_NAME, id);
       ctx.send(subscriber, 200);
     } catch (error) {
@@ -179,6 +183,10 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
   async update(ctx) {
     try {
       const { id } = ctx.params;
+      if (!await getSubscribersService(strapi).isUserSubscriberOwnerOrAdmin(id, ctx.state.user)) {
+        ctx.unauthorized("You are not authorized to update this subscriber");
+        return;
+      }
       const { data } = ctx.request.body;
       const updatedRecord = await getSubscribersService(strapi).updateSubscriber(
         DEDI_NAMESPACE_ID,
@@ -196,6 +204,10 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
   async revoke(ctx) {
     try {
       const { id } = ctx.params;
+      if (!await getSubscribersService(strapi).isUserSubscriberOwnerOrAdmin(id, ctx.state.user)) {
+        ctx.unauthorized("You are not authorized to revoke this subscriber");
+        return;
+      }
       // Revoke subscriber from DeDi
       await getSubscribersService(strapi).revokeSubscriber(DEDI_NAMESPACE_ID, REGISTRY_NAME, id);
 

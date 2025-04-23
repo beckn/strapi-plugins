@@ -163,5 +163,23 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
                 updated: new Date(),
             }
         }
-    }
+    },
+
+    async isUserSubscriberOwnerOrAdmin(recordName: string, user: any) {
+        try {
+            if (user.role.type == "admin") {
+                return true;
+            }
+            const userNetworkSubscriber = await getUserNetworkSubscriberService(strapi).find({
+                filters: {
+                    record_name: recordName,
+                    user: user.id
+                }
+            });
+            return userNetworkSubscriber?.results?.length > 0 ? true : false;
+        } catch (error) {
+            console.log("Error checking if user is subscriber owner: ", error);
+            return false;
+        }
+    },
 })

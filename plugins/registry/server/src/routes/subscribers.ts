@@ -59,7 +59,7 @@ export default [
     path: '/subscribers/:id',
     handler: 'subscribers.getSubscriber',
     config: {
-      middlewares: ['plugin::registry.auth', 'plugin::registry.isAdmin'],
+      middlewares: ['plugin::registry.auth'],
       auth: false,
     },
   },
