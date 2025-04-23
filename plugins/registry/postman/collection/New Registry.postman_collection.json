@@ -268,7 +268,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/users?populate[0]=role&filters[emailVerified]=true&pagination[pageSize]=4&pagination[page]=1",
+							"raw": "{{baseUrl}}/users?populate[0]=role&filters[emailVerified]=true&pagination[pageSize]=4&pagination[page]=1&filters[fullName]=Laurence Wisoky&",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -291,6 +291,14 @@
 								{
 									"key": "pagination[page]",
 									"value": "1"
+								},
+								{
+									"key": "filters[fullName]",
+									"value": "Laurence Wisoky"
+								},
+								{
+									"key": "",
+									"value": null
 								}
 							]
 						}
@@ -810,7 +818,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"identifier\": \"dayeca4078@oronny.com\",\n    \"password\": \"{{password}}\"\n}",
+							"raw": "{\n    \"identifier\": \"{{userEmail}}\",\n    \"password\": \"{{password}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1138,7 +1146,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n     \"name\": \"{{$randomDomainName}}\",\n     \"schema_url\": \"{{$randomUrl}}\",\n     \"description\": \"{{$randomLoremText}}\"\n   }",
+							"raw": "{\n    \"name\": \"deg:test\",\n    \"schema_url\": \"{{$randomUrl}}\",\n    \"description\": \"{{$randomLoremText}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1324,7 +1332,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/subscribers?paginations[pageSize]=2&pagination[page]=1",
+							"raw": "{{baseUrl}}/subscribers?paginations[pageSize]=10&pagination[page]=1&name=initiated",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -1334,11 +1342,15 @@
 							"query": [
 								{
 									"key": "paginations[pageSize]",
-									"value": "2"
+									"value": "10"
 								},
 								{
 									"key": "pagination[page]",
 									"value": "1"
+								},
+								{
+									"key": "name",
+									"value": "initiated"
 								}
 							]
 						}
