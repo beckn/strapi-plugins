@@ -14,7 +14,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           data: {}
         });
       }
-      const { items, provider, billing, fulfillments, payments } =
+      const { items, provider, billing, fulfillments, payments = [] } =
         message.order;
       const { domain, transaction_id, bap_id, bap_uri } = context;
       //only for p2p energy trade
@@ -114,9 +114,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             domain,
             bap_id,
             bap_uri,
-            currency: payments[0]?.params?.amount || "INR",
-            total_amount: payments[0]?.params?.amount || 100,
-            transaction_id: payments[0]?.id
+            currency: payments?.[0]?.params?.amount || "INR",
+            total_amount: payments?.[0]?.params?.amount || 100,
+            transaction_id: payments?.[0]?.id
           };
           // Create order
           createOrder = await strapi.entityService.create("api::order.order", {
