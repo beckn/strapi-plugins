@@ -159,6 +159,10 @@ Below are the major releases and their highlights:
 | [v1.4.0](#v140) | Added Policy API and Policy Violation Plugin for Beckn Policy                                          |
 | [v1.5.0](#v150) | Added P2P Energy Plugin for Peer-to-Peer Energy Trade                                                  |
 | [v1.6.0](#v160) | Added Beckn Trade BAP, Beckn Trade BPP, and Beckn-MDM Plugin for Beckn Energy                           |
+| [v1.7.0](#v170) | Added Beckn Energy Admin Plugin for Managing P2P Pending Trades                                         |
+| [v1.8.0](#v180) | Added Multiple DEG Domains: DEG Rental, Retail, Finance, EV                                             |
+| [v1.9.0](#v190) | Added Support to Fetch Quantity Selected and Ordered in Beckn APIs                                      |
+| [v1.10.0](#v1100) | Added Support for Decimal Quantities and Advanced Search Filters                                       |
 
 ### v1.0.0
 Initial release of the Beckn Strapi Plugins. This version includes foundational support for implementing Beckn endpoints in commerce workflows, enabling businesses to integrate with the Beckn protocol seamlessly.
@@ -180,6 +184,24 @@ Introduced the P2P Energy plugin to enable peer-to-peer energy trading, supporti
 
 ### v1.6.0
 Released Beckn Trade BAP, Beckn Trade BPP, and Beckn-MDM plugins to support Beckn energy implementations, including trade facilitation and master data management.
+
+### v1.7.0
+Introduced the `beckn-energy-admin` plugin to enable execution of pending trades in P2P energy domains, providing better trade lifecycle management.
+
+### v1.8.0
+Added support for additional DEG domains such as:
+- DEG Rental  
+- DEG Retail  
+- DEG Finance  
+- DEG EV  
+This enables broader use-case coverage for decentralized energy and commerce.
+
+### v1.9.0
+Beckn APIs were extended to support retrieval of both quantity selected and quantity ordered, improving transparency and consistency in order processing.
+
+### v1.10.0
+- Added support for **decimal-based quantities** in order placement and processing.  
+- Introduced new search filters including filtering by quantity, price, tags, and more to enhance product discovery.
 
 ## Contributing
 
