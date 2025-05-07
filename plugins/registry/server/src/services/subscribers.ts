@@ -35,12 +35,12 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
             if (isSubscriberValid) {
                 existingSubscriber.details.status = SUBSCRIBER_STATUS.SUBSCRIBED;
                 await getDeDiService(strapi).updateRecord(namespace, registryName, existingSubscriber.record_name, existingSubscriber);
-                return ctx.send({ message: "Subscribed successfully" });
+                return ctx.send({ status: SUBSCRIBER_STATUS.SUBSCRIBED })
             } else {
-                throw new Error("Subscriber validation failed");
+                return ctx.send({ status: SUBSCRIBER_STATUS.INITIATED });
             }
         } else if (existingSubscriber && existingSubscriber.details.status == SUBSCRIBER_STATUS.SUBSCRIBED) {
-            return ctx.send({ message: "Subscribed successfully" });
+            return ctx.send({ status: SUBSCRIBER_STATUS.SUBSCRIBED })
         }
     },
 
@@ -113,6 +113,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
                 } else {
                     throw new Error("Subscriber is not valid");
                 }
+            } else {
+                recordData.details.status = SUBSCRIBER_STATUS.INITIATED;
             }
         } catch (error) {
             throw error;

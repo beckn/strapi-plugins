@@ -32,8 +32,11 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
             if (key === 'domain') {
               return record.details[key] === '*' || record.details[key] === value;
             }
-            if (key === 'unique_key_id') {
+            if (key === 'unique_key_id' || key === 'key_id') {
               return record.details['key_id'] === value;
+            }
+            if (key === 'subscriber_url' || key === 'url') {
+              return record.details['url'] === value;
             }
             if (key === 'country') {
               return (
@@ -44,7 +47,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
               return (
                 record.details['city_code'] === '*' ||
                 record.details['city_code']?.toLowerCase() ===
-                  filters[key]?.city?.code?.toLowerCase()
+                filters[key]?.city?.code?.toLowerCase()
               );
             }
             return value === '' || record.details[key] === value;
@@ -61,8 +64,10 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
           signing_public_key: records.details.signing_public_key,
           subscriber_id: records.details.subscriber_id,
           unique_key_id: records.details.key_id,
+          key_id: records.details.key_id,
           valid_until: records.details.valid_until,
           subscriber_url: records.details.url,
+          url: records.details.url,
           created: records.details.created,
           valid_from: records.details.valid_from,
           encr_public_key: records.details.encr_public_key,
