@@ -1,5 +1,5 @@
-import myService from './my-service';
+import meter from './meter';
 
 export default {
-  myService,
+  meter,
 };
