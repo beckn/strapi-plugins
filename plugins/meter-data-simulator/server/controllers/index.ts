@@ -1,5 +1,5 @@
-import myController from './my-controller';
+import meter from './meter';
 
 export default {
-  myController,
+  meter,
 };
