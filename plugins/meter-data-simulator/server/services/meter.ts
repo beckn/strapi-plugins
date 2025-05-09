@@ -74,12 +74,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         return ctx.badRequest('Invalid meter ID');
       }
 
-      const existingMeter = await getMeterApiService(strapi).findOne(id);
-      if (!existingMeter) {
+      const meter = await getMeterApiService(strapi).findOne(id, ctx.query);
+      
+      if (!meter) {
         return ctx.notFound('Meter not found');
       }
 
-      const meter = await getMeterApiService(strapi).findOne(id, ctx.query);
       return ctx.send({ message: "Meter fetched successfully", data: meter }, 200);
     } catch (error) {
       ctx.badRequest(error.message);

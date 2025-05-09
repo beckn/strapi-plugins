@@ -18,12 +18,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         return ctx.badRequest('Invalid meter dataset ID');
       }
 
-      const existingMeterDataset = await getMeterDatasetApiService(strapi).findOne(id);
-      if (!existingMeterDataset) {
+      const meterDataset = await getMeterDatasetApiService(strapi).findOne(id, ctx.query);
+      
+      if (!meterDataset) {
         return ctx.notFound('Meter Dataset not found');
       }
 
-      const meterDataset = await getMeterDatasetApiService(strapi).findOne(id, ctx.query);
       return ctx.send({ message: "Meter Dataset fetched successfully", data: meterDataset }, 200);
     } catch (error) {
       ctx.badRequest(error.message);

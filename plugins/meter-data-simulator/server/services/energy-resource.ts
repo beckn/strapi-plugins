@@ -66,12 +66,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         return ctx.badRequest('Invalid energy resource ID');
       }
 
-      const existingEnergyResource = await getEnergyResourceApiService(strapi).findOne(id);
-      if (!existingEnergyResource) {
+      const energyResource = await getEnergyResourceApiService(strapi).findOne(id, ctx.query);
+      
+      if (!energyResource) {
         return ctx.notFound('Energy resource not found');
       }
 
-      const energyResource = await getEnergyResourceApiService(strapi).findOne(id, ctx.query);
       return ctx.send({ message: "Energy resource fetched successfully", data: energyResource }, 200);
     } catch (error) {
       ctx.badRequest(error.message);
