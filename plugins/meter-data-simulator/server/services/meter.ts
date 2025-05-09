@@ -46,7 +46,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         ...reqBody,
         populate: {
           parent: true,
-          energyResource: true
+          energyResource: true,
+          children: true,
+          appliances: true
         }
       });
       return ctx.send({ message: "Meter updated successfully", data: meter }, 200);
