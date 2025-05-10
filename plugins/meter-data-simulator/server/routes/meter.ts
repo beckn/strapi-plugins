@@ -44,4 +44,14 @@ export default [
       auth: false,
     },
   },
+  {
+    method: "POST",
+    path: "/meters/control",
+    handler: "meter.control",
+    config: {
+      policies: [],
+      auth: false,
+      middlewares: ["plugin::meter-data-simulator.validateMeterControl"],
+    },
+  },
 ];

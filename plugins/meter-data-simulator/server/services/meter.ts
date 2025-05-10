@@ -1,5 +1,6 @@
 import { Strapi } from '@strapi/strapi';
 import { getMeterApiService, getEnergyResourceApiService } from '../utils/service';
+import { MeterControlLogType } from '../constant';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async create(ctx) {
@@ -46,7 +47,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         ...reqBody,
         populate: {
           parent: true,
-          energyResource: true
+          energyResource: true,
+          children: true,
+          appliances: true
         }
       });
       return ctx.send({ message: "Meter updated successfully", data: meter }, 200);
@@ -71,12 +74,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         return ctx.badRequest('Invalid meter ID');
       }
 
-      const existingMeter = await getMeterApiService(strapi).findOne(id);
-      if (!existingMeter) {
+      const meter = await getMeterApiService(strapi).findOne(id, ctx.query);
+      
+      if (!meter) {
         return ctx.notFound('Meter not found');
       }
 
-      const meter = await getMeterApiService(strapi).findOne(id, ctx.query);
       return ctx.send({ message: "Meter fetched successfully", data: meter }, 200);
     } catch (error) {
       ctx.badRequest(error.message);
@@ -99,6 +102,106 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       return ctx.send({ message: "Meter deleted successfully" }, 200);
     } catch (error) {
       ctx.badRequest(error.message);
+    }
+  },
+
+  async control(ctx) {
+    try {
+      const {
+        meter_id,
+        parent_meter_id,
+        appliance_type,
+        pincode,
+        load_factor,
+        log_type
+      } = ctx.request.body;
+
+      // Build query filters
+      const filters: any = {};
+      
+      if (meter_id) {
+        filters.code = meter_id;
+      }
+      
+      if (parent_meter_id) {
+        filters.parent = {
+          code: parent_meter_id
+        };
+      }
+      
+      if (pincode) {
+        filters.pincode = pincode;
+      }
+      
+      if (appliance_type && appliance_type.length > 0) {
+        filters.appliances = {
+          name: {
+            $in: appliance_type
+          }
+        };
+      }
+
+      // Add energy resource type filter based on log_type
+      if (log_type === MeterControlLogType.CONSUMER) {
+        filters.energyResource = {
+          type: MeterControlLogType.CONSUMER
+        };
+      } else if (log_type === MeterControlLogType.PROSUMER) {
+        filters.energyResource = {
+          type: MeterControlLogType.PROSUMER
+        };
+      } else if (log_type === MeterControlLogType.BOTH) {
+        filters.energyResource = {
+          type: {
+            $in: [MeterControlLogType.CONSUMER, MeterControlLogType.PROSUMER]
+          }
+        };
+      }
+
+      // Find meters based on filters
+      const meters = await getMeterApiService(strapi).find({
+        filters,
+        populate: ['parent', 'children', 'energyResource', 'appliances']
+      });
+
+      if (!meters.results || meters.results.length === 0) {
+        return ctx.notFound('No meters found matching the criteria');
+      }
+
+      // Update load factors based on energy resource type
+      const updates = meters.results.map(meter => {
+        const updateData: any = {};
+        
+        if (meter.energyResource) {
+          if (meter.energyResource.type === MeterControlLogType.CONSUMER) {
+            updateData.consumptionLoadFactor = load_factor;
+          } else if (meter.energyResource.type === MeterControlLogType.PROSUMER) {
+            updateData.productionLoadFactor = load_factor;
+          }
+        }
+
+        return getMeterApiService(strapi).update(meter.id, {
+          data: updateData,
+          populate: {
+            parent: true,
+            energyResource: true,
+            children: true,
+            appliances: true
+          }
+        });
+      });
+
+      const updatedMeters = await Promise.all(updates);
+
+      return ctx.send({
+        message: "Meters updated successfully",
+        data: updatedMeters,
+        meta: {
+          count: updatedMeters.length
+        }
+      }, 200);
+    } catch (error) {
+      return ctx.badRequest(error.message);
     }
   },
 });

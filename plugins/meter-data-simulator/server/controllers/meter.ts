@@ -18,4 +18,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async delete(ctx) {
     await getMeterPluginService(strapi).delete(ctx);
   },
+  async control(ctx) {
+    await getMeterPluginService(strapi).control(ctx);
+  },
 });
