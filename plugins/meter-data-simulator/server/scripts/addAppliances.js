@@ -1,5 +1,5 @@
 const BASE_URL = "http://127.0.0.1:1337/api/appliances"; // Replace with your Strapi URL
-const TOKEN = "your_strapi_jwt_token"; // Replace with your JWT
+// const TOKEN = "your_strapi_jwt_token"; // Replace with your JWT
 
 const headers = {
   "Content-Type": "application/json",

@@ -46,7 +46,9 @@
   "scripts": {
     "develop": "tsc -p tsconfig.server.json -w",
     "build": "tsc -p tsconfig.server.json",
-    "add-appliances": "node server/scripts/addAppliances.js"
+    "add-appliances": "node server/scripts/addAppliances.js",
+    "add-meters": "node server/scripts/addMeters.js",
+    "add-energy-resources": "node server/scripts/addEnergyResources.js"
   },
   "license": "MIT"
 }
