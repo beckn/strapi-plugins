@@ -1,445 +1,446 @@
 {
-	"info": {
-		"_postman_id": "5aecbdc9-5709-433e-aaad-a8cf46c70082",
-		"name": "DEG MDM",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
-		"_exporter_id": "25464511"
-	},
-	"item": [
-		{
-			"name": "Meter",
-			"item": [
-				{
-					"name": "Meter",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"data\": {\n        \"code\": \"METER003\",\n        \"parent\": null,\n        \"energyResource\": 1,\n        \"consumptionLoadFactor\": 1.0,\n        \"productionLoadFactor\": 0.0,\n        \"type\": \"SMART\",\n        \"city\": \"Bangalore\",\n        \"state\": \"Karnataka\",\n        \"latitude\": 12.9716,\n        \"longitude\": 77.5946,\n        \"pincode\": \"560001\"\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{BASE_URL}}/meters"
-					},
-					"response": []
-				},
-				{
-					"name": "Meters",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{BASE_URL}}/meters?pagination[page]=1&pagination[pageSize]=25&populate[0]=parent&populate[1]=energyResource&populate[2]=children&populate[3]=appliances&sort[0]=children.code:desc",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"meters"
-							],
-							"query": [
-								{
-									"key": "filters[code][$eq]",
-									"value": "METER001",
-									"disabled": true
-								},
-								{
-									"key": "pagination[page]",
-									"value": "1"
-								},
-								{
-									"key": "pagination[pageSize]",
-									"value": "25"
-								},
-								{
-									"key": "filters[createdAt][$eq]",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "populate[0]",
-									"value": "parent"
-								},
-								{
-									"key": "populate[1]",
-									"value": "energyResource"
-								},
-								{
-									"key": "populate[2]",
-									"value": "children"
-								},
-								{
-									"key": "populate[3]",
-									"value": "appliances"
-								},
-								{
-									"key": "sort[0]",
-									"value": "children.code:desc"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Meter",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": "{{BASE_URL}}/meters/5"
-					},
-					"response": []
-				},
-				{
-					"name": "Meter",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{BASE_URL}}/meters/8?populate[0]=parent&populate[1]=children",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"meters",
-								"8"
-							],
-							"query": [
-								{
-									"key": "populate[0]",
-									"value": "parent"
-								},
-								{
-									"key": "populate[1]",
-									"value": "children"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Meter",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"data\": {\n        \"parent\": null,\n        \"energyResource\": null,\n        \"appliances\": []\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{BASE_URL}}/meters/9"
-					},
-					"response": []
-				},
-				{
-					"name": "Control",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"meter_id\": \"\",\n    \"parent_meter_id\": null,\n    \"appliance_type\": [],\n    \"pincode\": \"\",\n    \"load_factor\": 0.5, // required\n    \"log_type\": \"CONSUMER\" // required --> 'CONSUMER' | 'PROSUMER' | 'BOTH'\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{BASE_URL}}/meters/control"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "P2P Trade",
-			"item": [
-				{
-					"name": "Trades",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"data\": {\n        \"buyer_meter_id\": \"METER001\",\n        \"seller_meter_id\": \"METER002\",\n        \"units_kWh\": 0.7,\n        \"price_per_kWh\": 0\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{BASE_URL}}/p2p-trades"
-					},
-					"response": []
-				},
-				{
-					"name": "Trades",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{BASE_URL}}/p2p-trades?sort[0]=createdAt:desc&pagination[page]=1&pagination[pageSize]=25",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"p2p-trades"
-							],
-							"query": [
-								{
-									"key": "sort[0]",
-									"value": "createdAt:desc"
-								},
-								{
-									"key": "pagination[page]",
-									"value": "1"
-								},
-								{
-									"key": "pagination[pageSize]",
-									"value": "25"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Trade",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{BASE_URL}}/p2p-trades/8"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Energy Resource",
-			"item": [
-				{
-					"name": "Energy-Resource",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"data\": {\n        \"name\": \"ABC's Home\",\n        \"type\": \"PROSUMER\",\n        \"meter\": 8\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{BASE_URL}}/energy-resources"
-					},
-					"response": []
-				},
-				{
-					"name": "Energy-Resources",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{BASE_URL}}/energy-resources?sort[0]=createdAt:desc&pagination[page]=1&pagination[pageSize]=25&populate[0]=meter",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"energy-resources"
-							],
-							"query": [
-								{
-									"key": "sort[0]",
-									"value": "createdAt:desc"
-								},
-								{
-									"key": "pagination[page]",
-									"value": "1"
-								},
-								{
-									"key": "pagination[pageSize]",
-									"value": "25"
-								},
-								{
-									"key": "populate[0]",
-									"value": "meter"
-								},
-								{
-									"key": "filters[code][$eq]",
-									"value": "METER001",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Energy-Resource",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": "{{BASE_URL}}/energy-resources/4"
-					},
-					"response": []
-				},
-				{
-					"name": "Energy-Resource",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{BASE_URL}}/energy-resources/1?populate[0]=meter.parent&populate[1]=meter.children&populate[2]=meter.appliances",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"energy-resources",
-								"1"
-							],
-							"query": [
-								{
-									"key": "populate[0]",
-									"value": "meter.parent"
-								},
-								{
-									"key": "populate[1]",
-									"value": "meter.children"
-								},
-								{
-									"key": "populate[2]",
-									"value": "meter.appliances"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Energy-Resource",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"data\": {\n        \"meter\": 7\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{BASE_URL}}/energy-resources/1"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Meter Dataset",
-			"item": [
-				{
-					"name": "Meter-Datasets",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{BASE_URL}}/meter-datasets?sort[0]=createdAt:desc&pagination[page]=1&pagination[pageSize]=25&filters[meter][code][$eq]=METER001&populate[0]=meter",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"meter-datasets"
-							],
-							"query": [
-								{
-									"key": "sort[0]",
-									"value": "createdAt:desc"
-								},
-								{
-									"key": "pagination[page]",
-									"value": "1"
-								},
-								{
-									"key": "pagination[pageSize]",
-									"value": "25"
-								},
-								{
-									"key": "filters[meter][code][$eq]",
-									"value": "METER001"
-								},
-								{
-									"key": "populate[0]",
-									"value": "meter"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Meter-Dataset",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{BASE_URL}}/meter-datasets/1"
-					},
-					"response": []
-				}
-			]
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "BASE_URL",
-			"value": "http://localhost:1337/meter-data-simulator",
-			"type": "string"
-		}
-	]
+  "info": {
+    "_postman_id": "1ce6f47f-6a76-4cd7-b0c9-a1aa1228d74f",
+    "name": "DEG MDM",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "23690031"
+  },
+  "item": [
+    {
+      "name": "Meter",
+      "item": [
+        {
+          "name": "Meter",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"data\": {\n        \"code\": \"METER003\",\n        \"parent\": null,\n        \"energyResource\": 2,\n        \"consumptionLoadFactor\": 1.0,\n        \"productionLoadFactor\": 0.0,\n        \"type\": \"SMART\",\n        \"city\": \"San Francisco\",\n        \"state\": \"California\",\n        \"latitude\": 37.7749,\n        \"longitude\": -122.4194,\n        \"pincode\": \"94103\"\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/meters",
+              "host": ["{{BASE_URL}}"],
+              "path": ["meters"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Meters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/meters?pagination[page]=1&pagination[pageSize]=25&populate[0]=parent&populate[1]=energyResource&populate[2]=children&populate[3]=appliances&sort[0]=children.code:desc",
+              "host": ["{{BASE_URL}}"],
+              "path": ["meters"],
+              "query": [
+                {
+                  "key": "filters[code][$eq]",
+                  "value": "METER001",
+                  "disabled": true
+                },
+                {
+                  "key": "pagination[page]",
+                  "value": "1"
+                },
+                {
+                  "key": "pagination[pageSize]",
+                  "value": "25"
+                },
+                {
+                  "key": "filters[createdAt][$eq]",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "populate[0]",
+                  "value": "parent"
+                },
+                {
+                  "key": "populate[1]",
+                  "value": "energyResource"
+                },
+                {
+                  "key": "populate[2]",
+                  "value": "children"
+                },
+                {
+                  "key": "populate[3]",
+                  "value": "appliances"
+                },
+                {
+                  "key": "sort[0]",
+                  "value": "children.code:desc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Meter",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/meters/5",
+              "host": ["{{BASE_URL}}"],
+              "path": ["meters", "5"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Meter",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/meters/8?populate[0]=parent&populate[1]=children",
+              "host": ["{{BASE_URL}}"],
+              "path": ["meters", "8"],
+              "query": [
+                {
+                  "key": "populate[0]",
+                  "value": "parent"
+                },
+                {
+                  "key": "populate[1]",
+                  "value": "children"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Meter",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"data\": {\n        \"parent\": null,\n        \"energyResource\": null,\n        \"appliances\": []\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/meters/9",
+              "host": ["{{BASE_URL}}"],
+              "path": ["meters", "9"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Control",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"meter_id\": \"METER003\",\n    \"parent_meter_id\": null,\n    \"pincode\": \"\",\n    \"load_factor\": 0.82, // required to be between 0-1 else will fail\n    \"log_type\": \"CONSUMER\" // required --> 'CONSUMER' | 'PROSUMER' | 'BOTH'\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/meters/control",
+              "host": ["{{BASE_URL}}"],
+              "path": ["meters", "control"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "P2P Trade",
+      "item": [
+        {
+          "name": "Trades",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"data\": {\n        \"buyer_meter_id\": \"METER003\",\n        \"seller_meter_id\": \"METER002\",\n        \"units_kWh\": 0.72,\n        \"price_per_kWh\": 8\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/p2p-trades",
+              "host": ["{{BASE_URL}}"],
+              "path": ["p2p-trades"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Trades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/p2p-trades?sort[0]=createdAt:desc&pagination[page]=1&pagination[pageSize]=100",
+              "host": ["{{BASE_URL}}"],
+              "path": ["p2p-trades"],
+              "query": [
+                {
+                  "key": "sort[0]",
+                  "value": "createdAt:desc"
+                },
+                {
+                  "key": "pagination[page]",
+                  "value": "1"
+                },
+                {
+                  "key": "pagination[pageSize]",
+                  "value": "100"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Trade",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/p2p-trades/8",
+              "host": ["{{BASE_URL}}"],
+              "path": ["p2p-trades", "8"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Energy Resource",
+      "item": [
+        {
+          "name": "Energy-Resource",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"data\": {\n        \"name\": \"ABC's Home\",\n        \"type\": \"PROSUMER\",\n        \"meter\": null,\n        \"appliances\":[\"Air Conditioner (1.5 Ton)\"]\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/energy-resources",
+              "host": ["{{BASE_URL}}"],
+              "path": ["energy-resources"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Energy-Resources",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/energy-resources?sort[0]=createdAt:desc&pagination[page]=1&populate[0]=meter&pagination[pageSize]=100",
+              "host": ["{{BASE_URL}}"],
+              "path": ["energy-resources"],
+              "query": [
+                {
+                  "key": "sort[0]",
+                  "value": "createdAt:desc"
+                },
+                {
+                  "key": "pagination[page]",
+                  "value": "1"
+                },
+                {
+                  "key": "populate[0]",
+                  "value": "meter"
+                },
+                {
+                  "key": "filters[code][$eq]",
+                  "value": "METER001",
+                  "disabled": true
+                },
+                {
+                  "key": "pagination[pageSize]",
+                  "value": "100"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Energy-Resource",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/energy-resources/4",
+              "host": ["{{BASE_URL}}"],
+              "path": ["energy-resources", "4"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Energy-Resource",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/energy-resources/1?populate[0]=meter.parent&populate[1]=meter.children&populate[2]=meter.appliances",
+              "host": ["{{BASE_URL}}"],
+              "path": ["energy-resources", "1"],
+              "query": [
+                {
+                  "key": "populate[0]",
+                  "value": "meter.parent"
+                },
+                {
+                  "key": "populate[1]",
+                  "value": "meter.children"
+                },
+                {
+                  "key": "populate[2]",
+                  "value": "meter.appliances"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Energy-Resource",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"data\": {\n        \"meter\": 1,\n        \"appliances\": [\"Ceiling Fan\", \"Solar Panel (production)\", \"Air Conditioner (1.5 Ton)\"] // to add or remove appliances, add appliance's names from the list of appliances retrieved or remove from the array\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/energy-resources/2",
+              "host": ["{{BASE_URL}}"],
+              "path": ["energy-resources", "2"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Meter Dataset",
+      "item": [
+        {
+          "name": "Meter-Datasets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/meter-datasets",
+              "host": ["{{BASE_URL}}"],
+              "path": ["meter-datasets"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Meter-Datasets Streamed",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/meter-datasets",
+              "host": ["{{BASE_URL}}"],
+              "path": ["meter-datasets"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Meter-Dataset",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/meter-datasets/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["meter-datasets", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:1337/meter-data-simulator",
+      "type": "string"
+    }
+  ]
 }
