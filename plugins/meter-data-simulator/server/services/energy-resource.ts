@@ -1,12 +1,36 @@
-import { Strapi } from '@strapi/strapi';
-import { getEnergyResourceApiService } from '../utils/service';
-import { getMeterApiService } from '../utils/service';
+import { Strapi } from "@strapi/strapi";
+import { getEnergyResourceApiService } from "../utils/service";
+import { getMeterApiService } from "../utils/service";
+import { getEntityService } from "../utils/service";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async create(ctx) {
     try {
-      const energyResource = await getEnergyResourceApiService(strapi).create(ctx.request.body);
-      return ctx.send({ message: "Energy resource created successfully", data: energyResource }, 201);
+      const { appliances } = ctx.request.body.data;
+      if (appliances && appliances.length) {
+        const isExistAppliances = await getEntityService(strapi).findMany(
+          "api::appliance.appliance",
+          {
+            filters: {
+              name: { $in: appliances }
+            }
+          }
+        );
+        console.log("isExistAppliances===>", isExistAppliances);
+        ctx.request.body.data.appliances = isExistAppliances.map(
+          (appliance) => appliance.id
+        );
+      }
+      const energyResource = await getEnergyResourceApiService(strapi).create(
+        ctx.request.body
+      );
+      return ctx.send(
+        {
+          message: "Energy resource created successfully",
+          data: energyResource
+        },
+        201
+      );
     } catch (error) {
       ctx.badRequest(error.message);
     }
@@ -16,35 +40,47 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     try {
       const id = ctx.params.id;
       if (!id) {
-        return ctx.badRequest('Invalid energy resource ID');
+        return ctx.badRequest("Invalid energy resource ID");
       }
 
-      const existingEnergyResource = await getEnergyResourceApiService(strapi).findOne(id);
+      const existingEnergyResource = await getEnergyResourceApiService(
+        strapi
+      ).findOne(id);
       if (!existingEnergyResource) {
-        return ctx.notFound('Energy resource not found');
+        return ctx.notFound("Energy resource not found");
       }
 
-      const reqBody  = ctx.request.body;
+      const reqBody = ctx.request.body;
 
       if (reqBody.data?.meter) {
-        const isExistMeter = await getMeterApiService(strapi).findOne(reqBody.data.meter);
+        const isExistMeter = await getMeterApiService(strapi).findOne(
+          reqBody.data.meter
+        );
         if (!isExistMeter) {
-          return ctx.notFound('Meter not found');
+          return ctx.notFound("Meter not found");
         }
       }
 
-      const energyResource = await getEnergyResourceApiService(strapi).update(id, {
-        ...reqBody,
-        populate: {
-          meter: {
-            populate: {
-              appliances: true,
-              children: true
+      const energyResource = await getEnergyResourceApiService(strapi).update(
+        id,
+        {
+          ...reqBody,
+          populate: {
+            meter: {
+              populate: {
+                children: true
+              }
             }
           }
         }
-      });
-      return ctx.send({ message: "Energy resource updated successfully", data: energyResource }, 200);
+      );
+      return ctx.send(
+        {
+          message: "Energy resource updated successfully",
+          data: energyResource
+        },
+        200
+      );
     } catch (error) {
       ctx.badRequest(error.message);
     }
@@ -52,8 +88,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
   async get(ctx) {
     try {
-      const energyResources = await getEnergyResourceApiService(strapi).find(ctx.query);
-      return ctx.send({ message: "Energy resources fetched successfully", data: energyResources }, 200);
+      const energyResources = await getEnergyResourceApiService(strapi).find(
+        ctx.query
+      );
+      return ctx.send(
+        {
+          message: "Energy resources fetched successfully",
+          data: energyResources
+        },
+        200
+      );
     } catch (error) {
       ctx.badRequest(error.message);
     }
@@ -63,16 +107,25 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     try {
       const id = ctx.params.id;
       if (!id) {
-        return ctx.badRequest('Invalid energy resource ID');
+        return ctx.badRequest("Invalid energy resource ID");
       }
 
-      const energyResource = await getEnergyResourceApiService(strapi).findOne(id, ctx.query);
-      
+      const energyResource = await getEnergyResourceApiService(strapi).findOne(
+        id,
+        ctx.query
+      );
+
       if (!energyResource) {
-        return ctx.notFound('Energy resource not found');
+        return ctx.notFound("Energy resource not found");
       }
 
-      return ctx.send({ message: "Energy resource fetched successfully", data: energyResource }, 200);
+      return ctx.send(
+        {
+          message: "Energy resource fetched successfully",
+          data: energyResource
+        },
+        200
+      );
     } catch (error) {
       ctx.badRequest(error.message);
     }
@@ -82,12 +135,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     try {
       const id = ctx.params.id;
       if (!id) {
-        return ctx.badRequest('Invalid energy resource ID');
+        return ctx.badRequest("Invalid energy resource ID");
       }
 
-      const existingEnergyResource = await getEnergyResourceApiService(strapi).findOne(id);
+      const existingEnergyResource = await getEnergyResourceApiService(
+        strapi
+      ).findOne(id);
       if (!existingEnergyResource) {
-        return ctx.notFound('Energy resource not found');
+        return ctx.notFound("Energy resource not found");
       }
 
       await getEnergyResourceApiService(strapi).delete(id);
@@ -95,5 +150,5 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       ctx.badRequest(error.message);
     }
-  },
+  }
 });

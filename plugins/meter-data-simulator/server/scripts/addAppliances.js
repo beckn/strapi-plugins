@@ -1,9 +1,11 @@
+// @ts-nocheck
 const BASE_URL = "http://127.0.0.1:1337/api/appliances"; // Replace with your Strapi URL
-// const TOKEN = "your_strapi_jwt_token"; // Replace with your JWT
+const TOKEN =
+  "b1f7ea537367985702d2361b4f10a546a54f2f38142d07932f9c349dfbbdf74c3bc50cee67690051a46190b22a3e97df566456a1d7419c635778e0b542458ab683917714b5318a846dc6dd8b7fdd9bb3b4e39f77b2aa10da663e9249d355168c7077d69c04b4264aa238ac233b95e1c9dc343abf34452ccafd4b158cf272ca0b"; // Replace with your JWT
 
 const headers = {
   "Content-Type": "application/json",
-  //   Authorization: `Bearer ${TOKEN}`,
+  Authorization: `Bearer ${TOKEN}`
 };
 
 const appliances = [
@@ -11,81 +13,81 @@ const appliances = [
     name: "LED Bulb (10W)",
     powerRating: 10,
     baseKWh: 0.00017,
-    description: "Very low-power appliance",
+    description: "Very low-power appliance"
   },
   {
     name: "Ceiling Fan",
     powerRating: 75,
     baseKWh: 0.00125,
-    description: "Common residential usage",
+    description: "Common residential usage"
   },
   {
     name: "Television (LED)",
     powerRating: 120,
     baseKWh: 0.002,
-    description: "Entertainment",
+    description: "Entertainment"
   },
   {
     name: "Refrigerator",
     powerRating: 200,
     baseKWh: 0.00333,
-    description: "Compressor cycles ON/OFF",
+    description: "Compressor cycles ON/OFF"
   },
   {
     name: "Laptop Charger",
     powerRating: 65,
     baseKWh: 0.00108,
-    description: "Varies by model",
+    description: "Varies by model"
   },
   {
     name: "Microwave Oven",
     powerRating: 1000,
     baseKWh: 0.01667,
-    description: "High-power but short usage",
+    description: "High-power but short usage"
   },
   {
     name: "Washing Machine",
     powerRating: 500,
     baseKWh: 0.00833,
-    description: "Motor + water heater load",
+    description: "Motor + water heater load"
   },
   {
     name: "Air Conditioner (1.5 Ton)",
     powerRating: 1500,
     baseKWh: 0.025,
-    description: "High-power appliance",
+    description: "High-power appliance"
   },
   {
     name: "Room Heater",
     powerRating: 2000,
     baseKWh: 0.03333,
-    description: "Constant high power",
+    description: "Constant high power"
   },
   {
     name: "Electric Geyser",
     powerRating: 3000,
     baseKWh: 0.05,
-    description: "Very high-demand heating",
+    description: "Very high-demand heating"
   },
   {
     name: "Water Pump",
     powerRating: 750,
     baseKWh: 0.0125,
-    description: "Moderate mechanical load",
+    description: "Moderate mechanical load"
   },
   {
     name: "Solar Panel (production)",
     powerRating: 1200,
     baseKWh: 0.02,
-    description: "",
-  },
+    description: ""
+  }
 ];
 
 const createIfNotExists = async (appliance) => {
   const query = `?filters[name][$eq]=${encodeURIComponent(appliance.name)}`;
   const checkRes = await fetch(`${BASE_URL}${query}`, {
     method: "GET",
-    headers,
+    headers
   });
 
   const existing = await checkRes.json();
@@ -98,7 +100,7 @@ const createIfNotExists = async (appliance) => {
   const createRes = await fetch(BASE_URL, {
     method: "POST",
     headers,
-    body: JSON.stringify({ data: appliance }),
+    body: JSON.stringify({ data: appliance })
   });
 
   const created = await createRes.json();

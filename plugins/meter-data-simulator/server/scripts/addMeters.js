@@ -1,3 +1,4 @@
+// @ts-nocheck
 const meters = [
   {
     code: "MTR001",
@@ -10,7 +11,7 @@ const meters = [
     latitude: 37.7749,
     longitude: -122.4194,
     pincode: "94103",
-    appliances: ["Refrigerator", "Washing Machine", "Television (LED)"],
+    appliances: ["Refrigerator", "Washing Machine", "Television (LED)"]
   },
   {
     code: "MTR002",
@@ -23,7 +24,7 @@ const meters = [
     latitude: 37.775,
     longitude: -122.4195,
     pincode: "94103",
-    appliances: ["Solar Panel (production)", "Electric Geyser"],
+    appliances: ["Solar Panel (production)", "Electric Geyser"]
   },
   {
     code: "MTR003",
@@ -40,8 +41,8 @@ const meters = [
       "Refrigerator",
       "Microwave Oven",
       "Television (LED)",
-      "Ceiling Fan",
-    ],
+      "Ceiling Fan"
+    ]
   },
   {
     code: "MTR004",
@@ -54,7 +55,7 @@ const meters = [
     latitude: 37.7752,
     longitude: -122.4197,
     pincode: "94103",
-    appliances: ["Air Conditioner (1.5 Ton)", "Water Pump"],
+    appliances: ["Air Conditioner (1.5 Ton)", "Water Pump"]
   },
   {
     code: "MTR005",
@@ -67,11 +68,7 @@ const meters = [
     latitude: 37.7753,
     longitude: -122.4198,
     pincode: "94103",
-    appliances: [
-      "Solar Panel (production)",
-      "Refrigerator",
-      "Television (LED)",
-    ],
+    appliances: ["Solar Panel (production)", "Refrigerator", "Television (LED)"]
   },
   {
     code: "MTR006",
@@ -88,8 +85,8 @@ const meters = [
       "Refrigerator",
       "Television (LED)",
       "Ceiling Fan",
-      "LED Bulb (10W)",
-    ],
+      "LED Bulb (10W)"
+    ]
   },
   {
     code: "MTR007",
@@ -102,7 +99,7 @@ const meters = [
     latitude: 37.7755,
     longitude: -122.42,
     pincode: "94103",
-    appliances: ["Air Conditioner (1.5 Ton)", "Television (LED)"],
+    appliances: ["Air Conditioner (1.5 Ton)", "Television (LED)"]
   },
   {
     code: "MTR008",
@@ -115,7 +112,7 @@ const meters = [
     latitude: 37.7756,
     longitude: -122.4201,
     pincode: "94103",
-    appliances: ["Water Pump", "Air Conditioner (1.5 Ton)", "Refrigerator"],
+    appliances: ["Water Pump", "Air Conditioner (1.5 Ton)", "Refrigerator"]
   },
   {
     code: "MTR009",
@@ -132,8 +129,8 @@ const meters = [
       "Solar Panel (production)",
       "Refrigerator",
       "Television (LED)",
-      "Air Conditioner (1.5 Ton)",
-    ],
+      "Air Conditioner (1.5 Ton)"
+    ]
   },
   {
     code: "MTR010",
@@ -146,22 +143,23 @@ const meters = [
     latitude: 37.7758,
     longitude: -122.4203,
     pincode: "94103",
-    appliances: ["Refrigerator", "Television (LED)"],
-  },
+    appliances: ["Refrigerator", "Television (LED)"]
+  }
 ];
 
 const API_URL = "http://127.0.0.1:1337/api/meters";
 const APPLIANCE_API_URL = "http://127.0.0.1:1337/api/appliances";
-// const TOKEN = "YOUR_AUTH_TOKEN_HERE"; // Replace with your actual token
+const TOKEN =
+  "b1f7ea537367985702d2361b4f10a546a54f2f38142d07932f9c349dfbbdf74c3bc50cee67690051a46190b22a3e97df566456a1d7419c635778e0b542458ab683917714b5318a846dc6dd8b7fdd9bb3b4e39f77b2aa10da663e9249d355168c7077d69c04b4264aa238ac233b95e1c9dc343abf34452ccafd4b158cf272ca0b"; // Replace with your actual token
 
 const headers = {
   "Content-Type": "application/json",
-  //   Authorization: `Bearer ${TOKEN}`,
+  Authorization: `Bearer ${TOKEN}`
 };
 
 async function meterExists(code) {
   const res = await fetch(`${API_URL}?filters[code][$eq]=${code}`, {
-    headers,
+    headers
   });
 
   if (!res.ok) {
@@ -177,8 +175,8 @@ async function getApplianceId(name) {
   const res = await fetch(
     `${APPLIANCE_API_URL}?filters[name][$eq]=${encodeURIComponent(name)}`,
     {
-      headers,
-    },
+      headers
+    }
   );
 
   if (!res.ok) {
@@ -219,7 +217,7 @@ async function seedMeters() {
       const response = await fetch(API_URL, {
         method: "POST",
         headers,
-        body: JSON.stringify({ data: meter }),
+        body: JSON.stringify({ data: meter })
       });
 
       const result = await response.json();
@@ -248,19 +246,19 @@ async function seedMeters() {
               headers,
               body: JSON.stringify({
                 data: {
-                  appliances: applianceIds,
-                },
-              }),
+                  appliances: applianceIds
+                }
+              })
             });
             console.log(
-              `Linked ${applianceIds.length} appliances to meter ${meter.code}`,
+              `Linked ${applianceIds.length} appliances to meter ${meter.code}`
             );
           }
         }
       } else {
         console.error(
           `Failed to create ${meter.code}:`,
-          result.error || result,
+          result.error || result
         );
       }
     } catch (err) {

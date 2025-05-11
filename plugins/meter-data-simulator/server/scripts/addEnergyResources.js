@@ -1,3 +1,4 @@
+// @ts-nocheck
 const energyResources = [
   { name: "John's Home", type: "CONSUMER", meterCode: "MTR001" },
   { name: "Maya's Residence", type: "PROSUMER", meterCode: "MTR002" },
@@ -8,24 +9,25 @@ const energyResources = [
   { name: "Khan's Home", type: "CONSUMER", meterCode: "MTR007" },
   { name: "Nguyen Family Home", type: "PROSUMER", meterCode: "MTR008" },
   { name: "O'Connor Cottage", type: "CONSUMER", meterCode: "MTR009" },
-  { name: "Kim Residence", type: "PROSUMER", meterCode: "MTR010" },
+  { name: "Kim Residence", type: "PROSUMER", meterCode: "MTR010" }
 ];
 
 const ENERGY_API_URL = "http://127.0.0.1:1337/api/energy-resources";
 const METER_API_URL = "http://127.0.0.1:1337/api/meters";
-const TOKEN = "YOUR_AUTH_TOKEN_HERE"; // Replace with your token
+const TOKEN =
+  "b1f7ea537367985702d2361b4f10a546a54f2f38142d07932f9c349dfbbdf74c3bc50cee67690051a46190b22a3e97df566456a1d7419c635778e0b542458ab683917714b5318a846dc6dd8b7fdd9bb3b4e39f77b2aa10da663e9249d355168c7077d69c04b4264aa238ac233b95e1c9dc343abf34452ccafd4b158cf272ca0b"; // Replace with your token
 
 const headers = {
   "Content-Type": "application/json",
-  //   Authorization: `Bearer ${TOKEN}`,
+  Authorization: `Bearer ${TOKEN}`
 };
 
 async function energyResourceExists(name) {
   const res = await fetch(
     `${ENERGY_API_URL}?filters[name][$eq]=${encodeURIComponent(name)}`,
     {
-      headers,
-    },
+      headers
+    }
   );
 
   if (!res.ok) return true; // prevent duplication if check fails
@@ -37,8 +39,8 @@ async function getMeterIdByCode(code) {
   const res = await fetch(
     `${METER_API_URL}?filters[code][$eq]=${encodeURIComponent(code)}`,
     {
-      headers,
-    },
+      headers
+    }
   );
 
   if (!res.ok) {
@@ -61,7 +63,7 @@ async function seedEnergyResources() {
     const meterId = await getMeterIdByCode(resource.meterCode);
     if (!meterId) {
       console.log(
-        `Meter ${resource.meterCode} not found. Skipping ${resource.name}.`,
+        `Meter ${resource.meterCode} not found. Skipping ${resource.name}.`
       );
       continue;
     }
@@ -69,14 +71,14 @@ async function seedEnergyResources() {
     const payload = {
       name: resource.name,
       type: resource.type,
-      meter: meterId,
+      meter: meterId
     };
 
     try {
       const res = await fetch(ENERGY_API_URL, {
         method: "POST",
         headers,
-        body: JSON.stringify({ data: payload }),
+        body: JSON.stringify({ data: payload })
       });
 
       const result = await res.json();
@@ -86,7 +88,7 @@ async function seedEnergyResources() {
       } else {
         console.error(
           `Failed to create ${resource.name}:`,
-          result.error || result,
+          result.error || result
         );
       }
     } catch (err) {
