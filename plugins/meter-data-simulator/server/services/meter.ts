@@ -151,30 +151,37 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         filters.pincode = pincode;
       }
 
-      if (appliance_type && appliance_type.length > 0) {
-        filters.appliances = {
-          name: {
-            $in: appliance_type
-          }
-        };
-      }
+      // if (appliance_type && appliance_type.length > 0) {
+      //   filters.appliances = {
+      //     name: {
+      //       $in: appliance_type
+      //     }
+      //   };
+      // }
 
       // Add energy resource type filter based on log_type
-      if (log_type === MeterControlLogType.CONSUMER) {
-        filters.energyResource = {
-          type: MeterControlLogType.CONSUMER
-        };
-      } else if (log_type === MeterControlLogType.PROSUMER) {
+      // if (log_type === MeterControlLogType.CONSUMER) {
+      //   filters.energyResource = {
+      //     type: MeterControlLogType.CONSUMER
+      //   };
+      // } else
+
+      if (log_type === MeterControlLogType.PROSUMER) {
         filters.energyResource = {
           type: MeterControlLogType.PROSUMER
         };
-      } else if (log_type === MeterControlLogType.BOTH) {
+      } else if (
+        log_type === MeterControlLogType.CONSUMER ||
+        log_type === MeterControlLogType.BOTH
+      ) {
         filters.energyResource = {
           type: {
             $in: [MeterControlLogType.CONSUMER, MeterControlLogType.PROSUMER]
           }
         };
       }
+
+      console.log("filters===>", filters);
 
       // Find meters based on filters
       const meters = await getMeterApiService(strapi).find({
@@ -191,13 +198,29 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         const updateData: any = {};
 
         if (meter.energyResource) {
-          if (meter.energyResource.type === MeterControlLogType.CONSUMER) {
+          if (log_type === MeterControlLogType.CONSUMER) {
+            // Meter can have ER with type consumer or prosumer and update consumption load factor only
             updateData.consumptionLoadFactor = load_factor;
-          } else if (
-            meter.energyResource.type === MeterControlLogType.PROSUMER
-          ) {
-            updateData.productionLoadFactor = load_factor;
+          } else if (log_type === MeterControlLogType.PROSUMER) {
+            // Meter can have ER with type prosumer only and update production load factor only
+            if (meter.energyResource.type === MeterControlLogType.PROSUMER) {
+              updateData.productionLoadFactor = load_factor;
+            } else return null;
+          } else if (log_type === MeterControlLogType.BOTH) {
+            // Meter can have ER with type prosumer only and update both load factor
+            if (meter.energyResource.type === MeterControlLogType.PROSUMER) {
+              updateData.consumptionLoadFactor = load_factor;
+              updateData.productionLoadFactor = load_factor;
+            } else return null;
           }
+
+          // if (meter.energyResource.type === MeterControlLogType.CONSUMER) {
+          //   updateData.consumptionLoadFactor = load_factor;
+          // } else if (
+          //   meter.energyResource.type === MeterControlLogType.PROSUMER
+          // ) {
+          //   updateData.productionLoadFactor = load_factor;
+          // }
         }
 
         return getMeterApiService(strapi).update(meter.id, {

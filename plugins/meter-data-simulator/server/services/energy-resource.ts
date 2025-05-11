@@ -60,7 +60,20 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           return ctx.notFound("Meter not found");
         }
       }
-
+      const { appliances } = reqBody.data;
+      if (appliances && appliances.length) {
+        const isExistAppliances = await getEntityService(strapi).findMany(
+          "api::appliance.appliance",
+          {
+            filters: {
+              name: { $in: appliances }
+            }
+          }
+        );
+        reqBody.data.appliances = isExistAppliances.map(
+          (appliance) => appliance.id
+        );
+      }
       const energyResource = await getEnergyResourceApiService(strapi).update(
         id,
         {

@@ -9,7 +9,7 @@ export default () => {
         appliance_type,
         pincode,
         load_factor,
-        log_type,
+        log_type
       } = ctx.request.body;
 
       // Validate required fields
@@ -30,7 +30,11 @@ export default () => {
       }
 
       if (!Object.values(MeterControlLogType).includes(log_type)) {
-        return ctx.badRequest(`log_type must be one of: ${Object.values(MeterControlLogType).join(", ")}`);
+        return ctx.badRequest(
+          `log_type must be one of: ${Object.values(MeterControlLogType).join(
+            ", "
+          )}`
+        );
       }
 
       // Validate optional fields
@@ -42,14 +46,14 @@ export default () => {
         return ctx.badRequest("parent_meter_id must be a string");
       }
 
-      if (appliance_type) {
-        if (!Array.isArray(appliance_type)) {
-          return ctx.badRequest("appliance_type must be an array");
-        }
-        if (appliance_type.some((type) => typeof type !== "string")) {
-          return ctx.badRequest("appliance_type must be an array of strings");
-        }
-      }
+      // if (appliance_type) {
+      //   if (!Array.isArray(appliance_type)) {
+      //     return ctx.badRequest("appliance_type must be an array");
+      //   }
+      //   if (appliance_type.some((type) => typeof type !== "string")) {
+      //     return ctx.badRequest("appliance_type must be an array of strings");
+      //   }
+      // }
 
       if (pincode && typeof pincode !== "string") {
         return ctx.badRequest("pincode must be a string");
