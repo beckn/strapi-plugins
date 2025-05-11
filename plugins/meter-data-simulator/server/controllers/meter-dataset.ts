@@ -1,5 +1,5 @@
-import { Strapi } from '@strapi/strapi';
-import { getMeterDatasetPluginService } from '../utils/service';
+import { Strapi } from "@strapi/strapi";
+import { getMeterDatasetPluginService } from "../utils/service";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async get(ctx) {
@@ -8,4 +8,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async getById(ctx) {
     await getMeterDatasetPluginService(strapi).getById(ctx);
   },
+  async getStreamedById(ctx) {
+    await getMeterDatasetPluginService(strapi).getStreamedById(ctx);
+  }
 });
