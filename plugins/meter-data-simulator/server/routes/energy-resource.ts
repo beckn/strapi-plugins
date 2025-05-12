@@ -44,5 +44,14 @@ export default [
         auth: false,
       },
     },
+    {
+      method: "POST",
+      path: "/meter/link",
+      handler: "energyResource.linkMeter",
+      config: {
+        policies: [],
+        auth: false,
+      },
+    },
   ];
   

@@ -1,7 +1,7 @@
 // @ts-nocheck
 const BASE_URL = "http://127.0.0.1:1337/api/appliances"; // Replace with your Strapi URL
 const TOKEN =
-  "b1f7ea537367985702d2361b4f10a546a54f2f38142d07932f9c349dfbbdf74c3bc50cee67690051a46190b22a3e97df566456a1d7419c635778e0b542458ab683917714b5318a846dc6dd8b7fdd9bb3b4e39f77b2aa10da663e9249d355168c7077d69c04b4264aa238ac233b95e1c9dc343abf34452ccafd4b158cf272ca0b"; // Replace with your JWT
+  "e73e072fc75be4a83437ab03dfaa67b6196cd661cf8e334ba14d95fe52a797558e308414d982dbbc6bb305ede1747ec0016fef6d5cbae2eee651e20eada9bef36762d78feadb539737a771c867102bdfd9ab638961579f4d4d3ac035f00707ca9aee5e00643cd55e9af5578028a65c812490356268515f82eef0db1b0713633d"; // Replace with your JWT
 
 const headers = {
   "Content-Type": "application/json",

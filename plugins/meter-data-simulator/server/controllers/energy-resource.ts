@@ -18,4 +18,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async delete(ctx) {
     await getEnergyResourcePluginService(strapi).delete(ctx);
   },
+  async linkMeter(ctx) {
+    await getEnergyResourcePluginService(strapi).linkMeter(ctx);
+  },
 });

@@ -6,6 +6,8 @@ const energyResourceApiIdentifier = "api::energy-resource.energy-resource";
 const meterDatasetApiIdentifier = "api::meter-dataset.meter-dataset";
 const p2pTradeApiIdentifier = "api::p2p-trade.p2p-trade";
 const applianceApiIdentifier = "api::appliance.appliance";
+const derApiIdentifier = "api::der.der";
+
 // Meter
 export const getMeterPluginService = (strapi: Strapi) => {
   return strapi.plugin(pluginName).service("meter");
@@ -44,4 +46,13 @@ export const getP2PTradeApiService = (strapi: Strapi) => {
 
 export const getEntityService = (strapi: Strapi) => {
   return strapi.entityService;
+};
+
+// DER
+export const getDerPluginService = (strapi: Strapi) => {
+  return strapi.plugin(pluginName).service("der");
+};
+
+export const getDerApiService = (strapi: Strapi) => {
+  return strapi.service(derApiIdentifier);
 };
