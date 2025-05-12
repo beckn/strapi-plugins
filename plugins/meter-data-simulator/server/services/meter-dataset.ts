@@ -86,9 +86,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
           console.log("meterDataSet====>", JSON.stringify(meterDataSet));
           if (!lastMeterDataSetSent.length) {
-            lastMeterDataSetSent.push(...meterDataSet);
+            lastMeterDataSetSent.push(...(meterDataSet as any));
             console.log("First Time Sent====>", JSON.stringify(meterDataSet));
-            res.write(JSON.stringify(JSON.parse(meterDataSet), null, 2));
+            res.write(JSON.stringify(meterDataSet), null, 2);
           } else {
             const newDatasetSent = meterDataSet.filter(
               (dataset) =>
@@ -99,7 +99,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
             if (newDatasetSent.length) {
               console.log("newDatasetSent.length====>", newDatasetSent.length);
-              res.write(JSON.stringify(JSON.parse(newDatasetSent), null, 2));
+              res.write(JSON.stringify(newDatasetSent as any, null, 2));
               lastMeterDataSetSent.push(...newDatasetSent);
             } else {
               console.log("No new dataset sent");
