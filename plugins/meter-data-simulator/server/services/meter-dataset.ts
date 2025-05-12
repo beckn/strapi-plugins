@@ -55,6 +55,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async getStreamedById(ctx) {
     try {
       const id = ctx.params.id;
+
       if (!id) {
         return ctx.badRequest("Invalid meter dataset ID");
       }
@@ -72,17 +73,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::meter-dataset.meter-dataset",
             {
               filters: {
-                meter: id
+                meter: {
+                  filters: {
+                    id: id
+                  }
+                }
               },
               populate: {
                 meter: {}
               }
             }
           );
+          console.log("meterDataSet====>", JSON.stringify(meterDataSet));
           if (!lastMeterDataSetSent.length) {
             lastMeterDataSetSent.push(...meterDataSet);
             console.log("First Time Sent====>", JSON.stringify(meterDataSet));
-            res.write(JSON.stringify(meterDataSet, null, 2));
+            res.write(JSON.stringify(JSON.parse(meterDataSet), null, 2));
           } else {
             const newDatasetSent = meterDataSet.filter(
               (dataset) =>
@@ -90,9 +96,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                   (lastdataset) => lastdataset.id === dataset.id
                 )
             );
-            console.log("newDatasetSent====>", JSON.stringify(newDatasetSent));
-            res.write(JSON.stringify(newDatasetSent, null, 2));
-            lastMeterDataSetSent.push(...newDatasetSent);
+
+            if (newDatasetSent.length) {
+              console.log("newDatasetSent.length====>", newDatasetSent.length);
+              res.write(JSON.stringify(JSON.parse(newDatasetSent), null, 2));
+              lastMeterDataSetSent.push(...newDatasetSent);
+            } else {
+              console.log("No new dataset sent");
+            }
           }
         } catch (error) {
           strapi.log.error("Error in sendDataInterval", error);
