@@ -1,5 +1,5 @@
 import { Strapi } from "@strapi/strapi";
-import { 
+import {
   getEnergyResourceApiService,
   getMeterApiService,
   getEntityService,
@@ -9,70 +9,20 @@ import {
 export default ({ strapi }: { strapi: Strapi }) => ({
   async create(ctx) {
     try {
-      const { appliances } = ctx.request.body.data;
-      
       // 1. Create Energy Resource
       const createdER = await getEnergyResourceApiService(strapi).create({
         data: ctx.request.body.data
       });
 
-      // 2. If appliances exist, create DERs
-      if (appliances && appliances.length) {
-        const isExistAppliances = await getEntityService(strapi).findMany(
-          "api::appliance.appliance",
-          {
-            filters: {
-              name: { $in: appliances }
-            }
-          }
-        );
-
-        console.log('Dank Found appliances:', isExistAppliances);
-
-        // 3. Create DERs one by one
-        const derIds = [];
-        // Convert to array if not already
-        const appliancesArray = Array.isArray(isExistAppliances) ? isExistAppliances : [isExistAppliances];
-        
-        for (const appliance of appliancesArray) {
-          const der = await getDerApiService(strapi).create({
-            data: {
-              switched_on: false,
-              appliance: appliance.id,
-              energy_resource: createdER.id
-            }
-          });
-          derIds.push(der.id);
-        }
-
-        // 4. Update ER with DER IDs
-        const updatedER = await getEnergyResourceApiService(strapi).update(
-          createdER.id,
-          {
-            data: {
-              ders: derIds
-            },
-            populate: {
-              ders: {
-                populate: ['appliance']
-              }
-            }
-          }
-        );
-
-        return ctx.send({
-          message: "Energy resource and DERs created successfully",
-          data: updatedER
-        }, 201);
-      }
-
-      return ctx.send({
-        message: "Energy resource created successfully",
-        data: createdER
-      }, 201);
-
+      return ctx.send(
+        {
+          message: "Energy resource created successfully",
+          data: createdER
+        },
+        201
+      );
     } catch (error) {
-      console.error('Error creating ER and DERs:', error);
+      console.error("Error creating ER and DERs:", error);
       return ctx.badRequest(error.message);
     }
   },
@@ -88,13 +38,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const existingER = await getEnergyResourceApiService(strapi).findOne(id, {
         populate: {
           ders: {
-            populate: ['appliance']
+            populate: ["appliance"]
           }
         }
       });
-      
-      console.log('Existing ER:', JSON.stringify(existingER, null, 2));
-      
+
+      console.log("Existing ER:", JSON.stringify(existingER, null, 2));
+
       if (!existingER) {
         return ctx.notFound("Energy resource not found");
       }
@@ -126,21 +76,21 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
         // Get current DER appliance IDs - with safe access
         const currentDERs = existingER?.ders || [];
-        console.log('Current DERs:', JSON.stringify(currentDERs, null, 2));
+        console.log("Current DERs:", JSON.stringify(currentDERs, null, 2));
 
         const currentApplianceIds = currentDERs
-          .filter(der => der && der.appliance)
-          .map(der => der.appliance.id);
+          .filter((der) => der && der.appliance)
+          .map((der) => der.appliance.id);
 
-        console.log('Current Appliance IDs:', currentApplianceIds);
+        console.log("Current Appliance IDs:", currentApplianceIds);
 
         // Find appliances to add and remove
-        const newApplianceIds = newAppliances.map(app => app.id);
+        const newApplianceIds = newAppliances.map((app) => app.id);
         const appliancesToAdd = newAppliances.filter(
-          app => !currentApplianceIds.includes(app.id)
+          (app) => !currentApplianceIds.includes(app.id)
         );
         const dersToRemove = currentDERs.filter(
-          der => der.appliance && !newApplianceIds.includes(der.appliance.id)
+          (der) => der.appliance && !newApplianceIds.includes(der.appliance.id)
         );
 
         // Create new DERs
@@ -165,21 +115,23 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         data: reqBody.data,
         populate: {
           ders: {
-            populate: ['appliance']
+            populate: ["appliance"]
           },
           meter: {
-            populate: ['children']
+            populate: ["children"]
           }
         }
       });
 
-      return ctx.send({
-        message: "Energy resource updated successfully",
-        data: updatedER
-      }, 200);
-
+      return ctx.send(
+        {
+          message: "Energy resource updated successfully",
+          data: updatedER
+        },
+        200
+      );
     } catch (error) {
-      console.error('Error updating ER:', error);
+      console.error("Error updating ER:", error);
       return ctx.badRequest(error.message);
     }
   },
@@ -259,7 +211,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
 
       // Check if ER exists
-      const existingER = await getEnergyResourceApiService(strapi).findOne(er_id);
+      const existingER = await getEnergyResourceApiService(strapi).findOne(
+        er_id
+      );
       if (!existingER) {
         return ctx.notFound("Energy Resource not found");
       }
@@ -272,12 +226,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       // Check if meter is already linked to another ER
       if (existingMeter.energyResource) {
-        return ctx.badRequest("Meter is already linked to another Energy Resource");
+        return ctx.badRequest(
+          "Meter is already linked to another Energy Resource"
+        );
       }
 
       // Check if ER is already linked to another meter
       if (existingER.meter) {
-        return ctx.badRequest("Energy Resource is already linked to another meter");
+        return ctx.badRequest(
+          "Energy Resource is already linked to another meter"
+        );
       }
 
       // Update the meter with ER reference
@@ -287,11 +245,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         }
       });
 
-      return ctx.send({
-        message: "Meter linked successfully",
-        data: updatedMeter
-      }, 200);
-
+      return ctx.send(
+        {
+          message: "Meter linked successfully",
+          data: updatedMeter
+        },
+        200
+      );
     } catch (error) {
       return ctx.badRequest(error.message);
     }

@@ -35,17 +35,33 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         return ctx.badRequest("Invalid meter dataset ID");
       }
 
-      const meterDataset = await getMeterDatasetApiService(strapi).findOne(
-        id,
-        ctx.query
+      // const meterDataset = await getMeterDatasetApiService(strapi).findOne(
+      //   id,
+      //   ctx.query
+      // );
+
+      const meterDataSet = await getEntityService(strapi).findMany(
+        "api::meter-dataset.meter-dataset",
+        {
+          filters: {
+            meter: {
+              filters: {
+                id: id
+              }
+            }
+          },
+          populate: {
+            meter: {}
+          }
+        }
       );
 
-      if (!meterDataset) {
+      if (!meterDataSet) {
         return ctx.notFound("Meter Dataset not found");
       }
 
       return ctx.send(
-        { message: "Meter Dataset fetched successfully", data: meterDataset },
+        { message: "Meter Dataset fetched successfully", data: meterDataSet },
         200
       );
     } catch (error) {
@@ -73,11 +89,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::meter-dataset.meter-dataset",
             {
               filters: {
-                meter: {
-                  filters: {
-                    id: id
-                  }
-                }
+                meter: id
               },
               populate: {
                 meter: {}
