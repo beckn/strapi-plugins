@@ -35,14 +35,18 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     return ctx.send({ utilities }, 200);
   },
   async resetUtility(ctx) {
-    await getEntityService(strapi).deleteMany("api::utility.utility");
-    await getEntityService(strapi).deleteMany("api::substation.substation");
-    await getEntityService(strapi).deleteMany("api::transformer.transformer");
-    await getEntityService(strapi).deleteMany("api::meter.meter");
+    await getEntityService(strapi).deleteMany("api::utility.utility", {});
+    await getEntityService(strapi).deleteMany("api::substation.substation", {});
     await getEntityService(strapi).deleteMany(
-      "api::energy-resource.energy-resource"
+      "api::transformer.transformer",
+      {}
     );
-    await getEntityService(strapi).deleteMany("api::der.der");
+    await getEntityService(strapi).deleteMany("api::meter.meter", {});
+    await getEntityService(strapi).deleteMany(
+      "api::energy-resource.energy-resource",
+      {}
+    );
+    await getEntityService(strapi).deleteMany("api::der.der", {});
 
     const utilities = getInitialStateService();
     const result = await Promise.all(
