@@ -131,5 +131,23 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       strapi.log.error("Error in getStreamedById", error);
       ctx.badRequest(error.message);
     }
+  },
+  async getGridLoads(ctx) {
+    try {
+      const gridLoads = await getEntityService(strapi).findMany(
+        "api::grid-load.grid-load",
+        {
+          filters: {},
+          populate: { transformer: { populate: { substation: {} } } },
+          sort: ["createdAt:desc"]
+        }
+      );
+      return ctx.send(
+        { message: "Grid Loads fetched successfully", data: gridLoads },
+        200
+      );
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
   }
 });

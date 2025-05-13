@@ -16,5 +16,14 @@ export default [
       policies: [],
       auth: false
     }
+  },
+  {
+    method: "GET",
+    path: "/appliance",
+    handler: "utility.getAppliance",
+    config: {
+      policies: [],
+      auth: false
+    }
   }
 ];

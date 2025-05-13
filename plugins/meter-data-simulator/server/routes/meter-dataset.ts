@@ -25,5 +25,14 @@ export default [
       policies: [],
       auth: false
     }
+  },
+  {
+    method: "GET",
+    path: "/grid-loads",
+    handler: "meterDataset.getGridLoads",
+    config: {
+      policies: [],
+      auth: false
+    }
   }
 ];
