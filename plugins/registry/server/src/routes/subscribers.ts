@@ -19,6 +19,15 @@ export default [
   },
   {
     method: 'POST',
+    path: '/lookup',
+    handler: 'subscribers.lookup', // TODO: Remove this route after hackathon
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+  {
+    method: 'POST',
     path: '/subscribers/register',
     handler: 'subscribers.register',
     config: {
@@ -82,5 +91,5 @@ export default [
       middlewares: ['plugin::registry.auth', 'plugin::registry.isAdmin'],
       auth: false,
     },
-  }
+  },
 ];
