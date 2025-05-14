@@ -44,11 +44,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         "api::meter-dataset.meter-dataset",
         {
           filters: {
-            meter: {
-              filters: {
-                id: id
-              }
-            }
+            meter: Number(id)
           },
           populate: {
             meter: {}

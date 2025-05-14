@@ -5,7 +5,16 @@ export default [
     handler: "der.toggle",
     config: {
       policies: [],
-      auth: false,
-    },
+      auth: false
+    }
+  },
+  {
+    method: "POST",
+    path: "/der",
+    handler: "der.create",
+    config: {
+      policies: [],
+      auth: false
+    }
   }
-]; 
+];
