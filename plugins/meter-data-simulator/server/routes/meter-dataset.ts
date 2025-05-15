@@ -28,6 +28,15 @@ export default [
   },
   {
     method: "GET",
+    path: "/transformer-load-streamed/:id",
+    handler: "meterDataset.getTransformerLoadStreamedById",
+    config: {
+      policies: [],
+      auth: false
+    }
+  },
+  {
+    method: "GET",
     path: "/grid-loads",
     handler: "meterDataset.getGridLoads",
     config: {

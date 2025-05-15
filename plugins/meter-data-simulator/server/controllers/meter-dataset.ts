@@ -14,5 +14,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
   async getGridLoads(ctx) {
     await getMeterDatasetPluginService(strapi).getGridLoads(ctx);
+  },
+  async getTransformerLoadStreamedById(ctx) {
+    await getMeterDatasetPluginService(strapi).getTransformerLoadStreamedById(
+      ctx
+    );
   }
 });

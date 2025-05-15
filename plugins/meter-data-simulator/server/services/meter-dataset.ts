@@ -40,14 +40,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       //   ctx.query
       // );
 
-      const meterDataSet = await getEntityService(strapi).findMany(
+      const meterDataSet = await strapi.entityService.findMany(
         "api::meter-dataset.meter-dataset",
         {
           filters: {
             meter: Number(id)
-          },
-          populate: {
-            meter: {}
           }
         }
       );
@@ -73,9 +70,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       }
       ctx.respond = false;
       const res = ctx.res;
-      res.setHeader("Content-Type", "application/json");
-      res.setHeader("Transfer-Encoding", "chunked");
-      res.setHeader("Connection", "keep-alive");
+      res.writeHead(200, {
+        "Content-Type": "application/json"
+      });
 
       let lastMeterDataSetSent = [];
 
@@ -85,18 +82,21 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::meter-dataset.meter-dataset",
             {
               filters: {
-                meter: id
+                meter: Number(id)
               },
               populate: {
                 meter: {}
-              }
+              },
+              sort: ["createdAt:desc"],
+              limit: 1
             }
           );
-          console.log("meterDataSet====>", JSON.stringify(meterDataSet));
+
           if (!lastMeterDataSetSent.length) {
+            console.log("meterDataSet====>", JSON.stringify(meterDataSet));
             lastMeterDataSetSent.push(...(meterDataSet as any));
             console.log("First Time Sent====>", JSON.stringify(meterDataSet));
-            res.write(JSON.stringify(meterDataSet), null, 2);
+            res.write(JSON.stringify(meterDataSet) + "\n");
           } else {
             const newDatasetSent = meterDataSet.filter(
               (dataset) =>
@@ -107,7 +107,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
             if (newDatasetSent.length) {
               console.log("newDatasetSent.length====>", newDatasetSent.length);
-              res.write(JSON.stringify(newDatasetSent as any, null, 2));
+              res.write(JSON.stringify(meterDataSet) + "\n");
               lastMeterDataSetSent.push(...newDatasetSent);
             } else {
               console.log("No new dataset sent");
@@ -128,6 +128,80 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ctx.badRequest(error.message);
     }
   },
+  async getTransformerLoadStreamedById(ctx) {
+    try {
+      const id = ctx.params.id;
+
+      if (!id) {
+        return ctx.badRequest("Invalid Transformer ID");
+      }
+      ctx.respond = false;
+      const res = ctx.res;
+      res.writeHead(200, {
+        "Content-Type": "application/json"
+      });
+
+      let lastLoadDataSetSent = [];
+
+      const sendDataInterval = setInterval(async () => {
+        try {
+          const transformerLoads = await getEntityService(strapi).findMany(
+            "api::grid-load.grid-load",
+            {
+              filters: {
+                transformer: Number(id)
+              },
+              populate: {
+                transformer: {}
+              },
+              sort: ["createdAt:desc"],
+              limit: 1
+            }
+          );
+
+          if (!lastLoadDataSetSent.length) {
+            console.log(
+              "Transformer Load Sent====>",
+              JSON.stringify(transformerLoads)
+            );
+            lastLoadDataSetSent.push(...(transformerLoads as any));
+            console.log(
+              "First Time Sent====>",
+              JSON.stringify(transformerLoads)
+            );
+            res.write(JSON.stringify(transformerLoads) + "\n");
+          } else {
+            const newDatasetSent = transformerLoads.filter(
+              (dataset) =>
+                !lastLoadDataSetSent.some(
+                  (lastdataset) => lastdataset.id === dataset.id
+                )
+            );
+
+            if (newDatasetSent.length) {
+              console.log("newDatasetSent.length====>", newDatasetSent.length);
+              res.write(JSON.stringify(transformerLoads) + "\n");
+              lastLoadDataSetSent.push(...newDatasetSent);
+            } else {
+              console.log("No new dataset sent");
+            }
+          }
+        } catch (error) {
+          strapi.log.error("Error in sendDataInterval", error);
+        }
+      }, 1000);
+
+      ctx.res.on("close", () => {
+        strapi.log.info("Closing connection");
+        clearInterval(sendDataInterval);
+        res.end();
+      });
+    } catch (error) {
+      strapi.log.error("Error in getStreamedById", error);
+      ctx.badRequest(error.message);
+    }
+  },
+
   async getGridLoads(ctx) {
     try {
       const gridLoads = await getEntityService(strapi).findMany(
