@@ -2,8 +2,8 @@ import { Strapi } from "@strapi/strapi";
 import {
   getMeterApiService,
   getEnergyResourceApiService
-} from "../utils/service";
-import { MeterControlLogType } from "../constant";
+} from "../utils/service.js";
+import { MeterControlLogType } from "../constant/index.js";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async create(ctx) {
@@ -89,7 +89,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         return ctx.badRequest("Invalid meter ID");
       }
 
-      const meter = await getMeterApiService(strapi).findOne(id, ctx.query);
+      const meter = await getMeterApiService(strapi).findOne(id, {
+        populate: {
+          user: {},
+          energyResource: {},
+          transformer: {}
+        }
+      });
 
       if (!meter) {
         return ctx.notFound("Meter not found");

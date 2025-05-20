@@ -1,10 +1,9 @@
-import { Strapi } from '@strapi/strapi';
-import { getEnergyResourcePluginService } from '../utils/service';
+import { Strapi } from "@strapi/strapi";
+import { getEnergyResourcePluginService } from "../utils/service.js";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async create(ctx) {
     await getEnergyResourcePluginService(strapi).create(ctx);
-
   },
   async update(ctx) {
     await getEnergyResourcePluginService(strapi).update(ctx);
@@ -20,5 +19,5 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async linkMeter(ctx) {
     await getEnergyResourcePluginService(strapi).linkMeter(ctx);
-  },
+  }
 });

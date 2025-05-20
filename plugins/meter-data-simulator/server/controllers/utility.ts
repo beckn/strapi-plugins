@@ -1,6 +1,6 @@
 import { Strapi } from "@strapi/strapi";
-import { getEntityService } from "../utils/service";
-import { getInitialStateService } from "../utils/service";
+import { getEntityService } from "../utils/service.js";
+import { getInitialStateService } from "../utils/service.js";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async getUtilityDetailed(ctx) {

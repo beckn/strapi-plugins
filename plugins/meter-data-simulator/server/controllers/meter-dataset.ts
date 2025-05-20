@@ -1,5 +1,5 @@
 import { Strapi } from "@strapi/strapi";
-import { getMeterDatasetPluginService } from "../utils/service";
+import { getMeterDatasetPluginService } from "../utils/service.js";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async get(ctx) {

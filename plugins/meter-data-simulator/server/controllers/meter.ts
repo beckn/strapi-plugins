@@ -1,10 +1,9 @@
-import { Strapi } from '@strapi/strapi';
-import { getMeterPluginService } from '../utils/service';
+import { Strapi } from "@strapi/strapi";
+import { getMeterPluginService } from "../utils/service.js";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async create(ctx) {
     await getMeterPluginService(strapi).create(ctx);
-
   },
   async update(ctx) {
     await getMeterPluginService(strapi).update(ctx);
@@ -20,5 +19,5 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async control(ctx) {
     await getMeterPluginService(strapi).control(ctx);
-  },
+  }
 });
