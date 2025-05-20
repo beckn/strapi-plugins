@@ -175,17 +175,21 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                       0.9
                   ? "Warning"
                   : "Critical",
-              load_percentage: `${(
-                (load.current_transformer_load /
-                  load.transformer.max_capacity_KW) *
-                100
-              ).toFixed(2)}%`,
-              margin_percentage: `${(
-                (1 -
-                  load.current_transformer_load /
+              load_percentage: Number(
+                (
+                  (load.current_transformer_load /
                     load.transformer.max_capacity_KW) *
-                100
-              ).toFixed(2)}%`
+                  100
+                ).toFixed(2)
+              ),
+              margin_percentage: Number(
+                (
+                  (1 -
+                    load.current_transformer_load /
+                      load.transformer.max_capacity_KW) *
+                  100
+                ).toFixed(2)
+              )
             };
           });
 
