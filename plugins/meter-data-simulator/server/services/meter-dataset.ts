@@ -3,8 +3,8 @@ import {
   getMeterDatasetApiService,
   getMeterApiService,
   getEnergyResourceApiService
-} from "../utils/service";
-import { getEntityService } from "../utils/service";
+} from "../utils/service.js";
+import { getEntityService } from "../utils/service.js";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async get(ctx) {
@@ -145,7 +145,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       const sendDataInterval = setInterval(async () => {
         try {
-          const transformerLoads = await getEntityService(strapi).findMany(
+          let transformerLoads = await getEntityService(strapi).findMany(
             "api::grid-load.grid-load",
             {
               filters: {
@@ -158,6 +158,36 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               limit: 1
             }
           );
+
+          transformerLoads = transformerLoads.map((load) => {
+            return {
+              ...load,
+              health_status:
+                load.current_transformer_load /
+                  load.transformer.max_capacity_KW <=
+                0.7
+                  ? "Normal"
+                  : load.current_transformer_load /
+                      load.transformer.max_capacity_KW >
+                      0.7 &&
+                    load.current_transformer_load /
+                      load.transformer.max_capacity_KW <=
+                      0.9
+                  ? "Warning"
+                  : "Critical",
+              load_percentage: `${(
+                (load.current_transformer_load /
+                  load.transformer.max_capacity_KW) *
+                100
+              ).toFixed(2)}%`,
+              margin_percentage: `${(
+                (1 -
+                  load.current_transformer_load /
+                    load.transformer.max_capacity_KW) *
+                100
+              ).toFixed(2)}%`
+            };
+          });
 
           if (!lastLoadDataSetSent.length) {
             console.log(

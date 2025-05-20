@@ -105,7 +105,7 @@ export const getInitialStateService = () => {
               createdAt: "2025-05-13T19:50:41.649626Z",
               updatedAt: "2025-05-13T19:50:41.649631Z",
               publishedAt: "2025-05-13T19:50:41.649633Z",
-              max_capacity_KW: 120,
+              max_capacity_KW: 90,
               meters: [
                 {
                   id: "b026744fde7a4c589db8b879ef2c1716",
@@ -1080,7 +1080,7 @@ export const getInitialStateService = () => {
               createdAt: "2025-05-13T19:50:41.653241Z",
               updatedAt: "2025-05-13T19:50:41.653244Z",
               publishedAt: "2025-05-13T19:50:41.653246Z",
-              max_capacity_KW: 120,
+              max_capacity_KW: 80,
               meters: [
                 {
                   id: "584ab5dfa15947eaa0503f1521a8f6e8",
@@ -2055,7 +2055,7 @@ export const getInitialStateService = () => {
               createdAt: "2025-05-13T19:50:41.657267Z",
               updatedAt: "2025-05-13T19:50:41.657270Z",
               publishedAt: "2025-05-13T19:50:41.657271Z",
-              max_capacity_KW: 120,
+              max_capacity_KW: 85,
               meters: [
                 {
                   id: "4210ad9e718b4dd29602ee018d6645a0",
@@ -3030,7 +3030,7 @@ export const getInitialStateService = () => {
               createdAt: "2025-05-13T19:50:41.660174Z",
               updatedAt: "2025-05-13T19:50:41.660176Z",
               publishedAt: "2025-05-13T19:50:41.660177Z",
-              max_capacity_KW: 120,
+              max_capacity_KW: 90,
               meters: [
                 {
                   id: "091cf20020f24e7592cb6273ee2d96c8",
@@ -3070,6 +3070,48 @@ export const getInitialStateService = () => {
                         }
                       },
                       {
+                        id: "2707feecb2cf410eba667b2e06d0e0b0",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660392Z",
+                        updatedAt: "2025-05-13T19:50:41.660395Z",
+                        publishedAt: "2025-05-13T19:50:41.660399Z",
+                        appliance: {
+                          id: 6,
+                          name: "Microwave Oven",
+                          powerRating: 1000,
+                          baseKWh: 0.01667,
+                          description: "High-power but short usage"
+                        }
+                      },
+                      {
+                        id: "2001228acac64092b7182b5bf12174ea",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660409Z",
+                        updatedAt: "2025-05-13T19:50:41.660410Z",
+                        publishedAt: "2025-05-13T19:50:41.660411Z",
+                        appliance: {
+                          id: 5,
+                          name: "Laptop Charger",
+                          powerRating: 65,
+                          baseKWh: 0.00108,
+                          description: "Varies by model"
+                        }
+                      },
+                      {
+                        id: "2001228acac64092b7182b5bf12174ea",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660409Z",
+                        updatedAt: "2025-05-13T19:50:41.660410Z",
+                        publishedAt: "2025-05-13T19:50:41.660411Z",
+                        appliance: {
+                          id: 5,
+                          name: "Laptop Charger",
+                          powerRating: 65,
+                          baseKWh: 0.00108,
+                          description: "Varies by model"
+                        }
+                      },
+                      {
                         id: "2001228acac64092b7182b5bf12174ea",
                         switched_on: true,
                         createdAt: "2025-05-13T19:50:41.660409Z",
@@ -3098,8 +3140,162 @@ export const getInitialStateService = () => {
                         }
                       },
                       {
-                        id: "fba84e7701e04e44b46e44d990ffa560",
+                        id: "731f295feb1049689851fecbb6e97ab5",
                         switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660423Z",
+                        updatedAt: "2025-05-13T19:50:41.660425Z",
+                        publishedAt: "2025-05-13T19:50:41.660426Z",
+                        appliance: {
+                          id: 9,
+                          name: "Room Heater",
+                          powerRating: 2000,
+                          baseKWh: 0.03333,
+                          description: "Constant high power"
+                        }
+                      },
+                      {
+                        id: "731f295feb1049689851fecbb6e97ab5",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660423Z",
+                        updatedAt: "2025-05-13T19:50:41.660425Z",
+                        publishedAt: "2025-05-13T19:50:41.660426Z",
+                        appliance: {
+                          id: 9,
+                          name: "Room Heater",
+                          powerRating: 2000,
+                          baseKWh: 0.03333,
+                          description: "Constant high power"
+                        }
+                      },
+                      {
+                        id: "731f295feb1049689851fecbb6e97ab5",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660423Z",
+                        updatedAt: "2025-05-13T19:50:41.660425Z",
+                        publishedAt: "2025-05-13T19:50:41.660426Z",
+                        appliance: {
+                          id: 1,
+                          name: "LED Bulb (10W)",
+                          powerRating: 10,
+                          baseKWh: 0.0102,
+                          description: "Very low-power appliance"
+                        }
+                      },
+                      {
+                        id: "731f295feb1049689851fecbb6e97ab5",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660423Z",
+                        updatedAt: "2025-05-13T19:50:41.660425Z",
+                        publishedAt: "2025-05-13T19:50:41.660426Z",
+                        appliance: {
+                          id: 1,
+                          name: "LED Bulb (10W)",
+                          powerRating: 10,
+                          baseKWh: 0.0102,
+                          description: "Very low-power appliance"
+                        }
+                      },
+                      {
+                        id: "731f295feb1049689851fecbb6e97ab5",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660423Z",
+                        updatedAt: "2025-05-13T19:50:41.660425Z",
+                        publishedAt: "2025-05-13T19:50:41.660426Z",
+                        appliance: {
+                          id: 1,
+                          name: "LED Bulb (10W)",
+                          powerRating: 10,
+                          baseKWh: 0.0102,
+                          description: "Very low-power appliance"
+                        }
+                      },
+                      {
+                        id: "731f295feb1049689851fecbb6e97ab5",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660423Z",
+                        updatedAt: "2025-05-13T19:50:41.660425Z",
+                        publishedAt: "2025-05-13T19:50:41.660426Z",
+                        appliance: {
+                          id: 1,
+                          name: "LED Bulb (10W)",
+                          powerRating: 10,
+                          baseKWh: 0.0102,
+                          description: "Very low-power appliance"
+                        }
+                      },
+                      {
+                        id: "731f295feb1049689851fecbb6e97ab5",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660423Z",
+                        updatedAt: "2025-05-13T19:50:41.660425Z",
+                        publishedAt: "2025-05-13T19:50:41.660426Z",
+                        appliance: {
+                          id: 9,
+                          name: "Room Heater",
+                          powerRating: 2000,
+                          baseKWh: 0.03333,
+                          description: "Constant high power"
+                        }
+                      },
+                      {
+                        id: "731f295feb1049689851fecbb6e97ab5",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660423Z",
+                        updatedAt: "2025-05-13T19:50:41.660425Z",
+                        publishedAt: "2025-05-13T19:50:41.660426Z",
+                        appliance: {
+                          id: 9,
+                          name: "Air Conditioner (1.5 Ton)",
+                          powerRating: 1500,
+                          baseKWh: 1.5,
+                          description: "High-power appliance"
+                        }
+                      },
+                      {
+                        id: "731f295feb1049689851fecbb6e97ab5",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660423Z",
+                        updatedAt: "2025-05-13T19:50:41.660425Z",
+                        publishedAt: "2025-05-13T19:50:41.660426Z",
+                        appliance: {
+                          id: 9,
+                          name: "Air Conditioner (1.5 Ton)",
+                          powerRating: 1500,
+                          baseKWh: 1.5,
+                          description: "High-power appliance"
+                        }
+                      },
+                      {
+                        id: "731f295feb1049689851fecbb6e97ab5",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660423Z",
+                        updatedAt: "2025-05-13T19:50:41.660425Z",
+                        publishedAt: "2025-05-13T19:50:41.660426Z",
+                        appliance: {
+                          id: 9,
+                          name: "Air Conditioner (1.5 Ton)",
+                          powerRating: 1500,
+                          baseKWh: 1.5,
+                          description: "High-power appliance"
+                        }
+                      },
+                      {
+                        id: "731f295feb1049689851fecbb6e97ab5",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660423Z",
+                        updatedAt: "2025-05-13T19:50:41.660425Z",
+                        publishedAt: "2025-05-13T19:50:41.660426Z",
+                        appliance: {
+                          id: 9,
+                          name: "Air Conditioner (1.5 Ton)",
+                          powerRating: 1500,
+                          baseKWh: 1.5,
+                          description: "High-power appliance"
+                        }
+                      },
+                      {
+                        id: "fba84e7701e04e44b46e44d990ffa560",
+                        switched_on: false,
                         createdAt: "2025-05-13T19:50:41.660434Z",
                         updatedAt: "2025-05-13T19:50:41.660435Z",
                         publishedAt: "2025-05-13T19:50:41.660437Z",
@@ -3151,6 +3347,160 @@ export const getInitialStateService = () => {
                     updatedAt: "2025-05-13T19:50:41.660644Z",
                     publishedAt: "2025-05-13T19:50:41.660646Z",
                     ders: [
+                      {
+                        id: "2001228acac64092b7182b5bf12174ea",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660409Z",
+                        updatedAt: "2025-05-13T19:50:41.660410Z",
+                        publishedAt: "2025-05-13T19:50:41.660411Z",
+                        appliance: {
+                          id: 5,
+                          name: "Laptop Charger",
+                          powerRating: 65,
+                          baseKWh: 0.00108,
+                          description: "Varies by model"
+                        }
+                      },
+                      {
+                        id: "2001228acac64092b7182b5bf12174ea",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660409Z",
+                        updatedAt: "2025-05-13T19:50:41.660410Z",
+                        publishedAt: "2025-05-13T19:50:41.660411Z",
+                        appliance: {
+                          id: 5,
+                          name: "Laptop Charger",
+                          powerRating: 65,
+                          baseKWh: 0.00108,
+                          description: "Varies by model"
+                        }
+                      },
+                      {
+                        id: "2001228acac64092b7182b5bf12174ea",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660409Z",
+                        updatedAt: "2025-05-13T19:50:41.660410Z",
+                        publishedAt: "2025-05-13T19:50:41.660411Z",
+                        appliance: {
+                          id: 5,
+                          name: "Laptop Charger",
+                          powerRating: 65,
+                          baseKWh: 0.00108,
+                          description: "Varies by model"
+                        }
+                      },
+                      {
+                        id: "731f295feb1049689851fecbb6e97ab5",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660423Z",
+                        updatedAt: "2025-05-13T19:50:41.660425Z",
+                        publishedAt: "2025-05-13T19:50:41.660426Z",
+                        appliance: {
+                          id: 9,
+                          name: "Room Heater",
+                          powerRating: 2000,
+                          baseKWh: 0.03333,
+                          description: "Constant high power"
+                        }
+                      },
+                      {
+                        id: "731f295feb1049689851fecbb6e97ab5",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660423Z",
+                        updatedAt: "2025-05-13T19:50:41.660425Z",
+                        publishedAt: "2025-05-13T19:50:41.660426Z",
+                        appliance: {
+                          id: 9,
+                          name: "Air Conditioner (1.5 Ton)",
+                          powerRating: 1500,
+                          baseKWh: 1.5,
+                          description: "High-power appliance"
+                        }
+                      },
+                      {
+                        id: "731f295feb1049689851fecbb6e97ab5",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660423Z",
+                        updatedAt: "2025-05-13T19:50:41.660425Z",
+                        publishedAt: "2025-05-13T19:50:41.660426Z",
+                        appliance: {
+                          id: 9,
+                          name: "Air Conditioner (1.5 Ton)",
+                          powerRating: 1500,
+                          baseKWh: 1.5,
+                          description: "High-power appliance"
+                        }
+                      },
+                      {
+                        id: "731f295feb1049689851fecbb6e97ab5",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660423Z",
+                        updatedAt: "2025-05-13T19:50:41.660425Z",
+                        publishedAt: "2025-05-13T19:50:41.660426Z",
+                        appliance: {
+                          id: 9,
+                          name: "Air Conditioner (1.5 Ton)",
+                          powerRating: 1500,
+                          baseKWh: 1.5,
+                          description: "High-power appliance"
+                        }
+                      },
+                      {
+                        id: "87fcb1c00a084c2f8e68213d1de0a80e",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660679Z",
+                        updatedAt: "2025-05-13T19:50:41.660681Z",
+                        publishedAt: "2025-05-13T19:50:41.660682Z",
+                        appliance: {
+                          id: 3,
+                          name: "Television (LED)",
+                          powerRating: 120,
+                          baseKWh: 0.002,
+                          description: "Entertainment"
+                        }
+                      },
+                      {
+                        id: "87fcb1c00a084c2f8e68213d1de0a80e",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660679Z",
+                        updatedAt: "2025-05-13T19:50:41.660681Z",
+                        publishedAt: "2025-05-13T19:50:41.660682Z",
+                        appliance: {
+                          id: 3,
+                          name: "Television (LED)",
+                          powerRating: 120,
+                          baseKWh: 0.002,
+                          description: "Entertainment"
+                        }
+                      },
+                      {
+                        id: "87fcb1c00a084c2f8e68213d1de0a80e",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660679Z",
+                        updatedAt: "2025-05-13T19:50:41.660681Z",
+                        publishedAt: "2025-05-13T19:50:41.660682Z",
+                        appliance: {
+                          id: 3,
+                          name: "Television (LED)",
+                          powerRating: 120,
+                          baseKWh: 0.002,
+                          description: "Entertainment"
+                        }
+                      },
+                      {
+                        id: "87fcb1c00a084c2f8e68213d1de0a80e",
+                        switched_on: true,
+                        createdAt: "2025-05-13T19:50:41.660679Z",
+                        updatedAt: "2025-05-13T19:50:41.660681Z",
+                        publishedAt: "2025-05-13T19:50:41.660682Z",
+                        appliance: {
+                          id: 3,
+                          name: "Television (LED)",
+                          powerRating: 120,
+                          baseKWh: 0.002,
+                          description: "Entertainment"
+                        }
+                      },
                       {
                         id: "87fcb1c00a084c2f8e68213d1de0a80e",
                         switched_on: true,
@@ -4005,7 +4355,7 @@ export const getInitialStateService = () => {
               createdAt: "2025-05-13T19:50:41.663288Z",
               updatedAt: "2025-05-13T19:50:41.663290Z",
               publishedAt: "2025-05-13T19:50:41.663291Z",
-              max_capacity_KW: 120,
+              max_capacity_KW: 90,
               meters: [
                 {
                   id: "f14e4848a9e442e58f8adbe23b170e93",
@@ -4995,7 +5345,7 @@ export const getInitialStateService = () => {
               createdAt: "2025-05-13T19:50:41.667419Z",
               updatedAt: "2025-05-13T19:50:41.667421Z",
               publishedAt: "2025-05-13T19:50:41.667422Z",
-              max_capacity_KW: 120,
+              max_capacity_KW: 90,
               meters: [
                 {
                   id: "f227f6f5ac8844b98c2776f6606b389d",
@@ -5970,7 +6320,7 @@ export const getInitialStateService = () => {
               createdAt: "2025-05-13T19:50:41.670021Z",
               updatedAt: "2025-05-13T19:50:41.670023Z",
               publishedAt: "2025-05-13T19:50:41.670024Z",
-              max_capacity_KW: 120,
+              max_capacity_KW: 85,
               meters: [
                 {
                   id: "dbd43ccddc9b4c0085f2d733b4d09f11",
@@ -6945,7 +7295,7 @@ export const getInitialStateService = () => {
               createdAt: "2025-05-13T19:50:41.673554Z",
               updatedAt: "2025-05-13T19:50:41.673557Z",
               publishedAt: "2025-05-13T19:50:41.673559Z",
-              max_capacity_KW: 120,
+              max_capacity_KW: 80,
               meters: [
                 {
                   id: "96146aae0323452196acffd0b1f46f93",
@@ -7920,7 +8270,7 @@ export const getInitialStateService = () => {
               createdAt: "2025-05-13T19:50:41.678566Z",
               updatedAt: "2025-05-13T19:50:41.678569Z",
               publishedAt: "2025-05-13T19:50:41.678573Z",
-              max_capacity_KW: 120,
+              max_capacity_KW: 75,
               meters: [
                 {
                   id: "899e9bbcf11e4cb6ac07b50069b3399a",
@@ -8895,7 +9245,7 @@ export const getInitialStateService = () => {
               createdAt: "2025-05-13T19:50:41.682460Z",
               updatedAt: "2025-05-13T19:50:41.682462Z",
               publishedAt: "2025-05-13T19:50:41.682465Z",
-              max_capacity_KW: 120,
+              max_capacity_KW: 80,
               meters: [
                 {
                   id: "822e000a024c4117a9a93c16f0a776c5",
@@ -9885,7 +10235,7 @@ export const getInitialStateService = () => {
               createdAt: "2025-05-13T19:50:41.687167Z",
               updatedAt: "2025-05-13T19:50:41.687169Z",
               publishedAt: "2025-05-13T19:50:41.687170Z",
-              max_capacity_KW: 120,
+              max_capacity_KW: 80,
               meters: [
                 {
                   id: "5b483f72de3d4ffab8c4164a11b4631e",
@@ -10860,7 +11210,7 @@ export const getInitialStateService = () => {
               createdAt: "2025-05-13T19:50:41.691540Z",
               updatedAt: "2025-05-13T19:50:41.691543Z",
               publishedAt: "2025-05-13T19:50:41.691545Z",
-              max_capacity_KW: 120,
+              max_capacity_KW: 70,
               meters: [
                 {
                   id: "6209f4998f9940e2a81517d7821cbad1",
@@ -11835,7 +12185,7 @@ export const getInitialStateService = () => {
               createdAt: "2025-05-13T19:50:41.696483Z",
               updatedAt: "2025-05-13T19:50:41.696486Z",
               publishedAt: "2025-05-13T19:50:41.696489Z",
-              max_capacity_KW: 120,
+              max_capacity_KW: 75,
               meters: [
                 {
                   id: "1192511015a24891a6ce508f1ef9918f",
@@ -12810,7 +13160,7 @@ export const getInitialStateService = () => {
               createdAt: "2025-05-13T19:50:41.699874Z",
               updatedAt: "2025-05-13T19:50:41.699876Z",
               publishedAt: "2025-05-13T19:50:41.699877Z",
-              max_capacity_KW: 120,
+              max_capacity_KW: 80,
               meters: [
                 {
                   id: "1452f949077c4e668eb09bc0bfe969f6",
@@ -13785,7 +14135,7 @@ export const getInitialStateService = () => {
               createdAt: "2025-05-13T19:50:41.702866Z",
               updatedAt: "2025-05-13T19:50:41.702868Z",
               publishedAt: "2025-05-13T19:50:41.702869Z",
-              max_capacity_KW: 120,
+              max_capacity_KW: 85,
               meters: [
                 {
                   id: "ab43f1a91b514350a600443bd7eb3670",
