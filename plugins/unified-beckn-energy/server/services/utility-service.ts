@@ -38,17 +38,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
-  async mitigationActivate(payload: any) {
+  async mitigationActivate() {
     try {
       const matchedOrders = await strapi.entityService.findMany(
         "api::order-fulfillment.order-fulfillment",
         {
           filters: {
             order_id: {
-              filters: {
-                items: {
-                  name: "Home Battery Discharge Program"
-                }
+              items: {
+                name: "Home Battery Discharge Program"
               }
             }
           },
@@ -61,7 +59,26 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         }
       );
-      return matchedOrders;
+
+      const response = await Promise.all(
+        matchedOrders.map(async (order) => {
+          return await strapi.entityService.update(
+            "api::order-fulfillment.order-fulfillment",
+            order.id,
+            {
+              data: {
+                state_code: "Reduce Load By 30%",
+                state_value: "ACTIVATED"
+              },
+              populate: {
+                order_id: {}
+              }
+            }
+          );
+        })
+      );
+
+      return response;
     } catch (error) {
       console.log(error);
       throw new Error(error.message);

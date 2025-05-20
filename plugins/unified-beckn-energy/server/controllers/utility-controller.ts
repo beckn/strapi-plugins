@@ -48,10 +48,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .plugin("unified-beckn-energy")
         .service("utilityService");
 
-      const matcherOrders = await utilityService.mitigationActivate({});
+      const matcherOrders = await utilityService.mitigationActivate();
       ctx.status = 200;
       ctx.body = {
-        countries: matcherOrders
+        orders: matcherOrders
       };
       return;
     } catch (error) {
