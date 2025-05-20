@@ -41,5 +41,23 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ctx.status = 500;
       ctx.body = { message: error.message };
     }
+  },
+  async mitigationActivate(ctx) {
+    try {
+      const utilityService = strapi
+        .plugin("unified-beckn-energy")
+        .service("utilityService");
+
+      const matcherOrders = await utilityService.mitigationActivate({});
+      ctx.status = 200;
+      ctx.body = {
+        countries: matcherOrders
+      };
+      return;
+    } catch (error) {
+      ctx.status = 500;
+      ctx.body = { message: error.message };
+      return;
+    }
   }
 });

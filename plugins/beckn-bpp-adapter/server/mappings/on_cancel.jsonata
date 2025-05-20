@@ -24,7 +24,7 @@
                     }
                 }[],
                 "rating": provider_rating,
-                "short_desc": short_desc,
+               
                 "locations": [
                     {
                         "id": $string(location_id.id),

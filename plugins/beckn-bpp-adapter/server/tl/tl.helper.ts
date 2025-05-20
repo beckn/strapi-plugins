@@ -164,70 +164,12 @@ export const fulfillments = (
   fulfillments: KeyValuePair[],
   items: KeyValuePair[] = []
 ) => {
-  console.log("Temp===>", JSON.stringify({ fulfillments, items }));
   const allFulfillments = fulfillments || [];
   items?.forEach((item: KeyValuePair) => {
     item?.item_fulfillment_ids?.forEach((item_fulfillment_id) => {
       allFulfillments.push(item_fulfillment_id?.fulfilment_id);
     });
   });
-
-  console.log(
-    "TEMP====>",
-    JSON.stringify(
-      allFulfillments.map((fulfillment) => {
-        const agent = fulfillment?.service?.agent_id || {};
-        return {
-          id: fulfillment.id ? fulfillment.id + "" : "",
-          type: fulfillment.type,
-          rating: fulfillment.rating ? fulfillment.rating + "" : "",
-          rateable: fulfillment.rateable,
-          state: {
-            description: fulfillment?.state_value,
-            descriptor: {
-              code: fulfillment?.state_code,
-              name: fulfillment?.state_value
-            }
-          },
-          agent: {
-            person: {
-              id: agent?.id ? agent?.id + "" : "",
-              name: agent?.first_name
-                ? `${agent?.first_name} ${agent?.last_name}`
-                : ""
-            },
-            contact: {
-              phone: agent?.agent_profile?.phone_number,
-              email: agent?.agent_profile?.email
-            }
-          },
-          vehicle: {
-            make: agent?.agent_profile?.vehicle_make,
-            model: agent?.agent_profile?.vehicle_model,
-            registration: agent?.agent_profile?.registration_no
-          },
-          tags: fulfillment.tag_ids?.map((tag) => {
-            return {
-              display: true,
-              descriptor: {
-                description: tag.tag_group_id?.tag_group_name
-              },
-              list: [
-                {
-                  descriptor: {
-                    description: tag.tag_name
-                  },
-                  value: tag.code,
-                  display: true
-                }
-              ]
-            };
-          }),
-          stops: fulfillment?.stops || []
-        };
-      })
-    )
-  );
 
   return allFulfillments.map((fulfillment) => {
     const agent = fulfillment?.service?.agent_id || {};
@@ -393,5 +335,7 @@ export const valueItemQuantity = (tags: any, itemId: any) => {
   }
   // Find the tag where id matches itemId
   const matchingTag = tags.find((tag) => String(tag.id) === String(itemId));
-  return matchingTag?.quantity?.selected?.measure?.value ?  String(matchingTag?.quantity?.selected?.measure?.value) : '';
+  return matchingTag?.quantity?.selected?.measure?.value
+    ? String(matchingTag?.quantity?.selected?.measure?.value)
+    : "";
 };

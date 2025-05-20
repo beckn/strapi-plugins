@@ -379,5 +379,15 @@ export default [
       middlewares: [],
       auth: false
     }
+  },
+  {
+    method: "POST",
+    path: "/mitigation-activate",
+    handler: "utilityController.mitigationActivate",
+    config: {
+      policies: [],
+      middlewares: [],
+      auth: false
+    }
   }
 ];

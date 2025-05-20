@@ -25,7 +25,7 @@
                         }
                     }[],
                     "rating": provider_rating,
-                    "short_desc": short_desc,
+                   
                     "fulfillments": $fulfillments(fulfillments, items),
                     "locations": $locations($append(location_id, [items.item_fulfillment_ids.location_id])),
                     "rateable": true

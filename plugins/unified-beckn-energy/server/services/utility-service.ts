@@ -37,5 +37,27 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       throw new Error(error.message);
     }
+  },
+  async mitigationActivate(payload: any) {
+    try {
+      const matchedOrders = await strapi.entityService.findMany(
+        "api::order-fulfillment.order-fulfillment",
+        {
+          filters: {
+            order_id: {
+              filters: {
+                items: {
+                  name: "Home Battery Discharge Program"
+                }
+              }
+            }
+          }
+        }
+      );
+      return matchedOrders;
+    } catch (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
   }
 });
