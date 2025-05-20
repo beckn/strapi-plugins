@@ -255,5 +255,37 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       return ctx.badRequest(error.message);
     }
+  },
+
+  async addSubscription(ctx) {
+    try {
+      const { meter_id, subscription_order_id } = ctx.request.body;
+
+      const meter = await getMeterApiService(strapi).findOne(meter_id);
+      if (!meter) {
+        return ctx.notFound("Meter not found");
+      }
+
+      const addSubscription = await getMeterApiService(strapi).update(
+        meter_id,
+        {
+          data: {
+            dfp_subscription_id: subscription_order_id
+          },
+          populate: {
+            energyResource: {},
+            user: {},
+            transformer: {}
+          }
+        }
+      );
+
+      return ctx.send(
+        { message: "Subscription added successfully", data: addSubscription },
+        200
+      );
+    } catch (error) {
+      return ctx.badRequest(error.message);
+    }
   }
 });

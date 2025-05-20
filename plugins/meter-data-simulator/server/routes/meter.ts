@@ -5,8 +5,8 @@ export default [
     handler: "meter.create",
     config: {
       policies: [],
-      auth: false,
-    },
+      auth: false
+    }
   },
   {
     method: "PATCH",
@@ -14,8 +14,8 @@ export default [
     handler: "meter.update",
     config: {
       policies: [],
-      auth: false,
-    },
+      auth: false
+    }
   },
   {
     method: "GET",
@@ -23,8 +23,8 @@ export default [
     handler: "meter.get",
     config: {
       policies: [],
-      auth: false,
-    },
+      auth: false
+    }
   },
   {
     method: "GET",
@@ -32,8 +32,8 @@ export default [
     handler: "meter.getById",
     config: {
       policies: [],
-      auth: false,
-    },
+      auth: false
+    }
   },
   {
     method: "DELETE",
@@ -41,8 +41,8 @@ export default [
     handler: "meter.delete",
     config: {
       policies: [],
-      auth: false,
-    },
+      auth: false
+    }
   },
   {
     method: "POST",
@@ -51,7 +51,17 @@ export default [
     config: {
       policies: [],
       auth: false,
-      middlewares: ["plugin::meter-data-simulator.validateMeterControl"],
-    },
+      middlewares: ["plugin::meter-data-simulator.validateMeterControl"]
+    }
   },
+  {
+    method: "PUT",
+    path: "/meters/add-subscription",
+    handler: "meter.addSubscription",
+    config: {
+      policies: [],
+      auth: false,
+      middlewares: []
+    }
+  }
 ];

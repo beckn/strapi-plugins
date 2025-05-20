@@ -19,5 +19,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async control(ctx) {
     await getMeterPluginService(strapi).control(ctx);
+  },
+  async addSubscription(ctx) {
+    await getMeterPluginService(strapi).addSubscription(ctx);
   }
 });
