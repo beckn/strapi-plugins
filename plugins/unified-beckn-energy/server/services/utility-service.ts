@@ -51,6 +51,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                 }
               }
             }
+          },
+          populate: {
+            order_id: {
+              populate: {
+                items: {}
+              }
+            }
           }
         }
       );
