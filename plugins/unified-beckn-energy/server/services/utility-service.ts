@@ -97,17 +97,19 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async mitigationAcceptReject(ctx) {
     try {
       const { meter_id, dfp_accept = true, order_id } = ctx.request.body;
+
       const transformerLoads: any = await (
         await fetch(
           `${process.env.WORLD_ENGINE_URL}/transformer-load/instantaneous/${meter_id}`
         )
       ).json();
 
+      console.log(transformerLoads);
       const createAuditTrail = await strapi.entityService.create(
         "api::audit-trail.audit-trail",
         {
           data: {
-            meter_id,
+            meter_id: `${meter_id}`,
             order: order_id,
             dfp_accepted: dfp_accept,
             current_consumption_kwh: Number(
@@ -133,10 +135,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                       .current_transformer_load
                   ).toFixed(2)
                 )) *
-              100
+              100,
+            publishedAt: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
           }
         }
       );
+      console.log(createAuditTrail);
 
       ctx.status = 201;
       ctx.body = {
@@ -144,6 +150,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       };
       return;
     } catch (error) {
+      console.log(error);
       ctx.status = 500;
       ctx.body = { message: error.message };
       return;
