@@ -162,6 +162,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         "api::audit-trail.audit-trail",
         {
           filters: {},
+          populate: {
+            order: {}
+          },
           sort: ["createdAt:desc"]
         }
       );
