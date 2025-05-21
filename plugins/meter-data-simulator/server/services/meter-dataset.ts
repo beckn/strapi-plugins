@@ -135,7 +135,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ctx.req.setTimeout(0);
       const res = ctx.res;
       res.writeHead(200, {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Transfer-Encoding": "chunked", // Ensures chunked transfer (default in Node, but explicit is better)
+        "Cache-Control": "no-cache", // Prevents client/proxy caching
+        Connection: "keep-alive", // Keeps the connection open
+        "Access-Control-Allow-Origin": "*"
       });
 
       let lastLoadDataSetSent = [];
