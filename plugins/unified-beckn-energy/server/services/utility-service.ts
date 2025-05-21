@@ -97,7 +97,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async mitigationAcceptReject(ctx) {
     try {
       const { meter_id, dfp_accept = true, order_id } = ctx.request.body;
-      const transformerLoads = await (
+      const transformerLoads: any = await (
         await fetch(
           `${process.env.WORLD_ENGINE_URL}/transformer-load/instantaneous/${meter_id}`
         )
