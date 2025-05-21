@@ -43,5 +43,14 @@ export default [
       policies: [],
       auth: false
     }
+  },
+  {
+    method: "GET",
+    path: "/transformer-load/instantaneous/:id",
+    handler: "meterDataset.getTransformerLoadInstantaneous",
+    config: {
+      policies: [],
+      auth: false
+    }
   }
 ];

@@ -19,5 +19,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     await getMeterDatasetPluginService(strapi).getTransformerLoadStreamedById(
       ctx
     );
+  },
+  async getTransformerLoadInstantaneous(ctx) {
+    await getMeterDatasetPluginService(strapi).getTransformerLoadInstantaneous(
+      ctx
+    );
   }
 });

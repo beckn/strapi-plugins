@@ -1,6 +1,7 @@
 import { Strapi } from "@strapi/strapi";
 
 import { getEntityService } from "../utils/service.js";
+import { calculateBaseKWhByTransformer } from "../utils/service.js";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async get(ctx) {
@@ -253,6 +254,63 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
       return ctx.send(
         { message: "Grid Loads fetched successfully", data: gridLoads },
+        200
+      );
+    } catch (error) {
+      ctx.badRequest(error.message);
+    }
+  },
+  async getTransformerLoadInstantaneous(ctx) {
+    try {
+      const transformerId = ctx.params.id;
+      if (!transformerId) {
+        return ctx.badRequest("Invalid Transformer ID");
+      }
+
+      const transformerPreviousLoad = await getEntityService(strapi).findMany(
+        "api::grid-load.grid-load",
+        {
+          filters: { transformer: Number(transformerId) },
+          populate: { transformer: {} },
+          sort: ["createdAt:desc"],
+          limit: 1
+        }
+      );
+
+      const meters = await strapi.entityService.findMany("api::meter.meter", {
+        filters: {
+          energyResource: {
+            $null: false // This ensures energyResource exists
+          },
+          transformer: Number(transformerId)
+        },
+        populate: {
+          energyResource: {
+            populate: {
+              ders: {
+                populate: {
+                  appliance: {}
+                },
+                filters: {
+                  switched_on: true
+                }
+              }
+            }
+          },
+          transformer: {}
+        }
+      });
+
+      const transformerCurrentLoad = calculateBaseKWhByTransformer(meters);
+
+      return ctx.send(
+        {
+          message: "Meters fetched successfully",
+          data: {
+            transformerPreviousLoad: transformerPreviousLoad[0],
+            transformerCurrentLoad: transformerCurrentLoad[0]
+          }
+        },
         200
       );
     } catch (error) {
