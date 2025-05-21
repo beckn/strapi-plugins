@@ -39,7 +39,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       const { meterId } = ctx.request.params;
       const result = await getEntityService(strapi).findMany("api::der.der", {
         filters: {
-          energy_resource: { meter: { id: { eq: meterId } } }
+          energy_resource: { meter: `${meterId}` }
         },
         populate: {
           energy_resource: {},
