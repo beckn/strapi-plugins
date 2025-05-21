@@ -389,5 +389,25 @@ export default [
       middlewares: [],
       auth: false
     }
+  },
+  {
+    method: "POST",
+    path: "/mitigation-accept-reject",
+    handler: "utilityController.mitigationAcceptReject",
+    config: {
+      policies: [],
+      middlewares: [],
+      auth: false
+    }
+  },
+  {
+    method: "GET",
+    path: "/audit-trail",
+    handler: "utilityController.getAuditTrail",
+    config: {
+      policies: [],
+      middlewares: [],
+      auth: false
+    }
   }
 ];

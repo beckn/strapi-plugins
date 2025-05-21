@@ -59,5 +59,41 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ctx.body = { message: error.message };
       return;
     }
+  },
+  async mitigationAcceptReject(ctx) {
+    try {
+      const utilityService = strapi
+        .plugin("unified-beckn-energy")
+        .service("utilityService");
+
+      const response = await utilityService.mitigationAcceptReject(ctx);
+      ctx.status = 200;
+      ctx.body = {
+        orders: response
+      };
+      return;
+    } catch (error) {
+      ctx.status = 500;
+      ctx.body = { message: error.message };
+      return;
+    }
+  },
+  async getAuditTrail(ctx) {
+    try {
+      const utilityService = strapi
+        .plugin("unified-beckn-energy")
+        .service("utilityService");
+
+      const response = await utilityService.getAuditTrail(ctx);
+      ctx.status = 200;
+      ctx.body = {
+        orders: response
+      };
+      return;
+    } catch (error) {
+      ctx.status = 500;
+      ctx.body = { message: error.message };
+      return;
+    }
   }
 });
