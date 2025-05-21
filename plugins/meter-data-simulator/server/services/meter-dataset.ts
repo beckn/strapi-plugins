@@ -1,9 +1,5 @@
 import { Strapi } from "@strapi/strapi";
-import {
-  getMeterDatasetApiService,
-  getMeterApiService,
-  getEnergyResourceApiService
-} from "../utils/service.js";
+
 import { getEntityService } from "../utils/service.js";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
@@ -223,7 +219,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         } catch (error) {
           strapi.log.error("Error in sendDataInterval", error);
         }
-      }, 1000);
+      }, 20000);
 
       ctx.res.on("close", () => {
         strapi.log.info("Closing connection");
