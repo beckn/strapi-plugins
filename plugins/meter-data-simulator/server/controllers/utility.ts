@@ -126,6 +126,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                           ? `${transformer.longtitude}`
                           : transformer.longtitude,
                       pincode: transformer.pincode,
+                      emergency_service: transformer.emergency_service,
                       createdAt: new Date(),
                       updatedAt: new Date(),
                       publishedAt: new Date(),
