@@ -132,6 +132,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         return ctx.badRequest("Invalid Transformer ID");
       }
       ctx.respond = false;
+      ctx.req.setTimeout(0);
       const res = ctx.res;
       res.writeHead(200, {
         "Content-Type": "application/json"
@@ -218,7 +219,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                   lastLoadDataSetSent[lastLoadDataSetSent.length - 1]
                 ]) + "\n"
               );
-              console.log("No new dataset sent");
             }
           }
         } catch (error) {
