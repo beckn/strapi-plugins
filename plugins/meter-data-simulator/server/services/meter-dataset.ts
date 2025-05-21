@@ -213,13 +213,18 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               res.write(JSON.stringify(transformerLoads) + "\n");
               lastLoadDataSetSent.push(...newDatasetSent);
             } else {
+              res.write(
+                JSON.stringify(
+                  lastLoadDataSetSent[lastLoadDataSetSent.length - 1]
+                ) + "\n"
+              );
               console.log("No new dataset sent");
             }
           }
         } catch (error) {
           strapi.log.error("Error in sendDataInterval", error);
         }
-      }, 2000);
+      }, 5000);
 
       ctx.res.on("close", () => {
         strapi.log.info("Closing connection");
