@@ -224,7 +224,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         } catch (error) {
           strapi.log.error("Error in sendDataInterval", error);
         }
-      }, 5000);
+      }, 10000);
 
       ctx.res.on("close", () => {
         strapi.log.info("Closing connection");
