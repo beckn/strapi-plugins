@@ -214,9 +214,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               lastLoadDataSetSent.push(...newDatasetSent);
             } else {
               res.write(
-                JSON.stringify(
+                JSON.stringify([
                   lastLoadDataSetSent[lastLoadDataSetSent.length - 1]
-                ) + "\n"
+                ]) + "\n"
               );
               console.log("No new dataset sent");
             }
