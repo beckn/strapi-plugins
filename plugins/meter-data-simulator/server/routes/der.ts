@@ -16,5 +16,14 @@ export default [
       policies: [],
       auth: false
     }
+  },
+  {
+    method: "GET",
+    path: "/der/:meterId",
+    handler: "der.getDerByMeterId",
+    config: {
+      policies: [],
+      auth: false
+    }
   }
 ];

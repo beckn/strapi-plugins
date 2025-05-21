@@ -33,5 +33,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       ctx.throw(400, error.message);
     }
+  },
+  async getDerByMeterId(ctx) {
+    try {
+      const { meterId } = ctx.request.params;
+      const result = await getEntityService(strapi).findMany("api::der.der", {
+        filters: {
+          energy_resource: { meter: { id: { eq: meterId } } }
+        },
+        populate: {
+          energy_resource: {},
+          appliance: {}
+        }
+      });
+      return result;
+    } catch (error) {
+      ctx.throw(400, error.message);
+    }
   }
 });
