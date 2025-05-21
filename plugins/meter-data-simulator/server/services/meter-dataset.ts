@@ -262,15 +262,23 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async getTransformerLoadInstantaneous(ctx) {
     try {
-      const transformerId = ctx.params.id;
-      if (!transformerId) {
-        return ctx.badRequest("Invalid Transformer ID");
+      const meterId = ctx.params.id;
+      if (!meterId) {
+        return ctx.badRequest("Invalid Meter ID");
       }
+
+      const meter = await getEntityService(strapi).findMany(
+        "api::meter.meter",
+        {
+          filters: { id: Number(meterId) },
+          populate: { transformer: {} }
+        }
+      );
 
       const transformerPreviousLoad = await getEntityService(strapi).findMany(
         "api::grid-load.grid-load",
         {
-          filters: { transformer: Number(transformerId) },
+          filters: { transformer: Number(meter[0].transformer.id) },
           populate: { transformer: {} },
           sort: ["createdAt:desc"],
           limit: 1
@@ -282,7 +290,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           energyResource: {
             $null: false // This ensures energyResource exists
           },
-          transformer: Number(transformerId)
+          transformer: Number(meter[0].transformer.id)
         },
         populate: {
           energyResource: {
