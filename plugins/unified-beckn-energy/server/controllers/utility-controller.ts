@@ -48,7 +48,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .plugin("unified-beckn-energy")
         .service("utilityService");
 
-      const matcherOrders = await utilityService.mitigationActivate();
+      const matcherOrders = await utilityService.mitigationActivate(ctx);
       ctx.status = 200;
       ctx.body = {
         orders: matcherOrders

@@ -38,7 +38,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       throw new Error(error.message);
     }
   },
-  async mitigationActivate() {
+  async mitigationActivate(ctx) {
     try {
       const matchedOrders = await strapi.entityService.findMany(
         "api::order-fulfillment.order-fulfillment",
@@ -46,7 +46,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           filters: {
             order_id: {
               items: {
-                name: "Home Battery Discharge Program"
+                id: ctx.request.body.itemId
               }
             }
           },
@@ -62,6 +62,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       const response = await Promise.all(
         matchedOrders.map(async (order) => {
+          await strapi.entityService.update(
+            "api::order.order",
+            order.order_id.id,
+            {
+              data: {
+                bap_id: "bap2-ps-network-deg.becknprotocol.io",
+                bap_uri: "https://bap2-ps-network-deg.becknprotocol.io"
+              }
+            }
+          );
           return await strapi.entityService.update(
             "api::order-fulfillment.order-fulfillment",
             order.id,
