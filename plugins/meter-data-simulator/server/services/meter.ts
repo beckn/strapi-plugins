@@ -287,5 +287,30 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       return ctx.badRequest(error.message);
     }
+  },
+
+  async getMeterBySubscriptionId(ctx) {
+    try {
+      const { subscriptionId } = ctx.params;
+      const meter = await getMeterApiService(strapi).findMany(
+        "api::meter.meter",
+        {
+          filters: {
+            dfp_subscription_id: subscriptionId
+          },
+          populate: {
+            energyResource: {},
+            user: {},
+            transformer: {}
+          }
+        }
+      );
+      return ctx.send(
+        { message: "Meter fetched successfully", data: meter },
+        200
+      );
+    } catch (error) {
+      return ctx.badRequest(error.message);
+    }
   }
 });

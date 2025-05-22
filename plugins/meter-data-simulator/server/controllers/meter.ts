@@ -22,5 +22,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
   async addSubscription(ctx) {
     await getMeterPluginService(strapi).addSubscription(ctx);
+  },
+  async getMeterBySubscriptionId(ctx) {
+    await getMeterPluginService(strapi).getMeterBySubscriptionId(ctx);
   }
 });

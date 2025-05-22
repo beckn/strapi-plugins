@@ -63,5 +63,15 @@ export default [
       auth: false,
       middlewares: []
     }
+  },
+  {
+    method: "GET",
+    path: "/meters/subscription/:subscriptionId",
+    handler: "meter.getMeterBySubscriptionId",
+    config: {
+      policies: [],
+      auth: false,
+      middlewares: []
+    }
   }
 ];
