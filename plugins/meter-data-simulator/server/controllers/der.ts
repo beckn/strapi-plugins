@@ -44,7 +44,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         populate: {
           energy_resource: {},
           appliance: {}
-        }
+        },
+        sort: ["appliance.baseKWh:desc"]
       });
       return result;
     } catch (error) {
