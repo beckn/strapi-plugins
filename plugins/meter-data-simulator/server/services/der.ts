@@ -1,7 +1,7 @@
 import { Strapi } from "@strapi/strapi";
-import { 
+import {
   getDerApiService,
-  getEnergyResourceApiService 
+  getEnergyResourceApiService
 } from "../utils/service.js";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
@@ -9,16 +9,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     try {
       // 1. Fetch DER with its energy resource
       const der = await getDerApiService(strapi).findOne(der_id, {
-        populate: ['energy_resource']
+        populate: ["energy_resource"]
       });
 
       if (!der) {
-        throw new Error('DER not found');
+        throw new Error("DER not found");
       }
 
       // 2. Validate ER ID
       if (der.energy_resource.id !== parseInt(er_id)) {
-        throw new Error('DER does not belong to this Energy Resource');
+        throw new Error("DER does not belong to this Energy Resource");
       }
 
       // 3. Toggle the switched_on state
@@ -29,13 +29,38 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       });
 
       return {
-        message: `DER ${updatedDer.switched_on ? 'switched on' : 'switched off'} successfully`,
+        message: `DER ${
+          updatedDer.switched_on ? "switched on" : "switched off"
+        } successfully`,
         data: updatedDer
       };
-
     } catch (error) {
-      console.error('Error toggling DER:', error);
+      console.error("Error toggling DER:", error);
+      throw error;
+    }
+  },
+  async switchOff(der_ids: string[]) {
+    try {
+      const result = await strapi.db.query("api::der.der").updateMany({
+        where: { id: { $in: der_ids } },
+        data: { switched_on: false }
+      });
+      return result;
+    } catch (error) {
+      console.error("Error switching off DER:", error);
+      throw error;
+    }
+  },
+  async switchOn(der_ids: string[]) {
+    try {
+      const result = await strapi.db.query("api::der.der").updateMany({
+        where: { id: { $in: der_ids } },
+        data: { switched_on: true }
+      });
+      return result;
+    } catch (error) {
+      console.error("Error switching on DER:", error);
       throw error;
     }
   }
-}); 
+});

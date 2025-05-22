@@ -25,5 +25,23 @@ export default [
       policies: [],
       auth: false
     }
+  },
+  {
+    method: "PUT",
+    path: "/ders/switch-off",
+    handler: "der.switchOff",
+    config: {
+      policies: [],
+      auth: false
+    }
+  },
+  {
+    method: "PUT",
+    path: "/ders/switch-on",
+    handler: "der.switchOn",
+    config: {
+      policies: [],
+      auth: false
+    }
   }
 ];

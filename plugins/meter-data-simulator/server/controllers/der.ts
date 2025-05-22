@@ -51,5 +51,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     } catch (error) {
       ctx.throw(400, error.message);
     }
+  },
+  async switchOff(ctx) {
+    const { der_ids } = ctx.request.body;
+    const result = await getDerPluginService(strapi).switchOff(der_ids);
+
+    return ctx.send({ message: "DERs switched off successfully", result }, 200);
+  },
+  async switchOn(ctx) {
+    const { der_ids } = ctx.request.body;
+    const result = await getDerPluginService(strapi).switchOn(der_ids);
+    return ctx.send({ message: "DERs switched on successfully", result }, 200);
   }
 });
