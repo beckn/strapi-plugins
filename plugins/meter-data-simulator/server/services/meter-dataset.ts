@@ -145,7 +145,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       let lastLoadDataSetSent = [];
 
-      const sendDataInterval = setInterval(async () => {
+      // Execute immediately first
+      const sendData = async () => {
         try {
           let transformerLoads = await getEntityService(strapi).findMany(
             "api::grid-load.grid-load",
@@ -229,7 +230,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         } catch (error) {
           strapi.log.error("Error in sendDataInterval", error);
         }
-      }, 10000);
+      };
+
+      // Execute immediately
+      await sendData();
+
+      // Then set up the interval
+      const sendDataInterval = setInterval(sendData, 5000);
 
       ctx.res.on("close", () => {
         strapi.log.info("Closing connection");
