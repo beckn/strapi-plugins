@@ -1,7 +1,8 @@
 import { Strapi } from "@strapi/strapi";
 import {
   getMeterApiService,
-  getEnergyResourceApiService
+  getEnergyResourceApiService,
+  getEntityService
 } from "../utils/service.js";
 import { MeterControlLogType } from "../constant/index.js";
 
@@ -292,7 +293,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async getMeterBySubscriptionId(ctx) {
     try {
       const { subscriptionId } = ctx.params;
-      const meter = await getMeterApiService(strapi).findMany(
+      const meter = await getEntityService(strapi).findMany(
         "api::meter.meter",
         {
           filters: {
