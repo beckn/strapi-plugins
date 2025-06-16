@@ -155,6 +155,7 @@ export default {
     });
 
     const result = await response.json();
+    strapi.log.info(`Response for login: ${result}`);
     return result.message.access_token;
   },
 
