@@ -156,7 +156,7 @@ export default {
 
     const result = await response.json();
     strapi.log.info(`Response for login: ${JSON.stringify(result, null, 2)}`);
-    return result.message.access_token;
+    return result.message.data.access_token;
   },
 
   async _makeRequest(endpoint: string, method: string, body?: object): Promise<any> {
