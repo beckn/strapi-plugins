@@ -13,14 +13,14 @@ export const actions: string[] = [
   "update",
   "cred"
 ];
-export const HOSPITALITY_DOMAINS: string[] = ["hospitality:dev"];
-export const TOURISM_DOMAINS: string[] = ["tourism:dev"];
-export const MOBILITY_DOMAINS: string[] = ["mobility:1.1.0:dev"];
+export const HOSPITALITY_DOMAINS: string[] = ["hospitality:staging"];
+export const TOURISM_DOMAINS: string[] = ["tourism:staging"];
+export const MOBILITY_DOMAINS: string[] = ["mobility:1.1.0:staging"];
 export const ENERGY_DOMAINS: string[] = [
-  "uei:p2p-trading:dev",
-  "uei:p2p_trading:dev"
+  "uei:p2p-trading:staging",
+  "uei:p2p_trading:staging"
 ];
-export const RETAIL_DOMAINS: string[] = ["retail:1.1.0:dev"];
+export const RETAIL_DOMAINS: string[] = ["retail:1.1.0:staging"];
 
 export const CHECK_IN: string = "check-in";
 export const CHECK_OUT: string = "check-out";
@@ -32,56 +32,56 @@ export const MAX_DISTANCE: number = 10000; // meter
 
 export const DEFAULT_INITIAL_STATE = [
   {
-    domain: "dsep:courses:dev",
+    domain: "dsep:courses:staging",
     state: {
       state_code: "PAYMENT_RECEIVED",
       state_value: "PAYMENT_RECEIVED"
     }
   },
   {
-    domain: "dsep:jobs:dev",
+    domain: "dsep:jobs:staging",
     state: {
       state_code: "APPLICATION_SUBMITTED",
       state_value: "APPLICATION SUBMITTED"
     }
   },
   {
-    domain: "dsep:scholarships:dev",
+    domain: "dsep:scholarships:staging",
     state: {
       state_code: "APPLICATION_SUBMITTED",
       state_value: "APPLICATION SUBMITTED"
     }
   },
   {
-    domain: "supply-chain-services:assembly:dev",
+    domain: "supply-chain-services:assembly:staging",
     state: {
       state_code: "ORDER_ACCEPTED",
       state_value: "ORDER ACCEPTED"
     }
   },
   {
-    domain: "online-dispute-resolution:0.1.0:dev",
+    domain: "online-dispute-resolution:0.1.0:staging",
     state: {
       state_code: "REQUEST_RECEIVED",
       state_value: "REQUEST RECEIVED"
     }
   },
   {
-    domain: "mobility:1.1.0:dev",
+    domain: "mobility:1.1.0:staging",
     state: {
       state_code: "RIDE_STATUS",
       state_value: "AWAITING_DRIVER_APPROVAL"
     }
   },
   {
-    domain: "deg:retail:dev",
+    domain: "deg:retail:staging",
     state: {
       state_code: "ORDER_DELIVERED",
       state_value: "ORDER DELIVERED"
     }
   },
   {
-    domain: "deg:finance:dev",
+    domain: "deg:finance:staging",
     state: {
       state_code: "LOAN_DISBURSED",
       state_value: "LOAN DISBURSED"
