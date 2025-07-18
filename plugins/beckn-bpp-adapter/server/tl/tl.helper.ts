@@ -90,16 +90,16 @@ export const quote = async (items: KeyValuePair[]) => {
 
 // Domain-specific base price name mappings
 const domainBasePriceNames = {
-  "Retail": "Item Price",
-  "dhp:pharmacy:0.1.0": "Item Price",
-  "supply-chain-services:assembly": "Base Price",
-  "mobility:1.1.0": "Base Fare",
-  "tourism": "Sub Total",
-  "dsep:courses": "Course Fee",
-  "hospitality": "Room Tariff",
-  "retail:1.1.0": "Item Price",
-  "uei:p2p_trading": "P2P Energy Cost",
-  "uei:charging": "Cost of Charge"
+  "Retail:staging": "Base Price",
+  "dhp:pharmacy:0.1.0:staging": "Base Price",
+  "supply-chain-services:assembly:staging": "Base Price",
+  "mobility:1.1.0:staging": "Base Fare",
+  "tourism:staging": "Sub Total",
+  "dsep:courses:staging": "Course Fee",
+  "hospitality:staging": "Room Tariff",
+  "retail:1.1.0:staging": "Base Price",
+  "uei:p2p_trading:staging": "P2P Energy Cost",
+  "uei:charging:staging": "Cost of Charge"
 };
 
 export const quotePrice = async (
@@ -141,9 +141,9 @@ export const quotePrice = async (
           title: price_bareakup_id.title,
           price: {
             currency: price_bareakup_id.currency,
-            value: adjustedValue.toString(),
+            value: adjustedValue.toString()
           },
-          item: { id: `${item.id || ""}` },
+          item: { id: `${item.id || ""}` }
         });
       });
 
@@ -153,9 +153,9 @@ export const quotePrice = async (
           title: basePriceName,
           price: {
             currency: scProduct.currency,
-            value: (Number(scProduct.base_fee) * selectedQuantity).toString(),
+            value: (Number(scProduct.base_fee) * selectedQuantity).toString()
           },
-          item: { id: `${item.id || ""}` },
+          item: { id: `${item.id || ""}` }
         });
       }
     } else {
@@ -176,9 +176,9 @@ export const quotePrice = async (
   return {
     price: {
       value: (breakupPriceValue + totalPriceValue).toString(),
-      currency: items?.[0]?.sc_retail_product?.currency,
+      currency: items?.[0]?.sc_retail_product?.currency
     },
-    breakup,
+    breakup
   };
 };
 
