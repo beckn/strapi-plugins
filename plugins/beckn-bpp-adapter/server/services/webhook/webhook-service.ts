@@ -11,7 +11,7 @@ export default ({ strapi: any }: { strapi: Strapi }) => ({
   async index(body, domain) {
     try {
       const dummyProvider = {
-        DOMAIN: "Retail",
+        DOMAIN: "Retail:dev",
         provider_name: "Sample Provider",
         provider_short_desc: "Your one-stop shop for daily essentials.",
         provider_long_desc:

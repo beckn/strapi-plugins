@@ -90,16 +90,16 @@ export const quote = async (items: KeyValuePair[]) => {
 
 // Domain-specific base price name mappings
 const domainBasePriceNames = {
-  "Retail": "Item Price",
-  "dhp:pharmacy:0.1.0": "Item Price",
-  "supply-chain-services:assembly": "Base Price",
-  "mobility:1.1.0": "Base Fare",
-  "tourism": "Sub Total",
-  "dsep:courses": "Course Fee",
-  "hospitality": "Room Tariff",
-  "retail:1.1.0": "Item Price",
-  "uei:p2p_trading": "P2P Energy Cost",
-  "uei:charging": "Cost of Charge"
+  "Retail:dev": "Item Price",
+  "dhp:pharmacy:0.1.0:dev": "Item Price",
+  "supply-chain-services:assembly:dev": "Base Price",
+  "mobility:1.1.0:dev": "Base Fare",
+  "tourism:dev": "Sub Total",
+  "dsep:courses:dev": "Course Fee",
+  "hospitality:dev": "Room Tariff",
+  "retail:1.1.0:dev": "Item Price",
+  "uei:p2p_trading:dev": "P2P Energy Cost",
+  "uei:charging:dev": "Cost of Charge"
 };
 
 export const quotePrice = async (
@@ -141,9 +141,9 @@ export const quotePrice = async (
           title: price_bareakup_id.title,
           price: {
             currency: price_bareakup_id.currency,
-            value: adjustedValue.toString(),
+            value: adjustedValue.toString()
           },
-          item: { id: `${item.id || ""}` },
+          item: { id: `${item.id || ""}` }
         });
       });
 
@@ -153,9 +153,9 @@ export const quotePrice = async (
           title: basePriceName,
           price: {
             currency: scProduct.currency,
-            value: (Number(scProduct.base_fee) * selectedQuantity).toString(),
+            value: (Number(scProduct.base_fee) * selectedQuantity).toString()
           },
-          item: { id: `${item.id || ""}` },
+          item: { id: `${item.id || ""}` }
         });
       }
     } else {
@@ -176,9 +176,9 @@ export const quotePrice = async (
   return {
     price: {
       value: (breakupPriceValue + totalPriceValue).toString(),
-      currency: items?.[0]?.sc_retail_product?.currency,
+      currency: items?.[0]?.sc_retail_product?.currency
     },
-    breakup,
+    breakup
   };
 };
 
