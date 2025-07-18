@@ -90,14 +90,14 @@ export const quote = async (items: KeyValuePair[]) => {
 
 // Domain-specific base price name mappings
 const domainBasePriceNames = {
-  "Retail:dev": "Item Price",
-  "dhp:pharmacy:0.1.0:dev": "Item Price",
+  "Retail:dev": "Base Price",
+  "dhp:pharmacy:0.1.0:dev": "Base Price",
   "supply-chain-services:assembly:dev": "Base Price",
   "mobility:1.1.0:dev": "Base Fare",
   "tourism:dev": "Sub Total",
   "dsep:courses:dev": "Course Fee",
   "hospitality:dev": "Room Tariff",
-  "retail:1.1.0:dev": "Item Price",
+  "retail:1.1.0:dev": "Base Price",
   "uei:p2p_trading:dev": "P2P Energy Cost",
   "uei:charging:dev": "Cost of Charge"
 };
