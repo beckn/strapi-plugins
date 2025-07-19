@@ -25,23 +25,29 @@ export const context = async (data: any, action: string) => {
 export const xInput = async (context: KeyValuePair) => {
   const { action, domain } = context;
   let formId;
-  if (action === "init" && domain === "dsep:scholarships") {
+  if (
+    action === "init" &&
+    domain === `dsep:scholarships:${process.env.BECKN_ENV}`
+  ) {
     formId = "dsepScholarshipDetailsForm";
-  } else if (action === "init" && domain === "dsep:jobs") {
+  } else if (
+    action === "init" &&
+    domain === `dsep:jobs:${process.env.BECKN_ENV}`
+  ) {
     formId = "dsepJobsApplyForm";
   } else if (
     action === "select" &&
-    domain === "online-dispute-resolution:0.1.0"
+    domain === `online-dispute-resolution:0.1.0:${process.env.BECKN_ENV}`
   ) {
     formId = "odrDisputeDetailsForm";
   } else if (
     action === "init" &&
-    domain === "online-dispute-resolution:0.1.0"
+    domain === `online-dispute-resolution:0.1.0:${process.env.BECKN_ENV}`
   ) {
     formId = "odrConsentForm";
   } else if (
     action === "select" &&
-    domain === "supply-chain-services:assembly"
+    domain === `supply-chain-services:assembly:${process.env.BECKN_ENV}`
   ) {
     formId = "industryAssemblyDetailsForm";
   } else if (action === "rating" && isMobility(context)) {
