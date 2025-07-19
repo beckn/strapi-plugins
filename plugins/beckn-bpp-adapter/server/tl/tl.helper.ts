@@ -23,6 +23,7 @@ export const context = async (data: any, action: string) => {
 };
 
 export const xInput = async (context: KeyValuePair) => {
+  console.log("context====>", context, "\n\n\n");
   const { action, domain } = context;
   let formId;
   if (
