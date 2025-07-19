@@ -70,6 +70,12 @@
                             $string($v.location_id.id)
                         })[] :
                     [],
+                    "xinput": {
+                        "form": {
+                            "url": $xInput(%.%.context),
+                            "mime_type": "text/html"
+                        }
+                    },
                     "tags": $tags(cat_attr_tag_relations),
                     "time": {
                         "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""

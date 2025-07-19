@@ -36,7 +36,7 @@ export const xInput = async (context: KeyValuePair) => {
   ) {
     formId = "dsepJobsApplyForm";
   } else if (
-    action === "select" &&
+    (action === "select" || action === "search") &&
     domain === `online-dispute-resolution:0.1.0:${process.env.BECKN_ENV}`
   ) {
     formId = "odrDisputeDetailsForm";
