@@ -4,7 +4,7 @@ import _sodium from 'libsodium-wrappers';
 import { LookupRequest } from 'src/types/requests/LookupRequest';
 import dedi from '../services/dedi';
 import { getSubscribersService, getUserNetworkSubscriberService } from '../utils/service';
-export const REGISTRY_NAME = 'network-subscribers';
+export const REGISTRY_NAME = process.env.DEDI_REGISTRY_NAME || 'network-subscribers';
 
 const DEDI_NAMESPACE_ID =
   process.env.DEDI_NAMESPACE_ID ||
@@ -47,7 +47,7 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
               return (
                 record.details['city_code'] === '*' ||
                 record.details['city_code']?.toLowerCase() ===
-                filters[key]?.city?.code?.toLowerCase()
+                  filters[key]?.city?.code?.toLowerCase()
               );
             }
             return value === '' || record.details[key] === value;
@@ -173,11 +173,15 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
   async getSubscriber(ctx) {
     try {
       const { id } = ctx.params;
-      if (!await getSubscribersService(strapi).isUserSubscriberOwnerOrAdmin(id, ctx.state.user)) {
-        ctx.unauthorized("You are not authorized to access this subscriber");
+      if (!(await getSubscribersService(strapi).isUserSubscriberOwnerOrAdmin(id, ctx.state.user))) {
+        ctx.unauthorized('You are not authorized to access this subscriber');
         return;
       }
-      const subscriber = await getSubscribersService(strapi).getSubscriber(DEDI_NAMESPACE_ID, REGISTRY_NAME, id);
+      const subscriber = await getSubscribersService(strapi).getSubscriber(
+        DEDI_NAMESPACE_ID,
+        REGISTRY_NAME,
+        id
+      );
       ctx.send(subscriber, 200);
     } catch (error) {
       console.log(error);
@@ -188,8 +192,8 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
   async update(ctx) {
     try {
       const { id } = ctx.params;
-      if (!await getSubscribersService(strapi).isUserSubscriberOwnerOrAdmin(id, ctx.state.user)) {
-        ctx.unauthorized("You are not authorized to update this subscriber");
+      if (!(await getSubscribersService(strapi).isUserSubscriberOwnerOrAdmin(id, ctx.state.user))) {
+        ctx.unauthorized('You are not authorized to update this subscriber');
         return;
       }
       const { data } = ctx.request.body;
@@ -209,8 +213,8 @@ const subscribers = ({ strapi }: { strapi: Core.Strapi }) => ({
   async revoke(ctx) {
     try {
       const { id } = ctx.params;
-      if (!await getSubscribersService(strapi).isUserSubscriberOwnerOrAdmin(id, ctx.state.user)) {
-        ctx.unauthorized("You are not authorized to revoke this subscriber");
+      if (!(await getSubscribersService(strapi).isUserSubscriberOwnerOrAdmin(id, ctx.state.user))) {
+        ctx.unauthorized('You are not authorized to revoke this subscriber');
         return;
       }
       // Revoke subscriber from DeDi
