@@ -1338,5 +1338,37 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       });
     });
     return activeRentals.length > 0;
+  },
+  
+  async resetAccount(userId: number, categoryId: number) {
+    try {
+      
+      if(!categoryId) {
+        throw new Error('Category not provided to reset account!');
+      }
+      const orders = await strapi.entityService.findMany('api::order-bap.order-bap', {
+        filters: {
+          user: userId,
+          category: categoryId,
+        },
+        fields: ['id'],
+      });
+      
+      console.log(`Found ${orders.length} orders to delete`, orders.map((order) => order.id));
+      let deletedCount = 0;
+
+      // Delete each order one by one since delete many does not exist in strapi
+      for (const order of orders) {
+        await strapi.entityService.delete('api::order-bap.order-bap', order.id);
+        deletedCount++;
+      }
+
+      return {
+        success: true,
+        deletedCount,
+      };
+    } catch (error) {
+      throw new Error(`Failed to reset account: ${error.message}`);
+    }
   }
 });

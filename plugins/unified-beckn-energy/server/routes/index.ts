@@ -210,6 +210,18 @@ export default [
       auth: false
     }
   },
+  //reset user account by domain
+  {
+    method: "POST",
+    path: "/reset-account",
+    handler: "userController.resetAccount",
+    config: {
+      policies: [],
+      middlewares: ["plugin::unified-beckn-energy.authMiddleware"],
+      auth: false
+    }
+  },
+
   //utilities
   {
     method: "GET",
