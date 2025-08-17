@@ -102,60 +102,59 @@ export class SearchUtil {
       } else {
         filteredProviders = [];
       }
-    }
-    // else if (isTourism(context)) {
-    //   let checkInReq: KeyValuePair | null = null;
-    //   fulfillment?.stops?.map((fulfillmentStop: KeyValuePair) => {
-    //     if (fulfillmentStop?.type?.toLowerCase() === CHECK_IN) {
-    //       checkInReq = fulfillmentStop;
-    //     }
-    //   });
-    //   if (checkInReq) {
-    //     filteredProviders = providers.filter((providerItem: KeyValuePair) => {
-    //       providerItem.items = providerItem.items.filter(
-    //         (item: KeyValuePair) => {
-    //           let checkInItem: any = null;
-    //           item?.item_fulfillment_ids?.forEach(
-    //             (fulfillment: KeyValuePair) => {
-    //               if (
-    //                 fulfillment?.fulfilment_id?.type?.toLowerCase() === CHECK_IN
-    //               ) {
-    //                 checkInItem = fulfillment;
-    //               }
-    //             }
-    //           );
-    //           const checkInGps = checkInReq?.location?.gps.split(",") || [];
-    //           const itemGps = checkInItem?.location_id?.gps.split(",") || [];
-    //           const checkInLat = checkInGps[0];
-    //           const checkInLong = checkInGps[1];
-    //           const itemLat = itemGps[0];
-    //           const itemLong = itemGps[1];
-    //           console.log(
-    //             moment(checkInReq?.time?.timestamp).format("YYYY-MM-DD"),
-    //             moment(checkInItem?.timestamp).format("YYYY-MM-DD"),
-    //             checkInGps.length &&
-    //               itemGps.length &&
-    //               !isInRange(checkInLat, checkInLong, itemLat, itemLong)
-    //           );
-    //           if (
-    //             moment(checkInReq?.time?.timestamp).format("YYYY-MM-DD") !==
-    //               moment(checkInItem?.timestamp).format("YYYY-MM-DD") ||
-    //             (checkInGps.length &&
-    //               itemGps.length &&
-    //               !isInRange(checkInLat, checkInLong, itemLat, itemLong))
-    //           ) {
-    //             return false;
-    //           }
-    //           return true;
-    //         }
-    //       );
-    //       return providerItem.items.length > 0;
-    //     });
-    //   } else {
-    //     filteredProviders = [];
-    //   }
-    // }
-    else if (isMobility(context)) {
+    } else if (isTourism(context)) {
+      //   let checkInReq: KeyValuePair | null = null;
+      //   fulfillment?.stops?.map((fulfillmentStop: KeyValuePair) => {
+      //     if (fulfillmentStop?.type?.toLowerCase() === CHECK_IN) {
+      //       checkInReq = fulfillmentStop;
+      //     }
+      //   });
+      //   if (checkInReq) {
+      //     filteredProviders = providers.filter((providerItem: KeyValuePair) => {
+      //       providerItem.items = providerItem.items.filter(
+      //         (item: KeyValuePair) => {
+      //           let checkInItem: any = null;
+      //           item?.item_fulfillment_ids?.forEach(
+      //             (fulfillment: KeyValuePair) => {
+      //               if (
+      //                 fulfillment?.fulfilment_id?.type?.toLowerCase() === CHECK_IN
+      //               ) {
+      //                 checkInItem = fulfillment;
+      //               }
+      //             }
+      //           );
+      //           const checkInGps = checkInReq?.location?.gps.split(",") || [];
+      //           const itemGps = checkInItem?.location_id?.gps.split(",") || [];
+      //           const checkInLat = checkInGps[0];
+      //           const checkInLong = checkInGps[1];
+      //           const itemLat = itemGps[0];
+      //           const itemLong = itemGps[1];
+      //           console.log(
+      //             moment(checkInReq?.time?.timestamp).format("YYYY-MM-DD"),
+      //             moment(checkInItem?.timestamp).format("YYYY-MM-DD"),
+      //             checkInGps.length &&
+      //               itemGps.length &&
+      //               !isInRange(checkInLat, checkInLong, itemLat, itemLong)
+      //           );
+      //           if (
+      //             moment(checkInReq?.time?.timestamp).format("YYYY-MM-DD") !==
+      //               moment(checkInItem?.timestamp).format("YYYY-MM-DD") ||
+      //             (checkInGps.length &&
+      //               itemGps.length &&
+      //               !isInRange(checkInLat, checkInLong, itemLat, itemLong))
+      //           ) {
+      //             return false;
+      //           }
+      //           return true;
+      //         }
+      //       );
+      //       return providerItem.items.length > 0;
+      //     });
+      //   } else {
+      //     filteredProviders = [];
+      //   }
+      return providers;
+    } else if (isMobility(context)) {
       let customerLocation: KeyValuePair | null = null;
       fulfillment?.stops.map((fulfillmentStop: KeyValuePair) => {
         if (fulfillmentStop?.type?.toLowerCase() === START) {
