@@ -13,14 +13,17 @@ export const actions: string[] = [
   "update",
   "cred"
 ];
-export const HOSPITALITY_DOMAINS: string[] = ["hospitality:dev"];
-export const TOURISM_DOMAINS: string[] = ["tourism:dev"];
-export const MOBILITY_DOMAINS: string[] = ["mobility:1.1.0:dev"];
-export const ENERGY_DOMAINS: string[] = [
-  "uei:p2p-trading:dev",
-  "uei:p2p_trading:dev"
-];
-export const RETAIL_DOMAINS: string[] = ["retail:1.1.0:dev"];
+
+export const HOSPITALITY_DOMAINS: string[] =
+  process.env.HOSPITALITY_DOMAINS?.split(",") || [];
+export const TOURISM_DOMAINS: string[] =
+  process.env.TOURISM_DOMAINS?.split(",") || [];
+export const MOBILITY_DOMAINS: string[] =
+  process.env.MOBILITY_DOMAINS?.split(",") || [];
+export const ENERGY_DOMAINS: string[] =
+  process.env.ENERGY_DOMAINS?.split(",") || [];
+export const RETAIL_DOMAINS: string[] =
+  process.env.RETAIL_DOMAINS?.split(",") || [];
 
 export const CHECK_IN: string = "check-in";
 export const CHECK_OUT: string = "check-out";
@@ -32,56 +35,56 @@ export const MAX_DISTANCE: number = 10000; // meter
 
 export const DEFAULT_INITIAL_STATE = [
   {
-    domain: "dsep:courses:dev",
+    domain: process.env.DSEP_COURSES_DOMAIN!,
     state: {
       state_code: "PAYMENT_RECEIVED",
       state_value: "PAYMENT_RECEIVED"
     }
   },
   {
-    domain: "dsep:jobs:dev",
+    domain: process.env.DSEP_JOBS_DOMAIN!,
     state: {
       state_code: "APPLICATION_SUBMITTED",
       state_value: "APPLICATION SUBMITTED"
     }
   },
   {
-    domain: "dsep:scholarships:dev",
+    domain: process.env.DSEP_SCHOLARSHIPS_DOMAIN!,
     state: {
       state_code: "APPLICATION_SUBMITTED",
       state_value: "APPLICATION SUBMITTED"
     }
   },
   {
-    domain: "supply-chain-services:assembly:dev",
+    domain: process.env.SUPPLY_CHAIN_DOMAIN!,
     state: {
       state_code: "ORDER_ACCEPTED",
       state_value: "ORDER ACCEPTED"
     }
   },
   {
-    domain: "online-dispute-resolution:0.1.0:dev",
+    domain: process.env.ODR_DOMAIN!,
     state: {
       state_code: "REQUEST_RECEIVED",
       state_value: "REQUEST RECEIVED"
     }
   },
   {
-    domain: "mobility:1.1.0:dev",
+    domain: process.env.MOBILITY_DOMAIN!,
     state: {
       state_code: "RIDE_STATUS",
       state_value: "AWAITING_DRIVER_APPROVAL"
     }
   },
   {
-    domain: "deg:retail:dev",
+    domain: process.env.DEG_RETAIL_DOMAIN!,
     state: {
       state_code: "ORDER_DELIVERED",
       state_value: "ORDER DELIVERED"
     }
   },
   {
-    domain: "deg:finance:dev",
+    domain: process.env.DEG_FINANCE_DOMAIN!,
     state: {
       state_code: "LOAN_DISBURSED",
       state_value: "LOAN DISBURSED"
