@@ -122,6 +122,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           createOrder = await strapi.entityService.create("api::order.order", {
             data: orderData
           });
+          console.log("createOrder ==>>>>>>", createOrder);
           orderId = createOrder.id;
 
           // Create order address
@@ -207,11 +208,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
                 // Update the order with the modified tags
                 console.log("Orderis", orderId);
-                await strapi.entityService.update("api::order.order", orderId, {
+                const updateOrder = await strapi.entityService.update("api::order.order", orderId, {
                   data: {
                     tags: items // Assuming 'items' is a writable field; adjust based on your Strapi schema
                   }
                 });
+
+                console.log("updateOrder ==>>>>>>", updateOrder);
 
                 strapi.log.info(
                   `Order ${orderId} has been successfully updated with tag IDs.`
@@ -230,11 +233,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             ...billingInfo,
             publishedAt: isoString
           };
-          await strapi.entityService.create(
+          const createOrderAddress = await strapi.entityService.create(
             "api::order-address.order-address",
             { data: orderAddressData }
           );
-
+          console.log("createOrderAddress ==>>>>>>", createOrderAddress);
           // Find or create customer
           const [existingCustomer] = await strapi.entityService.findMany(
             "api::customer.customer",
@@ -254,6 +257,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::order-fulfillment-location.order-fulfillment-location",
             { data: shippingDetail }
           );
+          console.log("createShipping ==>>>>>>", createShipping);
           const stopsIds = [createShipping.id];
 
           if (endLocationDetail) {
@@ -301,6 +305,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             "api::order-fulfillment.order-fulfillment",
             { data: orderFulfillmentDetail }
           );
+          console.log("orderFulfillmentRes ==>>>>>>", orderFulfillmentRes);
           orderFulFillmentId = orderFulfillmentRes.id;
 
           await onConfirm(message);
@@ -397,6 +402,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           populate
         }
       );
+      console.log("itemDetails ==>>>>>>", itemDetails);
       const commonService = strapi.plugin(PLUGIN).service("commonService");
       await Promise.all(
         itemDetails.map(async (itemDetail) => {
@@ -432,6 +438,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           fulfilment_id: {}
         }
       );
+      console.log("orderFulfillment ==>>>>>>", orderFulfillment);
       const billingDetails = billing;
       const fulfillmentDetails = fulfillments;
 
