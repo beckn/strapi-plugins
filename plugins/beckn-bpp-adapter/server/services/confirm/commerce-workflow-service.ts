@@ -112,8 +112,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             order_transaction_id: transaction_id,
             publishedAt: isoString,
             domain,
-            bap_id,
-            bap_uri,
+            bap_id: bap_id ? bap_id : "sandbox-retail-np1.com",
+            bap_uri: bap_uri ? bap_uri : "http://34.93.45.226:8081/bap/receiver",
             currency: payments?.[0]?.params?.amount || "INR",
             total_amount: payments?.[0]?.params?.amount || 100,
             transaction_id: payments?.[0]?.id
