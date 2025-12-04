@@ -312,7 +312,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           await onConfirm(message);
           trx.commit();
         } catch (err) {
-          console.log("err ==>>>>>>", err);
+          console.log("err ==>>>>>>", JSON.stringify(err.details, null, 2));
           trx.rollback();
         }
       });
