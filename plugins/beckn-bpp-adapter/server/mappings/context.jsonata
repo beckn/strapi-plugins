@@ -15,8 +15,8 @@
     "action": $action,
     "timestamp": $moment().toISOString(),
     "version": "1.1.0",
-    "bap_uri": bap_uri ? bap_uri : "http://34.93.45.226:8081/bap/receiver,
-    "bap_id": bap_id ? bap_id : "sandbox-retail-np1.com",
+    "bap_uri": "http://34.93.45.226:8081/bap/receiver,
+    "bap_id": "sandbox-retail-np1.com",
     "bpp_id": $env.BPP_ID,
     "bpp_uri": $env.BPP_URI
 }
