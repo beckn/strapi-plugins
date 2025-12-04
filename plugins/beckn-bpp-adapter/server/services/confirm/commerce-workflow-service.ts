@@ -118,6 +118,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             total_amount: payments?.[0]?.params?.amount || 100,
             transaction_id: payments?.[0]?.id
           };
+          console.log("orderData ==>>>>>>", orderData);
           // Create order
           createOrder = await strapi.entityService.create("api::order.order", {
             data: orderData
@@ -311,6 +312,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           await onConfirm(message);
           trx.commit();
         } catch (err) {
+          console.log("err ==>>>>>>", err);
           trx.rollback();
         }
       });
