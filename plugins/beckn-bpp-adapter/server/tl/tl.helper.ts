@@ -106,7 +106,8 @@ const domainBasePriceNames = {
   "hospitality:dev": "Room Tariff",
   "retail:1.1.0:dev": "Base Price",
   "uei:p2p_trading:dev": "P2P Energy Cost",
-  "uei:charging:dev": "Cost of Charge"
+  "uei:charging:dev": "Cost of Charge",
+  "retail:1.1.0": "Base Price"
 };
 
 export const quotePrice = async (
