@@ -174,6 +174,8 @@ export const quotePrice = async (
     }
   });
 
+  console.log("Items Final====>", JSON.stringify(items, null, 2));
+
   // Calculate total priceValue as sum of all breakup.price.value plus any base_fee values
   const breakupPriceValue = breakup.reduce(
     (accumulator, currentValue) =>
