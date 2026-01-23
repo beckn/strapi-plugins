@@ -44,4 +44,13 @@ export default [
       auth: false
     },
   },
+  {
+    method: 'POST',
+    path: '/uploadCatalog',
+    handler: 'catalogController.uploadCatalog',
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
 ];
