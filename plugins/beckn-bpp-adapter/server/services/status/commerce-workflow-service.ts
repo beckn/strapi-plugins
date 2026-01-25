@@ -3,6 +3,7 @@ import { KeyValuePair } from "../../types";
 import { PLUGIN } from "../../constants";
 import { isEnergy, TradeUtil } from "../../util";
 
+
 export default ({ strapi }: { strapi: Strapi }) => ({
   async index({ message, context }) {
     try {
@@ -71,6 +72,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
                     payment_methods: {}
                   }
                 }
+              }
+            },
+            order_items: {
+              populate: {
+                item_id: {}
               }
             },
             order_address: {}

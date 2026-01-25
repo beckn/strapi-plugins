@@ -101,20 +101,29 @@
                     "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
                 }
             }[],
-            "quote": $quote(message[0].items,message[0].order_details),
+            "quote": $quote(message[0].items,message[0].order_details, message.itemsBody),
             "billing": message.billing,
             "fulfillments": $map(message.orderFulfillment, function($elem) {
                    {
                        "id": $string($elem.fulfilment_id.id),
                        "type": $elem.fulfilment_id.type,
                        "state": {
-                        "descriptor": {
-                            "code": $elem.state_code ? $elem.state_code : "IN_PROGRESS",
-                            "short_desc": $elem.state_value ? $elem.state_value : "IN PROGRESS"
+                            "descriptor": {
+                                "code": $elem.state_code ? $elem.state_code : "IN_PROGRESS",
+                                "short_desc": $elem.state_value ? $elem.state_value : "IN PROGRESS"
+                            },
+                            "updated_at": $string($elem.updatedAt)
                         },
-                        "updated_at": $string($elem.updatedAt)
-                    }
-                }
+                        "customer":{
+                            "person":{
+                                "name":message.fulfillment[0].customer.person.name ? message.fulfillment[0].customer.person.name : "GUEST"
+                            },
+                            "contact":{
+                                "email":message.fulfillment[0].customer.contact.email ? message.fulfillment[0].customer.contact.email: "NA",
+                                "phone":message.fulfillment[0].customer.contact.phone ? message.fulfillment[0].customer.contact.phone : "NA"
+                            }
+                        }
+                   }
             })[],
             "payments": $payments(message[0]),
             "cancellation_terms": $cancellationTerms(message[0].items)

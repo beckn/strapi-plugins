@@ -1,0 +1,70 @@
+{
+    "success": true,
+    "order": message.order.{
+        "order_id": id,
+        "restaurant_id": provider.id,
+        "restaurant_name": provider.descriptor.name,
+        "outlet_id": provider.locations[0].id,
+        "order_date_time": created_at,
+        "enable_delivery": 1,
+        "order_type": fulfillments[0].type ? fulfillments[0].type: "DELIVERY",
+        "customer_details": {
+            "name":fulfillments[0].customer.person.name ? fulfillments[0].customer.person.name: "GUEST",
+            "phone":fulfillments[0].customer.contact.phone ? fulfillments[0].customer.contact.phone: "NA",
+            "email":fulfillments[0].customer.contact.email ? fulfillments[0].customer.contact.email: "NA"
+        },
+        "order_instructions": "",
+        "cutlery_instructions": "",
+        "net_amount": $number(quote.price.value ? quote.price.value: '0'),
+        "gross_amount": $number(quote.price.value ? quote.price.value: '0'),
+        "order_discounts": [],
+        "is_special_combo_order": 0,
+        "dishes": $map(items, function($item){
+            [
+                {
+                    "dish_type": "variant",
+                    "dish_id": $item.id,
+                    "composition": {
+                        "variant_id": $item.id,
+                        "catalogue_id": $item.id,
+                        "catalogue_name": $item.descriptor.name,
+                        "properties": [],
+                        "modifier_groups": [],
+                        "unit_cost": $number($item.price.value ? $item.price.value: '0'),
+                        "sub_category_id": "133789",
+                        "sub_category_name": "Breads",
+                        "category_id": "2468",
+                        "category_name": "Main Course"
+                    },
+                    "quantity": $item.quantity.selected.count ? $item.quantity.selected.count : 1,
+                    "total_cost": ($item.quantity.selected.count ? $item.quantity.selected.count: 1) * $number($item.price.value ? $item.price.value: 0),
+                    "total_discount": 0,
+                    "final_cost": ($item.quantity.selected.count ? $item.quantity.selected.count : 1) * $number($item.price.value ? $item.price.value: 0),
+                    "taxes":quote.breakup.{
+                        "slug": title,
+                        "name": title,
+                        "amount":price.value
+                        }[],
+                    "charges": [
+                        {
+                            "charge_id": "5",
+                            "name": "Restaurant Packaging Charges",
+                            "type": "FIXED",
+                            "value": 15,
+                            "amount": 15,
+                            "taxes": []
+                        }
+                    ],
+                    "dish_discounts": []
+                }
+            ]
+        }),
+        "total_merchant": $number(quote.price.value ? quote.price.value: '0'),
+        "payment_mode": "CASH",
+        "payment_status": "PENDING",
+        "amount_paid": 0,
+        "amount_balance": $number(quote.price.value ? quote.price.value: '0'),
+        "cash_to_be_collected": $number(quote.price.value ? quote.price.value: '0'),
+        "order_status": "ACCEPTED"
+    }
+}

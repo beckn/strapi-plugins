@@ -3,9 +3,9 @@
     "message": {
         "catalog": {
             "descriptor": {
-                "name": "UrjaKart",
-                "code": "UrjaKart",
-                "short_desc": "A seller platform for energy solutions, enabling seamless transactions of batteries, solar panels, and other renewable energy products."
+                "name": "BecknFoods",
+                "code": "BecknFoods",
+                "short_desc": "A Food Delivery Platform."
             },
             "providers": $count(message) > 0 ? message.{
                 "id": $string(id),

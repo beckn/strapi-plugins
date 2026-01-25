@@ -58,32 +58,80 @@ export const xInput = async (context: KeyValuePair) => {
 
 export const quote = async (
   items: KeyValuePair[],
-  order_details: KeyValuePair
+  order_details: KeyValuePair,
+  order_item_quantity: KeyValuePair[]
 ) => {
+
+
+
+
   const priceValue =
     order_details?.total_amount ||
     items?.reduce(
       (accumulator, currentValue) =>
-        accumulator + Number(currentValue?.sc_retail_product?.min_price),
+        accumulator + Number(currentValue?.sc_retail_product?.min_price) * order_item_quantity?.find((elem) => elem.id == currentValue.id)?.quantity?.selected?.count || 1,
       0
     );
+  const { order_items = [] } = order_details
   const breakup: KeyValuePair[] = [];
   items?.map((item) => {
     item?.sc_retail_product?.price_bareakup_ids?.map(
       (price_bareakup_id: KeyValuePair) => {
-        breakup.push({
-          title: price_bareakup_id.title,
-          price: {
-            currency: price_bareakup_id.currency,
-            value: price_bareakup_id.value ? price_bareakup_id.value + "" : ""
-          },
-          item: {
-            id: `${item.id || ""}`
+
+        if (order_items.length) {
+          const itemQuantity = order_items?.find((elem) => (elem?.item_id?.id == item.id))?.item_quantity || 1;
+          breakup.push({
+            title: price_bareakup_id.title,
+            price: {
+              currency: price_bareakup_id.currency,
+              value: price_bareakup_id.value ? (price_bareakup_id.value * itemQuantity) + "" : ""
+            },
+            item: {
+              id: `${item.id || ""}`
+            }
+          })
+          if (item?.sc_retail_product?.base_fee) {
+            breakup.push({
+              title: "BASE PRICE",
+              price: {
+                currency: item?.sc_retail_product?.currency,
+                value: item?.sc_retail_product?.base_fee ? (Number(item?.sc_retail_product?.base_fee) * itemQuantity) + "" : ""
+              },
+              item: {
+                id: `${item.id || ""}`
+              }
+            });
           }
-        });
+        }
+        else {
+          breakup.push({
+            title: price_bareakup_id.title,
+            price: {
+              currency: price_bareakup_id.currency,
+              value: price_bareakup_id.value ? (price_bareakup_id.value * order_item_quantity?.find((elem) => elem.id == item.id)?.quantity?.selected?.count || 1) + "" : ""
+            },
+            item: {
+              id: `${item.id || ""}`
+            }
+          });
+          if (item?.sc_retail_product?.base_fee) {
+            breakup.push({
+              title: "BASE PRICE",
+              price: {
+                currency: item?.sc_retail_product?.currency,
+                value: item?.sc_retail_product?.base_fee ? (Number(item?.sc_retail_product?.base_fee) * order_item_quantity?.find((elem) => elem.id == item.id)?.quantity?.selected?.count || 1) + "" : ""
+              },
+              item: {
+                id: `${item.id || ""}`
+              }
+            });
+          }
+        }
+
       }
     );
   });
+
   return {
     price: {
       value: priceValue + "",
@@ -264,12 +312,12 @@ export const tags = (tagRelations) => {
           groupedRelationsMap.set(tagGroupId, {
             ...(tagGroupId !== "no-tag-group-id"
               ? {
-                  descriptor: {
-                    description:
-                      taxanomy.taxanomy_id.tag_group_id.tag_group_name,
-                    code: taxanomy.taxanomy_id.tag_group_id.code
-                  }
+                descriptor: {
+                  description:
+                    taxanomy.taxanomy_id.tag_group_id.tag_group_name,
+                  code: taxanomy.taxanomy_id.tag_group_id.code
                 }
+              }
               : {}),
             list: []
           });

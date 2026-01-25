@@ -12,6 +12,7 @@ import { KeyValuePair } from "../../types";
 import { PLUGIN, DEFAULT_INITIAL_STATE } from "../../constants";
 import { initiateCharging } from "../../util/ev.utils";
 
+
 function generateRandomString(length = 10) {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -33,7 +34,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           data: {}
         });
       }
-      console.log("Here---->24 confirm service");
+
       const { items, provider, billing, fulfillments, payments, tags } =
         message.order;
       const { domain, transaction_id, bap_id, bap_uri } = context;
@@ -45,7 +46,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       let orderFulFillmentId;
 
       // Extract billing details
-      console.log("Here---->36 confirm service");
+
       const billingInfo = {
         first_name: billing?.name || "",
         address_line_1: billing?.address || "",
@@ -57,7 +58,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         postcode: billing?.area_code || "",
         tax_id: billing?.tax_id || ""
       };
-      console.log("Here---->48 confirm service");
+
 
       // Extract customer details
       const customer = fulfillments[0]?.customer || {
@@ -78,13 +79,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         contact: customer?.contact?.phone,
         publishedAt: isoString
       };
-      console.log("Here---->69 confirm service");
+
 
       // Extract shipping details
       const shipping =
         (fulfillments[0]?.stops
           ? fulfillments[0]?.stops.find((elem: any) => elem.type === "start") ||
-            fulfillments[0]?.stops[0]
+          fulfillments[0]?.stops[0]
           : undefined) || billing;
       const shippingDetail = {
         gps: shipping?.location?.gps || "",
@@ -99,7 +100,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         publishedAt: isoString,
         type: shipping?.type || "start"
       };
-      console.log("Here---->90 confirm service");
+
 
       const endLocation = fulfillments[0]?.stops
         ? fulfillments[0]?.stops.find((elem: any) => elem.type === "end")
@@ -124,16 +125,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         };
       }
 
-      console.log("Here---->115 confirm service");
 
       // Extract item values
       const itemValue = items.map((obj: { id: string }) => `${obj.id}`);
-      console.log("Here---->119 confirm service");
+
 
       let createOrder: any = {};
       // Start transaction
       await strapi.db.transaction(async ({ trx }) => {
         try {
+
           const orderData = {
             status: "ACTIVE",
             items: itemValue,
@@ -154,8 +155,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           createOrder = await strapi.entityService.create("api::order.order", {
             data: orderData
           });
-          console.log("createdOrder==========>", createOrder, "\n\n");
+
           orderId = createOrder.id;
+          const createdOrderItems = await Promise.all(items.map(async (item) => (strapi.entityService.create("api::order-item.order-item", {
+            data: {
+              order_id: orderId,
+              item_id: item.id,
+              item_quantity: item?.quantity?.selected?.count || item?.quantity?.selected?.measure?.value,
+              publishedAt: isoString
+            }
+          }))));
+
+          // const createdOrderItems = await strapi.entityService.createMany("api::order-item.order-item", {
+          //   data: orderItemQuantity
+          // });
+
+          console.log("createdOrderItems====>", createdOrderItems)
 
           // Create order address
           const onConfirm = async (message) => {
@@ -278,10 +293,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           const custId = existingCustomer
             ? existingCustomer.id
             : (
-                await strapi.entityService.create("api::customer.customer", {
-                  data: custData
-                })
-              ).id;
+              await strapi.entityService.create("api::customer.customer", {
+                data: custData
+              })
+            ).id;
 
           // Create shipping location
           const createShipping = await strapi.entityService.create(
@@ -369,7 +384,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               { data: anotherOrderFulfillmentDetail }
             );
           }
-          if(isDegFinance(context) || isDegRetail(context)) {
+          if (isDegFinance(context) || isDegRetail(context)) {
             //update order status to complete
             await strapi.entityService.update(
               "api::order.order",
@@ -488,13 +503,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             if (item.sc_retail_product) {
               // Update the code and price value
               if (item?.sc_retail_product?.min_price)
-                item.sc_retail_product.min_price = `${
-                  parseInt(item.sc_retail_product.min_price) - 2
-                }`;
+                item.sc_retail_product.min_price = `${parseInt(item.sc_retail_product.min_price) - 2
+                  }`;
               if (item?.sc_retail_product?.max_price)
-                item.sc_retail_product.max_price = `${
-                  parseInt(item.sc_retail_product.max_price) - 2
-                }`;
+                item.sc_retail_product.max_price = `${parseInt(item.sc_retail_product.max_price) - 2
+                  }`;
             }
           });
         });
@@ -530,20 +543,20 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       );
       const orderFulfillment = isDegRental(context)
         ? await strapi.entityService.findMany(
-            "api::order-fulfillment.order-fulfillment",
-            {
-              filters: {
-                order_id: orderId
-              },
-              populate: ["fulfilment_id"]
-            }
-          )
+          "api::order-fulfillment.order-fulfillment",
+          {
+            filters: {
+              order_id: orderId
+            },
+            populate: ["fulfilment_id"]
+          }
+        )
         : [
-            await commonService.getOrderFulfillmentById(orderFulFillmentId, {
-              order_id: {},
-              fulfilment_id: {}
-            })
-          ];
+          await commonService.getOrderFulfillmentById(orderFulFillmentId, {
+            order_id: {},
+            fulfilment_id: {}
+          })
+        ];
       const billingDetails = billing;
       const fulfillmentDetails = fulfillments;
       //filter out the selected items only
@@ -556,18 +569,18 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             (item) => Number(item.id) === responseItem.id
           );
           if (bodyItem && bodyItem?.tags?.length) {
-              const tagListFlatMap = bodyItem.tags.flatMap((tag) =>
-                tag.list.map((inner) => inner)
-              );
-              const requiredTags = responseItem.cat_attr_tag_relations.filter(
-                (relation) =>
-                  tagListFlatMap.find(
-                    (elem) =>
-                      elem?.descriptor?.code === relation?.taxanomy_id?.code &&
-                      elem?.descriptor?.name === relation?.taxanomy_id?.tag_name
-                  )
-              );
-              responseItem.cat_attr_tag_relations = requiredTags;
+            const tagListFlatMap = bodyItem.tags.flatMap((tag) =>
+              tag.list.map((inner) => inner)
+            );
+            const requiredTags = responseItem.cat_attr_tag_relations.filter(
+              (relation) =>
+                tagListFlatMap.find(
+                  (elem) =>
+                    elem?.descriptor?.code === relation?.taxanomy_id?.code &&
+                    elem?.descriptor?.name === relation?.taxanomy_id?.tag_name
+                )
+            );
+            responseItem.cat_attr_tag_relations = requiredTags;
 
           }
           return responseItem;
@@ -629,6 +642,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         );
       }
+
       console.log(
         "Returning on Confirm Details===>",
         JSON.stringify(confirmDetails)

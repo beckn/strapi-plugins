@@ -1,6 +1,7 @@
 import { Strapi } from "@strapi/strapi";
-import { TLService } from "../../tl/tl.service";
+import { POSTLService, TLService } from "../../tl/tl.service";
 import WorkflowProvider from "../../factory/search/workflow-provider";
+import axios from "axios";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async index(ctx) {
@@ -45,6 +46,16 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             { message: result, context },
             `on_${action}`
           );
+          if (context.domain === "food:restaurant" && action === "confirm") {
+            // Relay Mapped Order to POS==> 
+            try {
+              const transformedOrder = await POSTLService.transform(transformedResult);
+              const sendDataToPos = await axios.post(`${process.env.POS_BASE_URL}/orders/order_relay`, transformedOrder);
+              console.log(sendDataToPos.data)
+            } catch (error) {
+              console.log("[Error] Order Relay to POS: ", error)
+            }
+          }
           ctx.body = transformedResult;
         }
       } else {

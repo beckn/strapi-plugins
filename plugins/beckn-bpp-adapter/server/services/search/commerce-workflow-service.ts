@@ -102,7 +102,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       };
     }
 
-    if (category && !isDegFinance(context)) {
+    if (category && (context.domain !== "food:restaurant" && !isDegFinance(context))) {
       const categoryFilter = ObjectUtil.removeEmptyObjectKeys(
         FilterUtil.getCategoryFilter(category)
       );
@@ -147,19 +147,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             // Update the code and price value
 
             if (item?.sc_retail_product?.min_price)
-              item.sc_retail_product.min_price = `${
-                parseInt(item.sc_retail_product.min_price) - 2
-              }`;
+              item.sc_retail_product.min_price = `${parseInt(item.sc_retail_product.min_price) - 2
+                }`;
             if (item?.sc_retail_product?.max_price)
-              item.sc_retail_product.max_price = `${
-                parseInt(item.sc_retail_product.max_price) - 2
-              }`;
+              item.sc_retail_product.max_price = `${parseInt(item.sc_retail_product.max_price) - 2
+                }`;
           }
         });
       });
     }
 
-    if (fulfillment) {
+    if (fulfillment && context.domain !== "food:restaurant") {
       providers = SearchUtil.filterByFulfillment(
         providers,
         fulfillment,
@@ -224,7 +222,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               (relation: any) =>
                 relation?.taxanomy_id?.value === category?.descriptor?.name &&
                 relation?.taxanomy_id?.category_code ===
-                  category?.descriptor?.code
+                category?.descriptor?.code
             )
           );
 
@@ -257,7 +255,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
               rentalEndTime.toString().length === 10
                 ? rentalEndTime * 1000
                 : rentalEndTime;
-            console.log('Rental time: ', rentalEndTimeInMs,'  ', currentEpochInMs);
+            console.log('Rental time: ', rentalEndTimeInMs, '  ', currentEpochInMs);
             return rentalEndTimeInMs > currentEpochInMs;
           });
 
@@ -337,13 +335,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       console.log("startTime:", startTime);
       console.log("endTime:", endTime);
-      if(startTime && endTime) {
+      if (startTime && endTime) {
         //filter by startTime and endTime
         providers = filterProvidersByStartAndEndTime(providers, startTime, endTime);
       } else {
         providers = filterProvidersByRentalEnd(providers);
       }
-      
+
 
       // sorting the provider.items[0].createdAdd in descending order
       providers = providers.sort(
@@ -366,33 +364,33 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             return itemFromStrapi?.cat_attr_tag_relations?.some((tag: any) => {
               const result = domain === "deg:rental" && listItem?.descriptor?.code === "Renting Capacity"
                 ? (tag?.taxanomy_id?.code === listItem?.descriptor?.code &&
-                    Number(listItem?.value) <= Number(tag?.taxanomy_id?.value)) // Battery Capacity logic
+                  Number(listItem?.value) <= Number(tag?.taxanomy_id?.value)) // Battery Capacity logic
                 : (tag?.taxanomy_id?.code === listItem?.descriptor?.code &&
-                    tag?.taxanomy_id?.value === listItem?.value);
-        
+                  tag?.taxanomy_id?.value === listItem?.value);
+
               console.log(
                 `[Tag Match Check] Code: ${tag?.taxanomy_id?.code}, Value: ${tag?.taxanomy_id?.value} | ` +
                 `ListItem Code: ${listItem?.descriptor?.code}, Value: ${listItem?.value} | ` +
                 `Match Result: ${result}`
               );
-        
+
               return result;
             });
           });
-        
+
           console.log('Is match:: ', isMatch, 'Item: ', JSON.stringify(itemFromStrapi));
-        
+
           return isMatch;
         });
-        
+
 
         // Only keep provider if any items matched
-      if (filteredItems?.length) {
-        return { ...provider, items: filteredItems };
-      }
-      return null;
-    })
-    .filter((provider) => provider !== null); // Remove null providers
+        if (filteredItems?.length) {
+          return { ...provider, items: filteredItems };
+        }
+        return null;
+      })
+        .filter((provider) => provider !== null); // Remove null providers
       // if ((newProviders as any[]).every((elem: any) => elem === null)) {
       //   return providers;
       // } else {

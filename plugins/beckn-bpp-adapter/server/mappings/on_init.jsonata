@@ -87,7 +87,7 @@
                         "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
                     }
                 }[],
-                "quote": $quote(message.items),
+                "quote": $quote(message.items, _,  message.itemsBody),
                 "billing": message.billing,
                 "categories": $map(message.category_ids, function($v) {
                     {
