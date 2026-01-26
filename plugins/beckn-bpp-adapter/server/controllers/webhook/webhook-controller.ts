@@ -48,6 +48,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           );
           if (context.domain === "food:restaurant" && action === "confirm") {
             // Relay Mapped Order to POS==> 
+            console.log("Relaying Order to POS====>", JSON.stringify(transformedResult, null, 2))
             try {
               const transformedOrder = await POSTLService.transform(transformedResult);
               const sendDataToPos = await axios.post(`${process.env.POS_BASE_URL}/orders/order_relay`, transformedOrder);
@@ -59,6 +60,23 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           ctx.body = transformedResult;
         }
       } else {
+
+
+
+        // if (context.domain === "food:restaurant" && action === "confirm") {
+        //   // Relay Mapped Order to POS==> 
+        //   console.log("Relaying Order to POS====>", JSON.stringify(transformedResult, null, 2))
+        //   try {
+        //     const transformedOrder = await POSTLService.transform(transformedResult);
+        //     const sendDataToPos = await axios.post(`${process.env.POS_BASE_URL}/orders/order_relay`, transformedOrder);
+        //     console.log(sendDataToPos.data)
+        //   } catch (error) {
+        //     console.log("[Error] Order Relay to POS: ", error)
+        //   }
+        // }
+
+        console.log("Response received from BPP====>", JSON.stringify({ action, body }, null, 2))
+
         await strapi.eventHub.emit("webhook.request", body);
         ctx.body = {
           ack: {
