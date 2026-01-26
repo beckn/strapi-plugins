@@ -19,6 +19,69 @@ export default [
   },
   {
     method: 'POST',
+    path: '/search',
+    handler: 'webhookController.index',
+    config: {
+      policies: [],
+      auth: false
+    },
+  },
+  {
+    method: 'POST',
+    path: '/select',
+    handler: 'webhookController.index',
+    config: {
+      policies: [],
+      auth: false
+    },
+  },
+  {
+    method: 'POST',
+    path: '/init',
+    handler: 'webhookController.index',
+    config: {
+      policies: [],
+      auth: false
+    },
+  },
+  {
+    method: 'POST',
+    path: '/confirm',
+    handler: 'webhookController.index',
+    config: {
+      policies: [],
+      auth: false
+    },
+  },
+  {
+    method: 'POST',
+    path: '/status',
+    handler: 'webhookController.index',
+    config: {
+      policies: [],
+      auth: false
+    },
+  },
+  {
+    method: 'POST',
+    path: '/cancel',
+    handler: 'webhookController.index',
+    config: {
+      policies: [],
+      auth: false
+    },
+  },
+  {
+    method: 'POST',
+    path: '/update',
+    handler: 'webhookController.index',
+    config: {
+      policies: [],
+      auth: false
+    },
+  },
+  {
+    method: 'POST',
     path: '/ps/:action',
     handler: 'webhookController.psResponse',
     config: {
