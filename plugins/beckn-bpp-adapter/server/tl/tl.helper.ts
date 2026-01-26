@@ -72,7 +72,7 @@ export const quote = async (
         accumulator + Number(currentValue?.sc_retail_product?.min_price) * order_item_quantity?.find((elem) => elem.id == currentValue.id)?.quantity?.selected?.count || 1,
       0
     );
-  const { order_items = [] } = order_details
+  const order_items = order_details?.order_items || [];
   const breakup: KeyValuePair[] = [];
   items?.map((item) => {
     item?.sc_retail_product?.price_bareakup_ids?.map(
