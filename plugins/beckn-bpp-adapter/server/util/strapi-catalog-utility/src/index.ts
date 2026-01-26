@@ -22,7 +22,7 @@ import {
 } from "./recordCreator";
 import { createObjects, createPriceBreakups } from "./dbWriter";
 
-async function main(providerFilename: string, itemFilename: string) {
+export async function generateCatalogs(providerFilename: string, itemFilename: string) {
   dotenv.config();
   const client = axiosClient();
 
@@ -183,11 +183,3 @@ async function main(providerFilename: string, itemFilename: string) {
   );
 }
 
-if (process.argv.length !== 4) {
-  console.log(
-    "Please pass the providers csv file and items csv file as arguments"
-  );
-  process.exit(1);
-}
-
-main(process.argv[2], process.argv[3]);
