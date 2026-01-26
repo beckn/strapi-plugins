@@ -16,11 +16,13 @@ import {
   getUniqueProviders,
   getUniqueTags,
   hasDuplicates,
-  createPriceBreakupObjects
+  createPriceBreakupObjects,
+  getUniqueCountries,
+  getUniqueTagGroups
 } from "./recordCreator";
 import { createObjects, createPriceBreakups } from "./dbWriter";
 
-export async function generateCatalogs(providerFilename: string, itemFilename: string) {
+async function main(providerFilename: string, itemFilename: string) {
   dotenv.config();
   const client = axiosClient();
 
@@ -28,14 +30,24 @@ export async function generateCatalogs(providerFilename: string, itemFilename: s
   const records = await readCSVFile(itemFilename);
 
   if (hasDuplicates(providerRecords, records)) {
-    throw new Error('Duplicate records found in providers or items CSV files. Please fix duplicates and try again.');
+    process.exit(1);
   }
+
+  // const countries = getUniqueCountries(providerRecords);
+  // console.log(`Countries: ${countries.length}`);
+  // const countriesMap = await createObjects(client, "Countries", countries, [
+  //   { key: "name", relation: false },
+  //   { key: "code", relation: false }
+  // ]);
 
   const domains = getUniqueDomains(providerRecords);
   console.log(`Domains: ${domains.length}`);
   const domainsMap = await createObjects(client, "Domains", domains, [
     { key: "DomainName", relation: false }
   ]);
+  console.log(
+    `Domains: ${domains.length}, ${JSON.stringify(domainsMap, null, 2)}`
+  );
 
   const locations = getUniqueLocations(providerRecords);
   console.log(`Locations: ${locations.length}`);
@@ -55,12 +67,27 @@ export async function generateCatalogs(providerFilename: string, itemFilename: s
     { key: "value", relation: false }
   ]);
 
-  const tags = getUniqueTags(records);
-  console.log(`Tags: ${tags.length}`);
-  const tagsMap = await createObjects(client, "Tags", tags, [
-    { key: "tag_name", relation: false }
+  const tagGroups = getUniqueTagGroups(records);
+  console.log(
+    `TagGroups: ${tagGroups.length}, ${JSON.stringify(tagGroups, null, 2)}`
+  );
+  const tagGroupsMap = await createObjects(client, "tag-groups", tagGroups, [
+    { key: "tag_group_name", relation: false }
   ]);
 
+  console.log(JSON.stringify(tagGroupsMap, null, 2));
+
+  const tags = getUniqueTags(records, tagGroupsMap);
+  console.log(`Tags: ${tags.length}`);
+  console.log("tags======>", JSON.stringify(tags, null, 2));
+  const tagsMap = await createObjects(client, "Tags", tags, [
+    { key: "tag_name", relation: false },
+    { key: "tag_group_id", relation: true },
+    { key: "code", relation: false },
+    { key: "value", relation: false }
+  ]);
+
+  console.log("tagsMap======>", JSON.stringify(tagsMap, null, 2));
   const fulfillments = getUniqueFulfillments(records);
   console.log(`Fulfillments: ${fulfillments.length}`);
   const fulfillmentMaps = await createObjects(
@@ -75,8 +102,11 @@ export async function generateCatalogs(providerFilename: string, itemFilename: s
     domainsMap,
     locationsMap,
     mediaMap
+    // countriesMap
   );
-  console.log(`Providers: ${providers.length}`);
+  console.log(
+    `Providers: ${providers.length} ${JSON.stringify(providers, null, 2)}`
+  );
   const providersMap = await createObjects(client, "Providers", providers, [
     { key: "provider_name", relation: false }
   ]);
@@ -116,9 +146,11 @@ export async function generateCatalogs(providerFilename: string, itemFilename: s
     categoriesMap,
     tagsMap,
     itemsMap,
-    providersMap
+    providersMap,
+    tagGroupsMap
   );
   console.log(`cat_attr_tag_relations: ${cat_attr_tag_relations.length}`);
+
   const catAttrTagRelationsMap = await createObjects(
     client,
     "cat-attr-tag-relations",
@@ -150,3 +182,12 @@ export async function generateCatalogs(providerFilename: string, itemFilename: s
     ]
   );
 }
+
+if (process.argv.length !== 4) {
+  console.log(
+    "Please pass the providers csv file and items csv file as arguments"
+  );
+  process.exit(1);
+}
+
+main(process.argv[2], process.argv[3]);
