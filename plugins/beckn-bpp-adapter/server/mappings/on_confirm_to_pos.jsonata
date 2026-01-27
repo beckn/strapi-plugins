@@ -65,6 +65,6 @@
         "amount_paid": 0,
         "amount_balance": $number(quote.price.value ? quote.price.value: '0'),
         "cash_to_be_collected": $number(quote.price.value ? quote.price.value: '0'),
-        "order_status": "ACCEPTED"
+        "order_status": fulfillments[0].state.descriptor.code ? fulfillments[0].state.descriptor.code : "ACCEPTED"
     }
 }
