@@ -2,10 +2,8 @@ import { Strapi } from "@strapi/strapi";
 export default ({}: { strapi: Strapi }) => ({
   async updateOrderStatus(ctx: any) {
     try {
-      const {
-        order_id = "",
-        status = "ACCEPTED"
-      }: { order_id: string; status: string } = ctx.request.body;
+      const { order_id = "" }: { order_id: string; status: string } =
+        ctx.request.body;
 
       if (!order_id) {
         ctx.status = 400;
@@ -38,20 +36,28 @@ export default ({}: { strapi: Strapi }) => ({
         orderFulfillment[0].id,
         {
           data: {
-            state_code: status.toUpperCase().replace(/ /g, "_"),
-            state_value: status.toUpperCase().replace(/_/g, " ")
+            state_code: "ACCEPTED".toUpperCase().replace(/ /g, "_"),
+            state_value: "ACCEPTED".toUpperCase().replace(/_/g, " ")
           }
         }
       );
 
       ctx.status = 200;
       ctx.body = {
-        order_details: orderFulfillment,
+        code: 200,
+        status: "success",
         message: "Order status updated successfully"
       };
       return;
     } catch (error) {
-      throw error;
+      ctx.status = 500;
+      ctx.body = {
+        code: 500,
+        status: "failed",
+        message: "Order status updated successfully",
+        error: [error.message]
+      };
+      return;
     }
   }
 });

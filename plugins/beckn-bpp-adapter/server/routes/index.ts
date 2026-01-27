@@ -109,8 +109,17 @@ export default [
   },
   {
     method: "POST",
-    path: "/uploadCatalog",
+    path: "/v1/menu/add",
     handler: "catalogController.uploadCatalogFromPayload",
+    config: {
+      policies: [],
+      auth: false
+    }
+  },
+  {
+    method: "POST",
+    path: "/v1/order/confirm",
+    handler: "orderController.updateOrderStatus",
     config: {
       policies: [],
       auth: false
