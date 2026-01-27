@@ -116,11 +116,11 @@
                         },
                         "customer":{
                             "person":{
-                                "name":message.fulfillment[0].customer.person.name ? message.fulfillment[0].customer.person.name : "GUEST"
+                                "name":message.fulfillment[0].stops[0].contact.name ? message.fulfillment[0].stops[0].contact.name : "GUEST"
                             },
                             "contact":{
-                                "email":message.fulfillment[0].customer.contact.email ? message.fulfillment[0].customer.contact.email: "NA",
-                                "phone":message.fulfillment[0].customer.contact.phone ? message.fulfillment[0].customer.contact.phone : "NA"
+                                "email":message.fulfillment[0].stops[0].contact.email ? message.fulfillment[0].stops[0].contact.email: "NA",
+                                "phone":message.fulfillment[0].stops[0].contact.phone ? message.fulfillment[0].stops[0].contact.phone : "NA"
                             }
                         }
                    }
