@@ -1,4 +1,6 @@
-{
+(
+    $itemBody := message[0].itemsBody;
+    {
     "context": $context(context, $action),
     "message": {
         "order": {
@@ -78,7 +80,7 @@
                     "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
                 }
             }[],
-            "quote": $quote(message.items),
+            "quote": $quotePrice(message[0].items, message[0].itemsBody, context),
             "categories": $map(message.category_ids, function($v) {
                 {
                     "id": $string($v.id),
@@ -93,3 +95,4 @@
         }
     }
 }
+)

@@ -448,7 +448,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           }
         },
         order_id: orderId,
-        order_details: createOrder
+        order_details: createOrder,
+        // Attach itemsBody to get quantity of each items selected for order which will be used for dynamic price calculation
+        itemsBody: items.filter((i) => item.items.some((it) => String(it.id) === String(i.id)))
+
       }));
       if (isEnergy(context)) {
         const {

@@ -1,99 +1,105 @@
-{
-    "context": $context(context, $action),
-    "message": {
-        "order": { 
-            "provider": message.{
-                "id": $string(id),
-                "descriptor": {
-                    "name": provider_name,
-                    "short_desc": short_desc ? short_desc : "",
-                    "long_desc": long_desc ? long_desc : "",
-                    "additional_desc": {
-                        "url": provider_uri
-                    },
-                    "images": items.image.{
-                        "url": url ? url : "https://abc.com",
-                        "size_type": size_type ? size_type : "sm"
-                    }[]
-                },
-                "categories": category_ids. {
+(
+    $itemBody := message[0].itemsBody;
+    {
+        "context": $context(context, $action),
+        "message": {
+            "order": { 
+                "provider": message.{
                     "id": $string(id),
                     "descriptor": {
-                        "name": value
+                        "name": provider_name,
+                        "short_desc": short_desc ? short_desc : "",
+                        "long_desc": long_desc ? long_desc : "",
+                        "additional_desc": {
+                            "url": provider_uri
+                        },
+                        "images": items.image.{
+                            "url": url ? url : "https://abc.com",
+                            "size_type": size_type ? size_type : "sm"
+                        }[]
+                    },
+                    "categories": category_ids. {
+                        "id": $string(id),
+                        "descriptor": {
+                            "name": value
+                        }
+                    }[],
+                    "rating": provider_rating,
+                    "short_desc": short_desc,
+                    "fulfillments": $fulfillments(fulfillments, items),
+                    "locations": $locations($append(location_id, [items.item_fulfillment_ids.location_id])),
+                    "rateable": true
+                },
+                "items": message.items.{
+                    "id": $string(id),
+                    "descriptor": {
+                        "name": name ? name : "",
+                        "code": code ? code : "",
+                        "short_desc": short_desc ? short_desc : "",
+                        "long_desc": long_desc ? long_desc : "",
+                        "images": image.{
+                            "url": url?url:"https://abc.com",
+                            "size_type": size_type?size_type:"sm"
+                        }[]
+                    },
+                    "rating":$string(sc_retail_product.average_rating),
+                    "rateable": true,
+                    "price": $price(sc_retail_product),
+                    "quantity": sc_retail_product.{
+                        "available": {
+                            "count": stock_quantity ? stock_quantity : 0,
+                            "measure":{
+                                "value": $string(stock_quantity ? stock_quantity : 0),
+                                "unit": quantity_unit
+                            }
+                        },
+                        "selected": {
+                            "count": $itemQuantity($itemBody, %.id)
+                        }
+                    },
+                    "category_ids": $map(
+                        $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'CATEGORY'}),
+                        function($v) {
+                            $string($v.taxanomy_id.id)
+                        }
+                    )[],
+                    "fulfillment_ids": $count(item_fulfillment_ids) > 0 ?
+                        $map(item_fulfillment_ids, function($v){
+                            $string($v.fulfilment_id.id)
+                        })[] :
+                    [],
+                    "location_ids": $count(item_fulfillment_ids) > 0 ?
+                        $map(item_fulfillment_ids, function($v){
+                            $string($v.location_id.id)
+                        })[] :
+                    [],
+                    "tags": $tags(cat_attr_tag_relations),
+                    "xinput": {
+                        "form": {
+                            "url": $xInput(%.%.context),
+                            "mime_type": "text/html"
+                        }
+                    },
+                    "time": {
+                        "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
                     }
                 }[],
-                "rating": provider_rating,
-                "short_desc": short_desc,
-                "fulfillments": $fulfillments(fulfillments, items),
-                "locations": $locations($append(location_id, [items.item_fulfillment_ids.location_id])),
-                "rateable": true
-            },
-            "items": message.items.{
-                "id": $string(id),
-                "descriptor": {
-                    "name": name ? name : "",
-                    "code": code ? code : "",
-                    "short_desc": short_desc ? short_desc : "",
-                    "long_desc": long_desc ? long_desc : "",
-                    "images": image.{
-                        "url": url?url:"https://abc.com",
-                        "size_type": size_type?size_type:"sm"
-                    }[]
-                },
-                "rating":$string(sc_retail_product.average_rating),
-                "rateable": true,
-                "price": $price(sc_retail_product),
-                "quantity": sc_retail_product.{
-                    "available": {
-                        "count": stock_quantity ? stock_quantity : 0,
-                        "measure":{
-                            "value": $string(stock_quantity ? stock_quantity : 0),
-                            "unit": quantity_unit
-                        }
+                "quote": $quotePrice(message[0].items, message[0].itemsBody, context),
+                "billing": message.billing,
+                "categories": $map(message.category_ids, function($v) {
+                    {
+                        "id": $string($v.id),
+                        "value": $v.value,
+                        "createdAt": $v.createdAt,
+                        "updatedAt": $v.updatedAt,
+                        "publishedAt": $v.publishedAt,
+                        "category_code": $v.category_code
                     }
-                },
-                "category_ids": $map(
-                    $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'CATEGORY'}),
-                    function($v) {
-                        $string($v.taxanomy_id.id)
-                    }
-                )[],
-                "fulfillment_ids": $count(item_fulfillment_ids) > 0 ?
-                    $map(item_fulfillment_ids, function($v){
-                        $string($v.fulfilment_id.id)
-                    })[] :
-                [],
-                "location_ids": $count(item_fulfillment_ids) > 0 ?
-                    $map(item_fulfillment_ids, function($v){
-                        $string($v.location_id.id)
-                    })[] :
-                [],
-                "tags": $tags(cat_attr_tag_relations),
-                "xinput": {
-                    "form": {
-                        "url": $xInput(%.%.context),
-                        "mime_type": "text/html"
-                    }
-                },
-                "time": {
-                    "duration": service.time_slot_per_client_in_min ? $string(service.time_slot_per_client_in_min) : ""
-                }
-            }[],
-            "quote": $quote(message.items),
-            "billing": message.billing,
-            "categories": $map(message.category_ids, function($v) {
-                {
-                    "id": $string($v.id),
-                    "value": $v.value,
-                    "createdAt": $v.createdAt,
-                    "updatedAt": $v.updatedAt,
-                    "publishedAt": $v.publishedAt,
-                    "category_code": $v.category_code
-                }
-            })[],
-            "fulfillments": $fulfillments(message.fulfillments, message.items),
-            "payments": $payments(message[0]),
-            "cancellation_terms": $cancellationTerms(message[0].items)
+                })[],
+                "fulfillments": $fulfillments(message.fulfillments, message.items),
+                "payments": $payments(message[0]),
+                "cancellation_terms": $cancellationTerms(message[0].items)
+            }
         }
     }
-}
+)

@@ -88,6 +88,100 @@ export const quote = async (items: KeyValuePair[]) => {
   };
 };
 
+// Domain-specific base price name mappings
+const domainBasePriceNames = {
+  "Retail": "Item Price",
+  "dhp:pharmacy:0.1.0": "Item Price",
+  "supply-chain-services:assembly": "Base Price",
+  "mobility:1.1.0": "Base Fare",
+  "tourism": "Sub Total",
+  "dsep:courses": "Course Fee",
+  "hospitality": "Room Tariff",
+  "retail:1.1.0": "Item Price",
+  "uei:p2p_trading": "P2P Energy Cost",
+  "uei:charging": "Cost of Charge"
+};
+
+export const quotePrice = async (
+  items: KeyValuePair[],
+  itemSelected: KeyValuePair[],
+  context: KeyValuePair
+) => {
+  const breakup: KeyValuePair[] = [];
+  console.log("Context===>", context);
+  console.log("Items===>", items);
+  console.log("ItemSelected===>", itemSelected);
+
+  let totalPriceValue = 0;
+
+  items?.map((item) => {
+    const scProduct = item?.sc_retail_product;
+
+    // Find the selected quantity for the item from itemSelected
+    const matchingItem = itemSelected.find(
+      (tag) => String(tag.id) === String(item.id)
+    );
+    const selectedQuantity = matchingItem?.quantity?.selected?.count ?? 1; // Default to 1 if not found
+
+    // Get domain-specific base price name or use default
+    const domain = context?.domain;
+    const basePriceName = domainBasePriceNames[domain];
+
+    // Process price breakup items if they exist
+    if (scProduct?.price_bareakup_ids?.length > 0) {
+      // Add all price breakups
+      scProduct.price_bareakup_ids.map((price_bareakup_id: KeyValuePair) => {
+        // Calculate price based on is_item_qty_dependent flag
+        const baseValue = Number(price_bareakup_id.value ?? 0);
+        const adjustedValue = price_bareakup_id.is_item_qty_dependent
+          ? baseValue * selectedQuantity
+          : baseValue;
+
+        breakup.push({
+          title: price_bareakup_id.title,
+          price: {
+            currency: price_bareakup_id.currency,
+            value: adjustedValue.toString(),
+          },
+          item: { id: `${item.id || ""}` },
+        });
+      });
+
+      // If base price exists for this domain, add it to breakups
+      if (basePriceName && scProduct?.base_fee) {
+        breakup.push({
+          title: basePriceName,
+          price: {
+            currency: scProduct.currency,
+            value: (Number(scProduct.base_fee) * selectedQuantity).toString(),
+          },
+          item: { id: `${item.id || ""}` },
+        });
+      }
+    } else {
+      // If no breakups exist, just add base_fee * quantity to total price
+      if (scProduct?.base_fee) {
+        totalPriceValue += Number(scProduct.base_fee) * selectedQuantity;
+      }
+    }
+  });
+
+  // Calculate total priceValue as sum of all breakup.price.value plus any base_fee values
+  const breakupPriceValue = breakup.reduce(
+    (accumulator, currentValue) =>
+      accumulator + Number(currentValue?.price?.value),
+    0
+  );
+
+  return {
+    price: {
+      value: (breakupPriceValue + totalPriceValue).toString(),
+      currency: items?.[0]?.sc_retail_product?.currency,
+    },
+    breakup,
+  };
+};
+
 export const payments = async (
   provider: KeyValuePair,
   incomingPrice: KeyValuePair,
@@ -359,4 +453,13 @@ export const providerTags = (tagRelations) => {
   });
 
   return Array.from(groupedRelationsMap.values());
+};
+
+export const itemQuantity = (tags: any, itemId: any) => {
+  if (!Array.isArray(tags) || tags.length === 0) {
+    return 1;
+  }
+  // Find the tag where id matches itemId
+  const matchingTag = tags.find((tag) => String(tag.id) === String(itemId));
+  return matchingTag?.quantity?.selected?.count || 1;
 };

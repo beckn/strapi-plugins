@@ -1,10 +1,13 @@
+
+(
+    $tags := message.order_id.tags;
 {
     "context": $context(context, $action),
     "message": {
         "order":{ 
             "id": $string(message.order_id.id),
             "created_at": message.order_id.createdAt, 
-            "provider": message.order_id.items.provider.{
+                "provider": message.order_id.items[0].provider.{
                 "id": $string(id),
                 "descriptor": {
                     "name": provider_name,
@@ -58,9 +61,10 @@
                             "unit": quantity_unit
                         }
                     },
-                    "selected":{
-                        "count":1
+                        "selected": {
+                            "count": $itemQuantity($tags, %.id)
                     }
+
                 },
                 "category_ids": $map(
                     $filter(cat_attr_tag_relations, function($v) { $v.taxanomy = 'CATEGORY'}),
@@ -181,9 +185,10 @@
                 "type": "PRE-ORDER",
                 "transaction_id": transaction_id
             }[],
-            "quote": $quote(message.order_id.items),
+            "quote": $quotePrice(message[0].order_id.items, message[0].order_id.tags, context),
             "cancellation_terms": $cancellationTerms(message.order_id.items),
             "status": message.order_id.status
         }
     }
 }
+)
